@@ -64,8 +64,64 @@ cwpdlwhn13zd        nginx-network       overlay             swarm
 ```
 ### 创建带定制网络的服务
 ```
-
+docker service create --replicas 3 --name nginx \
+  --network nginx-network nginx
 ```
+实测时，nginx服务的3个实例分别运行在了node1和node2。然后执行```curl 10.10.56.3:8084```就找不到页面了。而未使用专用网络时，整个swarm集群的所有节点都可以在8084端口显示nginx首页。
+
+### 负载均衡
+swarm的内部负载均衡器自动将请求分发给服务的某个活动容器。会话粘性怎么实现？
+
+### [测试swarm网络](https://github.com/docker/docker/blob/master/docs/swarm/networking.md)
+1.在已有网络上创建服务：
+```
+docker service create --name my-busybox \
+  --network nginx-network busybox sleep 3000
+```
+2.查看运行服务的节点
+```
+docker service ps my-busybox
+ID                         NAME          IMAGE    NODE   DESIRED STATE  CURRENT STATE             ERROR
+em8ucnvb9db9qh59xzf4y0gyo  my-busybox.1      busybox  node2  Running        Running 2 minutes ago
+```
+3. 在节点2上通过下列命令打开一个容器内部命令行
+```
+docker exec -it my-busybox.1.em8ucnvb9db9qh59xzf4y0gyo /bin/sh
+```
+容器id构成算法是<TASK-NAME>+<ID>。在这个节点2上用docker ps命令可以看到这个容器id。
+4. 在内部命令行中查找服务nginx的VIP:
+```
+$ nslookup nginx
+
+Server:    127.0.0.11
+Address 1: 127.0.0.11
+
+Name:      nginx
+Address 1: 10.0.0.2
+```
+5. 查看服务nginx的所有容器的虚拟IP地址。
+```
+/ # nslookup tasks.nginx
+Server:    127.0.0.11
+Address 1: 127.0.0.11
+
+Name:      tasks.nginx
+Address 1: 10.0.0.5 nginx.2.11p5ygyzlva9mlip6bp3npa9j.nginx-network
+Address 2: 10.0.0.3 nginx.3.d5bzw1qz9w1h6xyuqmfuzdr3y.nginx-network
+Address 3: 10.0.0.4 nginx.1.14e5wpx0h6s442rrl628idj0u.nginx-network
+```
+6. 在buybox服务的内部命令行中访问nginx服务：
+```
+$ wget -O- nginx
+
+Connecting to nginx (10.0.0.2:80)
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx on Debian!</title>
+...snip...
+```
+按官方文档的说明，上述请求被内部负载均衡器按“轮询”策略转发到nginx服务的各个容器。但实测一直都是转发到了10.0.0.2。
 
 测试版安装脚本：https://experimental.docker.com/
 测试过程中涉及多个节点，用Vbox克隆出多个虚机，改/etc/network/interfaces来改ip，改/etc/hostname来改主机名（ubuntu）。
