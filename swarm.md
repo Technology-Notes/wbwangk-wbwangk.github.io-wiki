@@ -121,7 +121,15 @@ Connecting to nginx (10.0.0.2:80)
 <title>Welcome to nginx on Debian!</title>
 ...snip...
 ```
-按官方文档的说明，上述请求被内部负载均衡器按“轮询”策略转发到nginx服务的各个容器。但实测一直都是转发到了10.0.0.2。
+虽然nginx服务的容器有3个，但实测一直都是转发到了10.0.0.2，应存在IP粘性。而下面的dns轮询参数则去掉了粘性。
+
+### DNS轮询服务
+创建服务时增加```--endpoint-mode dnsrr```参数，可以创建DNS轮询服务。
+```
+ docker service create --replicas 3 --name nginx \
+   --network nginx-network --endpoint-mode dnsrr nginx
+```
+这种方式创建的服务，请求会被随机发送到服务的各个容器。用上面的busybox测试确实是这样的。
 
 测试版安装脚本：https://experimental.docker.com/
 测试过程中涉及多个节点，用Vbox克隆出多个虚机，改/etc/network/interfaces来改ip，改/etc/hostname来改主机名（ubuntu）。
