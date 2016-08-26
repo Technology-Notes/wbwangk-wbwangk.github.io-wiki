@@ -49,9 +49,23 @@ docker service rm nginx
 # 服务的定制网络
 
 ### 创建网络
+```
+docker network create --driver overlay nginx-network
+```
+### 查看网络
+```
+$ docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+5b0f3ab27531        bridge              bridge              local
+2cf1a0ff25c1        docker_gwbridge     bridge              local
+be31a37caa10        host                host                local
+8db8mexh3ble        ingress             overlay             swarm
+cwpdlwhn13zd        nginx-network       overlay             swarm
+```
+### 创建带定制网络的服务
+```
 
-
-
+```
 
 测试版安装脚本：https://experimental.docker.com/
 测试过程中涉及多个节点，用Vbox克隆出多个虚机，改/etc/network/interfaces来改ip，改/etc/hostname来改主机名（ubuntu）。
