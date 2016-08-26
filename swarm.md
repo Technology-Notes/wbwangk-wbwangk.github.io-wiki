@@ -131,5 +131,13 @@ Connecting to nginx (10.0.0.2:80)
 ```
 这种方式创建的服务，请求会被随机发送到服务的各个容器。用上面的busybox测试确实是这样的。
 
+### 绑定卷的服务
+可以创建绑定卷的服务：
+```
+docker service create --mount src=<VOLUME-NAME>,dst=<CONTAINER-PATH> \
+  --name myservice <IMAGE>
+```
+前提是所有节点要都存在卷指定的目录。swarm的调度器随时可能重新调度任务到其他的节点，所以本地卷要小心使用。
+
 测试版安装脚本：https://experimental.docker.com/
 测试过程中涉及多个节点，用Vbox克隆出多个虚机，改/etc/network/interfaces来改ip，改/etc/hostname来改主机名（ubuntu）。
