@@ -47,7 +47,7 @@ docker service rm nginx
 ```
 # swarm服务的ingress网络模式
 ### ingress网络
-创建服务时使用--publish参数来定义网络模式。在这一网络模式下，所有swarm节点均监听指定的外部网络端口，然后把请求反向代理到容器，即使这个节点上没有运行服务的容器。如下图：
+创建服务时使用--publish参数来定义网络模式。在这一网络模式下，所有swarm节点均监听指定的外部网络端口，然后把请求反向代理到容器，即使这个节点上没有运行服务的容器。如下图（暴露的8080端口）：
 ![ingress网络](https://github.com/docker/docker/raw/master/docs/swarm/images/ingress-routing-mesh.png)
 
 正在运行的服务，可以用update命令来暴露外部端口：
@@ -60,8 +60,9 @@ $ docker service update \
 $ docker service inspect --format="{{json .Endpoint.Spec.Ports}}" nginx
 [{"Protocol":"tcp","TargetPort":80,"PublishedPort":8084}]
 ```
-使用外部负载均衡器下的ingress网络示意图：
+使用外部负载均衡器下的ingress网络示意图(暴露的8080端口)：
 ![](https://github.com/docker/docker/blob/master/docs/swarm/images/ingress-lb.png)
+ingress网络模式下，外部负载均衡器将所有的节点都当成上游服务器。这样的好处是，即使swarm重新调度了运行服务任务的节点，负载均衡设置不用修改。
 
 # swarm服务的定制网络
 
