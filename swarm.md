@@ -45,8 +45,25 @@ docker service scale nginx=3
 ```
 docker service rm nginx
 ```
+# swarm服务的ingress网络模式
+### ingress网络
+创建服务时使用--publish参数来定义网络模式。在这一网络模式下，所有swarm节点均监听指定的外部网络端口，然后把请求反向代理到容器，即使这个节点上没有运行服务的容器。如下图：
+![ingress网络](https://github.com/docker/docker/raw/master/docs/swarm/images/ingress-routing-mesh.png)
 
-# 服务的定制网络
+正在运行的服务，可以用update命令来暴露外部端口：
+```
+$ docker service update \
+  --publish-add <PUBLISHED-PORT>:<TARGET-PORT>  <SERVICE>
+```
+查看服务暴露的端口：
+```
+$ docker service inspect --format="{{json .Endpoint.Spec.Ports}}" nginx
+[{"Protocol":"tcp","TargetPort":80,"PublishedPort":8084}]
+```
+使用外部负载均衡器下的ingress网络示意图：
+![](https://github.com/docker/docker/blob/master/docs/swarm/images/ingress-lb.png)
+
+# swarm服务的定制网络
 
 ### 创建网络
 ```
