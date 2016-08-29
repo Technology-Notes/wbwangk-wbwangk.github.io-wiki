@@ -159,3 +159,35 @@ docker service create --mount src=<VOLUME-NAME>,dst=<CONTAINER-PATH> \
 
 测试版安装脚本：https://experimental.docker.com/
 测试过程中涉及多个节点，用Vbox克隆出多个虚机，改/etc/network/interfaces来改ip，改/etc/hostname来改主机名（ubuntu）。
+
+# stack
+stack是docker1.12.1正式版中没有，是experimental版的功能。
+stack是多个service的集合，是docker-compose的替代品。docker-compose靠yml文件，stack的定义文件扩展名是dab(distributed application bundle)，更早的版本扩展名是dsb，是json格式文本文件。
+定义一个hello-world.dab文件：
+```
+{
+    "Version": "0.1",
+    "Services": {
+        "redis": {
+            "Image": "redis@sha256:4b24131101fa0117bcaa18ac37055fffd9176aa1a240392bb8ea85e0be50f2ce",
+            "Networks": ["default"]
+        },
+        "web": {
+            "Image": "dockercloud/hello-world@sha256:fe79a2cfbd17eefc344fb8419420808df95a1e22d93b7f621a7399fd1e9dca1d",
+            "Networks": ["default"],
+            "User": "web"
+        }
+    }
+}
+```
+部署这个stack的命令：
+```
+docker stack deploy hello-world --file hello-world.dab
+```
+查看部署的成果：
+```
+docker service ls
+4rw6vetmmxxn  hello-world_redis  1/1       redis@sha256:4b24131101fa0117bcaa18ac37055fffd9176aa1a240392bb8ea85e0be50f2ce
+ekx7q2z7iu3b  hello-world_web    0/1       dockercloud/hello-world@sha256:fe79a2cfbd17eefc344fb8419420808df95a1e22d93b
+```
+docker镜像id使用了full content hash格式的标记。
