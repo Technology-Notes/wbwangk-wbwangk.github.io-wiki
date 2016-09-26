@@ -1,4 +1,4 @@
-http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SingleCluster.html
+[原始apache文档](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SingleCluster.html)
 
 安装oracle java7：
 ``` apt-get install oracle-java7-installer
