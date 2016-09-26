@@ -9,8 +9,13 @@ java的home目录：/usr/lib/jvm/java-7-oracle/jre
 下载和解压hadoop2.7.3到/opt/hadoop-2.7.3目录下，这是hadoop的根目录。然后编辑 etc/hadoop/hadoop-env.sh
 ```
   # set to the root of your Java installation
-  export JAVA_HOME=/usr/lib/jvm/java-7-oracle/jre
+  export JAVA_HOME="/usr/lib/jvm/java-7-oracle/jre"
 ```
+设置hadoop的home：
+```
+$ export HADOOP_COMMON_HOME="/opt/hadoop-2.7.3"
+```
+测试hadoop：
 ```
   $ mkdir input
   $ cp etc/hadoop/*.xml input
