@@ -1,4 +1,6 @@
 [原始apache文档](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SingleCluster.html)
+## 概念
+HDFS: namenode 存放文件系统元数据；datanode存放文件
 
 ## 安装单机版hadoop
 安装oracle java7：
