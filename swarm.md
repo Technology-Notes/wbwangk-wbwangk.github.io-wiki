@@ -1,3 +1,4 @@
+一个有价值的参考文档：[Docker1.12服务发现，负载均衡和Routing Mesh](http://wwwbuild.net/dockerone/414200.html)
 ### 创建管理节点
 ```
 docker swarm init --advertise-addr 10.10.56.1
