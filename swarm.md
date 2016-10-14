@@ -69,23 +69,34 @@ ingress网络模式下，外部负载均衡器将所有的节点都当成上游�
 ### 创建网络
 ```
 docker network create --driver overlay nginx-network
+78lax1rznqaim8uq31u68378b
 ```
 ### 查看网络
 ```
 $ docker network ls
 NETWORK ID          NAME                DRIVER              SCOPE
-5b0f3ab27531        bridge              bridge              local
-2cf1a0ff25c1        docker_gwbridge     bridge              local
-be31a37caa10        host                host                local
-8db8mexh3ble        ingress             overlay             swarm
-cwpdlwhn13zd        nginx-network       overlay             swarm
+...
+78lax1rznqai        nginx-network       overlay             swarm
 ```
 ### 创建带定制网络的服务
 ```
-docker service create --replicas 3 --name nginx \
+$ docker service create --replicas 1 --name nginx \
   --network nginx-network nginx
+ds3nfquip9g1waylznyuycgke
 ```
-实测时，nginx服务的3个实例分别运行在了node1和node2。然后执行```curl 10.10.56.3:8084```就找不到页面了。而未使用专用网络时，整个swarm集群的所有节点都可以在8084端口显示nginx首页。
+查看nginx服务所在的节点：
+```
+$ docker service ps nginx
+ID                         NAME     IMAGE  NODE   DESIRED STATE  CURRENT STATE           ERROR
+79v9kauluouq2ftkxxqti72j2  nginx.1  nginx  node3  Running        Running 48 seconds ago
+```
+可以看到任务运行在node3，可以到node3去执行：
+```
+$ docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+0edc5d68066c        nginx:latest        "nginx"             3 minutes ago       Up 3 minutes        80/tcp, 443/tcp     nginx.1.79v9kauluouq2ftkxxqti72j2
+```
+然后执行```curl 10.10.56.3:8084```就找不到页面了。而未使用专用网络时，整个swarm集群的所有节点都可以在8084端口显示nginx首页。
 
 ### 负载均衡
 swarm的内部负载均衡器自动将请求分发给服务的某个活动容器。会话粘性怎么实现？
@@ -95,18 +106,26 @@ swarm的内部负载均衡器自动将请求分发给服务的某个活动容器
 ```
 docker service create --name my-busybox \
   --network nginx-network busybox sleep 3000
+1tvrcg69rwi7eu9zwb6p58ruu
 ```
 2.查看运行服务的节点
 ```
 docker service ps my-busybox
-ID                         NAME          IMAGE    NODE   DESIRED STATE  CURRENT STATE             ERROR
-em8ucnvb9db9qh59xzf4y0gyo  my-busybox.1      busybox  node2  Running        Running 2 minutes ago
+ID                         NAME          IMAGE    NODE   DESIRED STATE  CURRENT STATE               ERROR
+b9zrubs9ka6h1819wflr815xe  my-busybox.1  busybox  node1  Running        Running about a minute ago
 ```
+在node1上执行命令：
+```
+$ docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+721e3822964a        busybox:latest      "sleep 3000"        2 minutes ago       Up 2 minutes                            my-busybox.1.b9zrubs9ka6h1819wflr815xe
+```
+(可以把b9zrubs9ka6h1819wflr815xe看作任务id？)
 3. 在节点2上通过下列命令打开一个容器内部命令行
 ```
-docker exec -it my-busybox.1.em8ucnvb9db9qh59xzf4y0gyo /bin/sh
+docker exec -it my-busybox.1.b9zrubs9ka6h1819wflr815xe /bin/sh
 ```
-容器id构成算法是<TASK-NAME>+<ID>。在这个节点2上用docker ps命令可以看到这个容器id。
+容器id构成算法是<TASK-NAME>+<ID>，em8ucnvb9db9qh59xzf4y0gyo是task id。在这个节点2上用docker ps命令可以看到这个容器id。
 4. 在内部命令行中查找服务nginx的VIP:
 ```
 $ nslookup nginx
@@ -117,17 +136,22 @@ Address 1: 127.0.0.11
 Name:      nginx
 Address 1: 10.0.0.2
 ```
+再执行nslookup my-busybox，可以看到服务my-busybox的VIP是10.0.0.4。
 5. 查看服务nginx的所有容器的虚拟IP地址。
 ```
 / # nslookup tasks.nginx
 Server:    127.0.0.11
 Address 1: 127.0.0.11
-
 Name:      tasks.nginx
-Address 1: 10.0.0.5 nginx.2.11p5ygyzlva9mlip6bp3npa9j.nginx-network
-Address 2: 10.0.0.3 nginx.3.d5bzw1qz9w1h6xyuqmfuzdr3y.nginx-network
-Address 3: 10.0.0.4 nginx.1.14e5wpx0h6s442rrl628idj0u.nginx-network
+Address 1: 10.0.0.3 nginx.1.79v9kauluouq2ftkxxqti72j2.nginx-network
+
+/ # nslookup tasks.my-busybox
+Server:    127.0.0.11
+Address 1: 127.0.0.11
+Name:      tasks.my-busybox
+Address 1: 10.0.0.5 721e3822964a
 ```
+
 6. 在buybox服务的内部命令行中访问nginx服务：
 ```
 $ wget -O- nginx
