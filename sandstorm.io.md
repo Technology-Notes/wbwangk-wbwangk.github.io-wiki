@@ -5,4 +5,7 @@ sandstorm实现了平台级别的认证，所以你只需要登录平台一次�
 ### 免费动态域名xip.io
 如域名127.0.0.1.xip.io（或xxx.127.0.0.1.xip.io）会自动解析到ip 127.0.0.1
 
+### sandstorm的动态域名和https证书
+[github.com/sandstorm-io/sandcats](https://github.com/sandstorm-io/sandcats)
+
 
