@@ -1,30 +1,13 @@
-## 安装
-[参考](http://docs.ceph.org.cn/start/quick-start-preflight/#ceph)
-
-node1（10.10.56.1)充当管理节点，node2/3/4当存储节点。
-
-管理节点node1安装部署工具ceph-deploy。用jewel替换{ceph-stable-release}。
-
-node2/3/4安装ssh：
+安装apt-get密钥，apt-get利用该密钥校验安装包的hash sum值。
 ```
-sudo apt-get install openssh-server 或 sudo yum install ntp ntpdate ntp-doc
+wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
 ```
-node2/3/4安装NTP（时间同步）：
+将ceph加入APT源，hammer是最新版的ceph版本编号：
 ```
-apt-get install ntp 或 yum install ntp ntpdate ntp-doc
+echo deb http://download.ceph.com/debian-hammer/ $(lsb_release -sc) main | sudo tee /etc/apt/sources.list.d/ceph.list
 ```
-在node2/3/4上创建用户ceph2，并赋予sudo权限。
+安装ceph：
 ```
-ssh wbwang@10.10.56.2
-sudo useradd -d /home/ceph2 -m ceph2
-sudo passwd ceph2
-echo "ceph2 ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ceph2
-sudo chmod 0440 /etc/sudoers.d/ceph2
+sudo apt-get update && sudo apt-get install ceph ceph-mds
 ```
-在node1上使用wbwang用户生成ssh密钥。
-将ssh公钥复制到各存储节点：
-```
-ssh-copy-id ceph2@10.10.56.2
-ssh-copy-id ceph2@10.10.56.3
-ssh-copy-id ceph2@10.10.56.4
-```
+以上操作在每个ceph节点上都要进行。本来ceph提供了安装工具ceph-deploy，希望借助SSH实现网络安装。实测ceph-deploy问题多，所以选择手工安装。
