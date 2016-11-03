@@ -1,3 +1,40 @@
+准备3台虚拟机（node1/node2/node3)，在各台虚拟机的/etc/hosts文件中分别加入3台虚拟机的主机名和ip：
+```
+10.10.56.1      node1
+10.10.56.2      node2
+10.10.56.3      node3
+```
+每台虚机上安装ssh：
+```
+apt-get install openssh-server
+```
+每台虚机上创建ceph专用的用户ceph2：
+```
+# useradd -d /home/ceph2 -m ceph2
+# passwd ceph2
+```
+确保各个虚机的ceph用户都有sudo权限：
+```
+echo "ceph ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ceph2
+sudo chmod 0440 /etc/sudoers.d/ceph2
+```
+允许无密码SSH登录：
+```
+$ ssh-keygen
+
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+```
+复制公钥到其他各个节点：
+```
+ssh-copy-id ceph2@node2
+ssh-copy-id ceph2@node3
+```
+
 安装apt-get密钥，apt-get利用该密钥校验安装包的hash sum值。
 ```
 wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
