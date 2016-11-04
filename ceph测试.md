@@ -51,3 +51,5 @@ sudo apt-get update && sudo apt-get install ceph ceph-mds
 以上操作在每个ceph节点上都要进行。本来ceph提供了安装工具ceph-deploy，希望借助SSH实现网络安装。实测ceph-deploy问题多，所以选择手工安装。
 
 apt-get install ceph碰到大量依赖包缺失，后从网上查到aptitude install ceph命令安装。
+
+为虚机增加一块硬盘，以便ceph使用：http://www.linuxidc.com/Linux/2011-02/31868.htm
