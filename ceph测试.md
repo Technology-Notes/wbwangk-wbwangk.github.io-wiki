@@ -100,3 +100,9 @@ yum makecache
 ceph-deploy disk zap ceph-node1:sdb ceph-node1:sdc ceph-node1:sdd
 ceph-deploy osd create ceph-node1:sdb ceph-node1:sdc ceph-node1:sdd
 ```
+各虚拟机的OSD添加完后设置rbd存储池的pg_num和pgp_num：
+```
+ceph osd pool set rbd pg_num 256
+ceph osd pool set rbd pgp_num 256
+```
+pg_num设置后ceph需要一定时间调整然后才能设置pgp_num。都设置好需要一定时间，设置好后，ceph -s命令就显示HEALTH_OK状态了。
