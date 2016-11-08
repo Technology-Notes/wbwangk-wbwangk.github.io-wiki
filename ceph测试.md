@@ -53,3 +53,19 @@ sudo apt-get update && sudo apt-get install ceph ceph-mds
 apt-get install ceph碰到大量依赖包缺失，后从网上查到aptitude install ceph命令安装。
 
 为虚机增加一块硬盘，以便ceph使用：http://www.linuxidc.com/Linux/2011-02/31868.htm
+
+# 使用vagrant+centos7的测试
+
+所有虚拟机防火墙开放端口：
+```
+firewall-cmd --zone=public --add-port=6789/tcp --permanent
+firewall-cmd --zone=public --add-port=6800-7100/tcp --permanent
+firewall-cmd --reload
+firewall-cmd --zone=public --list-all
+```
+所有虚拟机禁用SELINUX:
+```
+setenforce 0
+sed -i s'/SELINUX.*=.*enforcing/SELINUX=disabled'/g /etc/selinux/config
+cat /etc/selinux/config | grep -i =disabled
+```
