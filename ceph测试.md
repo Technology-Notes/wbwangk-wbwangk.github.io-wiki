@@ -69,3 +69,19 @@ setenforce 0
 sed -i s'/SELINUX.*=.*enforcing/SELINUX=disabled'/g /etc/selinux/config
 cat /etc/selinux/config | grep -i =disabled
 ```
+所有虚拟机安装时间同步服务：
+```
+yum install ntp ntpdate -y
+systemctl stop ntpd.service
+ntpdate 2.asia.pool.ntp.org
+systemctl restart ntpdate.service
+systemctl restart ntpd.service
+systemctl enable ntpd.service
+systemctl enable ntpdate.service
+```
+所有虚拟机添加ceph的yum源并更新：
+```
+rpm -Uhv http://ceph.com/rpm-giant/el7/noarch/ceph-release-1-0.el7.noarch.rpm
+(yum --enablerepo=base clean metadata)
+yum update -y
+```
