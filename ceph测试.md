@@ -94,3 +94,9 @@ yum clean all
 yum makecache
 ```
 修改了epel的源：http://blog.csdn.net/user_friendly/article/details/8773417
+
+在各个虚机机上创建OSD:
+```
+ceph-deploy disk zap ceph-node1:sdb ceph-node1:sdc ceph-node1:sdd
+ceph-deploy osd create ceph-node1:sdb ceph-node1:sdc ceph-node1:sdd
+```
