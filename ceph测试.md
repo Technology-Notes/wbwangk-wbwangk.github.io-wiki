@@ -93,3 +93,4 @@ wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-
 yum clean all
 yum makecache
 ```
+修改了epel的源：http://blog.csdn.net/user_friendly/article/details/8773417
