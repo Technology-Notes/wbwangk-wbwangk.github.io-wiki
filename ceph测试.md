@@ -106,3 +106,5 @@ ceph osd pool set rbd pg_num 256
 ceph osd pool set rbd pgp_num 256
 ```
 pg_num设置后ceph需要一定时间调整然后才能设置pgp_num。都设置好需要一定时间，设置好后，ceph -s命令就显示HEALTH_OK状态了。
+
+OSD的删除：http://www.cnblogs.com/zhangzhengyan/p/5839897.html
