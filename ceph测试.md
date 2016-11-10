@@ -122,4 +122,36 @@ chkconfig命令用于永久关闭防火墙。
 为s3访问创建RADOS网关用户：
 ```
 radosgw-admin user create --uid=mona --display-name="javacup00" --email=javacup00@163.com -k /etc/ceph/ceph.client.radosgw.keyring --name client.radosgw.gateway
+{
+    "user_id": "mona",
+    "display_name": "javacup00",
+    "email": "javacup00@163.com",
+    "suspended": 0,
+    "max_buckets": 1000,
+    "auid": 0,
+    "subusers": [],
+    "keys": [
+        {
+            "user": "mona",
+            "access_key": "8KF9PZE24O7A43PZ4DM9",
+            "secret_key": "JXXQv5Tj6yELsIqhIhFMNr2CzNBcXm2YwrtDw5nr"
+        }
+    ],
+    "swift_keys": [],
+    "caps": [],
+    "op_mask": "read, write, delete",
+    "default_placement": "",
+    "placement_tags": [],
+    "bucket_quota": {
+        "enabled": false,
+        "max_size_kb": -1,
+        "max_objects": -1
+    },
+    "user_quota": {
+        "enabled": false,
+        "max_size_kb": -1,
+        "max_objects": -1
+    },
+    "temp_url_keys": []
+}
 ```
