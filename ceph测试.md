@@ -117,3 +117,9 @@ service firewalld stop
 chkconfig firewalld off 
 ```
 chkconfig命令用于永久关闭防火墙。
+
+### 为S3创建ceph用户
+为s3访问创建RADOS网关用户：
+```
+radosgw-admin user create --uid=mona --display-name="javacup00" --email=javacup00@163.com -k /etc/ceph/ceph.client.radosgw.keyring --name client.radosgw.gateway
+```
