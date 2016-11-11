@@ -254,17 +254,22 @@ radosgw-admin key create --subuser=mona:swift --key-type=swift --gen-secret -k /
 ```
 列出默认bucket：
 ```
-# swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w list
+# swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit \
+-K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w list
 my-new-bucket
 ```
 添加一个新bucket：
 ```
-# swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w post second-bucket
+# swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit \
+-K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w post second-bucket
 ```
 上传文件：
 ```
-swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w upload second-bucket /etc/hosts
+swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit \
+-K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w upload second-bucket /etc/hosts
 ```
+列出某容器（桶）下的对象：
 ```
-swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w list second-bucket
+swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit \
+-K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w list second-bucket
 ```
