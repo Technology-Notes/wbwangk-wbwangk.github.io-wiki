@@ -86,6 +86,7 @@ systemctl enable ntpdate.service
 deb http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse
 deb-src http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse
 ```
+然后apt-get update就可以成功了。如果update有错误，会导致ceph-deploy的失败。
 
 所有虚拟机添加ceph的yum源并更新：
 ```
