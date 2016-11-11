@@ -155,3 +155,116 @@ radosgw-admin user create --uid=mona --display-name="javacup00" --email=javacup0
     "temp_url_keys": []
 }
 ```
+
+### 创建swift用户
+```
+radosgw-admin subuser create  --uid=mona --subuser=mona:swfit --access=full -k /etc/ceph/ceph.client.radosgw.keyring --name client.radosgw.gateway
+{
+    "user_id": "mona",
+    "display_name": "javacup00",
+    "email": "javacup00@163.com",
+    "suspended": 0,
+    "max_buckets": 1000,
+    "auid": 0,
+    "subusers": [
+        {
+            "id": "mona:swfit",
+            "permissions": "full-control"
+        }
+    ],
+    "keys": [
+        {
+            "user": "mona",
+            "access_key": "8KF9PZE24O7A43PZ4DM9",
+            "secret_key": "JXXQv5Tj6yELsIqhIhFMNr2CzNBcXm2YwrtDw5nr"
+        }
+    ],
+    "swift_keys": [
+        {
+            "user": "mona:swfit",
+            "secret_key": "ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w"
+        }
+    ],
+    "caps": [],
+    "op_mask": "read, write, delete",
+    "default_placement": "",
+    "placement_tags": [],
+    "bucket_quota": {
+        "enabled": false,
+        "max_size_kb": -1,
+        "max_objects": -1
+    },
+    "user_quota": {
+        "enabled": false,
+        "max_size_kb": -1,
+        "max_objects": -1
+    },
+    "temp_url_keys": []
+}
+```
+为mona:swift子用户创建密钥：
+```
+radosgw-admin key create --subuser=mona:swift --key-type=swift --gen-secret -k /etc/ceph/ceph.client.radosgw.keyring --name client.radosgw.gateway
+{
+    "user_id": "mona",
+    "display_name": "javacup00",
+    "email": "javacup00@163.com",
+    "suspended": 0,
+    "max_buckets": 1000,
+    "auid": 0,
+    "subusers": [
+        {
+            "id": "mona:swfit",
+            "permissions": "full-control"
+        }
+    ],
+    "keys": [
+        {
+            "user": "mona",
+            "access_key": "8KF9PZE24O7A43PZ4DM9",
+            "secret_key": "JXXQv5Tj6yELsIqhIhFMNr2CzNBcXm2YwrtDw5nr"
+        }
+    ],
+    "swift_keys": [
+        {
+            "user": "mona:swfit",
+            "secret_key": "ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w"
+        },
+        {
+            "user": "mona:swift",
+            "secret_key": "ZXZOIPUyrBYQgliTVEnJiY9B65Gi4edazMAUJ2QG"
+        }
+    ],
+    "caps": [],
+    "op_mask": "read, write, delete",
+    "default_placement": "",
+    "placement_tags": [],
+    "bucket_quota": {
+        "enabled": false,
+        "max_size_kb": -1,
+        "max_objects": -1
+    },
+    "user_quota": {
+        "enabled": false,
+        "max_size_kb": -1,
+        "max_objects": -1
+    },
+    "temp_url_keys": []
+}
+```
+列出默认bucket：
+```
+# swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w list
+my-new-bucket
+```
+添加一个新bucket：
+```
+# swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w post second-bucket
+```
+上传文件：
+```
+swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w upload second-bucket /etc/hosts
+```
+```
+swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w list second-bucket
+```
