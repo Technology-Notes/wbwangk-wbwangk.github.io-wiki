@@ -79,6 +79,14 @@ systemctl restart ntpd.service
 systemctl enable ntpd.service
 systemctl enable ntpdate.service
 ```
+### ubuntu trust 14.04.5 修改更新源
+```/etc/apt/sources.list```文件中，把archive.替换为cn.archive.(```:%s/archive./cn.archive./g````)
+将security.子域名的4行注释掉，替换为：
+```
+deb http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse
+deb-src http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse
+```
+
 所有虚拟机添加ceph的yum源并更新：
 ```
 rpm -Uhv http://ceph.com/rpm-giant/el7/noarch/ceph-release-1-0.el7.noarch.rpm
