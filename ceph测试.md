@@ -56,6 +56,13 @@ apt-get install ceph碰到大量依赖包缺失，后从网上查到aptitude ins
 
 # 使用vagrant+centos7的测试
 
+dropbox被墙，修改Vagrantfile：
+```
+BOX='centos7-standard'
+#BOX_URL='https://www.dropbox.com/s/hiarmp3cdzjy94o/centos7-standard.box?dl=1'
+BOX_URL='https://github.com/CommanderK5/packer-centos-template/releases/download/0.7.2/vagrant-centos-7.2.box'
+```
+
 所有虚拟机防火墙开放端口：
 ```
 firewall-cmd --zone=public --add-port=6789/tcp --permanent
