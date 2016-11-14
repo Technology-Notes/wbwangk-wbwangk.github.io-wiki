@@ -56,6 +56,7 @@ apt-get install ceph碰到大量依赖包缺失，后从网上查到aptitude ins
 
 # 使用vagrant+centos7的测试
 Vagrantfile位于：github.com/ksingh7/ceph-cookbook/
+
 dropbox被墙，修改Vagrantfile：
 ```
 BOX='centos7-standard'
