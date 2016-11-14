@@ -55,7 +55,7 @@ apt-get install ceph碰到大量依赖包缺失，后从网上查到aptitude ins
 为虚机增加一块硬盘，以便ceph使用：http://www.linuxidc.com/Linux/2011-02/31868.htm
 
 # 使用vagrant+centos7的测试
-
+Vagrantfile位于：github.com/ksingh7/ceph-cookbook/
 dropbox被墙，修改Vagrantfile：
 ```
 BOX='centos7-standard'
