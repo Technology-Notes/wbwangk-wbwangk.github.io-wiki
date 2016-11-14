@@ -296,3 +296,31 @@ my-new-bucket
 -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w download second-bucket etc/hosts
 etc/hosts [auth 0.010s, headers 0.015s, total 0.015s, 0.143 MB/s]
 ```
+### 用python测试对象网关
+yum install python-boto
+vi s3test.py
+下面是s3test.py的内容：
+```
+import boto
+import boto.s3.connection
+
+access_key = '8KF9PZE24O7A43PZ4DM9'
+secret_key = 'JXXQv5Tj6yELsIqhIhFMNr2CzNBcXm2YwrtDw5nr'
+conn = boto.connect_s3(
+        aws_access_key_id = access_key,
+        aws_secret_access_key = secret_key,
+        host = 'rgw-node1.cephcookbook.com', port = 7480,
+        is_secure=False, calling_format = boto.s3.connection.OrdinaryCallingFormat(),
+        )
+
+bucket = conn.create_bucket('my-new-bucket')
+for bucket in conn.get_all_buckets():
+                print "{name}".format(
+                name = bucket.name,
+                created = bucket.creation_date,
+                )
+```
+执行：
+```
+python s3test.py
+```
