@@ -88,7 +88,7 @@ systemctl enable ntpd.service
 systemctl enable ntpdate.service
 ```
 ### ubuntu trust 14.04.5 修改更新源
-```/etc/apt/sources.list```文件中，把archive.替换为cn.archive.(```:%s/archive./cn.archive./g```)
+/etc/apt/sources.list文件中，把archive.替换为cn.archive.(:%s/archive./cn.archive./g)  
 将security.子域名的4行注释掉，替换为：
 ```
 deb http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse
