@@ -95,7 +95,15 @@ deb http://mirrors.163.com/ubuntu/ trusty-security main restricted universe mult
 deb-src http://mirrors.163.com/ubuntu/ trusty-security main restricted universe multiverse
 ```
 然后apt-get update就可以成功了。如果update有错误，会导致ceph-deploy的失败。
-
+### centos 7修改更新源
+fedorapeople.org的openstack源地址发生变化，正确的是:
+```
+https://repos.fedorapeople.org/openstack/EOL/openstack-juno/epel-7/
+```
+openstack-node1镜像的默认设置的openstack源是(错误的)：
+```
+https://repos.fedorapeople.org/repos/openstack/openstack-juno/epel-7/
+```
 所有虚拟机添加ceph的yum源并更新：
 ```
 rpm -Uhv http://ceph.com/rpm-giant/el7/noarch/ceph-release-1-0.el7.noarch.rpm
