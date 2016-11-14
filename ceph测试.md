@@ -282,11 +282,17 @@ my-new-bucket
 ```
 上传文件：
 ```
-swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit \
+# swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit \
 -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w upload second-bucket /etc/hosts
 ```
 列出某容器（桶）下的对象：
 ```
-swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit \
+# swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit \
 -K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w list second-bucket
+```
+下载文件：
+```
+# swift -A http://192.168.1.106:7480/auth/1.0 -U mona:swfit \
+-K ZykqoYycub1hpuHH7NCzIRquNqARsTegyhTDwo9w download second-bucket etc/hosts
+etc/hosts [auth 0.010s, headers 0.015s, total 0.015s, 0.143 MB/s]
 ```
