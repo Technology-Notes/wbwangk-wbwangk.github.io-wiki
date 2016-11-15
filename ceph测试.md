@@ -332,3 +332,5 @@ for bucket in conn.get_all_buckets():
 ```
 python s3test.py
 ```
+### openstack测试
+uuid：5c31ccac-383e-4d08-9408-3cd6c4fbfd31
