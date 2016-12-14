@@ -5,7 +5,8 @@ git：终端（git-scm.com）
 
 1.执行vagrant init获得一个基础的Vagrantfile
 2.将base换成ubuntu/xenial64
-```config.vm.box = "ubuntu/xenial64"
+```
+config.vm.box = "ubuntu/xenial64"
 ```
 3. 多虚拟机的[Vagrantfile](https://github.com/wbwangk/wbwangk.github.io/wiki/Vagrantfile)
 
