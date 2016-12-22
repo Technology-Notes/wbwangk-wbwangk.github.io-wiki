@@ -31,9 +31,12 @@ Vagrant.configure("2") do |config|
    end
 end
 ```
-4.进入webb1
-$vagrant ssh webb1
+4.进入webb1  
+```
+$vagrant ssh webb1  
+```
 查看/etc/hosts、/etc/hostname
 
-5.通过vbox增加硬盘
+5.通过vbox增加硬盘  
    查看设备
+(待补充)
