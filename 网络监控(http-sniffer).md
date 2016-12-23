@@ -1,5 +1,7 @@
-工作的原因，经常需要跟踪tcp/http请求的详细信息，如http头中内容。纯从nginx的访问日志中获取的信息有限。后来发现有tcp嗅探(sniffer)软件可以用。  
+工作的原因，经常需要跟踪tcp/http请求的详细信息，如http头中内容。纯从nginx的访问日志中获取的信息有限。后来发现有tcp嗅探(sniffer)软件可以用。
+
 就网络监控(嗅探)来说，tcpdump最流行，但不好掌握。最终选择了[httpry](https://github.com/jbittel/httpry)和[justniffer](http://justniffer.sourceforge.net/)。两者貌似都师从tcpdump，参数都有点像。
+
 在unbuntu16下两个软件的安装都容易：
 ```
 # apt-get install httpry
@@ -7,6 +9,8 @@
 $ apt-get update
 $ apt-get install justniffer
 ```
+centos下的安装参加[这个](http://justniffer.sourceforge.net/#!/install)。
+
 两个软件都监控网卡的tcp流。
 
 ### httpry
