@@ -9,7 +9,7 @@
 $ apt-get update
 $ apt-get install justniffer
 ```
-centos下的安装参加[这个](http://justniffer.sourceforge.net/#!/install)。
+centos下的安装参加[这个](http://justniffer.sourceforge.net/#!/install)。本人在centos7上装justniffer没成功，各种依赖包缺失。
 
 两个软件都监控网卡的tcp流。
 
