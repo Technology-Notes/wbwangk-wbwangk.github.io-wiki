@@ -30,3 +30,7 @@ centos下的安装参加[这个](http://justniffer.sourceforge.net/#!/install)�
 # justniffer -i enp0s8 -r
 ```
 -r参数会使http请求和响应的完整信息输出到屏幕上，包括http头的信息。这就是justniffer比httpry强的地方。
+如果仅想监视80端口，则：
+```
+# justniffer -i enp0s8 -r -p "port 80"
+```
