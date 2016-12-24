@@ -4,8 +4,8 @@
 
 在unbuntu16下两个软件的安装都容易：
 ```
-# apt-get install httpry
-# add-apt-repository ppa:oreste-notelli/ppa 
+# apt-get install httpry   (安装httpry)
+# add-apt-repository ppa:oreste-notelli/ppa    （安装justniffer）
 $ apt-get update
 $ apt-get install justniffer
 ```
