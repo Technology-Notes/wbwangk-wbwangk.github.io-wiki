@@ -16,12 +16,13 @@ keystone-manage bootstrap --bootstrap-password vagrant \
   --bootstrap-region-id RegionOne
 ```
 
-向keystone的mysql数据库添加授权，官方安装说明中授权的是'keystone'@'localhost',实测需要增加'keystone'@'controller'的授权(该观点未确认是否正确).
+向keystone的mysql数据库添加授权，官方安装说明中授权的是'keystone'@'localhost',实测需要增加'keystone'@'controller'的授权(该观点未确认是否正确):
+```
 GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'controller' \
   IDENTIFIED BY 'vagrant';
 GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' \
   IDENTIFIED BY 'vagrant';
-
+```
 ### 测试keystone
 环境脚本admin-openrc和demo-openrc位于/home/webb/目录下。
  - admin-openrc:
