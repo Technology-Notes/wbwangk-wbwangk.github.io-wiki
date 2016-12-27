@@ -46,9 +46,9 @@ export OS_AUTH_URL=http://controller:5000/v3 \
 export OS_IDENTITY_API_VERSION=3 \
 export OS_IMAGE_API_VERSION=2
 ```
-获取认证token(小数点+空格+脚本表示执行它)：
+获取认证token：
 ```
-$ . demo-openrc
+$ . demo-openrc           (小数点+空格+脚本表示执行它)
 $ openstack token issue
 +------------+----------------------------------------------------------------------------------------------------+
 | Field      | Value                                                                                              |
