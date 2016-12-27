@@ -1,18 +1,47 @@
 openstack最新版是newton。目前（2016-11-28）在ubuntu上仅支持ubuntu16的xenial版（实测trusty版不行）。
-vagrant box 是"ubuntu/xenial64"，provider是virtualbiox。在公司下载这个box花费了3个小时。
+vagrant box 是"ubuntu/xenial64"，provider是virtualbiox。在公司下载这个box花费了3个小时。  
 
 安装keystone的机器域名是controller，在/etc/hosts文件中增加了一条记录：```192.168.1.116 controller```
-也可以在Vagrantfile中直接定义hostname为"controller"。
+也可以在Vagrantfile中直接定义hostname为"controller"。利用vagrant启动controller:  
+```
+$ vagrant up wbwang1
+```
+### keystone安装
+初始化命令：
+```
+keystone-manage bootstrap --bootstrap-password vagrant \
+  --bootstrap-admin-url http://controller:35357/v3/ \
+  --bootstrap-internal-url http://controller:35357/v3/ \
+  --bootstrap-public-url http://controller:5000/v3/ \
+  --bootstrap-region-id RegionOne
+```
 
-官方安装说明中授权的是'keystone'@'localhost',实测需要增加'keystone'@'controller'的授权(该观点未确认是否正确).
+向keystone的mysql数据库添加授权，官方安装说明中授权的是'keystone'@'localhost',实测需要增加'keystone'@'controller'的授权(该观点未确认是否正确).
 GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'controller' \
   IDENTIFIED BY 'vagrant';
 GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' \
   IDENTIFIED BY 'vagrant';
 
-## 按keystone开发文档安装
-文档地址：http://docs.openstack.org/developer/keystone/index.html
-首先使用apt安装keystone：
+### 测试keystone
+环境脚本admin-openrc和demo-openrc位于/home/webb/目录下。
+ - admin-openrc:
 ```
-apt-get install keystone
+export OS_USERNAME=admin \
+export OS_PASSWORD=vagrant \
+export OS_PROJECT_NAME=admin \
+export OS_USER_DOMAIN_NAME=default \
+export OS_PROJECT_DOMAIN_NAME=default \
+export OS_AUTH_URL=http://controller:35357/v3 \
+export OS_IDENTITY_API_VERSION=3
+```
+ - demo-openrc:
+```
+xport OS_PROJECT_DOMAIN_NAME=default \
+export OS_USER_DOMAIN_NAME=default \
+export OS_PROJECT_NAME=demo \
+export OS_USERNAME=demo \
+export OS_PASSWORD=vagrant \
+export OS_AUTH_URL=http://controller:5000/v3 \
+export OS_IDENTITY_API_VERSION=3 \
+export OS_IMAGE_API_VERSION=2
 ```
