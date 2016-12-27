@@ -23,7 +23,7 @@ GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'controller' \
 GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' \
   IDENTIFIED BY 'vagrant';
 ```
-### 测试keystone
+### 安装后测试keystone
 环境脚本admin-openrc和demo-openrc位于/home/webb/目录下。
  - admin-openrc:
 ```
@@ -61,6 +61,26 @@ $ openstack token issue
 | user_id    | c0f5c13dc43a455d81647fd49f2b1798                                                                   |
 +------------+----------------------------------------------------------------------------------------------------+
 ```
+### API测试
+在这个[官方API文档](http://developer.openstack.org/api-ref/identity/v3/?expanded=password-authentication-with-unscoped-authorization-detail)中，写是POST方法，实测必须用GET方法才能正确返回。
+ - 根据用户名/口令返回token（unscoped）：
+```
+$ curl -i -H 'Content-Type: application/json' http://controller:5000/v3/auth/tokens \
+    -d '{"auth": {"identity": {"methods": ["password"],"password": {"user": {"name": "admin",                     "domain": {"name": "default" },"password": "vagrant"}}}}}'     （实测发现 curl的-d参数中不能用反斜杠）
+
+HTTP/1.1 201 Created
+Date: Tue, 27 Dec 2016 12:12:47 GMT
+Server: Apache/2.4.18 (Ubuntu)
+X-Subject-Token: gAAAAABYYlrAfOkTbE_IRba0_i5D1U7yNAT4KxWUlI2OVOQKS8T3pAmDHAT8yxbX-BNGxtf2KziXkn3D6CX09OaIjqgqXYzaVmlsy4i1qyU-2JCFuC2MvwOei8z87ersif0nMS6jKNMoZ_CxSJvmvfujQ4SjSRD0IA
+Vary: X-Auth-Token
+X-Distribution: Ubuntu
+x-openstack-request-id: req-c2308440-2d3e-476d-888b-54820d82b1c3
+Content-Length: 283
+Content-Type: application/json
+
+{"token": {"issued_at": "2016-12-27T12:12:48.000000Z", "audit_ids": ["CWsnt4DwRguOncZjwpT03Q"], "methods": ["password"], "expires_at": "2016-12-27T13:12:48.000000Z", "user": {"domain": {"id": "default", "name": "Default"}, "id": "c0f5c13dc43a455d81647fd49f2b1798", "name": "admin"}}}
+```
+响应中的X-Subject-Token就是要取的token，即gAAAAABYYlrAfOkTbE_IRba0_i5D1U7yNAT4KxWUlI2OVOQKS8T3pAmDHAT8yxbX-BNGxtf2KziXkn3D6CX09OaIjqgqXYzaVmlsy4i1qyU-2JCFuC2MvwOei8z87ersif0nMS6jKNMoZ_CxSJvmvfujQ4SjSRD0IA
 
 ### 概念
  - project
