@@ -9,3 +9,10 @@ GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'controller' \
   IDENTIFIED BY 'vagrant';
 GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' \
   IDENTIFIED BY 'vagrant';
+
+## 按keystone开发文档安装
+文档地址：http://docs.openstack.org/developer/keystone/index.html
+首先使用apt安装keystone：
+```
+apt-get install keystone
+```
