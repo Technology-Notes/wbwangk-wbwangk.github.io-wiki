@@ -46,3 +46,18 @@ export OS_AUTH_URL=http://controller:5000/v3 \
 export OS_IDENTITY_API_VERSION=3 \
 export OS_IMAGE_API_VERSION=2
 ```
+获取认证token：
+```
+$ . demo-openrc
+$ openstack token issue
++------------+----------------------------------------------------------------------------------------------------+
+| Field      | Value                                                                                              |
++------------+----------------------------------------------------------------------------------------------------+
+| expires    | 2016-12-27 10:36:43+00:00                                                                          |
+| id         | gAAAAABYYjYrngrJNOEEaGMdFhD-LJZDtFHcR54w-                                                          |
+|            | mur9vFtPdOnlhehP80CfkkJEH3bKeHsnXMhMs1vnvTND3t5s4coiS9Jv1iBjAI75_ln-                               |
+|            | BFZxM6lGh_bq5GpZXSgxsSCeiLGpfc515zZyAnoCLJMPH0HTMfJ2QhCxDlbQ8FfLwOZ2EibH0c                         |
+| project_id | 6c0647b73b5e4c43888779b32446507a                                                                   |
+| user_id    | c0f5c13dc43a455d81647fd49f2b1798                                                                   |
++------------+----------------------------------------------------------------------------------------------------+
+```
