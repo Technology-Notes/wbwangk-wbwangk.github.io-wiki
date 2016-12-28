@@ -48,7 +48,7 @@ export OS_IMAGE_API_VERSION=2
 ```
 获取认证token：
 ```
-$ . demo-openrc           (小数点+空格+脚本表示执行它)
+$ . admin-openrc           (小数点+空格+脚本表示执行它)
 $ openstack token issue
 +------------+----------------------------------------------------------------------------------------------------+
 | Field      | Value                                                                                              |
@@ -63,17 +63,57 @@ $ openstack token issue
 ```
 ## API测试
 在这个[官方API文档](http://developer.openstack.org/api-ref/identity/v3/?expanded=password-authentication-with-unscoped-authorization-detail)中，写是POST方法，实测必须用GET方法才能正确返回。
-#### 取unscopted token
+#### 密码换token
 ```
-$ curl -i -H 'Content-Type: application/json' http://controller:5000/v3/auth/tokens \
-    -d '{"auth": {"identity": {"methods": ["password"],"password": {"user": {"name": "admin", 
-   "domain": {"name": "default" },"password": "vagrant"}}}}}'     （实测发现 curl的-d参数中不能用反斜杠）
-
-X-Subject-Token: (header的其它部分略)  gAAAAABYYwbwwGx3IektpWI_QpvfibRCTsbBKPM2RuVZLzs9xI9Bkiw1Fhpn23osGS1QsSSqWWyqytirIRtwNfW9CuqnYxzHhlW2HipxJMObCRuCNWjaZ4YZEyozS1rMZROfzSh5i5TsvKNNoKW6IVADikoXLOj13w
-
-{"token": {"issued_at": "2016-12-28T00:27:28.000000Z", "audit_ids": ["vOzeX48sRruswQm6guKwyw"], "methods": ["password"], "expires_at": "2016-12-28T01:27:28.000000Z", "user": {"domain": {"id": "default", "name": "Default"}, "id": "c0f5c13dc43a455d81647fd49f2b1798", "name": "admin"}}}
+curl -i -X POST http://localhost:5000/v3/auth/tokens \
+    -H "Content-Type: application/json" \
+-d '
+{
+    "auth": {
+        "identity": {
+            "methods": [
+                "password"
+            ],
+            "password": {
+                "user": {
+                    "name": "admin",
+                    "domain": {
+                        "name": "default"
+                    },
+                    "password": "vagrant"
+                }
+            }
+        }
+    }
+}'
 ```
-响应中的X-Subject-Token就是要取的token，调用openstack REST API都需要使用这个token,方法是在设置在http头中的X-Auth-Token。
+在响应头中可以看到认证token：
+```
+X-Subject-Token: gAAAAABYYxdFg3mast0aDKVAsBB8KTVoeotSbxFZ2dOVFwr0fzTocAo4-H8kfk57X7sOLJ0vlEldQnb3GG_78WZNGfgQvuwT9UWCQfSE_lw6oOP1E8PEsTN0Z2LANvR1-IRk4Kzo1yGC0Lh-MthlVSh2tCrLgNVo6A
+```
+响应体(通过jq进行格式优化)：
+```
+{
+  "token": {
+    "issued_at": "2016-12-28T01:37:09.000000Z",
+    "audit_ids": [
+      "Kf-nvobQSMGdqZ8_mMTFsQ"
+    ],
+    "methods": [
+      "password"
+    ],
+    "expires_at": "2016-12-28T02:37:09.000000Z",
+    "user": {
+      "domain": {
+        "id": "default",
+        "name": "Default"
+      },
+      "id": "c0f5c13dc43a455d81647fd49f2b1798",
+      "name": "admin"
+    }
+  }
+}
+```
 
 #### 取scoped token
 ```
@@ -107,10 +147,11 @@ curl -i -s http://controller:5000/v3/auth/tokens \
     }
 }' | grep ^X-Subject-Token: | awk '{print $2}' )
 ```
+可以通过```echo $ADMIN_TOKEN```查看token值。
 #### 取domain
 ```
 ID_ADMIN_DOMAIN=$(\
-curl http://controller:5000/v3/domains \
+curl http://localhost:5000/v3/domains \
     -s \
     -H "X-Auth-Token: $ADMIN_TOKEN" \
     -H "Content-Type: application/json" \
