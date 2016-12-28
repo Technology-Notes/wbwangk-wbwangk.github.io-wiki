@@ -139,9 +139,9 @@ $ curl -X POST http://controller:5000/v3/users \
 ## 概念
  - **project**  
     一个对服务或认证对象进行分组或隔离的容器。可以映射到客户、账号、组织或租户。
- - domain   
+ - **domain**   
     项目和用户的集合。一个域下可能包含多个项目（租户）。一个用户可以指定为某域的管理员角色。
- - endpoint  
+ - **endpoint**  
     一个网络访问地址，一般是个URL，通过它可以访问某个服务。
- - region  
+ - **region**  
     一个认证API的v3版实体，用于表示openstack部署的分布，如可以用地域表示。
