@@ -64,39 +64,25 @@ $ openstack token issue
 ```
 ## API测试
 在这个[官方API文档](http://developer.openstack.org/api-ref/identity/v3/?expanded=password-authentication-with-unscoped-authorization-detail)中，写是POST方法，实测用GET方法也能正确返回。
-#### 密码换token(scoped)
+#### 密码换token(unscoped)
 ```
 ADMIN_TOKEN=$(\
 curl http://controller:5000/v3/auth/tokens \
-    -s \
     -i \
     -H "Content-Type: application/json" \
     -d '
-{
-    "auth": {
-        "identity": {
-            "methods": [
-                "password"
-            ],
-            "password": {
-                "user": {
-                    "domain": {
-                        "name": "default"
-                    },
-                    "name": "admin",
-                    "password": "vagrant"
-                }
-            }
-        },
-        "scope": {
-            "project": {
-                "domain": {
-                    "name": "default"
-                },
-                "name": "admin"
-            }
+{ "auth": {
+    "identity": {
+      "methods": ["password"],
+      "password": {
+        "user": {
+          "name": "admin",
+          "domain": { "id": "default" },
+          "password": "vagrant"
         }
+      }
     }
+  }
 }' | grep ^X-Subject-Token: | awk '{print $2}' )
 ```
 查看token：
@@ -104,8 +90,7 @@ curl http://controller:5000/v3/auth/tokens \
 $ echo $ADMIN_TOKEN
 gAAAAABYYxwRhlpHQqw5-HqSRpJN4tsPaG_F5fdIwzRyqC4Tvetq9eIBU4Nf3AZZLGO7gpOF5iwGfyAGiWZhyM_W6GfklKknUEb6K6SctH_TZP87M7NLIC91MN_0-gj1XvigHvoRx8qKCmSPBlQcsg7dkosE0Pr8jQ
 ```
-认证token的默认有效期是一个小时，如果后续的测试持续时间超过一小时就重新执行“密码换token”命令，重设环境变量$ADMIN_TOKEN。  
-还有一个取unscoped令牌的API，但实测发现取回的token在使用时总是提示没权限。还有就是后续的测试在controller这台虚机执行出错，而在另外一台机器上没事，应是keystone授权的问题。
+认证token的默认有效期是一个小时。  
 
 #### 取用户清单
 ```
