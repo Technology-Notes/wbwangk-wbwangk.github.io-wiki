@@ -63,12 +63,14 @@ $ openstack token issue
 ```
 ## API测试
 在这个[官方API文档](http://developer.openstack.org/api-ref/identity/v3/?expanded=password-authentication-with-unscoped-authorization-detail)中，写是POST方法，实测必须用GET方法才能正确返回。
-#### 密码换token
+#### 密码换token(scoped)
 ```
 ADMIN_TOKEN=$(\
-curl -i -X POST http://controller:5000/v3/auth/tokens \
+curl http://controller:5000/v3/auth/tokens \
+    -s \
+    -i \
     -H "Content-Type: application/json" \
--d '
+    -d '
 {
     "auth": {
         "identity": {
@@ -77,12 +79,20 @@ curl -i -X POST http://controller:5000/v3/auth/tokens \
             ],
             "password": {
                 "user": {
-                    "name": "admin",
                     "domain": {
                         "name": "default"
                     },
+                    "name": "admin",
                     "password": "vagrant"
                 }
+            }
+        },
+        "scope": {
+            "project": {
+                "domain": {
+                    "name": "default"
+                },
+                "name": "admin"
             }
         }
     }
@@ -93,7 +103,8 @@ curl -i -X POST http://controller:5000/v3/auth/tokens \
 $ echo $ADMIN_TOKEN
 gAAAAABYYxwRhlpHQqw5-HqSRpJN4tsPaG_F5fdIwzRyqC4Tvetq9eIBU4Nf3AZZLGO7gpOF5iwGfyAGiWZhyM_W6GfklKknUEb6K6SctH_TZP87M7NLIC91MN_0-gj1XvigHvoRx8qKCmSPBlQcsg7dkosE0Pr8jQ
 ```
-认证token的默认有效期是一个小时，如果后续的测试持续时间超过一小时就重新执行“密码换token”命令，重设环境变量$ADMIN_TOKEN。
+认证token的默认有效期是一个小时，如果后续的测试持续时间超过一小时就重新执行“密码换token”命令，重设环境变量$ADMIN_TOKEN。  
+还有一个取unscoped令牌的API，但实测发现取回的token在使用时总是提示没权限。还有就是后续的测试在controller这台虚机执行出错，而在另外一台机器上没事，应是keystone授权的问题。
 
 #### 取用户清单
 ```
@@ -101,7 +112,13 @@ $ curl http://controller:5000/v3/users \
   -H "X-Auth-Token: $ADMIN_TOKEN" | jq
 ```
 （jq是个格式化显示json的工具，类似的还有jshon。不用jq只是显示的json串难读一些）  
-实测发现在另一台机器上才可以成功执行上述请求，可能是keystone的权限设置的问题。直接在controller这台机器上执行请求会报401错误。
+
+#### 取具体用户信息
+```
+curl http://controller:5000/v3/users/cbf4cff4cb874ce5a9ca075fd96649c4 \
+  -H "X-Auth-Token: $ADMIN_TOKEN" | jq
+```
+上面请求会返回“manila”这个用户的信息，而manila这个用户的id(cbf4cff4cb874ce5a9ca075fd96649c4)是“取用户清单”这个API返回的。
 
 #### 创建用户
 ```
