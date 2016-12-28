@@ -95,13 +95,29 @@ gAAAAABYYxwRhlpHQqw5-HqSRpJN4tsPaG_F5fdIwzRyqC4Tvetq9eIBU4Nf3AZZLGO7gpOF5iwGfyAG
 ```
 认证token的默认有效期是一个小时，如果后续的测试持续时间超过一小时就重新执行“密码换token”命令，重设环境变量$ADMIN_TOKEN。
 
-#### 用户清单
+#### 取用户清单
 ```
-curl http://controller:5000/v3/users \
+$ curl http://controller:5000/v3/users \
   -H "X-Auth-Token: $ADMIN_TOKEN" | jq
 ```
-（jq是个格式化显示json的工具，类似的还有jshon。不用jq只是显示的json串难读一些）
+（jq是个格式化显示json的工具，类似的还有jshon。不用jq只是显示的json串难读一些）  
 实测发现在另一台机器上才可以成功执行上述请求，可能是keystone的权限设置的问题。直接在controller这台机器上执行请求会报401错误。
+
+#### 创建用户
+```
+$ curl -X POST http://controller:5000/v3/users \
+    -H "X-Auth-Token: $ADMIN_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d \
+'{
+    "user": {
+        "enabled": true,
+        "name": "James Doe",
+        "password": "secret"
+    }
+}'
+```
+创建用户后可以重新调用“取用户清单”的API，可以看到新增加的James Doe用户。
 ## 概念
  - project
     一个对服务或认证对象进行分组或隔离的容器。可以映射到客户、账号、组织或租户。
