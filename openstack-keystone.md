@@ -65,7 +65,8 @@ $ openstack token issue
 在这个[官方API文档](http://developer.openstack.org/api-ref/identity/v3/?expanded=password-authentication-with-unscoped-authorization-detail)中，写是POST方法，实测必须用GET方法才能正确返回。
 #### 密码换token
 ```
-curl -i -X POST http://localhost:5000/v3/auth/tokens \
+ADMIN_TOKEN=$(\
+curl -i -X POST http://controller:5000/v3/auth/tokens \
     -H "Content-Type: application/json" \
 -d '
 {
@@ -85,85 +86,22 @@ curl -i -X POST http://localhost:5000/v3/auth/tokens \
             }
         }
     }
-}'
-```
-在响应头中可以看到认证token：
-```
-X-Subject-Token: gAAAAABYYxdFg3mast0aDKVAsBB8KTVoeotSbxFZ2dOVFwr0fzTocAo4-H8kfk57X7sOLJ0vlEldQnb3GG_78WZNGfgQvuwT9UWCQfSE_lw6oOP1E8PEsTN0Z2LANvR1-IRk4Kzo1yGC0Lh-MthlVSh2tCrLgNVo6A
-```
-响应体(通过jq进行格式优化)：
-```
-{
-  "token": {
-    "issued_at": "2016-12-28T01:37:09.000000Z",
-    "audit_ids": [
-      "Kf-nvobQSMGdqZ8_mMTFsQ"
-    ],
-    "methods": [
-      "password"
-    ],
-    "expires_at": "2016-12-28T02:37:09.000000Z",
-    "user": {
-      "domain": {
-        "id": "default",
-        "name": "Default"
-      },
-      "id": "c0f5c13dc43a455d81647fd49f2b1798",
-      "name": "admin"
-    }
-  }
-}
-```
-
-#### 取scoped token
-```
-ADMIN_TOKEN=$(\
-curl -i -s http://controller:5000/v3/auth/tokens \
-    -H "Content-Type: application/json" \
-    -d '{
-    "auth": {
-        "identity": {
-            "methods": [
-                "password"
-            ],
-            "password": {
-                "user": {
-                    "domain": {
-                        "name": "default"
-                    },
-                    "name": "admin",
-                    "password": "vagrant"
-                }
-            }
-        },
-        "scope": {
-            "project": {
-                "domain": {
-                    "name": "default"
-                },
-                "name": "admin"
-            }
-        }
-    }
 }' | grep ^X-Subject-Token: | awk '{print $2}' )
 ```
-可以通过```echo $ADMIN_TOKEN```查看token值。
-#### 取domain
+查看token：
 ```
-ID_ADMIN_DOMAIN=$(\
-curl http://localhost:5000/v3/domains \
-    -s \
-    -H "X-Auth-Token: $ADMIN_TOKEN" \
-    -H "Content-Type: application/json" \
-    -d '
-{
-    "domain": {
-    "enabled": true,
-    "name": "default"
-    }
-}' | jq .domain.id | tr -d '"' )
+$ echo $ADMIN_TOKEN
+gAAAAABYYxwRhlpHQqw5-HqSRpJN4tsPaG_F5fdIwzRyqC4Tvetq9eIBU4Nf3AZZLGO7gpOF5iwGfyAGiWZhyM_W6GfklKknUEb6K6SctH_TZP87M7NLIC91MN_0-gj1XvigHvoRx8qKCmSPBlQcsg7dkosE0Pr8jQ
 ```
-（jq是个格式化显示json的工具，类似的还有jshon）
+认证token的默认有效期是一个小时，如果后续的测试持续时间超过一小时就重新执行“密码换token”命令，重设环境变量$ADMIN_TOKEN。
+
+#### 用户清单
+```
+curl http://controller:5000/v3/users \
+  -H "X-Auth-Token: $ADMIN_TOKEN" | jq
+```
+（jq是个格式化显示json的工具，类似的还有jshon。不用jq只是显示的json串难读一些）
+实测发现在另一台机器上才可以成功执行上述请求，可能是keystone的权限设置的问题。直接在controller这台机器上执行请求会报401错误。
 ## 概念
  - project
     一个对服务或认证对象进行分组或隔离的容器。可以映射到客户、账号、组织或租户。
