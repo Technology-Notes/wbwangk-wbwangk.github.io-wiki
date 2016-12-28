@@ -62,7 +62,7 @@ $ openstack token issue
 +------------+----------------------------------------------------------------------------------------------------+
 ```
 ## API测试
-在这个[官方API文档](http://developer.openstack.org/api-ref/identity/v3/?expanded=password-authentication-with-unscoped-authorization-detail)中，写是POST方法，实测必须用GET方法才能正确返回。
+在这个[官方API文档](http://developer.openstack.org/api-ref/identity/v3/?expanded=password-authentication-with-unscoped-authorization-detail)中，写是POST方法，实测用GET方法也能正确返回。
 #### 密码换token(scoped)
 ```
 ADMIN_TOKEN=$(\
