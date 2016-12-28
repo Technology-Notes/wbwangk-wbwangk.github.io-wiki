@@ -1,4 +1,4 @@
-openstack最新版是newton。目前（2016-11-28）在ubuntu上仅支持ubuntu16的xenial版（实测trusty版不行）。
+下文的openstack最新newton版keystone测试环境是按[文档](http://docs.openstack.org/newton/install-guide-ubuntu/keystone.html)部署的。目前（2016-11-28）在ubuntu上仅支持ubuntu16的xenial版（实测trusty版不行）。
 vagrant box 是"ubuntu/xenial64"，provider是virtualbiox。在公司下载这个box花费了3个小时。  
 
 安装keystone的机器域名是controller，在/etc/hosts文件中增加了一条记录：```192.168.1.116 controller```
@@ -37,7 +37,7 @@ export OS_IDENTITY_API_VERSION=3
 ```
  - demo-openrc:
 ```
-xport OS_PROJECT_DOMAIN_NAME=default \
+export OS_PROJECT_DOMAIN_NAME=default \
 export OS_USER_DOMAIN_NAME=default \
 export OS_PROJECT_NAME=demo \
 export OS_USERNAME=demo \
@@ -66,7 +66,8 @@ $ openstack token issue
 #### 取unscopted token
 ```
 $ curl -i -H 'Content-Type: application/json' http://controller:5000/v3/auth/tokens \
-    -d '{"auth": {"identity": {"methods": ["password"],"password": {"user": {"name": "admin",                     "domain": {"name": "default" },"password": "vagrant"}}}}}'     （实测发现 curl的-d参数中不能用反斜杠）
+    -d '{"auth": {"identity": {"methods": ["password"],"password": {"user": {"name": "admin", 
+   "domain": {"name": "default" },"password": "vagrant"}}}}}'     （实测发现 curl的-d参数中不能用反斜杠）
 
 X-Subject-Token: (header的其它部分略)  gAAAAABYYwbwwGx3IektpWI_QpvfibRCTsbBKPM2RuVZLzs9xI9Bkiw1Fhpn23osGS1QsSSqWWyqytirIRtwNfW9CuqnYxzHhlW2HipxJMObCRuCNWjaZ4YZEyozS1rMZROfzSh5i5TsvKNNoKW6IVADikoXLOj13w
 
