@@ -6,7 +6,7 @@ vagrant box 是"ubuntu/xenial64"，provider是virtualbiox。在公司下载这�
 ```
 $ vagrant up wbwang1
 ```
-### keystone安装
+## keystone安装
 初始化命令：
 ```
 keystone-manage bootstrap --bootstrap-password vagrant \
@@ -23,7 +23,7 @@ GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'controller' \
 GRANT ALL PRIVILEGES ON keystone.* TO 'keystone'@'%' \
   IDENTIFIED BY 'vagrant';
 ```
-### 安装后测试keystone
+## 安装后测试keystone
 环境脚本admin-openrc和demo-openrc位于/home/webb/目录下。
  - admin-openrc:
 ```
@@ -61,28 +61,68 @@ $ openstack token issue
 | user_id    | c0f5c13dc43a455d81647fd49f2b1798                                                                   |
 +------------+----------------------------------------------------------------------------------------------------+
 ```
-### API测试
+## API测试
 在这个[官方API文档](http://developer.openstack.org/api-ref/identity/v3/?expanded=password-authentication-with-unscoped-authorization-detail)中，写是POST方法，实测必须用GET方法才能正确返回。
- - 根据用户名/口令返回token（unscoped）：
+#### 取unscopted token
 ```
 $ curl -i -H 'Content-Type: application/json' http://controller:5000/v3/auth/tokens \
     -d '{"auth": {"identity": {"methods": ["password"],"password": {"user": {"name": "admin",                     "domain": {"name": "default" },"password": "vagrant"}}}}}'     （实测发现 curl的-d参数中不能用反斜杠）
 
-HTTP/1.1 201 Created
-Date: Tue, 27 Dec 2016 12:12:47 GMT
-Server: Apache/2.4.18 (Ubuntu)
-X-Subject-Token: gAAAAABYYlrAfOkTbE_IRba0_i5D1U7yNAT4KxWUlI2OVOQKS8T3pAmDHAT8yxbX-BNGxtf2KziXkn3D6CX09OaIjqgqXYzaVmlsy4i1qyU-2JCFuC2MvwOei8z87ersif0nMS6jKNMoZ_CxSJvmvfujQ4SjSRD0IA
-Vary: X-Auth-Token
-X-Distribution: Ubuntu
-x-openstack-request-id: req-c2308440-2d3e-476d-888b-54820d82b1c3
-Content-Length: 283
-Content-Type: application/json
+X-Subject-Token: (header的其它部分略)  gAAAAABYYwbwwGx3IektpWI_QpvfibRCTsbBKPM2RuVZLzs9xI9Bkiw1Fhpn23osGS1QsSSqWWyqytirIRtwNfW9CuqnYxzHhlW2HipxJMObCRuCNWjaZ4YZEyozS1rMZROfzSh5i5TsvKNNoKW6IVADikoXLOj13w
 
-{"token": {"issued_at": "2016-12-27T12:12:48.000000Z", "audit_ids": ["CWsnt4DwRguOncZjwpT03Q"], "methods": ["password"], "expires_at": "2016-12-27T13:12:48.000000Z", "user": {"domain": {"id": "default", "name": "Default"}, "id": "c0f5c13dc43a455d81647fd49f2b1798", "name": "admin"}}}
+{"token": {"issued_at": "2016-12-28T00:27:28.000000Z", "audit_ids": ["vOzeX48sRruswQm6guKwyw"], "methods": ["password"], "expires_at": "2016-12-28T01:27:28.000000Z", "user": {"domain": {"id": "default", "name": "Default"}, "id": "c0f5c13dc43a455d81647fd49f2b1798", "name": "admin"}}}
 ```
-响应中的X-Subject-Token就是要取的token，即gAAAAABYYlrAfOkTbE_IRba0_i5D1U7yNAT4KxWUlI2OVOQKS8T3pAmDHAT8yxbX-BNGxtf2KziXkn3D6CX09OaIjqgqXYzaVmlsy4i1qyU-2JCFuC2MvwOei8z87ersif0nMS6jKNMoZ_CxSJvmvfujQ4SjSRD0IA
+响应中的X-Subject-Token就是要取的token，调用openstack REST API都需要使用这个token,方法是在设置在http头中的X-Auth-Token。
 
-### 概念
+#### 取scoped token
+```
+ADMIN_TOKEN=$(\
+curl -i -s http://controller:5000/v3/auth/tokens \
+    -H "Content-Type: application/json" \
+    -d '{
+    "auth": {
+        "identity": {
+            "methods": [
+                "password"
+            ],
+            "password": {
+                "user": {
+                    "domain": {
+                        "name": "default"
+                    },
+                    "name": "admin",
+                    "password": "vagrant"
+                }
+            }
+        },
+        "scope": {
+            "project": {
+                "domain": {
+                    "name": "default"
+                },
+                "name": "admin"
+            }
+        }
+    }
+}' | grep ^X-Subject-Token: | awk '{print $2}' )
+```
+#### 取domain
+```
+ID_ADMIN_DOMAIN=$(\
+curl http://controller:5000/v3/domains \
+    -s \
+    -H "X-Auth-Token: $ADMIN_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d '
+{
+    "domain": {
+    "enabled": true,
+    "name": "default"
+    }
+}' | jq .domain.id | tr -d '"' )
+```
+（jq是个格式化显示json的工具，类似的还有jshon）
+## 概念
  - project
     一个对服务或认证对象进行分组或隔离的容器。可以映射到客户、账号、组织或租户。
  - domain 
