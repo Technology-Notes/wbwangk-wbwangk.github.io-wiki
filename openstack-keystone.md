@@ -1,4 +1,4 @@
-下文的openstack最新newton版keystone测试环境是按[文档](http://docs.openstack.org/newton/install-guide-ubuntu/keystone.html)部署的。目前（2016-11-28）在ubuntu上仅支持ubuntu16的xenial版（实测trusty版不行）。
+下文的openstack最新newton版keystone测试环境是按openstack官方的[install tutorial](http://docs.openstack.org/newton/install-guide-ubuntu/keystone.html)部署的。目前（2016-11-28）在ubuntu上仅支持ubuntu16的xenial版（实测trusty版不行）。
 vagrant box 是"ubuntu/xenial64"，provider是virtualbiox。在公司下载这个box花费了3个小时。  
 
 安装keystone的机器域名是controller，在/etc/hosts文件中增加了一条记录：  
