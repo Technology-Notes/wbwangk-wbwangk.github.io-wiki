@@ -35,7 +35,7 @@ $ openstack container create webb
 | AUTH_43694a2ef90f4a22af23552aa6836b4e | webb      | tx7860038a5a664a518b85b-0058647bd2 |
 +---------------------------------------+-----------+------------------------------------+
 ```
-创建这个容器的目的是为了确认当前账号的id(AUTH_43694a2ef90f4a22af23552aa6836b4e)。
+43694a2ef90f4a22af23552aa6836b4e是项目demo的id。这个项目由keystone创建。在keystone中叫project，而swift中称account，两者是一个意思。
 #### 获取token(scoped)
 ```
 DEMO_TOKEN=$(\
