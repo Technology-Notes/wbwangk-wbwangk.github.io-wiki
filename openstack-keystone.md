@@ -63,29 +63,44 @@ $ openstack token issue
 +------------+----------------------------------------------------------------------------------------------------+
 ```
 ## API测试
-在这个[官方API文档](http://developer.openstack.org/api-ref/identity/v3/?expanded=password-authentication-with-unscoped-authorization-detail)中，写是POST方法，实测用GET方法也能正确返回。
-#### 密码换token(unscoped)
+本测试参考了openstack[官方API文档](http://developer.openstack.org/api-ref/identity/v3/)
+
+#### 密码换token(scoped)
 ```
 ADMIN_TOKEN=$(\
-curl http://controller:5000/v3/auth/tokens \
+curl -X POST http://controller:5000/v3/auth/tokens \
+    -s \
     -i \
     -H "Content-Type: application/json" \
     -d '
-{ "auth": {
-    "identity": {
-      "methods": ["password"],
-      "password": {
-        "user": {
-          "name": "admin",
-          "domain": { "id": "default" },
-          "password": "vagrant"
+{
+    "auth": {
+        "identity": {
+            "methods": [
+                "password"
+            ],
+            "password": {
+                "user": {
+                    "domain": {
+                        "name": "default"
+                    },
+                    "name": "admin",
+                    "password": "vagrant"
+                }
+            }
+        },
+        "scope": {
+            "project": {
+                "domain": {
+                    "name": "default"
+                },
+                "name": "admin"
+            }
         }
-      }
     }
-  }
 }' | grep ^X-Subject-Token: | awk '{print $2}' )
 ```
-查看token：
+返回的token存在于响应头的X-Subject-Token中，然后 保存到环境变量$ADMIN_TOKEN中。查看token：
 ```
 $ echo $ADMIN_TOKEN
 gAAAAABYYxwRhlpHQqw5-HqSRpJN4tsPaG_F5fdIwzRyqC4Tvetq9eIBU4Nf3AZZLGO7gpOF5iwGfyAGiWZhyM_W6GfklKknUEb6K6SctH_TZP87M7NLIC91MN_0-gj1XvigHvoRx8qKCmSPBlQcsg7dkosE0Pr8jQ
@@ -98,6 +113,11 @@ $ curl http://controller:5000/v3/users \
   -H "X-Auth-Token: $ADMIN_TOKEN" | jq
 ```
 （jq是个格式化显示json的工具，类似的还有jshon。不用jq只是显示的json串难读一些）  
+使用git bash进入ubuntu16，执行上述curl命令失败，提示：
+```
+{"error": {"message": "The request you have made requires authentication.", "code": 401, "title": "Unauthorized"}}
+```
+当把$ADMIN_TOKEN替换为token的值本身时可以正常返回用户清单。而用justniffer监控keystone收到的请求，两种curl执行方式（使用环境变量与否）的请求是完全一样的。在git bash下（windows模拟linux）下执行两种curl方式都可以成功。
 
 #### 取具体用户信息
 ```
@@ -121,6 +141,42 @@ $ curl -X POST http://controller:5000/v3/users \
 }'
 ```
 创建用户后可以重新调用“取用户清单”的API，可以看到新增加的James Doe用户。
+
+### 另一种密码换token(unscoped)
+```
+ADMIN_TOKEN=$(\
+curl http://controller:5000/v3/auth/tokens \
+    -i \
+    -H "Content-Type: application/json" \
+    -d '
+{ "auth": {
+    "identity": {
+      "methods": ["password"],
+      "password": {
+        "user": {
+          "name": "admin",
+          "domain": { "id": "default" },
+          "password": "vagrant"
+        }
+      }
+    }
+  }
+}' | grep ^X-Subject-Token: | awk '{print $2}' )
+```
+使用这种不确定scope的令牌来执行“取用户清单”报错如下：
+```
+{"error": {"message": "You are not authorized to perform the requested action: identity:list_users", "code": 403, "title": "Forbidden"}}
+```
+打开文件/etc/keystone/policy.json，发现identity:list_users的默认设置是：
+```
+ "identity:list_users": "rule:admin_required",
+```
+如果修改为：
+```
+ "identity:list_users": "",
+```
+则“取用户清单”的请求就可以正常执行了。而admin明明是admin角色，却被keystone认为没有权限。这可能是个keystone的bug。用scoped令牌，没有问题。
+
 ## 概念
  - **project**  
     一个对服务或认证对象进行分组或隔离的容器。可以映射到客户、账号、组织或租户。
