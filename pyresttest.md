@@ -85,7 +85,7 @@ resttest.py http://localhost:8000 test.yaml
     - body: '{"first_name": "Gaius","id": 10,"last_name": "Baltar","login": "baltarg"}'
     - headers: {'Content-Type': 'application/json'}
 ```
-测试通过。然后增加一个测试检测刚刚添加的10号(Baltar)人物：
+测试通过。然后增加一个测试检测刚刚添加的10号(Baltar)用户：
 ```
 ---
 - config:
@@ -109,7 +109,7 @@ resttest.py http://localhost:8000 test.yaml
     - name: "Make sure Mr Baltar was added"
     - url: "/api/person/10/"
 ```
-如果在最开始“希望”10号人物不存在：
+如果在最开始“希望”10号用户不存在：
 ```
 ---
 - config:
@@ -139,8 +139,8 @@ resttest.py http://localhost:8000 test.yaml
     - name: "Make sure Mr Baltar is there after we added him"
     - url: "/api/person/10/"
 ```
-expected_status表示预期状态是404（表示该URL不存在），但10号人物(Baltar)已经存在，所以第一个测试不通过（Error）。
-进一步改进测试代码，在最后增加删除10号人物(Baltar)的测试：
+expected_status表示预期状态是404（表示该URL不存在），但10号用户(Baltar)已经存在，所以第一个测试不通过（Error）。
+进一步改进测试代码，在最后增加删除10号用户(Baltar)的测试：
 ```
 ---
 - config:
@@ -182,7 +182,13 @@ expected_status表示预期状态是404（表示该URL不存在），但10号人
     - url: "/api/person/10/"
     - expected_status: [404]
 ```
-现在6个测试全部通过了。
+现在6个测试全部通过了。这基本上是一个完整的测试，包括创建、查询、删除用户。
+
+
+
+
+
+
 ### json-server与httpbin.org
 要测试pyresttest需要一个REST模拟服务器。可以自己部署[json-server](https://github.com/typicode/json-server)或直接使用云服务[httpbin.org](http://httpbin.org/)。本测试使用的httpbin.org。
 
