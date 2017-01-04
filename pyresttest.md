@@ -73,3 +73,25 @@ Access-Control-Allow-Credentials: true
   "url": "http://httpbin.org/put"
 }
 ```
+## 配置文件的基本语法
+配置文件使用YAML格式。  
+有5个顶级的测试语法元素：  
+ - **url**: 简单测试，用给定的GET请求来检测响应状态码是否正确。
+ - **test**: 完整测试定义。
+ - **benchmark**: 定义基准测试。
+ - **config或configuration**: 全部测试设置(超时是最常见选项)
+ - **import**: 导入其它配置文件
+
+#### 定制http选项(特殊curl参数)
+一些特定Curl参数在PyRestTest中没有对应的语法。可以使用'curl_option_optionname'语法来定义特殊curl参数。其中optionname的定义来自[Curl Easy Option](https://curl.haxx.se/libcurl/c/curl_easy_setopt.html)(去掉'CURLOPT_')。  
+下例中，跟随重定向5次((CURLOPT_FOLLOWLOCATION 和 CURLOPT_MAXREDIRS)：
+```
+---
+- test: 
+    - url: "/api/person/1"
+    - curl_option_followlocation: True
+    - curl_option_maxredirs: 5  
+```
+####基准测试
+PyRestTest允许你通过curl收集底层网络性能指标。
+（略）
