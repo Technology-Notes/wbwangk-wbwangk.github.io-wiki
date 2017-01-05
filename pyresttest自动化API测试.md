@@ -287,7 +287,8 @@ aaa|ddd
 fff|ddd  
 fff|sss  
 
- Name(s)                             |                Description                | Details for comparator(A, B)                ----------------------------------------------|-----------------------------------------|------------------------------  
+ Name(s)                             |                Description                | Details for comparator(A, B)                
+----------------------------------------------|-----------------------------------------|------------------------------  
  'count_eq','length_eq'                       | Check length of body/str or count of elements equals value      | ength(A)   == B   or -1 if cannot obtain length   
  'lt', 'less_than':                           | Less Than                                 | A < B                                                                  
  'le', 'less_than_or_equal'                   | Less Than Or Equal To                     | A <= B                                                                 
