@@ -28,6 +28,15 @@ curl -s http://localhost:8000/api/person/2/ | python -m json.tool
     "resource_uri": "/api/person/2/"
 }
 ```
+## 配置文件的基本语法
+配置文件使用YAML格式。  
+有5个顶级的测试语法元素：  
+ - **url**: 简单测试，用给定的GET请求来检测响应状态码是否正确。
+ - **test**: 完整测试定义。
+ - **benchmark**: 定义基准测试。
+ - **config或configuration**: 全部测试设置(超时是最常见选项)
+ - **import**: 导入其它配置文件
+
 ### 配置文件范例
 一个典型的PyRestTest配置文件：
 ```
@@ -281,12 +290,6 @@ compare: {header: 'content-type', expected: 'application/json'}
 参数有3个：提取器、比较函数、预期值。  
 预期值也可以用提取器，这时可用于比较响应中包含的两个值。  
 比较函数清单：  
-
-aaa|ddd  
----|---  
-fff|ddd  
-fff|sss  
-
  Name(s)                             |                Description                | Details for comparator(A, B)                
 ----------------------------------------------|-----------------------------------------|------------------------------  
  'count_eq','length_eq'                       | Check length of body/str or count of elements equals value      | ength(A)   == B   or -1 if cannot obtain length   
@@ -303,63 +306,5 @@ fff|sss
  'regex'                                      | Regex Equals                              | A matches regex B                                                 
 
 ### json-server与httpbin.org
-要测试pyresttest需要一个REST模拟服务器。可以自己部署[json-server](https://github.com/typicode/json-server)或直接使用云服务[httpbin.org](http://httpbin.org/)。本测试使用的httpbin.org。
+如果测试pyresttest需要一个REST模拟服务器。可以自己部署[json-server](https://github.com/typicode/json-server)或直接使用云服务[httpbin.org](http://httpbin.org/)。
 
-### 测试代码
-参考了pyresttest项目的README文档中的样例代码，改写成了使用httpbin.org。
-```
-
-```
-上述例子中put测试较复杂，有比较(compare)逻辑。所以最好提前测试一下httpbin.org的功能：
-```
-$ curl -i -X PUT http://httpbin.org/put -d '{"first_name": "Gaius","id": 1,"last_name": "Baltar","login": "gbaltar"}' 
-HTTP/1.1 200 OK
-Server: nginx
-Date: Wed, 04 Jan 2017 01:45:07 GMT
-Content-Type: application/json
-Content-Length: 437
-Connection: keep-alive
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Credentials: true
-
-{
-  "args": {},
-  "data": "",
-  "files": {},
-  "form": {
-    "{\"first_name\": \"Gaius\",\"id\": 1,\"last_name\": \"Baltar\",\"login\": \"gbaltar\"}": ""
-  },
-  "headers": {
-    "Accept": "*/*",
-    "Content-Length": "72",
-    "Content-Type": "application/x-www-form-urlencoded",
-    "Host": "httpbin.org",
-    "User-Agent": "curl/7.47.0"
-  },
-  "json": null,
-  "origin": "60.208.111.201",
-  "url": "http://httpbin.org/put"
-}
-```
-## 配置文件的基本语法
-配置文件使用YAML格式。  
-有5个顶级的测试语法元素：  
- - **url**: 简单测试，用给定的GET请求来检测响应状态码是否正确。
- - **test**: 完整测试定义。
- - **benchmark**: 定义基准测试。
- - **config或configuration**: 全部测试设置(超时是最常见选项)
- - **import**: 导入其它配置文件
-
-#### 定制http选项(特殊curl参数)
-一些特定Curl参数在PyRestTest中没有对应的语法。可以使用'curl_option_optionname'语法来定义特殊curl参数。其中optionname的定义来自[Curl Easy Option](https://curl.haxx.se/libcurl/c/curl_easy_setopt.html)(去掉'CURLOPT_')。  
-下例中，跟随重定向5次((CURLOPT_FOLLOWLOCATION 和 CURLOPT_MAXREDIRS)：
-```
----
-- test: 
-    - url: "/api/person/1"
-    - curl_option_followlocation: True
-    - curl_option_maxredirs: 5  
-```
-####基准测试
-PyRestTest允许你通过curl收集底层网络性能指标。
-（略）
