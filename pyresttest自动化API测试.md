@@ -280,9 +280,9 @@ compare: {header: 'content-type', expected: 'application/json'}
 ```
 参数有3个：提取器、比较函数、预期值。  
 预期值也可以用提取器，这时可用于比较响应中包含的两个值。  
-比较函数清单：
-| Name(s)                                      |                Description                | Details for comparator(A, B)                                           |
-|----------------------------------------------|:-----------------------------------------:|------------------------------------------------------------------------|
+比较函数清单：  
+
+| Name(s)                             |                Description                | Details for comparator(A, B)    |               |----------------------------------------------+-----------------------------------------+------------------------------|
 | 'count_eq','length_eq'                       | Check length of body/str or count of elements equals value      | length(A) == B   or -1 if cannot obtain length   |
 | 'lt', 'less_than':                           | Less Than                                 | A < B                                                                  |
 | 'le', 'less_than_or_equal'                   | Less Than Or Equal To                     | A <= B                                                                 |
@@ -294,7 +294,7 @@ compare: {header: 'content-type', expected: 'application/json'}
 | 'contains'                                   | Contains                                  | B in A                                                                 |
 | 'contained_by'                               | Contained By                              | A in B                                                                 |
 | 'type'                                       | Type of variable is                       | A instanceof (at least one of) B
-| 'regex'                                      | Regex Equals                              | A matches regex B                                                      |
+| 'regex'                                      | Regex Equals                              | A matches regex B                                                 |
 ### json-server与httpbin.org
 要测试pyresttest需要一个REST模拟服务器。可以自己部署[json-server](https://github.com/typicode/json-server)或直接使用云服务[httpbin.org](http://httpbin.org/)。本测试使用的httpbin.org。
 
