@@ -287,19 +287,20 @@ aaa|ddd
 fff|ddd  
 fff|sss  
 
-| Name(s)                             |                Description                | Details for comparator(A, B)    |               |----------------------------------------------|-----------------------------------------|------------------------------|
-| 'count_eq','length_eq'                       | Check length of body/str or count of elements equals value      | length(A) == B   or -1 if cannot obtain length   |
-| 'lt', 'less_than':                           | Less Than                                 | A < B                                                                  |
-| 'le', 'less_than_or_equal'                   | Less Than Or Equal To                     | A <= B                                                                 |
-| 'eq', 'equals'                               | Equals                                    | A == B                                                                 |
-| 'str_eq'                                     | Values are Equal When Converted to String | str(A) == str(B) -- useful for comparing templated numbers/collections |
-| 'ne', 'not_equals'                           | Not Equals                                | A != B                                                                 |
-| 'ge', 'greater_than_or_equal'                | Greater Than Or Equal To                  | A >= B                                                                 |
-| 'gt', 'greater_than'                         | Greater Than                              | A > B                                                                  |
-| 'contains'                                   | Contains                                  | B in A                                                                 |
-| 'contained_by'                               | Contained By                              | A in B                                                                 |
-| 'type'                                       | Type of variable is                       | A instanceof (at least one of) B
-| 'regex'                                      | Regex Equals                              | A matches regex B                                                 |
+ Name(s)                             |                Description                | Details for comparator(A, B)                ----------------------------------------------|-----------------------------------------|------------------------------  
+ 'count_eq','length_eq'                       | Check length of body/str or count of elements equals value      | ength(A)   == B   or -1 if cannot obtain length   
+ 'lt', 'less_than':                           | Less Than                                 | A < B                                                                  
+ 'le', 'less_than_or_equal'                   | Less Than Or Equal To                     | A <= B                                                                 
+ 'eq', 'equals'                               | Equals                                    | A == B                                                                 
+ 'str_eq'                                     | Values are Equal When Converted to String | str(A) == str(B) -- useful for comparing templated numbers/collections   
+ 'ne', 'not_equals'                           | Not Equals                                | A != B                                                               
+ 'ge', 'greater_than_or_equal'                | Greater Than Or Equal To                  | A >= B                                                                 
+ 'gt', 'greater_than'                         | Greater Than                              | A > B                                                                  
+ 'contains'                                   | Contains                                  | B in A                                                                 
+ 'contained_by'                               | Contained By                              | A in B                                                                 
+ 'type'                                       | Type of variable is                       | A instanceof (at least one of)   B  
+ 'regex'                                      | Regex Equals                              | A matches regex B                                                 
+
 ### json-server与httpbin.org
 要测试pyresttest需要一个REST模拟服务器。可以自己部署[json-server](https://github.com/typicode/json-server)或直接使用云服务[httpbin.org](http://httpbin.org/)。本测试使用的httpbin.org。
 
