@@ -14,7 +14,7 @@ pip install 'django >=1.6, <1.7' django-tastypie==0.12.1
 cd pyresttest/pyresttest/testapp
 python manage.py testserver test_data.json &
 ```
-如果运行成功，进程会监听8000端口。如果不加&符号，就另外再启动一个终端访问block2虚拟机。用下面的命令测试一下刚启动的REST服务：
+如果运行成功，进程会监听8000端口。如果不加&符号，就需要另外再启动一个终端访问block2虚拟机。用下面的命令测试一下刚启动的REST服务：
 ```
 curl -s http://localhost:8000/api/person/2/ | python -m json.tool
 ```
@@ -28,6 +28,42 @@ curl -s http://localhost:8000/api/person/2/ | python -m json.tool
     "resource_uri": "/api/person/2/"
 }
 ```
+### 配置文件范例
+一个典型的PyRestTest配置文件：
+```
+---
+- config:
+    - testset: "Basic tests"
+    - timeout: 100  # Increase timeout from the default 10 seconds
+- test: 
+    - name: "Basic get"
+    - url: "/api/person/"
+- test: 
+    - name: "Get single person"
+    - url: "/api/person/1/"
+- test: 
+    - name: "Delete a single person, verify that works"
+    - url: "/api/person/1/"
+    - method: 'DELETE'
+- test: # create entity by PUT
+    - name: "Create/update person"
+    - url: "/api/person/1/"
+    - method: "PUT"
+    - body: '{"first_name": "Gaius","id": 1,"last_name": "Baltar","login": "gbaltar"}'
+    - headers: {'Content-Type': 'application/json'}
+    - validators:  # This is how we do more complex testing!
+        - compare: {header: content-type, comparator: contains, expected:'json'}
+        - compare: {jsonpath_mini: 'login', expected: 'gbaltar'}  # JSON extraction
+        - compare: {raw_body:"", comparator:contains, expected: 'Baltar' }  # Tests on raw response
+- test: # create entity by POST
+    - name: "Create person"
+    - url: "/api/person/"
+    - method: "POST"
+    - body: '{"first_name": "William","last_name": "Adama","login": "theadmiral"}'
+    - headers: {Content-Type: application/json}
+```
+大致的解释：每个"- test:"代表一个测试，会发起一次REST请求；紧跟的对象往往是定义请求的内容；validators定义更复杂的验证逻辑，否则仅能通过响应状态码来确定测试是否通过；expected定义预期值；jsonpath_mini是提取语法用于从响应json串中提取值。
+
 ###测试1：首个冒烟测试
 在/opt/pyresttest/pyresttes目录下建立test.yaml文件，文件内容：
 ```
@@ -184,47 +220,88 @@ expected_status表示预期状态是404（表示该URL不存在），但10号用
 ```
 现在6个测试全部通过了。这基本上是一个完整的测试，包括创建、查询、删除用户。
 
+### 高阶向导
+高阶向导的原始文档是[这里](https://github.com/svanoort/pyresttest/blob/master/advanced_guide.md)。  
+PyRestTest可用于基准测试，而基准测试往往要运行多次来取平均值。PyRestTest提供Generators来产生数据。生成器(Generator)和模板本次测试忽略。
+#### 提取器：jsonpath_mini
+响应的例子：
+```
+{
+    "thing":{"foo":"bar"},
+    "link_ids": [1, 2, 3, 4],
+    "person":{
+        "firstname": "Bob",
+        "lastname": "Smith",
+        "age": 17
+    }
+}
+```
+在上述响应下使用提取器jsonpath_mini:
+ - jsonpath_mini: 'person.lastname' 返回 "Smith"
+ - jsonpath_mini: 'person.is_a_ninja' 返回 NOTHING (None object) ；因为person对象下没有这个key
+ - jsonpath_mini: 'link_ids.1' 返回 2
+ - jsonpath_mini: 'thing' 返回 {"foo":"bar"}
+ - jsonpath_mini: '.'返回整个响应
+ - jsonpath_mini: 'thing.0' 返回 None；因为thing不是数组
+#### 提取器：header
+从响应头中提取数据。不区分大小写。如果响应头中存在多个值(如cookie)则返回列表。
+例子：
+```
+header: 'content-type'
+```
+例子2：
+```
+compare: {header: 'content-type', expected: 'application/json'}
+```
+#### 提取器：raw_body
+返回整个响应体。
 
+#### 验证器：extract_test
+例子：
+```
+- validators:
+    # Test key does not exist
+    - extract_test: {jsonpath_mini: "key_should_not_exist",  test: "not_exists"}
+```
+检查值是否存在。
 
+#### 验证器：compare
+例子：
+```
+- validators:
+     # Check the user name matches
+     - compare: {jsonpath_mini: "user_name", comparator: "eq", expected: 'neo'}
 
+     # Check the total_count key has value over 10
+     - compare: {jsonpath_mini: "total_count", comparator: "gt", expected: 10}
 
-
+     # Check the user's login
+     - compare: {jsonpath_mini: "total_count", comparator: "gt", expected: }
+```
+参数有3个：提取器、比较函数、预期值。  
+预期值也可以用提取器，这时可用于比较响应中包含的两个值。  
+比较函数清单：
+| Name(s)                                      |                Description                | Details for comparator(A, B)                                           |
+|----------------------------------------------|:-----------------------------------------:|------------------------------------------------------------------------|
+| 'count_eq','length_eq'                       | Check length of body/str or count of elements equals value      | length(A) == B   or -1 if cannot obtain length   |
+| 'lt', 'less_than':                           | Less Than                                 | A < B                                                                  |
+| 'le', 'less_than_or_equal'                   | Less Than Or Equal To                     | A <= B                                                                 |
+| 'eq', 'equals'                               | Equals                                    | A == B                                                                 |
+| 'str_eq'                                     | Values are Equal When Converted to String | str(A) == str(B) -- useful for comparing templated numbers/collections |
+| 'ne', 'not_equals'                           | Not Equals                                | A != B                                                                 |
+| 'ge', 'greater_than_or_equal'                | Greater Than Or Equal To                  | A >= B                                                                 |
+| 'gt', 'greater_than'                         | Greater Than                              | A > B                                                                  |
+| 'contains'                                   | Contains                                  | B in A                                                                 |
+| 'contained_by'                               | Contained By                              | A in B                                                                 |
+| 'type'                                       | Type of variable is                       | A instanceof (at least one of) B
+| 'regex'                                      | Regex Equals                              | A matches regex B                                                      |
 ### json-server与httpbin.org
 要测试pyresttest需要一个REST模拟服务器。可以自己部署[json-server](https://github.com/typicode/json-server)或直接使用云服务[httpbin.org](http://httpbin.org/)。本测试使用的httpbin.org。
 
 ### 测试代码
 参考了pyresttest项目的README文档中的样例代码，改写成了使用httpbin.org。
 ```
----
-- config:
-    - testset: "Basic tests"
-    - timeout: 100  # Increase timeout from the default 10 seconds
-- test: 
-    - name: "返回ip"
-    - url: "http://httpbin.org/ip"
-- test: 
-    - name: "Get测试"
-    - url: "http://httpbin.org/get"
-- test: 
-    - name: "Delete测试"
-    - url: "http://httpbin.org/delete"
-    - method: 'DELETE'
-- test: # create entity by PUT
-    - name: "Create/update 测试"
-    - url: "http://httpbin.org/put"
-    - method: "PUT"
-    - body: '{"first_name": "Gaius","id": 1,"last_name": "Baltar","login": "gbaltar"}'
-    - headers: {'Content-Type': 'application/json'}
-    - validators:  # This is how we do more complex testing!
-        - compare: {header: content-type, comparator: contains, expected:'json'}
-        - compare: {jsonpath_mini: 'login', expected: 'gbaltar'}  # JSON extraction
-        - compare: {raw_body:"", comparator:contains, expected: 'Baltar' }  # Tests on raw response
-- test: # create entity by POST
-    - name: "Create person"
-    - url: "/api/person/"
-    - method: "POST"
-    - body: '{"first_name": "William","last_name": "Adama","login": "theadmiral"}'
-    - headers: {Content-Type: application/json}
+
 ```
 上述例子中put测试较复杂，有比较(compare)逻辑。所以最好提前测试一下httpbin.org的功能：
 ```
