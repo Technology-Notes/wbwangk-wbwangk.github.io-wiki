@@ -281,8 +281,11 @@ compare: {header: 'content-type', expected: 'application/json'}
 参数有3个：提取器、比较函数、预期值。  
 预期值也可以用提取器，这时可用于比较响应中包含的两个值。  
 比较函数清单：  
+|aaa|ddd|
+|---|
 
-| Name(s)                             |                Description                | Details for comparator(A, B)    |               |----------------------------------------------+-----------------------------------------+------------------------------|
+
+| Name(s)                             |                Description                | Details for comparator(A, B)    |               |----------------------------------------------|-----------------------------------------|------------------------------|
 | 'count_eq','length_eq'                       | Check length of body/str or count of elements equals value      | length(A) == B   or -1 if cannot obtain length   |
 | 'lt', 'less_than':                           | Less Than                                 | A < B                                                                  |
 | 'le', 'less_than_or_equal'                   | Less Than Or Equal To                     | A <= B                                                                 |
