@@ -1,5 +1,5 @@
-*[项目位于github](https://github.com/iron-io/functions)*
-go/python/nodejs等语言的安装参考:[ubuntu16下常用软件安装](ubuntu16下常用软件安装)。
+*[项目位于github](https://github.com/iron-io/functions)*  
+go/python/nodejs等语言的安装参考:[ubuntu16下常用软件安装](ubuntu16下常用软件安装)。本测试中使用的各种语言hello world程序位于github项目的[example/hello](https://github.com/iron-io/functions/tree/master/examples/hello)目录下。
 ### 命令行fn
 执行下列脚本，会下载和安装命令行工具fn。
 ```
