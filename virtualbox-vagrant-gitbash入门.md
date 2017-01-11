@@ -53,3 +53,9 @@ $ vagrant ssh wang1  （登录wang1）
 $ vagrant halt wang1   (wang1关机)
 $ vagrant destroy wang1 (将wang1虚拟机删除）
 ```
+
+当虚机上安装了很多软件，想打包自己的虚机镜像，则：
+```
+$ vagrant package wang1 --output webb-wang1
+```
+webb-wang1是输出的镜像文件名。
