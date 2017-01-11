@@ -59,3 +59,9 @@ $ vagrant destroy wang1 (将wang1虚拟机删除）
 $ vagrant package wang1 --output webb-wang1
 ```
 webb-wang1是输出的镜像文件名。
+在Vagrantfile中直接引用镜像文件名来定义新的虚拟机：
+```
+   config.vm.define :"wang2" do |os|
+         os.vm.box = "webb-wang1"
+         (略)   
+```
