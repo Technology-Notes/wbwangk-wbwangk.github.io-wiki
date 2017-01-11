@@ -32,6 +32,32 @@ $ apt install default-jdk
 $ java -version
 ```
 #### python-pip
+unbuntu自带了python2.7
 ```
-apt-get install python-pip
+$ apt-get install python-pip
+$ pip install --upgrade pip
+```
+#### nodejs
+```
+$ curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+$ apt-get install -y nodejs
+$ apt install npm
+$ npm install npm@latest -g   (更新)
+```
+#### golang
+$ cd /usr/local
+$ wget https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz
+$ tar -C /usr/local -xzf go1.7.4.linux-amd64.tar.gz
+$ export GOROOT=/usr/local/go
+$ export PATH=$PATH:$GOROOT/bin
+如果要编译go源码,还要设置GOPATH，GOPATH下的src目录下放源码。
+可以把上面的两个export添加到/root/.bashrc文件中（root用户）。
+#### htpasswd
+```
+$ apt-get install apache2-utils
+```
+#### pyresttest
+```
+$ apt-get install python-pycurl
+$ pip install pyresttest
 ```
