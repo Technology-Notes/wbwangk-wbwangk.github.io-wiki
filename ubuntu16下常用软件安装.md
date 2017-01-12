@@ -57,6 +57,15 @@ $ export PATH=$PATH:$GOROOT/bin
 ```
 $ apt-get install apache2-utils
 ```
+#### jq
+jq是一个将json格式化显示的工具。
+```
+$ apt-get install jq
+$ echo '{"name": "webb"}' | jq
+{
+  "name": "webb"
+}
+```
 #### pyresttest
 ```
 $ apt-get install python-pycurl
