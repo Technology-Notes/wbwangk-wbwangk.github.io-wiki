@@ -23,8 +23,8 @@ $ nginx -t (显示有ok就是成功了)
 $ add-apt-repository ppa:oreste-notelli/ppa
 $ apt-get update
 $ apt-get install justniffer
-$ ip addr (查看网卡,可以看到enp0s03等)
-$ justniffer -i enp0s03 -r 
+$ ip addr (查看网卡,可以看到enp0s3等)
+$ justniffer -i enp0s3 -r 
 ```
 #### openjdk
 ```
