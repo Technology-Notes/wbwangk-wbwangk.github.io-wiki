@@ -99,3 +99,32 @@ Function wbwang/hello:0.0.1 built successfully.
 $ fn fun
 Hello World from Node!
 ```
+### push镜像
+```fn push```把构建出的docker镜像推送到docker hub中。在执行push命令前应使用docker login登录docker hub：
+```
+$ docker login -u wbwang
+Password:
+Login Succeeded
+$ fn push
+The push refers to a repository [docker.io/wbwang/hello]
+1c39755406e8: Pushed
+fe696dc00a19: Pushed
+e67f7ef625c5: Mounted from iron/python
+321db514ef85: Mounted from iron/python
+6102f0d2ad33: Mounted from iron/python
+0.0.1: digest: sha256:d880817fc614a072e2333150e0f2670c230c7185c52f375c6995e9515291ae1d size: 1364
+Function wbwang/hello:0.0.1 pushed successfully to Docker Hub.
+```
+### 创建应用和路由
+```
+$ fn apps create myapp2
+myapp2 created
+$ fn routes create myapp2 /hello2
+/hello2 created with wbwang/hello:0.0.1
+$ curl http://localhost:8080/r/myapp2/hello2
+Hello World from Node!
+root@block3:/opt/iron# curl http://localhost:8080/r/myapp2/hello2
+Hello World from Node!
+```
+利用fn创建的docker镜像的默认tag是0.0.1，而不是docker默认的latest，要注意。  
+创建路由前，可以直接通过docker run命令来运行wbwang/hello:0.0.1这个镜像，但无法通过浏览器来启动它。创建路由后，就可以通过http协议来启动了。serverless应用的典型运行方式启动、处理数据、数据结果、停止。所以前面用了“启动”而不是一般说的“请求”。  
