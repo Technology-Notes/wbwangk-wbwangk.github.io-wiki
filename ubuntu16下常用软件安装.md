@@ -37,7 +37,7 @@ unbuntu自带了python2.7
 $ apt-get install python-pip
 $ pip install --upgrade pip
 ```
-#### nodejs
+#### nodejs & npm
 ```
 $ curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
 $ apt-get install -y nodejs
@@ -45,6 +45,10 @@ $ apt install npm
 $ ln -s `which nodejs` /usr/bin/node
 ```
 ln是建立符号连接。原因是不同平台，有的叫node有的叫nodejs。
+npm的自我升级:
+```
+$ npm install npm@latest -g
+```
 #### golang
 $ cd /usr/local
 $ wget https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz
