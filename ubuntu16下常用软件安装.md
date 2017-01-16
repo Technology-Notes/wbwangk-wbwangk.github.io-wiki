@@ -75,3 +75,7 @@ $ echo '{"name": "webb"}' | jq
 $ apt-get install python-pycurl
 $ pip install pyresttest
 ```
+#### wscat
+```
+$ npm install -g wscat
+```
