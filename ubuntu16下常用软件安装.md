@@ -78,4 +78,5 @@ $ pip install pyresttest
 #### wscat
 ```
 $ npm install -g wscat
+$ wscat -c ws://10.0.7.107:8086 
 ```
