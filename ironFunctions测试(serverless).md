@@ -1,4 +1,4 @@
-*[项目位于github](https://github.com/iron-io/functions)*  
+*https://github.com/iron-io/functions*  
 go/python/nodejs等语言的安装参考:[ubuntu16下常用软件安装](ubuntu16下常用软件安装)。本测试中使用的各种语言hello world程序位于github项目的[example/hello](https://github.com/iron-io/functions/tree/master/examples/hello)目录下。
 
 首先启动一个ironFunctions的服务器，后面执行curl会用到：
