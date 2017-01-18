@@ -122,11 +122,11 @@ Function wbwang/hello:0.0.1 pushed successfully to Docker Hub.
 ```
 ### 创建应用和路由
 ```
-$ fn apps create myapp2
-myapp2 created
-$ fn routes create myapp2 /hello2
-/hello2 created with wbwang/hello:0.0.1
-$ curl http://localhost:8080/r/myapp2/hello2
+$ fn apps create myapp
+myapp created
+$ fn routes create myapp /hello
+/hello created with wbwang/hello:0.0.1
+$ curl http://localhost:8080/r/myapp/hello
 Hello World from Node!
 ```
 利用fn创建的docker镜像的默认tag是0.0.1，而不是docker默认的latest，要注意。  
@@ -142,17 +142,6 @@ $ curl localhost:8080/v1/apps | jq
     {
       "name": "myapp",
       "config": null
-    },
-    {
-      "name": "myapp2",
-      "config": null
-    },
-    {
-      "name": "myapp3",
-      "config": {
-        "k1": "v1",
-        "k2": "v2"
-      }
     }
   ]
 }
@@ -160,13 +149,32 @@ $ curl localhost:8080/v1/apps | jq
 创建路由。hello-world镜像是docker的官方测试镜像。请求中config对象中的键值对会被放入环境变量。
 ```
 $ curl -H "Content-Type: application/json" -X POST -d '{
-    "app": {
-        "path": "/hello-world",
-        "image": "hello-world",
-        "config": {
-            "k1": "v1",
-            "k2": "v2"
-        } 
-    } 
+    "route": {
+        "path":"/hello1",
+        "image":"wbwang/hello:0.0.1"
+    }
 }' http://localhost:8080/v1/apps/myapp/routes
+
+{
+  "message": "Route successfully created",
+  "route": {
+    "app_name": "myapp",
+    "path": "/hello1",
+    "image": "wbwang/hello:0.0.1",
+    "memory": 128,
+    "headers": {},
+    "type": "sync",
+    "format": "default",
+    "max_concurrency": 1,
+    "timeout": 30,
+    "config": {}
+  }
+}
 ```
+执行功能:
+```
+$ fn call myapp /hello1
+$ curl localhost:8080/r/myapp/hello
+```
+同一个功能建了两个路由```/hello```和```/hello1```，访问这两个路由的任何一个都可以。  
+第一次调用功能的时候，由于要从docker hub上拉镜像下来，可能耗时比较长。第二次调用就快了。
