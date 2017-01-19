@@ -107,6 +107,7 @@ $ netstat -an | grep 8080 查看谁占用了8080端口
 　6. 对于.Z结尾的文件 　　uncompress all.Z  
 　7. 对于.tar.Z结尾的文件 　　tar -xZf all.tar.z  
   8. 对于.zip结尾文件，apt-get install unzip，然后unzip xxx.zip  
+
 ### 进程命令
 ```
 $ ps -ef | grep docker   查看docker服务的进程号
