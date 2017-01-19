@@ -99,14 +99,14 @@ $ netstat -an | grep 8080 查看谁占用了8080端口
 ```|```管道符。如```echo '{"name": "webb"}' | jq```  
 
 ### 解压命令
-　1. 对于.tar结尾的文件 　　tar -xf all.tar  
-　2. 对于.gz结尾的文件　　gzip -d all.gz 　　gunzip all.gz   
-　3. 对于.tgz或.tar.gz结尾的文件 　　tar -xzf all.tar.gz 　　tar -xzf all.tgz   
-　4. 对于.bz2结尾的文件 　　bzip2 -d all.bz2 　　bunzip2 all.bz2   
-　5. 对于tar.bz2结尾的文件 　　tar -xjf all.tar.bz2   
-　6. 对于.Z结尾的文件 　　uncompress all.Z  
-　7. 对于.tar.Z结尾的文件 　　tar -xZf all.tar.z  
-  8. 对于.zip结尾文件，apt-get install unzip，然后unzip xxx.zip  
+ 1. 对于.tar结尾的文件 　　tar -xf all.tar  
+ 2. 对于.gz结尾的文件　　gzip -d all.gz 　　gunzip all.gz   
+ 3. 对于.tgz或.tar.gz结尾的文件 　　tar -xzf all.tar.gz 　　tar -xzf all.tgz   
+ 4. 对于.bz2结尾的文件 　　bzip2 -d all.bz2 　　bunzip2 all.bz2   
+ 5. 对于tar.bz2结尾的文件 　　tar -xjf all.tar.bz2   
+ 6. 对于.Z结尾的文件 　　uncompress all.Z  
+ 7. 对于.tar.Z结尾的文件 　　tar -xZf all.tar.z  
+ 8. 对于.zip结尾文件，apt-get install unzip，然后unzip xxx.zip  
 
 ### 进程命令
 ```
