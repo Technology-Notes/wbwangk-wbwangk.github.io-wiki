@@ -126,8 +126,10 @@ $ fn apps create myapp
 myapp created
 $ fn routes create myapp /hello
 /hello created with wbwang/hello:0.0.1
+$ fn call myapp /hello
+python hello world!!
 $ curl http://localhost:8080/r/myapp/hello
-Hello World from Node!
+python hello world!!
 ```
 利用fn创建的docker镜像的默认tag是0.0.1，而不是docker默认的latest，要注意。  
 创建路由前，可以直接通过docker run命令来运行wbwang/hello:0.0.1这个镜像，但无法通过浏览器来启动它。创建路由后，就可以通过http协议来启动了。serverless应用的典型运行方式启动、处理数据、数据结果、停止。所以前面用了“启动”而不是一般说的“请求”。  
