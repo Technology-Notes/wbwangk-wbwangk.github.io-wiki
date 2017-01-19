@@ -93,6 +93,7 @@ $ echo {\"path\": \"$PATH\"} | jq
 $ chmod +x run.sh 或 chmod 777 run.sh    修改文件权限
 $ netstat -an | grep 8080 查看谁占用了8080端口
 
+### 几个符号
 ```
 ```~```表示用户的home位置，如```cd ~```  
 ```$PWD```表示当前目录，如```echo $PWD```    
