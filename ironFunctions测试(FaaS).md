@@ -180,3 +180,21 @@ $ curl localhost:8080/r/myapp/hello
 ```
 同一个功能建了两个路由```/hello```和```/hello1```，访问这两个路由的任何一个都可以。  
 第一次调用功能的时候，由于要从docker hub上拉镜像下来，可能耗时比较长。第二次调用就快了。
+
+### 其他镜像测试
+ironFuntions还可以运行普通的docker镜像。docker官方提供的hello-world镜像，通过标准输出(STDOUT)输出一些文本欢迎词。下面用ironFunctions去运行它。首先创建路由：
+```
+curl -H "Content-Type: application/json" -X POST -d '{
+    "route": {
+        "path":"/helloworld",
+        "image":"hello-world"
+    }
+}' http://localhost:8080/v1/apps/myapp/routes
+```
+然后执行：
+```
+$ curl localhost:8080/r/myapp/helloworld
+(很多欢迎词，省略)
+```
+ironFunctions很擅长把标准输出转换成http响应。  
+实测看，ironFunctions的docker镜像在本地没有缓存，如果iron/functions服务重启，则需要重新从docker hub拉取镜像。对于本地docker镜像库的支持尚在开发中。
