@@ -4,12 +4,12 @@
  - git：终端（[git-scm.com]）  
 
 ### vagrant入门　
-1.建个目录(如C:/U)，在鼠标右键菜单中选择“Git Bash”。然后执行vagrant init，发现目录下新建了一个Vagrantfile文件。
-2.修改Vagrantfile文件将base换成ubuntu/xenial64
+1.建个目录(如C:/U)，在鼠标右键菜单中选择“Git Bash”。然后执行vagrant init，发现目录下新建了一个Vagrantfile文件。  
+2.修改Vagrantfile文件将base换成ubuntu/xenial64  
 ```
 config.vm.box = "ubuntu/xenial64"
 ```  
-执行（如果是第一次执行vagrant up，由于需要从网上下载镜像会很慢）：
+执行（如果是第一次执行vagrant up，由于需要从网上下载镜像会很慢）：  
 ```
 $ vagrant up (启动虚拟机）
 $ vagrant ssh （进入虚拟机）
@@ -41,13 +41,13 @@ Vagrant.configure("2") do |config|
    end
 end
 ```
-上面的这个配置文件支持两个虚机，而且设定了两个虚机的ip、主机名、内存大小等。
+上面的这个配置文件支持两个虚机，而且设定了两个虚机的ip、主机名、内存大小等。  
 4.进入webb1  
 ```
 $ vagrant up wang1 wang2 （启动两个虚机）
 $ vagrant ssh wang1  （登录wang1）
 ```
-退出虚拟机执行```$ exit```
+退出虚拟机执行```$ exit```  
 其他的vagrant命令还有：
 ```
 $ vagrant halt wang1   (wang1关机)
@@ -59,7 +59,7 @@ $ vagrant reload wang1 (重新加载配置文件，有时可以解决一些未�
 ```
 $ vagrant package wang1 --output webb-wang1
 ```
-webb-wang1是输出的镜像文件名。
+webb-wang1是输出的镜像文件名。  
 在Vagrantfile中直接引用镜像文件名来定义新的虚拟机：
 ```
    config.vm.define :"wang2" do |os|
@@ -78,7 +78,7 @@ $ htpasswd webb 为webb用户创建密码
 $ echo "12345" > t.tt
 $ scp t.tt webb@10.10.11.86:/usr/webb/
 ```
-上述命令会把windows当前目录下新建的t.tt文件远程复制到linux的/usr/webb/目录下。
+上述命令会把windows当前目录下新建的t.tt文件远程复制到linux的/usr/webb/目录下。  
 如果把linux下的文件复制到windows下则：
 ```
 $ scp webb@10.10.11.86:/usr/webb/t.tt .
@@ -94,9 +94,9 @@ $ netstat -an | grep 8080 查看谁占用了8080端口
 
 ```
 ```~```表示用户的home位置，如```cd ~```  
-```$PWD```表示当前目录，如```echo $PWD```  
-```.``` 当前目录，但有时```. run.sh```表示执行脚本文件run.sh。与```./xxx.sh```类似，有时让人困扰。
-```|```管道符。如```echo '{"name": "webb"}' | jq```
+```$PWD```表示当前目录，如```echo $PWD```    
+```.``` 当前目录，但有时```. run.sh```表示执行脚本文件run.sh。与```./xxx.sh```类似，有时让人困扰。  
+```|```管道符。如```echo '{"name": "webb"}' | jq```  
 
 ### 解压命令
 　1. 对于.tar结尾的文件 　　tar -xf all.tar  
@@ -111,10 +111,10 @@ $ netstat -an | grep 8080 查看谁占用了8080端口
 ```
 $ ps -ef | grep docker   查看docker服务的进程号
 ```
-ps的参数：
--a ：all，表示列出所有的连接，服务监听，Socket资料
--t ：tcp，列出tcp协议的服务
--u ：udp，列出udp协议的服务
--n ：port number， 用端口号来显示
--l ：listening，列出当前监听服务
--p ：program，列出服务程序的PID
+ps的参数：  
+-a ：all，表示列出所有的连接，服务监听，Socket资料  
+-t ：tcp，列出tcp协议的服务  
+-u ：udp，列出udp协议的服务  
+-n ：port number， 用端口号来显示  
+-l ：listening，列出当前监听服务  
+-p ：program，列出服务程序的PID  
