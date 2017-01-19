@@ -71,17 +71,17 @@ webb-wang1是输出的镜像文件名。
 可以将文件在windows和linux之间用scp命令。为了演示scp先建个用户：
 ```
 $ useradd -d /usr/webb -m webb
-$ htpasswd webb 为webb用户创建密码
+$ passwd webb 为webb用户创建密码
 ```
 在windows利用鼠标右键菜单进入git bash：
 ```
 $ echo "12345" > t.tt
-$ scp t.tt webb@10.10.11.86:/usr/webb/
+$ scp t.tt webb@10.10.11.86:/usr/webb/    （按提示输入webb用户的密码）
 ```
 上述命令会把windows当前目录下新建的t.tt文件远程复制到linux的/usr/webb/目录下。  
 如果把linux下的文件复制到windows下则：
 ```
-$ scp webb@10.10.11.86:/usr/webb/t.tt .
+$ scp webb@10.10.11.86:/usr/webb/t.tt .   （t.tt后面跟空格和点）
 ```
 ### 常用linux命令
 ```
@@ -89,6 +89,7 @@ $ sudo su - root 切换用户到root
 $ rm -rf <dir name>   删除目录及下属
 $ alias ll='ls -l' 定义别名
 $ export PATH=$PATH:/usr/webb    定义环境变量
+$ echo {\"path\": \"$PATH\"} | jq
 $ chmod +x run.sh 或 chmod 777 run.sh    修改文件权限
 $ netstat -an | grep 8080 查看谁占用了8080端口
 
@@ -97,6 +98,11 @@ $ netstat -an | grep 8080 查看谁占用了8080端口
 ```$PWD```表示当前目录，如```echo $PWD```    
 ```.``` 当前目录，但有时```. run.sh```表示执行脚本文件run.sh。与```./xxx.sh```类似，有时让人困扰。  
 ```|```管道符。如```echo '{"name": "webb"}' | jq```  
+```\```转义符，除了前面的echo转义引号外，还用于把长命令拆成多行（忽略回车）。如：
+```
+$ curl -X POST http://127.0.0.1:5984/demo \
+            -d '{"company": "Example, Inc."}'
+```
 
 ### 解压命令
  1. 对于.tar结尾的文件 　　tar -xf all.tar  
