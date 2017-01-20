@@ -138,3 +138,27 @@ $ curl http://controller:8080/v1/AUTH_43694a2ef90f4a22af23552aa6836b4e/container
 (下面的略)
 ```
 响应的Content-Type: application/octet-stream。直接输出文件swift.conf的内容到响应体中。
+#### 上传文件到swift
+SWIFT REST API遵循了WEBDAV协议。可参考[WEBDAV测试](https://github.com/imaidev/imaidev.github.io/wiki/WebDav%E6%B5%8B%E8%AF%95)。  
+上传/etc/hosts文件到swift：
+```
+$ curl -T '/etc/hosts' http://controller:8080/v1/AUTH_43694a2ef90f4a22af23552aa6836b4e/container1/etc/hosts \
+   -H "X-Auth-Token: $DEMO_TOKEN"
+```
+查看刚上传的文档：
+```
+$ curl http://controller:8080/v1/AUTH_43694a2ef90f4a22af23552aa6836b4e/container1/etc/hosts \
+  -H "X-Auth-Token: $DEMO_TOKEN" 
+```
+需要注意的是，上面的请求中的对象id是```etc/hosts```。这种方式id命名方式近乎于目录，也称伪目录，本质上还是对象。
+#### 删除/复制对象
+复制对象(实测提示找不到资源,原因不明)：
+```
+ curl -X COPY http://controller:8080/v1/AUTH_43694a2ef90f4a22af23552aa6836b4e/container1/etc/hosts \
+  -H "X-Auth-Token: $DEMO_TOKEN" -H "Destination: /etc/hosts2"
+```
+删除对象：
+```
+ curl -X DELETE http://controller:8080/v1/AUTH_43694a2ef90f4a22af23552aa6836b4e/container1/etc/hosts2 \
+  -H "X-Auth-Token: $DEMO_TOKEN" 
+```
