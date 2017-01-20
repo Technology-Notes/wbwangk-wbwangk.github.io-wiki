@@ -6,7 +6,7 @@ $ . demo-openrc
 $ swift stat 
 $ openstack object list container1          (列出容器container1下所有对象)
 ```
-**[这里]**是swift API官方文档的地址。  
+[这里](http://developer.openstack.org/api-ref/object-storage/)是swift API官方文档的地址。  
 ## API测试
 下面这个请求不需要认证：
 ```
