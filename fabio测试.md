@@ -67,9 +67,7 @@ $ wget https://github.com/eBay/fabio/releases/download/v1.3.7/fabio-1.3.7-go1.7.
 $ chmod +x fabio-1.3.7-go1.7.4-linux_amd64
 $ ln -s fabio-1.3.7-go1.7.4-linux_amd64 /usr/local/bin/fabio
 ```
-用chmod将下载的程序修改为可执行，然后在可执行目录/usr/local/bin下定义了一个软符号链接fabio。启动fabio：
-```
-用默认值启动fabio
+用chmod将下载的程序修改为可执行，然后在可执行目录/usr/local/bin下定义了一个软符号链接fabio。用默认值启动fabio：
 ```
 $ fabio
 ```
