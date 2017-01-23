@@ -78,4 +78,4 @@ $ fabio
 $ curl localhost:9999/foo
 Serving /foo from svc-a on 127.0.0.1:5000
 ```
-9999端口是fabio的代理(proxy)端口。
+9999端口是fabio的代理(proxy)端口。fabio将9999端口收到的/foo路径下的请求，根据路由策略(tag:urlprefix-/foo)发往127.0.0.1:5000端口的svc-a服务。
