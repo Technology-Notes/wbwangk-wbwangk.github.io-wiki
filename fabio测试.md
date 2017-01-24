@@ -4,7 +4,8 @@ Consul是一个在国外流行的服务发现和配置共享的服务软件。fa
 这是[安装地址](https://www.consul.io/downloads.html)(含UI下载地址)。  
 ```
 $ wget https://releases.hashicorp.com/consul/0.7.2/consul_0.7.2_linux_amd64.zip
-$ unzip consul_0.7.2_linux_amd64.zip
+$ unzip consul_0.7.2_linux_amd64.zip            (如果没有unzip工具，则先apt-get install unzip)
+$ rm consul_0.7.2_linux_amd64.zip
 $ mv consul /usr/local/bin            （把consul移动到可执行目录下）
 $ consul agent -dev    (-dev表示开发模式)
 ```
