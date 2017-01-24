@@ -36,3 +36,22 @@ $ consul agent -data-dir=/tmp/consul -node=block2 \
     -bind=10.10.11.86 -config-dir=/etc/consul.d
    ...
 ```
+这时，你就有了两个consul agent，一个server一个客户端。现在两个agent还不知道彼此的存在，都是独立在运行。可以分别通过命令consul members命令查看节点清单：
+```
+$ consul members       （在节点1上运行）
+Node    Address           Status  Type    Build  Protocol  DC
+block1  10.10.11.85:8301  alive   server  0.7.2  2         dc1
+$ consul members        （在节点2上运行）
+Node    Address           Status  Type    Build  Protocol  DC
+block2  10.10.11.86:8301  alive   client  0.7.2  2         dc1
+```
+现在登录第一个节点，让节点1加入节点2：
+```
+$ consul join 10.10.11.86
+Successfully joined cluster by contacting 1 nodes.
+$ consul members
+Node    Address           Status  Type    Build  Protocol  DC
+block1  10.10.11.85:8301  alive   server  0.7.2  2         dc1
+block2  10.10.11.86:8301  alive   client  0.7.2  2         dc1
+```
+要加入consul集群，agent只要join集群的任何一个成员都可以。
