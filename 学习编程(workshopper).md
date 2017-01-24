@@ -76,5 +76,18 @@ $ javascripting verify introduction.js
 $ javascripting run introduction.js
 hello
 ```
-再进入全屏菜单，发现INTRODUCTION这个练习已经是COMPLETED状态。  
+再进入全屏菜单，发现INTRODUCTION这个练习已经是COMPLETED状态：
+```
+   JAVASCRIPTING
+   Select an exercise and hit Enter to begin
+   ─────────────────────────────────────────────────────────────────────────
+   » INTRODUCTION                                                [COMPLETED]
+   » VARIABLES                                                   [COMPLETED]
+   » STRINGS
+   » STRING LENGTH
+   » REVISING STRINGS
+   » NUMBERS
+   » ROUNDING NUMBERS
+   » NUMBER TO STRING
+```
 可以模仿着完成其他练习。
