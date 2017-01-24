@@ -63,4 +63,5 @@ Node    Address           Status  Type    Build  Protocol  DC
 block1  10.10.11.85:8301  failed  server  0.7.2  2         dc1
 block2  10.10.11.86:8301  alive   client  0.7.2  2         dc1
 ```
-看到节点block1的状态是failed。
+看到节点block1的状态是failed。  
+重新启动节点1的consul agent，然后再执行consul members，两个节点都显示为alive状态，consul集群回复正常。  
