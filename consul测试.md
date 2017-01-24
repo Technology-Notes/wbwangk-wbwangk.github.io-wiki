@@ -17,3 +17,22 @@ $ curl localhost:8500/v1/catalog/nodes     （8500是consul的HTTP API端口）
 会显示当前节点信息。如果上述命令正确执行就表示consul已经安装成功。上述命令行和HTTP API的功能相同。
 
 ### consul集群搭建
+-dev选项用于启动单机的开发模式。集群部署不使用这个选项。  
+每个节点须有唯一的id，默认使用hostname，可以用-node选项手工设置。  
+使用-bind选项设置绑定的ip，这个ip必须能够被其他节点访问到。  
+第一个节点会被当作集群的server，可以用-server选项来手工指定。-server选项可以指定agent工作在服务器还是客户端模式下。  
+-bootstrap-expect选择的指定了consul集群的节点数，如果小于这个节点数，集群应不能工作（无法选举出领导？）。  
+-config-dir选项指定了配置文件的目录，目录里定义了服务和健康检查策略。  
+启动consul agent的命令：
+```
+$ consul agent -server -bootstrap-expect=1 \
+    -data-dir=/tmp/consul -node=block1 -bind=10.10.11.85 \
+    -config-dir=/etc/consul.d
+   ...
+```
+启动另一个终端进入第二个节点，第二节点的节点名字是block2，ip是10.10.11.86。这个节点不是consul server，不能加server选项。启动consul agent的命令：
+```
+$ consul agent -data-dir=/tmp/consul -node=block2 \
+    -bind=10.10.11.86 -config-dir=/etc/consul.d
+   ...
+```
