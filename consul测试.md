@@ -54,4 +54,13 @@ Node    Address           Status  Type    Build  Protocol  DC
 block1  10.10.11.85:8301  alive   server  0.7.2  2         dc1
 block2  10.10.11.86:8301  alive   client  0.7.2  2         dc1
 ```
-要加入consul集群，agent只要join集群的任何一个成员都可以。
+要加入consul集群，agent只要join集群的任何一个成员都可以。  
+通过contrl+C将block1的agent进程终止，然后进入block2：
+```
+$ vagrant ssh block2
+$ consul members
+Node    Address           Status  Type    Build  Protocol  DC
+block1  10.10.11.85:8301  failed  server  0.7.2  2         dc1
+block2  10.10.11.86:8301  alive   client  0.7.2  2         dc1
+```
+看到节点block1的状态是failed。
