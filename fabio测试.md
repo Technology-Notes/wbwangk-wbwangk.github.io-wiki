@@ -22,7 +22,7 @@ $ export GOPATH=/go
 $ go get github.com/magiconair/fabio-example
 ```
 要等一会儿到/go目录下去看，发现/go/bin目录下多了一个fabio-example的可执行程序。
-（go语言的安装参考golangk.org）
+（go语言的安装参考golang.org）
 ```
 $ ./fabio-example --help
 Usage of ./fabio-example:
