@@ -5,7 +5,7 @@
 
 ### vagrant入门　
 1.建个目录(如C:/U)，在鼠标右键菜单中选择“Git Bash”。然后执行vagrant init，发现目录下新建了一个Vagrantfile文件。  
-2.修改Vagrantfile文件将base换成ubuntu/xenial64  
+2.修改Vagrantfile文件将base换成ubuntu/xenial64 (其他的镜像参考这个[链接](https://atlas.hashicorp.com/boxes/search)) 
 ```
 config.vm.box = "ubuntu/xenial64"
 ```  
