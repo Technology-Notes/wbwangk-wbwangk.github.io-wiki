@@ -24,6 +24,8 @@ $ wget https://github.com/coreos/flannel/releases/download/v0.7.0/
 $ tar -xzf flannel-v0.7.0-linux-amd64.tar.gz && rm *.tar.gz
 ```
 ### 安装kubernetes
+```
 $ wget https://github.com/kubernetes/kubernetes/releases/download/v1.5.2/kubernetes.tar.gz
 $ mkdir /opt/k8s && cd /opt/k8s
 $ tar -xzf kubernetes.tar.gz
+```
