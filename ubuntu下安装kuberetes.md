@@ -77,3 +77,57 @@ mykubernetes/flannel:latest
 docker tag registry.cn-hangzhou.aliyuncs.com/kubernetes/etcd-amd64:2.2.5 \
 google_containers/etcd-amd64:2.2.5
 ```
+## vagrant部署单节点kubernetes
+之前部署vagrant(如[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/virtualbox-vagrant-gitbash%E5%85%A5%E9%97%A8))都是在windows下，而利用windows下按[这个文档](https://coreos.com/kubernetes/docs/latest/kubernetes-on-vagrant-single.ubuntu)kubernetes，碰到各种问题，无法解决。  
+后来，尝试在纯linux(ubuntu)下部署。找了一台上网本，升级到ubuntu16。这台机器下称宿主机。首先在宿主机下安装vagrant和virtualbox，比windows下简单：
+```
+$ apt install vagrant virtualbox git docker.io -y
+```
+然后下载单节点kubernetes部署程序：
+```
+$ cd /opt
+$ git clone https://github.com/coreos/coreos-kubernetes.git
+$ cd coreos-kubernetes/single-node/
+```
+修改配置文件Vagrantfile，将NODE_ID修改为：10.10.250.190。而宿主机的IP是10.10.250.199，这样宿主机与虚拟机可以互相通信。
+```
+$ vagrant up
+$ vagrant ssh
+Last login: Thu Feb  9 06:24:30 UTC 2017 from 10.0.2.2 on ssh
+Container Linux by CoreOS alpha (1313.0.0)
+Failed Units: 3
+  coreos-cloudinit-173822746.service
+  flannel-docker-opts.service
+  update-engine.service
+core@localhost ~ $
+```
+vagrant up命令启动一个基于box'coreos-alpha'的虚拟机。vagrant ssh登录新启动的虚拟机。可以通过命令查看服务失败的原因：
+```
+$ systemctl status flannel-docker-opts.service
+```
+根据提示，是从quay.io下载东西失败，翻墙后重新启动服务成功：
+```
+$ systemctl restart flannel-docker-opts.service
+```
+用命令```ip addr```查看各网卡ip：
+```
+eth0: 10.0.2.15
+eth1:10.10.250.190
+flannel:10.2.67.0/32
+```
+返回宿主机操作系统(ubuntu16)，安装kubectl：
+```
+$ cd /opt
+$ curl -O https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl
+$ chmod +x kubectl
+$ mv kubectl /usr/local/bin/kubectl
+```
+配置kubectl：
+```
+$ export KUBECONFIG="${KUBECONFIG}:$(pwd)/kubeconfig"
+$ kubectl config use-context vagrant-single
+$ kubectl config set-cluster vagrant-single-cluster --server=https://10.10.250.190:443 --certificate-authority=${PWD}/ssl/ca.pem
+$ kubectl config set-credentials vagrant-single-admin --certificate-authority=${PWD}/ssl/ca.pem --client-key=${PWD}/ssl/admin-key.pem --client-certificate=${PWD}/ssl/admin.pem
+$ kubectl config set-context vagrant-single --cluster=vagrant-single-cluster --user=vagrant-single-admin
+$ kubectl config use-context vagrant-single
+```
