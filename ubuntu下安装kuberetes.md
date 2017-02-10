@@ -1,5 +1,6 @@
+有多种方式部署kubernetes，如手工部署、docker部署、vagrant虚拟机部署。
+# 手工部署kubernetes
 要安装kubernetes要首先安装etcd(做服务发现)和flannel(虚拟网络)。
-
 ### 安装etcd
 ```
 $ apt-get update
@@ -63,52 +64,15 @@ wbwang/hyperkube-${ARCH}:${K8S_VERSION}
 LATEST_STABLE_K8S_VERSION=$(curl -sSL "https://storage.googleapis.com/kubernetes-release/release/stable.txt") 修改为：
 LATEST_STABLE_K8S_VERSION=v1.5.2
 ```
-设置环境变量，编辑一个env.sh：
-```
-export K8S_VERSION=v1.5.2
-export ETCD_VERSION=3.0.4
-export FLANNEL_VERSION=0.6.1
-#export FLANNEL_IPMASQ=true
-#export FLANNEL_NETWORK='10.1.0.0/16'
-#export FLANNEL_BACKEND=udp
-#export RESTART_POLICY=unless-stopped
-#export MASTER_IP=192.168.1.140
-#export ARCH=amd64
-#export NET_INTERFACE=enp0s8
-```
-执行env.sh:
-```
-$ . env.sh
-$ env
-```
+
 下载部署脚本：
 ```
-$ git clone https://github.com/kubernetes/kube-deploy
+$ cd /opt
+$ git clone https://github.com/wbwangk/kube-deploy
 $ cd kube-deploy/docker-multinode
 $ ./master.sh
 ```
-注意：执行master.sh前需要先执行前面的env.sh，否则出错。  
-根据master.sh执行时的屏幕提示发现需要几个docker镜像：
-```
-gcr.io/google_containers/etcd-amd64:2.2.5
-quay.io/coreos/flannel:0.7.0-amd64
-```
-由于GFW的原因，上述镜像不能正常pull下来。好在可以在[阿里镜像库](https://cs.console.aliyun.com/#/repo)中可以找到类似的：
-```
-docker pull registry.cn-hangzhou.aliyuncs.com/kubernetes/etcd-amd64:2.2.5
-docker pull registry.cn-hangzhou.aliyuncs.com/mykubernetes/flannel:v0.7.0-amd64
-docker tag registry.cn-hangzhou.aliyuncs.com/kubernetes/etcd-amd64:2.2.5 \
-gcr.io/google_containers/etcd-amd64:2.2.5
-docker tag registry.cn-hangzhou.aliyuncs.com/mykubernetes/flannel:v0.7.0-amd64 \
-quay.io/coreos/flannel:0.7.0-amd64
-docker tag registry.cn-hangzhou.aliyuncs.com/kubernetes/etcd-amd64:2.2.5 \
-kubernetes/etcd-amd64:latest
-docker tag  registry.cn-hangzhou.aliyuncs.com/mykubernetes/flannel:v0.7.0-amd64 \
-mykubernetes/flannel:latest
-docker tag registry.cn-hangzhou.aliyuncs.com/kubernetes/etcd-amd64:2.2.5 \
-google_containers/etcd-amd64:2.2.5
-```
-## vagrant部署单节点kubernetes
+# vagrant部署单节点kubernetes
 之前部署vagrant(如[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/virtualbox-vagrant-gitbash%E5%85%A5%E9%97%A8))都是在windows下，而利用windows下按[这个文档](https://coreos.com/kubernetes/docs/latest/kubernetes-on-vagrant-single.ubuntu)kubernetes，碰到各种问题，无法解决。  
 后来，尝试在纯linux(ubuntu)下部署。找了一台上网本，升级到ubuntu16。这台机器下称宿主机。首先在宿主机下安装vagrant和virtualbox，比windows下简单：
 ```
