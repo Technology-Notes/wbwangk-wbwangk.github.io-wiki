@@ -43,10 +43,13 @@ wbwang/etcd-amd64:3.0.4
 wbwang/flannel:v0.6.1-amd64
 wbwang/hyperkube-amd64:v1.5.2
 ```
-为了提高脚本运行速度，可以把上述3个镜像手工拉下来，如：
+为了提高脚本运行速度，可以把上述3个镜像手工拉下来:
 ```
 docker pull wbwang/etcd-amd64:3.0.4
+docker pull wbwang/flannel:v0.6.1-amd64
+docker pull wbwang/hyperkube-amd64:v1.5.2
 ```
+master节点需要拉取3个镜像，而worker节点只需要后两个。
 ### 修改common.sh
 ```
 gcr.io/google_containers/etcd-${ARCH}:${ETCD_VERSION} 修改为：
