@@ -67,13 +67,38 @@ wbwang/hyperkube-${ARCH}:${K8S_VERSION}
 LATEST_STABLE_K8S_VERSION=$(curl -sSL "https://storage.googleapis.com/kubernetes-release/release/stable.txt") 修改为：
 LATEST_STABLE_K8S_VERSION=v1.5.2
 ```
-
+### 部署master节点
+利用vagrant启动master节点(ip 192.168.1.140)：
+```
+$ vagrant up k8s0
+$ vagrant ssh k8s0
+```
 下载部署脚本：
 ```
 $ cd /opt
 $ git clone https://github.com/wbwangk/kube-deploy
 $ cd kube-deploy/docker-multinode
+$ export MASTER_IP=192.168.1.140
 $ ./master.sh
+```
+### 部署worker节点
+利用vagrant启动worker节点(ip 192.168.1.141)：
+```
+$ vagrant up k8s1
+$ vagrant ssh k8s1
+```
+测试一下主节点的etcd是否正常工作：
+```
+$ export MASTER_IP=192.168.1.140
+$ curl $MASTER_IP:2379/version
+{"etcdserver":"3.0.4","etcdcluster":"3.0.0"}
+```
+下载部署脚本：
+```
+$ cd /opt
+$ git clone https://github.com/wbwangk/kube-deploy
+$ cd kube-deploy/docker-multinode
+$ ./worker.sh
 ```
 # vagrant部署单节点kubernetes
 之前部署vagrant(如[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/virtualbox-vagrant-gitbash%E5%85%A5%E9%97%A8))都是在windows下，而利用windows下按[这个文档](https://coreos.com/kubernetes/docs/latest/kubernetes-on-vagrant-single.ubuntu)kubernetes，碰到各种问题，无法解决。  
