@@ -7,6 +7,7 @@ $ apt-get install etcd
 $ etcd  (执行etcd，它会监听2379和2380)
 $ etcdctl --version
 etcdctl version 2.25
+$ curl -L http://127.0.0.1:2379/version
 $ netstat -an | grep 2380(或2379)  (可以看到etcd已经监听2379和2380)
 ```
 按etcd的官方[README](https://github.com/coreos/etcd)来测试一下etcd：
