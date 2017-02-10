@@ -34,7 +34,7 @@ $ mkdir /opt/k8s && cd /opt/k8s
 $ tar -xzf kubernetes.tar.gz
 ```
 # 以docker方式安装kubernetes
-以docker安装kubernetes的库是https://github.com/kubernetes/kube-deploy，这个库中使用了gcr.io和quay.io中docker镜像，国内用需要翻墙。将库/kubernetes/kube-deploy fork到/wbwang/kube-deploy，并对docker-multinode目录下的common.sh进行了修改。  
+以docker安装kubernetes的库是```https://github.com/kubernetes/kube-deploy```，这个库中使用了gcr.io和quay.io中docker镜像，国内用需要翻墙。将库/kubernetes/kube-deploy fork到/wbwang/kube-deploy，并对docker-multinode目录下的common.sh进行了修改。  
 ### 创建3个docker镜像：etcd,flannel和hyperkube
 在docker-multinode目录下创建了3个目录，分别是etcd-amd64,flannel,hyperkube-amd64。在目录下分别创建Dockerfile。  
 在hub.docker.com下创建3个autobuild库，分别对应到上述3个Dockerfile：
