@@ -32,18 +32,48 @@ $ mkdir /opt/k8s && cd /opt/k8s
 $ tar -xzf kubernetes.tar.gz
 ```
 # 以docker方式安装kubernetes
+以docker安装kubernetes的库是https://github.com/kubernetes/kube-deploy，这个库中使用了gcr.io和quay.io中docker镜像，国内用需要翻墙。将库/kubernetes/kube-deploy fork到/wbwang/kube-deploy，并对docker-multinode目录下的common.sh进行了修改。  
+### 创建3个docker镜像：etcd,flannel和hyperkube
+在docker-multinode目录下创建了3个目录，分别是etcd-amd64,flannel,hyperkube-amd64。在目录下分别创建Dockerfile。  
+在hub.docker.com下创建3个autobuild库，分别对应到上述3个Dockerfile：
+```
+wbwang/etcd-amd64:3.0.4
+wbwang/flannel:v0.6.1-amd64
+wbwang/hyperkube-amd64:v1.5.2
+```
+为了提高脚本运行速度，可以把上述3个镜像手工拉下来，如：
+```
+docker pull wbwang/etcd-amd64:3.0.4
+```
+### 修改common.sh
+```
+gcr.io/google_containers/etcd-${ARCH}:${ETCD_VERSION} 修改为：
+wbwang/etcd-${ARCH}:${ETCD_VERSION} 
+```
+```
+quay.io/coreos/flannel:${FLANNEL_VERSION}-${ARCH} 修改为：
+wbwang/flannel:${FLANNEL_VERSION}-${ARCH}  
+```
+```
+gcr.io/google_containers/hyperkube-${ARCH}:${K8S_VERSION} 修改为：
+wbwang/hyperkube-${ARCH}:${K8S_VERSION}
+```
+```
+LATEST_STABLE_K8S_VERSION=$(curl -sSL "https://storage.googleapis.com/kubernetes-release/release/stable.txt") 修改为：
+LATEST_STABLE_K8S_VERSION=v1.5.2
+```
 设置环境变量，编辑一个env.sh：
 ```
 export K8S_VERSION=v1.5.2
-export ETCD_VERSION=2.2.5
-export FLANNEL_VERSION=0.7.0
-export FLANNEL_IPMASQ=true
-export FLANNEL_NETWORK='10.1.0.0/16'
-export FLANNEL_BACKEND=udp
-export RESTART_POLICY=unless-stopped
-export MASTER_IP=192.168.1.140
-export ARCH=amd64
-export NET_INTERFACE=enp0s8
+export ETCD_VERSION=3.0.4
+export FLANNEL_VERSION=0.6.1
+#export FLANNEL_IPMASQ=true
+#export FLANNEL_NETWORK='10.1.0.0/16'
+#export FLANNEL_BACKEND=udp
+#export RESTART_POLICY=unless-stopped
+#export MASTER_IP=192.168.1.140
+#export ARCH=amd64
+#export NET_INTERFACE=enp0s8
 ```
 执行env.sh:
 ```
