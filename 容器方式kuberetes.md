@@ -29,9 +29,12 @@ wbwang/hyperkube-amd64:v1.5.2
 ```
 为了提高脚本运行速度，可以把上述3个镜像手工拉下来:
 ```
-docker pull wbwang/etcd-amd64:3.0.4
-docker pull wbwang/flannel:v0.6.1-amd64
-docker pull wbwang/hyperkube-amd64:v1.5.2
+$ docker pull wbwang/etcd-amd64:3.0.4
+$ docker pull wbwang/flannel:v0.6.1-amd64
+$ docker pull wbwang/hyperkube-amd64:v1.5.2
+$ docker tag wbwang/etcd-amd64:3.0.4 gcr.io/google_containers/etcd-amd64:3.0.4
+$ docker tag wbwang/flannel:v0.6.1-amd64 quay.io/coreos/flannel:v0.6.1-amd64
+$ docker tag wbwang/hyperkube-amd64:v1.5.2 gcr.io/google_containers/hyperkube-amd64:v1.5.2
 ```
 master节点需要拉取3个镜像，而worker节点只需要后两个。
 ### 修改common.sh
@@ -64,10 +67,7 @@ $ git clone https://github.com/wbwangk/kube-deploy
 $ cd kube-deploy/docker-multinode
 $ ./master.sh
 ```
-手工pull上面提到的3个镜像可以提高master.sh执行成功的概率。最好添加原始镜像的tag：
-```
-$ docker tag wbwang/hyperkube-amd64:v1.5.2 gcr.io/google_containers/hyperkube-amd64:v1.5.2
-```
+手工pull上面提到的3个镜像并添加tag可以提高master.sh执行成功的概率。
 master.sh执行过程中可能会提示：
 ```
 Do you want to clean /var/lib/kubelet? [Y/n]
