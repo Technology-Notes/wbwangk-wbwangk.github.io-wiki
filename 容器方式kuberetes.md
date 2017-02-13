@@ -129,3 +129,9 @@ $ wget https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linu
 $ chmod +x kubectl
 $ mv kubectl /usr/local/bin/
 ```
+等主节点的所有容器都启动后：
+```
+$ kubectl get pod
+No resources found.
+```
+虽然提示没有发现资源，但kubectl要访问localhost:8080端口（即apiserver的监听端口）获取数据，这种提示说明apiserver已经启动了。
