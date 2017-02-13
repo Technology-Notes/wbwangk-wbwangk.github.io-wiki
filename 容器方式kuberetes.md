@@ -78,6 +78,18 @@ Do you want to clean /var/lib/kubelet? [Y/n]
 ```
 +++ [0213 00:04:26] Done. It may take about a minute before apiserver is up.
 ```
+等主节点的所有容器起来后（可能需要翻墙），执行docker ps：
+```
+CONTAINER ID        IMAGE                                             COMMAND                  CREATED             STATUS              PORTS               NAMES
+8295aab03d15        gcr.io/google_containers/hyperkube-amd64:v1.5.2   "/copy-addons.sh mult"   3 minutes ago       Up 3 minutes                            k8s_kube-addon-manager-data.21c62009_kube-addon-manager-10.0.2.15_kube-system_92f3be110d19c44f081ae988b5d212e5_9efd60c0
+0781c87d0be8        gcr.io/google_containers/hyperkube-amd64:v1.5.2   "/hyperkube apiserver"   4 minutes ago       Up 4 minutes                            k8s_apiserver.f8f4c740_k8s-master-10.0.2.15_kube-system_641e44c2313a0e2de04ba5de4e9414be_298cce5e
+b20415580373        gcr.io/google_containers/hyperkube-amd64:v1.5.2   "/setup-files.sh IP:1"   4 minutes ago       Up 4 minutes                            k8s_setup.26d03c3a_k8s-master-10.0.2.15_kube-system_641e44c2313a0e2de04ba5de4e9414be_0fa806a7
+892314bda257        gcr.io/google_containers/hyperkube-amd64:v1.5.2   "/hyperkube scheduler"   4 minutes ago       Up 4 minutes                            k8s_scheduler.c4a803ee_k8s-master-10.0.2.15_kube-system_641e44c2313a0e2de04ba5de4e9414be_330ccdae
+db7d5552163a        gcr.io/google_containers/hyperkube-amd64:v1.5.2   "/hyperkube controlle"   4 minutes ago       Up 4 minutes                            k8s_controller-manager.1db66019_k8s-master-10.0.2.15_kube-system_641e44c2313a0e2de04ba5de4e9414be_9b0ea747
+8bebc2ee70a9        gcr.io/google_containers/pause-amd64:3.0          "/pause"                 31 minutes ago      Up 31 minutes                           k8s_POD.d8dbe16c_kube-addon-manager-10.0.2.15_kube-system_92f3be110d19c44f081ae988b5d212e5_6c1ec6cd
+a8ee8be1147a        gcr.io/google_containers/pause-amd64:3.0          "/pause"                 31 minutes ago      Up 31 minutes                           k8s_POD.d8dbe16c_k8s-master-10.0.2.15_kube-system_641e44c2313a0e2de04ba5de4e9414be_495c287c
+1d970f2b00f4        wbwang/hyperkube-amd64:v1.5.2                     "/hyperkube kubelet -"   31 minutes ago      Up 31 minutes                           kube_kubelet_a6663
+```
 ### 部署worker节点
 利用vagrant启动worker节点(ip 192.168.1.141)：
 ```
@@ -106,8 +118,11 @@ $ apt install docker.io
 ```
 手工pull用到的两个docker镜像可以提高worker.sh运行成功的概率。实测手工pull镜像后，可以不用翻墙就成功运行worker.sh。  
 注意运行worker.sh前，需要设置好MASTER_IP，并用curl测试主节点的etcd能否链接上。  
-
-利用同样的办法，再启动k8
+worker.sh执行成功后会提示：
+```
++++ [0213 00:07:15] Done. After about a minute the node should be ready.
+```
+利用同样的办法，再启动k82节点(192.168.1.142)。
 ### 安装kubectl
 ```
 $ wget https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl
