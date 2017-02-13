@@ -27,16 +27,6 @@ wbwang/etcd-amd64:3.0.4
 wbwang/flannel:v0.6.1-amd64
 wbwang/hyperkube-amd64:v1.5.2
 ```
-为了提高脚本运行速度，可以把上述3个镜像手工拉下来:
-```
-$ docker pull wbwang/etcd-amd64:3.0.4
-$ docker pull wbwang/flannel:v0.6.1-amd64
-$ docker pull wbwang/hyperkube-amd64:v1.5.2
-$ docker tag wbwang/etcd-amd64:3.0.4 gcr.io/google_containers/etcd-amd64:3.0.4
-$ docker tag wbwang/flannel:v0.6.1-amd64 quay.io/coreos/flannel:v0.6.1-amd64
-$ docker tag wbwang/hyperkube-amd64:v1.5.2 gcr.io/google_containers/hyperkube-amd64:v1.5.2
-```
-master节点需要拉取3个镜像，而worker节点只需要后两个。
 ### 修改common.sh
 ```
 gcr.io/google_containers/etcd-${ARCH}:${ETCD_VERSION} 修改为：
@@ -65,9 +55,9 @@ $ vagrant ssh k8s0
 $ cd /opt
 $ git clone https://github.com/wbwangk/kube-deploy
 $ cd kube-deploy/docker-multinode
+$ export IP_ADDRESS=192.168.1.140
 $ ./master.sh
 ```
-手工pull上面提到的3个镜像并添加tag可以提高master.sh执行成功的概率。
 master.sh执行过程中可能会提示：
 ```
 Do you want to clean /var/lib/kubelet? [Y/n]
@@ -99,7 +89,7 @@ a8ee8be1147a        gcr.io/google_containers/pause-amd64:3.0          "/pause"  
 $ vagrant up k8s1
 $ vagrant ssh k8s1
 ```
-测试一下主节点的etcd是否正常工作：
+（可选）测试一下主节点的etcd是否正常工作：
 ```
 $ export MASTER_IP=192.168.1.140
 $ curl $MASTER_IP:2379/version
@@ -113,6 +103,7 @@ $ cd kube-deploy/docker-multinode
 $ docker pull wbwang/flannel:v0.6.1-amd64
 $ docker pull wbwang/hyperkube-amd64:v1.5.2
 $ export MASTER_IP=192.168.1.140
+$ export IP_ADDRESS=192.168.1.141
 $ ./worker.sh
 ```
 如果节点上未安装docker引擎,可以用下列命令安装:
@@ -125,7 +116,27 @@ worker.sh执行成功后会提示：
 ```
 +++ [0213 00:07:15] Done. After about a minute the node should be ready.
 ```
-利用同样的办法，再启动k82节点(192.168.1.142)。
+利用同样的办法，再启动k8s2节点(192.168.1.142)和k8s3节点。
+### 环境变量的总结
+k8s0(master节点)：
+```
+$ export IP_ADDRESS=192.168.1.140
+```
+k8s1(woker节点1)：
+```
+$ export MASTER_IP=192.168.1.140
+$ export IP_ADDRESS=192.168.1.141
+```
+k8s2(woker节点2)：
+```
+$ export MASTER_IP=192.168.1.140
+$ export IP_ADDRESS=192.168.1.142
+```
+k8s3(woker节点3)：
+```
+$ export MASTER_IP=192.168.1.140
+$ export IP_ADDRESS=192.168.1.143
+```
 ### 安装kubectl
 ```
 $ wget https://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl
@@ -134,7 +145,11 @@ $ mv kubectl /usr/local/bin/
 ```
 等主节点的所有容器都启动后：
 ```
-$ kubectl get pod
-No resources found.
+$ kubectl get nodes
+NAME            STATUS     AGE
+192.168.1.140   Ready      4m
+192.168.1.141   Ready      9m
+192.168.1.142   Ready      10m
+192.168.1.143   Ready      11m
 ```
-虽然提示没有发现资源，但kubectl要访问localhost:8080端口（即apiserver的监听端口）获取数据，这种提示说明apiserver已经启动了。
+kubectl要访问localhost:8080端口（即apiserver的监听端口）获取数据，这种提示说明apiserver已经成功启动了。
