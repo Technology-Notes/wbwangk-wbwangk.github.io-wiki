@@ -64,7 +64,10 @@ $ git clone https://github.com/wbwangk/kube-deploy
 $ cd kube-deploy/docker-multinode
 $ ./master.sh
 ```
-手工pull上面提到的3个镜像可以提高master.sh执行成功的概率。
+手工pull上面提到的3个镜像可以提高master.sh执行成功的概率。最好添加原始镜像的tag：
+```
+$ docker tag wbwang/hyperkube-amd64:v1.5.2 gcr.io/google_containers/hyperkube-amd64:v1.5.2
+```
 master.sh执行过程中可能会提示：
 ```
 Do you want to clean /var/lib/kubelet? [Y/n]
