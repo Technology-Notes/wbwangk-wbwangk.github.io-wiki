@@ -111,8 +111,8 @@ $ docker push wbwang/nginx:2
 $ docker run -d -p 83:80 wbwang/nginx:2
 ```
 ####利用dockerhub自动构建
-1. 在github上建个库，库的根目录下建个叫Dockerfile的文件
-2. 登录hub.docker.com，在create下拉菜单中选择Create Automated Build，弹出页点选github
-3. 选择刚创建的库，保存
-4. 在Build Settings选项卡中点击Trigger按钮
-5. 在Build Details选项卡中等待构建成功
+ 1. 在github上建个库，库的根目录下建个叫Dockerfile的文件
+ 2. 登录hub.docker.com，在create下拉菜单中选择Create Automated Build，弹出页点选github
+ 3. 选择刚创建的库，保存
+ 4. 在Build Settings选项卡中点击Trigger按钮
+ 5. 在Build Details选项卡中等待构建成功
