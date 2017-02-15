@@ -53,18 +53,53 @@ $ systemctl status docker  或 service docker status
 ```
 $ docker run hello-world  (也可先执行docker pull hello-world)
 $ docker ps -a   (-a表示全部容器,包括停止的)
-$ docker logs <hello-world container id>
+$ docker logs <容器id>
 $ docker run -d -e HAHA='wbwang' busybox echo $HAHA   (-d 表示后台执行, 镜像id+空格之后是容器启动后执行的命令和参数)
 $ docker run -it busybox /bin/sh   (-it表示开启标准输入输出)
+$ docker stop <容器id> && docker rm <容器id>
 ```
 长任务往往执行网络服务：
 ```
 $ docker run -d -p 9000:9000 -v "/var/run/docker.sock:/var/run/docker.sock" portainer/portainer
 $ docker run -d -p 8080:8080 swaggerapi/swagger-ui
+$ docker exec -it <container id> /bin/sh
 ```
 查看容器日志文件路径：
 ```
 docker inspect --format='{{.LogPath}}' containername
+```
+### docker build
+ 1. 利用命令行构建镜像：
+```
+$ docker run -d -p 80:80 nginx
+$ curl localhost:80
+$ docker exec -it <nginx的容器id> /bin/sh
+# apt-get update && apt-get install vim  (然后用vim修改一下/usr/share/nginx/html/index.html)
+# exit
+$ docker commit <nginx的容器id> nginx:test
+$ docker run -d -p 81:80 nginx:test
+$ curl localhost:81
+```
+ 2. 利用Dockerfile构建镜像
+新建一个目录，在目录下创建一个叫Dockerfile的文本文件：
+```
+FROM nginx
+COPY index.html /usr/share/nginx/html/index.html
+```
+创建一个index.html:
+```
+<!DOCTYPE html>
+<html>
+<body>
+<h1>======= Welcome to nginx!  =======</h1>
+<p>haha</p>
+</body>
+</html>
+```
+执行构建(命令最后有个点)：
+```
+$ docker build -t nginx:2 .
+$ docker run -d -p 82:80 nginx:2
 ```
 运行一个容器
 浏览docker hub
