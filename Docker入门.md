@@ -1,4 +1,4 @@
-### vagrant启动linux VM
+## vagrant启动linux VM
 Vagrantfile：
 ```
 Vagrant.configure("2") do |config|
@@ -31,7 +31,7 @@ end
 $ vagrant up docker0 docker1
 $ vagrant ssh docker0
 ```
-### 安装docker
+## 安装docker
 使用ubuntu默认源安装：
 ```
 $ apt install docker.io
@@ -48,8 +48,9 @@ $ sudo apt-get update
 $ sudo apt-get -y install docker-engine
 $ systemctl status docker  或 service docker status
 ```
-### docker run
-两种容器：短任务和长任务。短任务：
+## 运行docker容器
+两种容器：短任务和长任务。
+####短任务
 ```
 $ docker run hello-world  (也可先执行docker pull hello-world)
 $ docker ps -a   (-a表示全部容器,包括停止的)
@@ -58,6 +59,7 @@ $ docker run -d -e HAHA='wbwang' busybox echo $HAHA   (-d 表示后台执行, �
 $ docker run -it busybox /bin/sh   (-it表示开启标准输入输出)
 $ docker stop <容器id> && docker rm <容器id>
 ```
+#### 长任务
 长任务往往执行网络服务：
 ```
 $ docker run -d -p 9000:9000 -v "/var/run/docker.sock:/var/run/docker.sock" portainer/portainer
@@ -68,8 +70,8 @@ $ docker exec -it <container id> /bin/sh
 ```
 docker inspect --format='{{.LogPath}}' containername
 ```
-### docker build
- 1. 利用命令行构建镜像：
+## docker构建
+####利用命令行构建镜像
 ```
 $ docker run -d -p 80:80 nginx
 $ curl localhost:80
@@ -80,7 +82,7 @@ $ docker commit <nginx的容器id> nginx:test
 $ docker run -d -p 81:80 nginx:test
 $ curl localhost:81
 ```
- 2. 利用Dockerfile构建镜像
+####利用Dockerfile构建镜像
 新建一个目录，在目录下创建一个叫Dockerfile的文本文件：
 ```
 FROM nginx
@@ -101,8 +103,16 @@ COPY index.html /usr/share/nginx/html/index.html
 $ docker build -t nginx:2 .
 $ docker run -d -p 82:80 nginx:2
 ```
-运行一个容器
-浏览docker hub
-构建镜像并运行
-docker hub自动构建镜像
-push镜像到docker hub
+####镜像push到docker hub
+```
+$ docker login -u wbwang
+$ docker tag nginx:2 wbwang/nginx:2
+$ docker push wbwang/nginx:2
+$ docker run -d -p 83:80 wbwang/nginx:2
+```
+####利用dockerhub自动构建
+1. 在github上建个库，库的根目录下建个叫Dockerfile的文件
+2. 登录hub.docker.com，在create下拉菜单中选择Create Automated Build，弹出页点选github
+3. 选择刚创建的库，保存
+4. 在Build Settings选项卡中点击Trigger按钮
+5. 在Build Details选项卡中等待构建成功
