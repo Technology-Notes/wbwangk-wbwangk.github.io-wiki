@@ -71,6 +71,7 @@ $ docker exec -it <container id> /bin/sh
 docker inspect --format='{{.LogPath}}' containername
 ```
 ## docker构建
+可以本地构建，也可以使用Docker Hub的自动构建。本地构建，可以使用命令行构建，更多的使用Dockerfile构建。
 ####利用命令行构建镜像
 ```
 $ docker run -d -p 80:80 nginx
@@ -105,12 +106,14 @@ $ docker run -d -p 82:80 nginx:2
 ```
 ####镜像push到docker hub
 ```
-$ docker login -u wbwang
 $ docker tag nginx:2 wbwang/nginx:2
+$ docker images       (查看镜像列表)
+$ docker login -u wbwang    (登录Docker Hub)
 $ docker push wbwang/nginx:2
 $ docker run -d -p 83:80 wbwang/nginx:2
 ```
 ####利用dockerhub自动构建
+
  1. 在github上建个库，库的根目录下建个叫Dockerfile的文件
  2. 登录hub.docker.com，在create下拉菜单中选择Create Automated Build，弹出页点选github
  3. 选择刚创建的库，保存
