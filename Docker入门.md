@@ -1,5 +1,5 @@
 ## vagrant启动linux VM
-vagrant的入门参考《[virtualbox vagrant gitbash入门](virtualbox vagrant gitbash入门)》。
+vagrant的入门参考《[virtualbox vagrant gitbash入门](virtualbox vagrant gitbash入门)》。  
 新建一个docker文件夹，在文件夹下创建一个名为Vagrantfile的文本文件：
 ```
 Vagrant.configure("2") do |config|
