@@ -35,9 +35,9 @@ $ vagrant ssh docker0
 ## 安装docker
 **使用ubuntu默认源安装**：
 ```
-$ apt install docker.io
+$ apt-get install docker.io
 $ docker -v  （查看docker引擎版本）
-$ apt remove docker.io  (卸载docker)
+$ apt-get remove docker.io  (卸载docker)
 ```
 这种方式方便，但安装的docker版本略旧。
 
