@@ -33,11 +33,15 @@ $ vagrant up docker0 docker1
 $ vagrant ssh docker0
 ```
 ## 安装docker
-使用ubuntu默认源安装：
+**使用ubuntu默认源安装**：
 ```
 $ apt install docker.io
+$ docker -v  （查看docker引擎版本）
+$ apt remove docker.io  (卸载docker)
 ```
-使用docker官方源安装：
+这种方式方便，但安装的docker版本略旧。
+
+**使用docker官方源安装**：
 ```
 $ sudo apt-get install -y --no-install-recommends \
     apt-transport-https  ca-certificates \
@@ -47,8 +51,10 @@ $ sudo add-apt-repository "deb https://apt.dockerproject.org/repo/ \
        ubuntu-$(lsb_release -cs) main"
 $ sudo apt-get update
 $ sudo apt-get -y install docker-engine
+$ docker -v  (查看docker引擎版本)
 $ systemctl status docker  或 service docker status
 ```
+这种方式安装的docker版本是最新的，甚至可以选装测试版。docker官方文档地址：[docs.docker.com](https://docs.docker.com)(有时不翻墙很慢)。
 ## 运行docker容器
 两种容器：短任务和长任务。
 ####短任务
