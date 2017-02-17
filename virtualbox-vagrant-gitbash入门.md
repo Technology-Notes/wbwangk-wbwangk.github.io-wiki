@@ -19,30 +19,19 @@ $ vagrant ssh （进入虚拟机）
 可以手工将Vagrantfile修改为：
 ```
 Vagrant.configure("2") do |config|
-   config.vm.define :"wang1" do |os|
-      os.vm.box = "ubuntu/xenial64"
-      os.vm.network :private_network, ip: "192.168.1.130"
-      os.vm.hostname = "wang1"
-      os.vm.provider "virtualbox" do |v|
-          v.customize ["modifyvm", :id, "--memory", "1024"]
-          v.name = "wang1"
-          v.gui = false
-      end
-   end
-   config.vm.define :"wang2" do |os|
-      os.vm.box = "ubuntu/xenial64"
-      os.vm.network :private_network, ip: "192.168.1.131"
-      os.vm.hostname = "wang2"
-      os.vm.provider "virtualbox" do |v|
-          v.customize ["modifyvm", :id, "--memory", "1024"]
-          v.name = "wang2"
-          v.gui = false
-      end
-   end
+        config.vm.box = "ubuntu/xenial64"
+        config.vm.define "Wang1" do |wang1|
+                wang1.vm.network "private_network", ip: "192.168.1.110"
+                wang1.vm.hostname = "wang1"
+        end
+        config.vm.define "wang2" do |wang2|
+                wang2.vm.network "private_network", ip: "192.168.1.111"
+                wang2.vm.hostname = "wang2"
+        end
 end
 ```
 上面的这个配置文件支持两个虚机，而且设定了两个虚机的ip、主机名、内存大小等。  
-4.进入webb1  
+4.进入wang1  
 ```
 $ vagrant up wang1 wang2 （启动两个虚机）
 $ vagrant ssh wang1  （登录wang1）
