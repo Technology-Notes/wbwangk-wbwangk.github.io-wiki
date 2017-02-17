@@ -3,28 +3,15 @@ vagrant的入门参考《[virtualbox vagrant gitbash入门](virtualbox vagrant g
 新建一个docker文件夹，在文件夹下创建一个名为Vagrantfile的文本文件：
 ```
 Vagrant.configure("2") do |config|
-   config.vm.define :"docker0" do |os|
-      config.vm.box = "ubuntu/xenial64"
-      config.vm.network "private_network", ip: "192.168.1.160"
-      os.vm.hostname = "docker0"
-      os.vm.synced_folder ".", "/vagrant", disabled: true
-      os.vm.provider "virtualbox" do |v|
-         v.customize ["modifyvm", :id, "--memory", "1024"]
-         v.name = "docker0"
-         v.gui = false
-      end
-   end
-   config.vm.define :"docker1" do |os|
-      config.vm.box = "ubuntu/xenial64"
-      config.vm.network "private_network", ip: "192.168.1.161"
-      os.vm.hostname = "docker1"
-      os.vm.synced_folder ".", "/vagrant", disabled: true
-      os.vm.provider "virtualbox" do |v|
-         v.customize ["modifyvm", :id, "--memory", "1024"]
-         v.name = "docker1"
-         v.gui = false
-      end
-   end
+        config.vm.box = "ubuntu/xenial64"
+        config.vm.define "node0" do |node0|
+                node0.vm.network "private_network", ip: "192.168.1.110"
+                node0.vm.hostname = "node0"
+        end
+        config.vm.define "node1" do |node1|
+                node1.vm.network "private_network", ip: "192.168.1.111"
+                node1.vm.hostname = "node1"
+        end
 end
 ```
 在docker文件夹下利用git bash启动虚拟机：
