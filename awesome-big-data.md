@@ -17,7 +17,7 @@ http://chartd.co/
 视网膜级折线图转化为一个图片
 
 
-## [data engineering](https://github.com/igorbarinov/awesome-data-engineering)
+## [数据工程](https://github.com/igorbarinov/awesome-data-engineering)
 ### Charts and Dashboards
 http://www.zingchart.com/
 太多的图表类型
