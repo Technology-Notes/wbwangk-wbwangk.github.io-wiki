@@ -16,3 +16,29 @@ https://github.com/airbnb/superset
 http://chartd.co/
 视网膜级折线图转化为一个图片
 
+
+## https://github.com/igorbarinov/awesome-data-engineering
+### Charts and Dashboards
+http://www.zingchart.com/
+太多的图表类型
+
+http://smoothiecharts.org/
+流式线图，监控用
+
+https://github.com/plotly/dash
+python实现的交互式应用,使用了socket.io
+
+### Workflow
+https://github.com/spotify/luigi
+链接批量任务,带界面
+
+### ELK Elastic Logstash Kibana
+https://github.com/pblittle/docker-logstash
+一个比较完善的logstash docker镜像,支持从网上某URL下载配置文件。
+
+### docker
+https://github.com/ClusterHQ/flocker
+跨节点同步docker卷
+
+https://github.com/weaveworks/weave
+跨节点跨数据中心的虚拟网络
