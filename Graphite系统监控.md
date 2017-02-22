@@ -1,0 +1,2 @@
+###Graphite系统监控
+Graphite 是一个Python写的web应用，采用django框架，Graphite用来进行收集服务器所有的及时状态，用户请求信息，Memcached命中率，RabbitMQ消息服务器的状态，Unix操作系统的负载状态，Graphite服务器大约每分钟需要有4800次更新操作，Graphite采用简单的文本协议和绘图功能可以方便地使用在任何操作系统上。
