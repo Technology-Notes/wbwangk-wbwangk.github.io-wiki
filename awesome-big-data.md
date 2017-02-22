@@ -46,4 +46,13 @@ https://github.com/weaveworks/weave
 ## 数据集
 ### 即时
 https://github.com/Interana/eventsim
-模拟web事件，java8，scala
+模拟web点击事件，依赖java8，scala实现，生成json格式的用户点击数据
+
+[reddit](https://www.reddit.com/r/datasets/comments/3mk1vg/realtime_data_is_available_including_comments/)
+一个云服务，生成服务器推送的SSE事件流（Content-Type:text/event-stream）
+
+## 监控
+https://github.com/prometheus/prometheus
+监控系统和时间序列数据库
+
+![](http://xyz.insightdataengineering.com/blog/pipeline_map.html)
