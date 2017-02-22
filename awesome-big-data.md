@@ -1,3 +1,15 @@
+## BI
+redash.io
+开源商业智能平台，展现的样子土。
+安装在share2：使用了[provisioning script](https://raw.githubusercontent.com/getredash/redash/master/setup/ubuntu/bootstrap.sh)脚本安装，但不要直接git clone到/opt目录下，因为bootstrop脚本要自己创建/opt/redash/目录/。自动安装了nginx。
+
+saiku
+开源的OLAP浏览器
+
+spagobi
+安装在share2:/usr/webb/：从github库的release页面下载二进制包。解压后将bin和database目录下的*.sh脚本文件chmod为可执行。先安装了opeenjdk-8-jdk。
+
+
 https://github.com/samizdatco/arbor
 js库,图形可视化, 多节点的网状图,动画,自动调整形状
 
@@ -17,7 +29,7 @@ http://chartd.co/
 视网膜级折线图转化为一个图片
 
 
-## [数据工程](https://github.com/igorbarinov/awesome-data-engineering)
+# [数据工程](https://github.com/igorbarinov/awesome-data-engineering)
 ### Charts and Dashboards
 http://www.zingchart.com/
 太多的图表类型
@@ -55,4 +67,4 @@ https://github.com/Interana/eventsim
 https://github.com/prometheus/prometheus
 监控系统和时间序列数据库
 
-![](http://xyz.insightdataengineering.com/blog/pipeline_map.html)
+[数据工程生态系统](http://xyz.insightdataengineering.com/blog/pipeline_map.html)
