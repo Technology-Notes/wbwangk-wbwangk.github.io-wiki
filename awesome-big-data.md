@@ -7,7 +7,7 @@ saiku
 开源的OLAP浏览器
 
 spagobi
-安装在share2:/usr/webb/：从github库的release页面下载二进制包。解压后将bin和database目录下的*.sh脚本文件chmod为可执行。先安装了opeenjdk-8-jdk。
+安装在share2:/usr/webb/：从github库的release页面下载二进制包。解压后将bin和database目录下的*.sh脚本文件chmod为可执行。先安装了opeenjdk-8-jdk。无法正常启动。自己制作了一个docker镜像wbwang/spagobi,在share1上pull。
 
 
 https://github.com/samizdatco/arbor
