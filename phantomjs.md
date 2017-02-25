@@ -1,1 +1,0 @@
-phantomjs可以解析网页及执行网页中的js。phantomjs可生成网页截图。
