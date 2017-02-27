@@ -78,3 +78,17 @@ subType       |          含义
 1110          |          QoS CF‐Poll (未发送数据)
 1111          |          QoS CF‐Ack+CF‐Poll （未发送数据)
 
+## packetsender
+windows版:https://github.com/dannagle/PacketSender/releases/download/v5.3.1/PacketSender_v5_3_1_2017-02-21.exe
+
+#### 在linux下发送udp请求
+如果往本地UDP端口發送數據，那麼可以使用以下命令：
+```
+echo “hello” > /dev/udp/192.168.1.81/5060
+```
+意思是往本地192.168.1.81的5060端口發送數據包hello。
+
+如果往遠程UDP端口發送數據，那麼可以使用以下命令：
+```
+echo “hello” | socat - udp4-datagram:10.10.11.86:80
+```
