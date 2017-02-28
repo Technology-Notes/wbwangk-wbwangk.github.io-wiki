@@ -1,4 +1,6 @@
-插入TZ006到pc，自动安装驱动失败。
+本测试针对中科爱讯的wifi探针TZ001。
+
+插入TZ001到pc，自动安装驱动失败。
 安装usb驱动:
 CP210xVCPInstaller_x64.exe，安装窗口提示：
 Welcome to the CP201X USB to UART Bridge Driver Installer
@@ -82,6 +84,7 @@ subType       |          含义
 windows版:https://github.com/dannagle/PacketSender/releases/download/v5.3.1/PacketSender_v5_3_1_2017-02-21.exe
 ![](wbwangk.github.io/images/packetsender.png)
 利用这个工具可以发送udp请求，用于调试。
+
 #### 在linux下发送udp请求
 如果往本地UDP端口發送數據，那麼可以使用以下命令：
 ```
