@@ -80,17 +80,19 @@ subType       |          含义
 
 ## packetsender
 windows版:https://github.com/dannagle/PacketSender/releases/download/v5.3.1/PacketSender_v5_3_1_2017-02-21.exe
-
+![](wbwangk.github.io/images/packetsender.png)
+利用这个工具可以发送udp请求，用于调试。
 #### 在linux下发送udp请求
 如果往本地UDP端口發送數據，那麼可以使用以下命令：
 ```
-echo “hello” > /dev/udp/192.168.1.81/5060
+echo “hello” > /dev/udp/10.10.11.86/9002
 ```
 意思是往本地192.168.1.81的5060端口發送數據包hello。
 
 如果往遠程UDP端口發送數據，那麼可以使用以下命令：
 ```
-echo “hello” | socat - udp4-datagram:10.10.11.86:80
+$ apt install socat
+$ echo “hello” | socat - udp4-datagram:10.10.11.86:9002
 ```
 ## java实现的udp server
 默认监听端口9002，如果要监听其他端口，如8888，可以这样执行：
@@ -156,3 +158,14 @@ public class Recv {
         }
 }                                        
 ```
+Recv.class会在屏幕上打印出收到的UDP消息：
+```
+$ java Recv
+hello webb 203 Feb 28, 2017 3:23:52 AM
+hello webb 203 Feb 28, 2017 3:23:58 AM
+“hello”
+ Feb 28, 2017 5:50:03 AM
+“hello”
+ Feb 28, 2017 5:50:49 AM
+```
+前两个消息是使用packetsender发出了，后两个消息是使用linux命令发出的。
