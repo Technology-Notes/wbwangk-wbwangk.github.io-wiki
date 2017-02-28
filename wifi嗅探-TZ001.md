@@ -81,9 +81,9 @@ subType       |          含义
 1111          |          QoS CF‐Ack+CF‐Poll （未发送数据)
 
 ## packetsender
-windows版:https://github.com/dannagle/PacketSender/releases/download/v5.3.1/PacketSender_v5_3_1_2017-02-21.exe
+windows版:的[下载地址](https://github.com/dannagle/PacketSender/releases/download/v5.3.1/PacketSender_v5_3_1_2017-02-21.exe)。利用这个工具可以发送udp请求，用于调试。下图是使用packet sender发送udp请求的示范：
 ![](https://github.com/wbwangk/wbwangk.github.io/blob/master/images/packetsender.png?raw=true)
-利用这个工具可以发送udp请求，用于调试。
+
 
 #### 在linux下发送udp请求
 如果往本地UDP端口發送數據，那麼可以使用以下命令：
