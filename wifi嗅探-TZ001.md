@@ -82,7 +82,7 @@ subType       |          含义
 
 ## packetsender
 windows版:https://github.com/dannagle/PacketSender/releases/download/v5.3.1/PacketSender_v5_3_1_2017-02-21.exe
-![](wbwangk.github.io/images/packetsender.png)
+![](https://github.com/wbwangk/wbwangk.github.io/blob/master/images/packetsender.png?raw=true)
 利用这个工具可以发送udp请求，用于调试。
 
 #### 在linux下发送udp请求
