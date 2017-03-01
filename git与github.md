@@ -15,13 +15,13 @@ $ cat ~/.ssh/id_rsa.pub
 ```
 $ mkdir /opt/git-webb && cd /opt/git-webb
 $ git init
-$ git config --global user.email "javacup00@163.com"
+$ git config --global user.email "javacup00@163.com"    （这两个git config如果不执行下面的git remote add会报错）
 $ git config --global user.name "wbwangk"
-$ git remote add git@github.com:wbwangk/git-webb.git
+$ git remote add origin git@github.com:wbwangk/git-webb.git  (上面新建的库git-webb在本地添加为orgin，象别名或简称)
 $ git pull origin master
 $ touch t.txt   (创建一个叫t.txt的空文件)
 $ git add t.txt
-$ git commit -m "add t.txt"
-$ git push -u orgin master
+$ git commit -m "add t.txt"   （提交到本地库）
+$ git push -u orgin master     （推送到远程库）
 ```
 可以用浏览器到github.com/wbwangk/git-webb库下查看，发现增加了一个t.txt文件。
