@@ -80,6 +80,9 @@ subType       |          含义
 1110          |          QoS CF‐Poll (未发送数据)
 1111          |          QoS CF‐Ack+CF‐Poll （未发送数据)
 
+## TZ006测试
+![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/tz006.png)
+
 ## packetsender
 windows版:的[下载地址](https://github.com/dannagle/PacketSender/releases/download/v5.3.1/PacketSender_v5_3_1_2017-02-21.exe)。利用这个工具可以发送udp请求，用于调试。下图是使用packet sender发送udp请求的示范：
 ![](https://github.com/wbwangk/wbwangk.github.io/blob/master/images/packetsender.png?raw=true)
