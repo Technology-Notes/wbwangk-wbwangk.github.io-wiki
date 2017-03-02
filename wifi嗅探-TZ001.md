@@ -21,7 +21,6 @@ Welcome to the CP201X USB to UART Bridge Driver Installer
 打开putty，在Session选项中：  
 connection type选Serial（默认SSH），Serial line输入COM5，Speed输入115200，Saved Sessions输入wifi-sniffer，点save按钮.
 
-(个人手机mate8的mac地址：58:2a:f7:2a:00:5f,hp笔记本mac：08:3e:8e:2f:d2:95)  
 点击open按钮，出现黑窗口显示：  
 ```
 28:01:00:00:40:4A|70:F9:6D:34:BD:51|01|09|11|-75
