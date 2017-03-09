@@ -115,3 +115,13 @@ ps的参数：
 -n ：port number， 用端口号来显示  
 -l ：listening，列出当前监听服务  
 -p ：program，列出服务程序的PID  
+
+## 更大的box
+上面提到的box ubuntu/xenial64默认的虚拟硬盘较小，只有10G，很多时候不大够用。现在发现一个更大的ubuntu box：bento/ubuntu-16.10。具体的操作如下：
+```
+$ vagrant box add bento/ubuntu-16.10
+$ mkdir temp && cd temp
+$ vagrant init bento/ubuntu-16.10
+$ vagrant up && vagrant ssh
+```
+这个box的官方地址是[https://github.com/chef/bento](https://github.com/chef/bento)。
