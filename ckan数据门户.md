@@ -10,3 +10,12 @@ https://github.com/ckan/ckan
 
 ckan官网？  
 ckan.org
+
+[ckan的docker安装](https://github.com/ckan/ckan/blob/4a3b375/doc/maintaining/installing/install-using-docker.rst)
+
+[另一个docker镜像](https://hub.docker.com/r/cygri/ckan/):
+docker run -d --rm --name db ckan/postgresql
+docker run -d --rm --name solr ckan/solr
+docker run -d -p 82:80 --link db:db --link solr:solr cygri/ckan:2.2.1
+
+
