@@ -55,6 +55,17 @@ webb-wang1是输出的镜像文件名。
          os.vm.box = "webb-wang1"
          (略)   
 ```
+### SSH
+ubuntu默认的ssh不支持root的远程登录，对于习惯使用root用户的人很不方便。当使用vagrant ssh登录虚机后：
+```
+$ sudo su -     (切换为root用户)
+$ passwd root    (为root用户创建口令)
+$ vi /etc/ssh/sshd_config     （改变ssh的默认设置PermitRootLogin为yes）
+  PermitRootLogin yes
+$ service sshd restat   (重启ssh服务)
+$ ssh root@localhost   （测试一下root ssh）
+```
+
 ### git bash入门
 打通了windows和linux，可以在windows文件系统下使用linux命令。  
 可以将文件在windows和linux之间用scp命令。为了演示scp先建个用户：
