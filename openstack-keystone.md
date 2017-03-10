@@ -186,5 +186,5 @@ curl http://controller:5000/v3/auth/tokens \
     一个网络访问地址，一般是个URL，通过它可以访问某个服务。
  - **region**  
     一个认证API的v3版实体，用于表示openstack部署的分布，如可以用地域表示。
- - **fernet**
+ - **fernet**  
     /etc/keystone/keystone.conf中配置的token默认provider
