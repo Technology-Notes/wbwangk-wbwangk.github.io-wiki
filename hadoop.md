@@ -18,7 +18,9 @@
  - Spark™: 一个针对hadoop数据的高速和通用计算引擎。Spark provides a simple and expressive programming model that supports a wide range of applications, including ETL, machine learning, stream processing, and graph computation.  
  - Tez™: 一个通用的数据流编程框架。构建在YARN之上，which provides a powerful and flexible engine to execute an arbitrary DAG of tasks to process data for both batch and interactive use-cases. Tez is being adopted by Hive™, Pig™ and other frameworks in the Hadoop ecosystem, and also by other commercial software (e.g. ETL tools), to replace Hadoop™ MapReduce as the underlying execution engine.  
  - ZooKeeper™: 一个针对分布式应用的高性能协调服务。  
+
 ## 集群安装
+
 选择了stable版本2.7.3，下载了一个200多兆的tar.gz包。按要求，先装openjdk-8-jdk。  
 NameNode和ResourceManager各占一台机器，这是**主节点**。而其他服务根据负载情况，可能运行在专用硬件上，也可能运行在共享基础设施上。  
 集群中的剩余机器可充当 DataNode和NodeManager，这些是**从节点**。  
