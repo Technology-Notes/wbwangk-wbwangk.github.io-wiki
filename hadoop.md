@@ -22,6 +22,9 @@
 选择了stable版本2.7.3，下载了一个200多兆的tar.gz包。按要求，先装openjdk-8-jdk。  
 NameNode和ResourceManager各占一台机器，这是**主节点**。而其他服务根据负载情况，可能运行在专用硬件上，也可能运行在共享基础设施上。  
 集群中的剩余机器可充当 DataNode和NodeManager，这些是**从节点**。  
+使用```bento/ubuntu-16.10```这个vagrant box创建了3个VM，分别是big1、big2、big3。计划使用big1充当NameNode。  
+使用[SSH入门](SSH入门)中的方法，是上述三个节点之间可以互相免密码SSH。  
+
 各个节点都要设置JAVA_HOME:
 ```
 $ export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
