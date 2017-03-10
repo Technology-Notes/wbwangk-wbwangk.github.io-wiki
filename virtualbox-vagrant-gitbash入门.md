@@ -56,7 +56,11 @@ webb-wang1是输出的镜像文件名。
          (略)   
 ```
 ### SSH
-ubuntu默认的ssh不支持root的远程登录，对于习惯使用root用户的人很不方便。当使用vagrant ssh登录虚机后：
+使用vagrant up启动的虚机，虽然可以用vagrant ssh登录虚拟，但进入虚拟操作系统后，却不可以用类似：
+```
+$ ssh root@<另一个虚机ID>
+```
+来登录。可能是ubuntu默认的ssh不支持root的远程登录。这对于习惯使用root用户的人很不方便。为了让虚机之间可以ssh，可以这样做，首先用vagrant ssh登录虚机，然后：
 ```
 $ sudo su -     (切换为root用户)
 $ passwd root    (为root用户创建口令)
