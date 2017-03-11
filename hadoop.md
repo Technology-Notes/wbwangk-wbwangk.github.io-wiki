@@ -90,3 +90,18 @@ $ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys    （方式2：直接操作�
 $ ssh localhost  或者ssh root@localhost
 ```
 发现不再提示输入密码。执行exit返回到原来的上下文。
+
+格式化HDFS:
+```
+bin/hdfs namenode -format
+```
+编辑$HADOOP_PREFIX/etc/hadoop目录下的hadoo-env.sh，设置JAVA_HOME:
+```
+# export JAVA_HOME=${JAVA_HOME}
+export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+```
+启动NameNode和DataNode两个守护进程：
+```
+$ sbin/start-dfs.sh
+$ curl http://localhost:50070/   (测试一下NameNode的web接口，也可以用浏览器访问这个web接口)
+```
