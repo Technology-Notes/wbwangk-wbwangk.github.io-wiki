@@ -40,25 +40,53 @@ $ export HADOOP_CONF_DIR="$HADOOP_PREFIX/etc/hadoop"
 [原始apache文档](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SingleCluster.html)  
 HDFS: namenode 存放文件系统元数据；datanode存放文件。  
 
-安装oracle java7：
+安装jdk:
 ``` 
-apt-get install oracle-java7-installer
+apt-get install openjdk-8-jdk
+export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 ```
-java的home目录：/usr/lib/jvm/java-7-oracle/jre
 
-[下载](http://apache.fayea.com/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz)和解压hadoop2.7.3到/opt/hadoop-2.7.3目录下，这是hadoop的根目录。然后编辑 etc/hadoop/hadoop-env.sh
+[下载](http://apache.fayea.com/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz)和解压hadoop2.7.3到/opt/hadoop-2.7.3目录下。测试一下：
 ```
-  # set to the root of your Java installation
-  export JAVA_HOME="/usr/lib/jvm/java-7-oracle/jre"
+cd /opt/hadoop-2.7.3
+bin/hadoop
 ```
-设置hadoop的home：
-```
-$ export HADOOP_COMMON_HOME="/opt/hadoop-2.7.3"
-```
-测试hadoop：
+###Standalone运行
+默认情况下，hadoop运行在非分布式模式下，用于调试：
 ```
   $ mkdir input
   $ cp etc/hadoop/*.xml input
   $ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input output 'dfs[a-z.]+'
   $ cat output/*
 ```
+上述代码扫码input目录，创建并输出到了output目录下。
+###伪分布式运行
+编辑配置文件etc/hadoop/core-site.xml:
+```
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://localhost:9000</value>
+    </property>
+</configuration>
+```
+etc/hadoop/hdfs-site.xml:
+```
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+</configuration>
+```
+下面的操作使ssh可以访问localhost，有两种方式：
+```
+$ ssh-copy-id localhost   （方式1：ssh原生的方式）
+$ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys    （方式2：直接操作文本文件）
+```
+可以通过查看 ~/.ssh/authorized_keys文件中的内容来了解ssh授权的原理，就把信任节点的公钥放入了authorized_keys而已。
+测试一下：
+```
+$ ssh localhost  或者ssh root@localhost
+```
+发现不再提示输入密码。执行exit返回到原来的上下文。
