@@ -18,24 +18,6 @@
  - Spark™: 一个针对hadoop数据的高速和通用计算引擎。Spark provides a simple and expressive programming model that supports a wide range of applications, including ETL, machine learning, stream processing, and graph computation.  
  - Tez™: 一个通用的数据流编程框架。构建在YARN之上，which provides a powerful and flexible engine to execute an arbitrary DAG of tasks to process data for both batch and interactive use-cases. Tez is being adopted by Hive™, Pig™ and other frameworks in the Hadoop ecosystem, and also by other commercial software (e.g. ETL tools), to replace Hadoop™ MapReduce as the underlying execution engine.  
  - ZooKeeper™: 一个针对分布式应用的高性能协调服务。  
-
-## 集群安装
-
-选择了stable版本2.7.3，下载了一个200多兆的tar.gz包。按要求，先装openjdk-8-jdk。  
-NameNode和ResourceManager各占一台机器，这是**主节点**。而其他服务根据负载情况，可能运行在专用硬件上，也可能运行在共享基础设施上。  
-集群中的剩余机器可充当 DataNode和NodeManager，这些是**从节点**。  
-使用```bento/ubuntu-16.10```这个vagrant box创建了3个VM，分别是big1、big2、big3。计划使用big1充当NameNode。  
-使用[SSH入门](SSH入门)中的方法，使上述三个节点之间可以互相免密码SSH（3个节点共执行了6次ssh-copy-id）。  
-
-各个节点都要设置JAVA_HOME:
-```
-$ export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-```
-环境变量HADOOP_PREFIX定义了hadoop的安装目录:
-```
-$ export HADOOP_PREFIX="/opt/hadoop-2.7.3"
-$ export HADOOP_CONF_DIR="$HADOOP_PREFIX/etc/hadoop"
-```
 ## 安装单机版hadoop
 [原始apache文档](http://hadoop.apache.org/docs/current/hadoop-project-dist/hadoop-common/SingleCluster.html)  
 HDFS: namenode 存放文件系统元数据；datanode存放文件。  
@@ -45,12 +27,15 @@ HDFS: namenode 存放文件系统元数据；datanode存放文件。
 apt-get install openjdk-8-jdk
 export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 ```
-
 [下载](http://apache.fayea.com/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz)和解压hadoop2.7.3到/opt/hadoop-2.7.3目录下。测试一下：
 ```
 cd /opt/hadoop-2.7.3
 bin/hadoop
 ```
+单节点运行hadoop有三种模式：
+ - Local (Standalone) Mode  
+ - Pseudo-Distributed Mode  
+ - Fully-Distributed Mode
 ###Standalone运行
 默认情况下，hadoop运行在非分布式模式下，用于调试：
 ```
@@ -60,6 +45,7 @@ bin/hadoop
   $ cat output/*
 ```
 上述代码扫码input目录，创建并输出到了output目录下。
+
 ###伪分布式运行
 编辑配置文件etc/hadoop/core-site.xml:
 ```
@@ -89,13 +75,13 @@ $ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys    （方式2：直接操作�
 ```
 $ ssh localhost  或者ssh root@localhost
 ```
-发现不再提示输入密码。执行exit返回到原来的上下文。
+发现不再提示输入密码。执行exit返回到原来的上下文。关于SSH的其他知识可参考[SSH入门](SSH入门)。
 
 格式化HDFS:
 ```
 bin/hdfs namenode -format
 ```
-编辑$HADOOP_PREFIX/etc/hadoop目录下的hadoo-env.sh，设置JAVA_HOME:
+编辑$HADOOP_PREFIX/etc/hadoop目录下的hadoop-env.sh，设置JAVA_HOME:
 ```
 # export JAVA_HOME=${JAVA_HOME}
 export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
@@ -104,4 +90,35 @@ export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 ```
 $ sbin/start-dfs.sh
 $ curl http://localhost:50070/   (测试一下NameNode的web接口，也可以用浏览器访问这个web接口)
+```
+在HDFS上创建执行MapReduce作业需要的目录：
+```
+$ bin/hdfs dfs -mkdir /user
+$ bin/hdfs dfs -mkdir /user/root     (root是当前用户)
+```
+将输入从本地文件系统复制到HDFS中：
+```
+$ bin/hdfs dfs -put etc/hadoop input      (在HDFS中的绝对地址是/user/root/input)
+```
+执行例子的MapReduce：
+```
+$ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input output 'dfs[a-z.]+'
+```
+输出是hfds中的/user/root/output目录。
+## 集群安装
+
+选择了stable版本2.7.3，下载了一个200多兆的tar.gz包。按要求，先装openjdk-8-jdk。  
+NameNode和ResourceManager各占一台机器，这是**主节点**。而其他服务根据负载情况，可能运行在专用硬件上，也可能运行在共享基础设施上。  
+集群中的剩余机器可充当 DataNode和NodeManager，这些是**从节点**。  
+使用```bento/ubuntu-16.10```这个vagrant box创建了3个VM，分别是big1、big2、big3。计划使用big1充当NameNode。  
+使用[SSH入门](SSH入门)中的方法，使上述三个节点之间可以互相免密码SSH（3个节点共执行了9次ssh-copy-id，包括localhost）。  
+
+各个节点都要设置JAVA_HOME:
+```
+$ export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+```
+环境变量HADOOP_PREFIX定义了hadoop的安装目录:
+```
+$ export HADOOP_PREFIX="/opt/hadoop-2.7.3"
+$ export HADOOP_CONF_DIR="$HADOOP_PREFIX/etc/hadoop"
 ```
