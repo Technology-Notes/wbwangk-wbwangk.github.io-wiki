@@ -41,10 +41,8 @@ $ pip install --upgrade pip
 ```
 $ curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
 $ apt-get install -y nodejs
-$ apt install npm
-$ ln -s `which nodejs` /usr/bin/node
 ```
-ln是建立符号连接。原因是不同平台，有的叫node有的叫nodejs。
+会自动安装nodejs和npm，并创建了node的符号链接。
 npm的自我升级:
 ```
 $ npm install npm@latest -g
