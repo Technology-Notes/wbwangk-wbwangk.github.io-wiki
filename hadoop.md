@@ -1,6 +1,7 @@
 
 # hadoop体系
-官网:http://hadoop.apache.org/  
+官网:http://hadoop.apache.org/，还有个hadoop的[中文文档](http://hadoop-learning-notes.readthedocs.io/en/latest/)。  
+
 主要模块:  
  - Hadoop Common: 支撑其他模块的通用工具  
  - Hadoop Distributed File System (HDFS™): 分布式文件系统  
@@ -32,10 +33,10 @@ export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 cd /opt/hadoop-2.7.3
 bin/hadoop
 ```
-单节点运行hadoop有三种模式：
+单节点运行hadoop有两种模式：
  - Local (Standalone) Mode  
  - Pseudo-Distributed Mode  
- - Fully-Distributed Mode
+
 ###Standalone运行
 默认情况下，hadoop运行在非分布式模式下，用于调试：
 ```
@@ -65,7 +66,7 @@ etc/hadoop/hdfs-site.xml:
     </property>
 </configuration>
 ```
-下面的操作使ssh可以访问localhost，有两种方式：
+hadoop的伪分布模式运行时需要SSH到localhost。下面的操作使ssh可以访问localhost，有两种方式：
 ```
 $ ssh-copy-id localhost   （方式1：ssh原生的方式）
 $ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys    （方式2：直接操作文本文件）
@@ -104,21 +105,41 @@ $ bin/hdfs dfs -put etc/hadoop input      (在HDFS中的绝对地址是/user/roo
 ```
 $ bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input output 'dfs[a-z.]+'
 ```
-输出是hfds中的/user/root/output目录。
+输出是hfds中的/user/root/output目录。  
+
+有两种方式查看输出结果。首先，是将文件从HDFS复制到本地文件系统：
+```
+$ bin/hdfs dfs -get output output
+$ cat output/*
+```
+直接查看HDFS中结果：
+```
+$ bin/hdfs dfs -cat output/*
+```
+最后，停止NameNode和DataNode：  
+```
+$ sbin/stop-dfs.sh
+```
+
 ## 集群安装
 
-选择了stable版本2.7.3，下载了一个200多兆的tar.gz包。按要求，先装openjdk-8-jdk。  
+需要在集群的所有节点上下载和解压hadoop的二进制包（200多M）。这里使用2.7.3版本（稳定版），下载路径参考上文的单节点安装hadoop。
+
 NameNode和ResourceManager各占一台机器，这是**主节点**。而其他服务根据负载情况，可能运行在专用硬件上，也可能运行在共享基础设施上。  
 集群中的剩余机器可充当 DataNode和NodeManager，这些是**从节点**。  
+
+HDFS daemons由NameNode, SecondaryNameNode,和DataNode组成。 YARN damones由ResourceManager, NodeManager,和WebAppProxy组成. 如果使用MapReduce，那么MapReduce Job History Server也需要运行。大规模集群下，通常都运行在专门的服务器上。
+
 使用```bento/ubuntu-16.10```这个vagrant box创建了3个VM，分别是big1、big2、big3。计划使用big1充当NameNode。  
 使用[SSH入门](SSH入门)中的方法，使上述三个节点之间可以互相免密码SSH（3个节点共执行了9次ssh-copy-id，包括localhost）。  
 
-各个节点都要设置JAVA_HOME:
+#### 配置Hadoop Daemons运行环境
+在/etc/profile.d/目录下建立一个my-hadoop.sh的文件（该目录下的脚本会在linux启动后自动执行）：
 ```
-$ export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-```
-环境变量HADOOP_PREFIX定义了hadoop的安装目录:
-```
-$ export HADOOP_PREFIX="/opt/hadoop-2.7.3"
-$ export HADOOP_CONF_DIR="$HADOOP_PREFIX/etc/hadoop"
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export JAVA_HOME
+HADOOP_PREFIX=/opt/hadoop-2.7.3
+export HADOOP_PREFIX
+HADOOP_CONF_DIR=$HADOOP_PREFIX/etc/hadoop
+export HADOOP_CONF_DIR
 ```
