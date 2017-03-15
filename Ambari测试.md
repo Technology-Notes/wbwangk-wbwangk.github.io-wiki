@@ -40,7 +40,7 @@ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD
 apt-get update
 apt-get install ambari-agent -y
 ```
-编辑各个节点的agent配置文件/etc/ambari-agent/conf/ambari.ini:
+编辑各个节点的agent配置文件/etc/ambari-agent/conf/ambari-agent.ini:
 ```
 ...
 [server]
