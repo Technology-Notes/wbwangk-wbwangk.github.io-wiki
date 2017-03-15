@@ -26,7 +26,7 @@ $ curl localhost:8080        (至少要几分钟后8080端口才有响应)
 ```
 安装Ambari Server的vagrant VM的hostname是big1，IP是10.10.11.95。当```curl localhost:8080```有了响应后，直接在windows下用浏览器访问地址：```http://10.10.11.95:8080```出现登录页面，用户名口令是admin/admin。
 
-###安装Ambari Agent
+### 安装Ambari Agent
 需要在集群的各个节点上安装Ambari Agent。做测试时使用了vagrant的两个VM：
 ```
 big1 10.10.11.96
