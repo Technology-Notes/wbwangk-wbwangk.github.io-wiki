@@ -55,6 +55,8 @@ webb-wang1是输出的镜像文件名。
          os.vm.box = "webb-wang1"
          (略)   
 ```
+vagrant的配置文件、box等位于$HOME/.vagrant.d/目录下。对于linux，$HOME相当与```~```，如root用户的HOME是/root。对于windows，$HOME类似于```c:/users/用户名```。  
+```~/.vagrant.d```目录下有个insecure_private_key是vagrant的私钥，有时需要复制到Vagrantfile所在的目录。  
 
 ### git bash入门
 打通了windows和linux，可以在windows文件系统下使用linux命令。  
