@@ -47,3 +47,7 @@ apt-get install ambari-agent -y
 hostname=big1
 ...
 ```
+将hostname配置为正确的Ambari Server地址，在本测试中Ambari Server位于big1虚机上。启动Agent：
+```
+$ ambari-agent start
+```
