@@ -51,3 +51,12 @@ hostname=big1
 ```
 $ ambari-agent start
 ```
+### 通过Ambari部署hadoop家族服务
+使用vagrant管理了4台VM，big1(10.10.11.95)上部署了Ambari Server。在big1、big2、big3、big4上部署ntp服务：
+```
+$ apt install ntp 
+$ service ntp start
+```
+如果不部署ntp服务，在使用Ambari部署hadoop过程中会有警告。  
+使得big1可以免密码SSH到big2、big3、big4，方法参考[SSH入门](SSH入门)。  
+使用上文的方法在big1、big2、big3、big4上部署Ambari Agent。按上文编辑Agent的配置文件，设置hostname=big1。启动Ambari Agent。4台虚机上还要装openjdk-8-jdk。  
