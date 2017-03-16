@@ -58,6 +58,23 @@ webb-wang1是输出的镜像文件名。
 vagrant的配置文件、box等位于$HOME/.vagrant.d/目录下。对于linux，$HOME相当与```~```，如root用户的HOME是/root。对于windows，$HOME类似于```c:/users/用户名```。  
 ```~/.vagrant.d```目录下有个insecure_private_key是vagrant的私钥，有时需要复制到Vagrantfile所在的目录。  
 
+### vagrant网络设置
+当需要启动多个VM，并且各个VM之间可以相互通信时必须在Vagrantfile中配置网络：
+```
+1. wang2.vm.network "private_network", ip: "192.168.1.111"
+2. wang2.vm.network "public_network", ip: "10.10.11.95"
+3. wang2.vm.network "private_network"
+4. wang2.vm.network "public_network"
+```
+1和3设置了私有网络，即hostonly网络。2和4设置了公开网络。  
+#### hostonly网络
+对于hostonly网络，vagrant会自动在宿主机上添加虚拟的网卡。按1的配置，虚拟网卡ip会是192.168.1.1。  
+hostonly网络，同一宿主机上的各个VM之间可以互相访问，但宿主机之外的其他机器不能访问这个VM。宿主机和VM之间也可以互相访问。
+
+#### public网络
+VM象宿主机一样对于整个局域网是可见的，而且VM会向局域网的DHCP请求分配网络参数。如果宿主机上有多个可以上网的网卡，则虚机通过```vagrant up```启动的时候，会提示选择网卡。选择哪个网卡，DHCP就会按那个网卡分配网络参数。
+
+
 ### git bash入门
 打通了windows和linux，可以在windows文件系统下使用linux命令。  
 可以将文件在windows和linux之间用scp命令。为了演示scp先建个用户：
