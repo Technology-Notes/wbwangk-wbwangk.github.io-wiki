@@ -207,3 +207,8 @@ $ apt clean all
 Apache Ambari在github的镜像库：https://github.com/apache/ambari。  
 一个Ambari的汉化库：https://github.com/yantaiv/Ambari-Web-Modify。 
 一个汉化的说明：[链接](http://blog.csdn.net/wang1472jian1110/article/details/50803887)。 
+
+## Ambari本地源
+下载地址：[HDP 2.5 Stack Repositories](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html)
+下载这个tarball（4.9G）：
+http://public-repo-1.hortonworks.com/HDP/ubuntu14/2.x/updates/2.5.3.0/HDP-2.5.3.0-ubuntu14-deb.tar.gz
