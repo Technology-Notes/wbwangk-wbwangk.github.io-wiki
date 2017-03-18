@@ -291,3 +291,10 @@ $ cd /var/www/html/hdp
 $ wget http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/ubuntu14/HDP-UTILS-1.1.0.21-ubuntu14.tar.gz
 $ tar -xzf HDP-UTILS-1.1.0.21-ubuntu14.tar.gz
 ```
+本地HDP-UTILS的Base URL是```localhost/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14```。  
+创建HDP-UTILS的apt源配置文件：
+```
+$ cd /etc/apt/sources.list.d
+$ cat HDP-UTILS.list
+deb http://localhost/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14 HDP-UTILS main
+```
