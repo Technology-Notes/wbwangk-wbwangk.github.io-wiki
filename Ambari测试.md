@@ -245,7 +245,7 @@ deb http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0 Amb
 ```
 $ cat ambari.list
 #VERSION_NUMBER=2.4.2.0-136
-deb http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ Ambari main
+deb http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari main
 ```
 由于使用了localhost当hostname，导致这个源只能在本机用。如果在其他机器上使用这个apt源，则需要把localhost替换为IP地址或域名。  
 
