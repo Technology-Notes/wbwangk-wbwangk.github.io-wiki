@@ -248,6 +248,13 @@ $ cat ambari.list
 deb http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari main
 ```
 由于使用了localhost当hostname，导致这个源只能在本机用。如果在其他机器上使用这个apt源，则需要把localhost替换为IP地址或域名。  
+测试一下这个源：
+```
+$ apt-get update
+Get:1 http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari InRelease [3,190 B]
+Get:2 http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari/main amd64 Packages [1,383 B]
+···
+```
 
 下载地址：[HDP 2.5 Stack Repositories](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html)
 下载这个tarball（4.9G）：
