@@ -209,6 +209,14 @@ Apache Ambari在github的镜像库：https://github.com/apache/ambari。
 一个汉化的说明：[链接](http://blog.csdn.net/wang1472jian1110/article/details/50803887)。 
 
 ## Ambari本地源
+[参考原文](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/setting_up_a_local_repository.html)  
+
+我在vagrant VM ubuntu16下建立“无互联网模式HDP本地源”，首先安装nginx：
+```
+$ apt install nginx
+$ cd /var/www/html/
+```
+
 下载地址：[HDP 2.5 Stack Repositories](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html)
 下载这个tarball（4.9G）：
 http://public-repo-1.hortonworks.com/HDP/ubuntu14/2.x/updates/2.5.3.0/HDP-2.5.3.0-ubuntu14-deb.tar.gz
