@@ -254,7 +254,31 @@ $ apt-get update
 Get:1 http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari InRelease [3,190 B]
 Get:2 http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari/main amd64 Packages [1,383 B]
 ···
+$ apt search ambari
+Sorting... Done
+Full Text Search... Done
+ambari-agent/unknown 2.4.2.0-136 amd64 [upgradable from: 2.4.0.0-6492]
+  Ambari Agent
+
+ambari-infra-solr/unknown 2.4.2.0-136 amd64
+  Apache Ambari Project POM
+
+ambari-infra-solr-client/unknown 2.4.2.0-136 amd64
+  Apache Ambari Project POM
+
+ambari-logsearch-logfeeder/unknown 2.4.2.0-136 amd64
+  Apache Ambari Project POM
+
+ambari-logsearch-portal/unknown 2.4.2.0-136 amd64
+  Apache Ambari Project POM
+
+ambari-metrics-assembly/unknown 2.4.2.0-136 amd64 [upgradable from: 2.4.0.0-6492]
+  Ambari Metrics Assembly
+
+ambari-server/unknown 2.4.2.0-136 amd64
+  Ambari Server
 ```
+
 
 下载地址：[HDP 2.5 Stack Repositories](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html)
 下载这个tarball（4.9G）：
