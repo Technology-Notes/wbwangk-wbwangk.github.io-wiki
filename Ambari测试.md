@@ -216,6 +216,38 @@ Apache Ambari在github的镜像库：https://github.com/apache/ambari。
 $ apt install nginx
 $ cd /var/www/html/
 ```
+下载[Ambari barball](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/ambari_repositories.html)  
+上述页面中，Base URL是库的基础地址，如ubuntu的/etc/apt/sources.list文件中：
+```
+deb http://security.ubuntu.com/ubuntu yakkety-security universe
+```
+其中的```http://security.ubuntu.com/ubuntu```就是Base URL。在base url之下是```dists```目录。而```yakkety-security```是dists的下级目录，依次类推（空格隔开的多级目录）。   
+下载ubuntu14的Armbri barball：
+```
+$ cd /var/www/html
+$ wget http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0/ambari-2.4.2.0-ubuntu14.tar.gz
+$ openssl md5 ambari-2.4.2.0-ubuntu14.tar.gz   (计算Tarball的MD5码，应与上述网页上公布的一样)
+$ tar -xzf ambari-2.4.2.0-ubuntu14.tar.gz
+$ cd AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 && ls -l          (可以看到下级的dists目录以及ambaribn.list)
+$ cat ambaribn.list        (一会儿通过curl+nginx访问这个文件)
+$ curl localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ambaribn.list
+```
+如果curl返回ambaribn.list的文件内容，说明用nginx搭建的apt本地源运行正常。其中```localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/```就是Base URL。  
+下面创建本地源的库配置文件。首先下载一个原始的库配置文件（上面的Ambari barball下载页面上有链接）：
+```
+$ cd /etc/apt/sources.list.d
+$ wget http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0/ambari.list
+$ cat ambari.list
+#VERSION_NUMBER=2.4.2.0-136
+deb http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0 Ambari main
+```
+编辑这个库配置文件，替换其中的Base URL为本地的，最终的样子：
+```
+$ cat ambari.list
+#VERSION_NUMBER=2.4.2.0-136
+deb http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ Ambari main
+```
+由于使用了localhost当hostname，导致这个源只能在本机用。如果在其他机器上使用这个apt源，则需要把localhost替换为IP地址或域名。  
 
 下载地址：[HDP 2.5 Stack Repositories](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html)
 下载这个tarball（4.9G）：
