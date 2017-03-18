@@ -222,7 +222,7 @@ $ cd /var/www/html/
 deb http://security.ubuntu.com/ubuntu yakkety-security universe
 ```
 其中的```http://security.ubuntu.com/ubuntu```就是Base URL。在base url之下是```dists```目录。而```yakkety-security```是dists的下级目录，依次类推（空格隔开的多级目录）。   
-下载ubuntu14的Armbri barball：
+下载ubuntu14的Armbri barball（1.3G)：
 ```
 $ cd /var/www/html
 $ wget http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0/ambari-2.4.2.0-ubuntu14.tar.gz
@@ -254,32 +254,40 @@ $ apt-get update
 Get:1 http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari InRelease [3,190 B]
 Get:2 http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari/main amd64 Packages [1,383 B]
 ···
-$ apt search ambari
+$ apt search ambari-server
 Sorting... Done
 Full Text Search... Done
-ambari-agent/unknown 2.4.2.0-136 amd64 [upgradable from: 2.4.0.0-6492]
-  Ambari Agent
-
-ambari-infra-solr/unknown 2.4.2.0-136 amd64
-  Apache Ambari Project POM
-
-ambari-infra-solr-client/unknown 2.4.2.0-136 amd64
-  Apache Ambari Project POM
-
-ambari-logsearch-logfeeder/unknown 2.4.2.0-136 amd64
-  Apache Ambari Project POM
-
-ambari-logsearch-portal/unknown 2.4.2.0-136 amd64
-  Apache Ambari Project POM
-
-ambari-metrics-assembly/unknown 2.4.2.0-136 amd64 [upgradable from: 2.4.0.0-6492]
-  Ambari Metrics Assembly
-
-ambari-server/unknown 2.4.2.0-136 amd64
+ambari-server/unknown,now 2.4.2.0-136 amd64 [installed]
   Ambari Server
+$ apt-get install ambari-server -y
 ```
+使用本地源安装ambari-server快多了。  
 
-
+#### HDP 2.5 Stack Repositories
 下载地址：[HDP 2.5 Stack Repositories](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html)
 下载这个tarball（4.9G）：
-http://public-repo-1.hortonworks.com/HDP/ubuntu14/2.x/updates/2.5.3.0/HDP-2.5.3.0-ubuntu14-deb.tar.gz
+```
+$ cd /var/www/html
+$ mkdir hdp && cd hdp
+$ wget http://public-repo-1.hortonworks.com/HDP/ubuntu14/2.x/updates/2.5.3.0/HDP-2.5.3.0-ubuntu14-deb.tar.gz
+$ tar -xzf HDP-2.5.3.0-ubuntu14-deb.tar.gz
+$ curl localhost/hdp/HDP/ubuntu14/hdp.list
+```
+如果curl显示出了hdp.list的内容，说明HDP的本地源服务已经有了，下面需要定制源配置文件：
+```
+$ cd /etc/apt/sources.list.d
+$ wget http://public-repo-1.hortonworks.com/HDP/ubuntu14/2.x/updates/2.5.3.0/hdp.list
+```
+编辑这个hdp.list，替换Base URL为```localhost/hdp/HDP/ubuntu14```：
+```
+$ cat hdp.list
+deb http://localhost/hdp/HDP/ubuntu14 HDP main
+$ apt-get update
+...
+```
+同样的办法安装HDP-UTILS的本地源：
+```
+$ cd /var/www/html/hdp
+$ wget http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/ubuntu14/HDP-UTILS-1.1.0.21-ubuntu14.tar.gz
+$ tar -xzf HDP-UTILS-1.1.0.21-ubuntu14.tar.gz
+```
