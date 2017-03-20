@@ -294,7 +294,7 @@ $ wget http://big3/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14/hdp-utils.list
 ```
 启动一个vagrant VM来测试Ambari本地源。Ambari本地源建立在big3(192.168.3.15)这个虚机上。
 ```
-$ vagrant up u1409
+$ vagrant up u1409    （u1409的box是ubuntu14）
 $ vagrant ssh u1409
 $ sudo su -   (切换到root用户)
 $ echo "192.168.3.15 big3" >> /etc/hosts   (可以ping big3来测试一下)
@@ -305,4 +305,7 @@ $ wget http://big3/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14/hdp-utils.list
 $ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD
 $ apt-get update
 $ apt-get install ambari-server -y
+$ apt-get install openjdk-7-jdk             (ubuntu14不支持openjdk-8-jdk)
+$ export JAVA_HOME=
+$ ambari-server setup      (ambari初始化，选择custom jdk)
 ```
