@@ -208,51 +208,53 @@ Apache Ambari在github的镜像库：https://github.com/apache/ambari。
 一个Ambari的汉化库：https://github.com/yantaiv/Ambari-Web-Modify。 
 一个汉化的说明：[链接](http://blog.csdn.net/wang1472jian1110/article/details/50803887)。 
 
-## Ambari本地源
+## 创建Ambari本地源
 [参考原文](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/setting_up_a_local_repository.html)  
-
-我在vagrant VM ubuntu16下建立“无互联网模式HDP本地源”，首先安装nginx：
+以下操作是建立“无互联网模式HDP本地源”，环境是vagrant VM + ubuntu16。  
+首先安装nginx：
 ```
 $ apt install nginx
 $ cd /var/www/html/
 ```
 下载[Ambari barball](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/ambari_repositories.html)  
+
+#### 解释一下什么是Base URL
 上述页面中，Base URL是库的基础地址，如ubuntu的/etc/apt/sources.list文件中：
 ```
 deb http://security.ubuntu.com/ubuntu yakkety-security universe
 ```
-其中的```http://security.ubuntu.com/ubuntu```就是Base URL。在base url之下是```dists```目录。而```yakkety-security```是dists的下级目录，依次类推（空格隔开的多级目录）。   
-下载ubuntu14的Armbri barball（1.3G)：
+其中的```http://security.ubuntu.com/ubuntu```就是Base URL。如果进入linux操作系统查看，发现在base url之下是```dists```目录，这应是apt打包系统的约定。而```yakkety-security```是dists的下级目录，依次类推（空格隔开的多级目录）。   
+
+#### 开始建立Ambari的本地源：  
+下载ubuntu14的Ambari barball（1.3G)，里面是Ambari apt打包文件：
 ```
 $ cd /var/www/html
 $ wget http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0/ambari-2.4.2.0-ubuntu14.tar.gz
 $ openssl md5 ambari-2.4.2.0-ubuntu14.tar.gz   (计算Tarball的MD5码，应与上述网页上公布的一样)
 $ tar -xzf ambari-2.4.2.0-ubuntu14.tar.gz
-$ cd AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 && ls -l          (可以看到下级的dists目录以及ambaribn.list)
-$ cat ambaribn.list        (一会儿通过curl+nginx访问这个文件)
-$ curl localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ambaribn.list
+$ cd AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 && ls -l          (可以看到下级的dists目录以，Base URL是dists之前的路径)
 ```
-如果curl返回ambaribn.list的文件内容，说明用nginx搭建的apt本地源运行正常。其中```localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/```就是Base URL。  
-下面创建本地源的库配置文件。首先下载一个原始的库配置文件（上面的Ambari barball下载页面上有链接）：
+建立本地源描述文件：
 ```
+$ cd /var/www/html/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136
+$ echo "deb http://$(hostname)/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari main" > ambari.list
+$ curl http://$(hostname)/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ambari.list   （测试一下）
+```
+如果curl返回ambari.list的文件内容，说明用nginx搭建的apt本地源运行正常。其中```http://$(hostname)/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136```就是Base URL。  
+
+#### 测试一下刚建立的本地源
+在同一台机器上：
+```
+$ echo "$(hostname)"
+big3     
 $ cd /etc/apt/sources.list.d
-$ wget http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0/ambari.list
+$ wget http://big3/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ambari.list
 $ cat ambari.list
-#VERSION_NUMBER=2.4.2.0-136
-deb http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0 Ambari main
-```
-编辑这个库配置文件，替换其中的Base URL为本地的，最终的样子：
-```
-$ cat ambari.list
-#VERSION_NUMBER=2.4.2.0-136
-deb http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari main
-```
-由于使用了localhost当hostname，导致这个源只能在本机用。如果在其他机器上使用这个apt源，则需要把localhost替换为IP地址或域名。  
-测试一下这个源：
-```
+deb http://big3/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari main
+$ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD
 $ apt-get update
-Get:1 http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari InRelease [3,190 B]
-Get:2 http://localhost/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari/main amd64 Packages [1,383 B]
+Get:1 http://big3/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari InRelease [3,190 B]
+Get:2 http://big3/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari/main amd64 Packages [1,383 B]
 ···
 $ apt search ambari-server
 Sorting... Done
@@ -263,38 +265,44 @@ $ apt-get install ambari-server -y
 ```
 使用本地源安装ambari-server快多了。  
 
-#### HDP 2.5 Stack Repositories
-下载地址：[HDP 2.5 Stack Repositories](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html)
+## 创建HDP 2.5本地源
+官方下载地址：[HDP 2.5 Stack Repositories](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html)
 下载这个tarball（4.9G）：
 ```
 $ cd /var/www/html
 $ mkdir hdp && cd hdp
 $ wget http://public-repo-1.hortonworks.com/HDP/ubuntu14/2.x/updates/2.5.3.0/HDP-2.5.3.0-ubuntu14-deb.tar.gz
 $ tar -xzf HDP-2.5.3.0-ubuntu14-deb.tar.gz
-$ curl localhost/hdp/HDP/ubuntu14/hdp.list
+$ cd hdp/HDP/ubuntu14
+$ echo "deb http://$(hostname)/hdp/HDP/ubuntu14 HDP main" > hdp.list
 ```
-如果curl显示出了hdp.list的内容，说明HDP的本地源服务已经有了，下面需要定制源配置文件：
-```
-$ cd /etc/apt/sources.list.d
-$ wget http://public-repo-1.hortonworks.com/HDP/ubuntu14/2.x/updates/2.5.3.0/hdp.list
-```
-编辑这个hdp.list，替换Base URL为```localhost/hdp/HDP/ubuntu14```：
-```
-$ cat hdp.list
-deb http://localhost/hdp/HDP/ubuntu14 HDP main
-$ apt-get update
-...
-```
-同样的办法安装HDP-UTILS的本地源：
+#### 同样的办法安装HDP-UTILS的本地源
+这个tarball小多了，只有24M：
 ```
 $ cd /var/www/html/hdp
 $ wget http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/ubuntu14/HDP-UTILS-1.1.0.21-ubuntu14.tar.gz
 $ tar -xzf HDP-UTILS-1.1.0.21-ubuntu14.tar.gz
+$ cd hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14
+$ echo "deb http://$(hostname)/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14 HDP-UTILS main" > hdp-utils.list
 ```
-本地HDP-UTILS的Base URL是```localhost/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14```。  
-创建HDP-UTILS的apt源配置文件：
+### 使用Ambari本地源
+总结一下之前建立的Ambari、HDP、HDP-UTILS三个本地源资源文件的下载地址：
 ```
+$ wget http://big3/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ambari.list
+$ wget http://big3/hdp/HDP/ubuntu14/hdp.list
+$ wget http://big3/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14/hdp-utils.list
+```
+启动一个vagrant VM来测试Ambari本地源。Ambari本地源建立在big3(192.168.3.15)这个虚机上。
+```
+$ vagrant up u1409
+$ vagrant ssh u1409
+$ sudo su -   (切换到root用户)
+$ echo "192.168.3.15 big3" >> /etc/hosts   (可以ping big3来测试一下)
 $ cd /etc/apt/sources.list.d
-$ cat HDP-UTILS.list
-deb http://localhost/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14 HDP-UTILS main
+$ wget http://big3/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ambari.list
+$ wget http://big3/hdp/HDP/ubuntu14/hdp.list
+$ wget http://big3/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14/hdp-utils.list
+$ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD
+$ apt-get update
+$ apt-get install ambari-server -y
 ```
