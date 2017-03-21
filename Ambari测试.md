@@ -13,7 +13,7 @@ apt-get install ambari-server -y
 
 初始化Ambari Server：
 ```
-$ ambari-server setup
+$ ambari-server setup -s
 ```
 初始化过程让选择JDK并设定JAVA_HOME。之前已经装好了openjdk-8-jdk。输入了JAVA_HOME:
 ```
@@ -55,9 +55,9 @@ $ ambari-agent start
 计划使用4台vagrant VM进行部署测试，big1/big2/big3/big4，其中Ambari Server在big1上启动。4台VM上需要安装的软件有：  
 ```
 $ ssh-copy-id root@big2 && ssh-copy-id root@big3 && ssh-copy-id root@big4    (让big1可以免密码SSH到其他VM)
-$ apt install ntp && service ntp start    (时间同步)
+$ apt install ntp -y && service ntp start    (时间同步)
 $ apt install openjdk-8-jdk
-$ apt install ambari-agent && ambari-agent start
+$ apt install ambari-agent -y && ambari-agent start
 ```
 免密码SSH的方法参考[SSH入门](SSH入门)。  
 各VM上Ambari Agent的配置文件要修改，设置hostname=big1。  
@@ -307,3 +307,4 @@ $ apt-get update
 $ apt-get install ambari-server -y
 $ ambari-server setup -s     (它会自动JDK)
 ```
+需要注意的是ambari-server和ambari-agent不支持ubuntu16，只能用ubuntu14装。
