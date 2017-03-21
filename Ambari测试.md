@@ -65,6 +65,12 @@ $ ambari-server start
 $ curl http://u1401:8080    (启动需要几分钟，用户名口令是admin/admin)
 ```
 使用本地源安装ambari-server速度快多了。直接用互联网安装时300k/s，而本地源可以达10M/s。   
+Ambari默认安装了一个PostgreSQL数据库。启动postgresql进程的linux用户名是postgres，数据库名是ambari。数据库的默认用户名和密码是ambari/bigdata。   
+如果要远程连接这个数据库，（比如在u1402上装ranger）远程连接这个数据库需要在u1402上这样执行：  
+```
+$ apt install postgresql-client
+$ psql -h 192.168.14.101 -U ambari -d ambari  (提示输入密码就输入bigdata)
+```
 直接在宿主机windows下用浏览器访问地址：```http://u1401的IP:8080```出现登录页面，用户名口令是admin/admin。
 
 ## 创建HDP 2.5本地源
