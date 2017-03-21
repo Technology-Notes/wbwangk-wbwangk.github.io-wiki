@@ -1,4 +1,4 @@
-[原始文档地址](https://cwiki.apache.org/confluence/display/AMBARI/Quick+Start+Guide)  
+[原始文档地址](http://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/ch_Installing_Ambari.htmle)  
 曾经尝试从[源代码](https://github.com/apache/ambari)构建Ambari，使用maven，耗时几个小时，但没有成功。  
 使用官方apt源在ubuntu14下安装Ambari server的方法：
 ```
@@ -51,7 +51,7 @@ $ curl http://$(hostname)/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ambari.list   （�
 ```
 如果curl返回ambari.list的文件内容，说明用nginx搭建的apt本地源运行正常。其中```http://$(hostname)/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136```就是Base URL。  
 
-#### 测试一下刚建立的本地源
+#### 用本地源安装ambari server
 在同一台机器上：
 ```
 $ echo "$(hostname)"
@@ -59,13 +59,6 @@ u1401
 $ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD
 $ apt-get update
 Get:1 http://u1401/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari InRelease [3,190 B]
-Get:2 http://u1401/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari/main amd64 Packages [1,383 B]
-···
-$ apt search ambari-server
-Sorting... Done
-Full Text Search... Done
-ambari-server/unknown,now 2.4.2.0-136 amd64 [installed]
-  Ambari Server
 $ apt-get install ambari-server -y
 $ ambari-server setup -s
 $ ambari-server start
@@ -73,7 +66,6 @@ $ curl http://u1401:8080    (启动需要几分钟，用户名口令是admin/adm
 ```
 使用本地源安装ambari-server速度快多了。直接用互联网安装时300k/s，而本地源可以达10M/s。   
 直接在宿主机windows下用浏览器访问地址：```http://u1401的IP:8080```出现登录页面，用户名口令是admin/admin。
-
 
 ## 创建HDP 2.5本地源
 官方下载地址：[HDP 2.5 Stack Repositories](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html)
@@ -128,7 +120,9 @@ hostname=u1401
 $ apt install ambari-agent
 $ ambari-agent start
 ```
-
+### 用ambari安装HDP
+通过宿主机的浏览器进入http://u1401:8080，admin/admin登录。
+通过界面只能创建一个集群。通过REST API可以创建多个集群。
 ## Ambari安装的清理
 [参考](http://blog.csdn.net/wk022/article/details/49278419)  
 ambari安装hadoop，有时会安装失败，需要卸载已经安装包。  
