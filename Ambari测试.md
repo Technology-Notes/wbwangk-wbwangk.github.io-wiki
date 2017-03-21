@@ -65,12 +65,7 @@ $ ambari-server start
 $ curl http://u1401:8080    (启动需要几分钟，用户名口令是admin/admin)
 ```
 使用本地源安装ambari-server速度快多了。直接用互联网安装时300k/s，而本地源可以达10M/s。   
-Ambari默认安装了一个PostgreSQL数据库。启动postgresql进程的linux用户名是postgres，数据库名是ambari。数据库的默认用户名和密码是ambari/bigdata。   
-如果要远程连接这个数据库，（比如在u1402上装ranger）远程连接这个数据库需要在u1402上这样执行：  
-```
-$ apt install postgresql-client
-$ psql -h 192.168.14.101 -U ambari -d ambari  (提示输入密码就输入bigdata)
-```
+
 直接在宿主机windows下用浏览器访问地址：```http://u1401的IP:8080```出现登录页面，用户名口令是admin/admin。
 
 ## 创建HDP 2.5本地源
@@ -275,3 +270,24 @@ Apache Ambari在github的镜像库：https://github.com/apache/ambari。
 一个Ambari的汉化库：https://github.com/yantaiv/Ambari-Web-Modify。 
 一个汉化的说明：[链接](http://blog.csdn.net/wang1472jian1110/article/details/50803887)。 
 
+## Ambari server的数据库
+Ambari server默认安装了一个PostgreSQL数据库。启动postgresql进程的linux用户名是postgres，数据库名是ambari。数据库的默认用户名和密码是ambari/bigdata。   
+如果要远程连接这个数据库，（比如在u1402上装ranger）远程连接这个数据库需要在u1402上这样执行：  
+```
+$ apt install postgresql-client
+$ psql -h 192.168.14.101 -U ambari -d ambari  (提示输入密码就输入bigdata)
+```
+-U表示数据库用户，-d表示数据库名。  
+还要修改postgresql的配置文件/etc/postgresql/9.3/main/postgresql.conf，在文件的最后添加：
+```
+host all all 0.0.0.0 0.0.0.0 md5      #表示运行任何IP连接
+``` 
+重启postgresql：  
+```
+etc/init.d/postgresql restart
+```
+而在postgresql所在机器的本地执行：
+```
+$ sudo -u postgres psql
+```
+可以进入postgres的交互式命令行。postgres是启动数据库进程的linux用户。
