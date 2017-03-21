@@ -305,7 +305,5 @@ $ wget http://big3/hdp/HDP-UTILS-1.1.0.21/repos/ubuntu14/hdp-utils.list
 $ apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD
 $ apt-get update
 $ apt-get install ambari-server -y
-$ apt-get install openjdk-7-jdk             (ubuntu14不支持openjdk-8-jdk)
-$ export JAVA_HOME="/usr/lib/jvm/java-7-openjdk-amd64/jre"      (/etc/profile.d/目录下的找个sh文件加上这行export)
-$ ambari-server setup      (ambari初始化，选择custom jdk)
+$ ambari-server setup -s     (它会自动JDK)
 ```
