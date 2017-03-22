@@ -289,5 +289,13 @@ etc/init.d/postgresql restart
 而在postgresql所在机器的本地执行：
 ```
 $ sudo -u postgres psql
+postgres=# alter user postgres with password 'bigdata';
 ```
-可以进入postgres的交互式命令行。postgres是启动数据库进程的linux用户。
+可以进入postgres的交互式命令行。postgres是启动数据库进程的linux用户。上述操作将postgres用户的密码改成了```bigdata```。在安装ranger的时候需要postgresql的管理员账户及密码。
+
+安装ranger时要求ambari server重新setup：
+```
+$ cd /usr/share/java
+$ wget https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
+$ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-42.0.0.jar
+```
