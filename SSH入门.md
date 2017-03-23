@@ -9,7 +9,7 @@ $ sudo su -     (切换为root用户)
 $ passwd root    (为root用户创建口令)
 $ vi /etc/ssh/sshd_config     （改变ssh的默认设置PermitRootLogin为yes）
   PermitRootLogin yes
-$ service sshd restat   (重启ssh服务)
+$ service ssh restart   (重启ssh服务)
 $ ssh root@localhost   （测试一下root ssh）
 ```
 假定有两个vagrant创建的虚机big1和big2，通过上述操作两台VM之间可以用类似：
