@@ -99,7 +99,7 @@ $ ssh-copy-id u1402   （输入yes并输入各VM的root密码，下同）
 $ ssh-copy-id u1403
 $ ssh-copy-id u1404
 ```
-之前要参考[SSH入门][SSH入门)的说明在三个VM为root用户创建密码。然后在三个VM上分别安装：
+之前要参考[SSH入门](SSH入门)的说明在三个VM为root用户创建密码。然后在三个VM上分别安装：
 ```
 $ apt install ntp -y 
 $ service ntp start    (时间同步)
