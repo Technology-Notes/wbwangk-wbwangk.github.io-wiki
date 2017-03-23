@@ -299,3 +299,32 @@ $ cd /usr/share/java
 $ wget https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
 $ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-42.0.0.jar
 ```
+
+### jdk jce
+```
+$ add-apt-repository ppa:webupd8team/java
+$ apt-get update
+$ apt-get install oracle-java8-installer
+$ apt install oracle-java8-unlimited-jce-policy
+```
+### 安装kerberos客户端时碰到问题
+向u1404安装kerberos客户端时报错：
+```
+$  apt-get install krb5-user
+The following packages have unmet dependencies:
+ krb5-user : Depends: libkrb5-3 (= 1.12+dfsg-2ubuntu5.2) but 1.12+dfsg-2ubuntu5.3 is to be installed
+E: Unable to correct problems, you have held broken packages.
+```
+krb5-user依赖libkrb5-3(= 1.12+dfsg-2ubuntu5.2)，但当前系统却安装上了libkrb5-3的(1.12+dfsg-2ubuntu5.3)版。  
+安装指定版本的librkb5-3：
+```
+$ apt-get install libkrb5-3=1.12+dfsg-2ubuntu5.2
+```
+librkb5-3的版本号比较长：1.12+dfsg-2ubuntu5.2。  
+
+检查安装成功的u1403，发现其安装krb5-user是5.3版。这说明apt的索引更新有问题。用手机充当热点，执行apt-get udpate。然后查看krb5-user版本：
+```
+$ apt show krb-user
+Version: 1.12+dfsg-2ubuntu5.3
+```
+再使用apt install krb-user安装就正常了。这说明公司的局域网访问国外有问题。
