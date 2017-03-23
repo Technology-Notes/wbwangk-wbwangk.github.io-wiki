@@ -307,7 +307,10 @@ $ apt-get update
 $ apt-get install oracle-java8-installer
 $ apt install oracle-java8-unlimited-jce-policy
 ```
-### 安装kerberos客户端时碰到问题
+### 安装kerberos
+principal: webb/admin@AMBARI.APACHE.ORG  
+passwd: vagrant
+
 向u1404安装kerberos客户端时报错：
 ```
 $  apt-get install krb5-user
