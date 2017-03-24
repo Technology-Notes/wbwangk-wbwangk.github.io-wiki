@@ -21,8 +21,8 @@ $ cd ambari-vagrant/ubuntu14.4
 $ ./up.sh 4    (或者按下面的)
 $ vagrant up u1401 u1402 u1403 u1404       (up.sh提供了更简单的启动方式)
 ```
-看一下各个VM的/etc/hosts文件，发现各个节点的hostname已经定义了。
-【解释一下什么是Base URL】
+看一下各个VM的/etc/hosts文件，发现各个节点的hostname已经定义了。  
+【解释一下什么是Base URL】  
 在网页[Ambari barball](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/ambari_repositories.html)中提到了Base URL。Base URL是库的基础地址，如ubuntu的/etc/apt/sources.list文件中：
 ```
 deb http://security.ubuntu.com/ubuntu yakkety-security universe
