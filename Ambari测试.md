@@ -194,3 +194,6 @@ $ apt show krb-user
 Version: 1.12+dfsg-2ubuntu5.3
 ```
 再使用apt install krb-user安装就正常了。这说明公司的局域网访问国外有问题。
+
+## 定制ambari服务
+Ambari待安装的各服务的配置文件位于/var/lib/ambari-server/resources/stacks/HDP/2.5/services下，每个服务占一个目录。定制的Ambari服务也要放在这个目录下。
