@@ -9,7 +9,10 @@ saiku
 spagobi  
 安装在share2:/usr/webb/：从github库的release页面下载二进制包。解压后将bin和database目录下的*.sh脚本文件chmod为可执行。先安装了opeenjdk-8-jdk。无法正常启动。自己制作了一个docker镜像wbwang/spagobi,在share1上pull。  
 
+Metabase  
+ The simplest, fastest way to get business intelligence and analytics to everyone in your company
 
+## 数据可视化
 https://github.com/samizdatco/arbor  
 js库,图形可视化, 多节点的网状图,动画,自动调整形状  
 
@@ -28,6 +31,22 @@ https://github.com/airbnb/superset
 http://chartd.co/  
 视网膜级折线图转化为一个图片  
 
+Grafana - graphite dashboard frontend, editor and graph composer.  
+ambari使用了grafana.  
+
+IPython - provides a rich architecture for interactive computing.
+Kibana - visualize logs and time-stamped data
+Lumify - open source big data analysis and visualization platform
+
+Plot.ly - Easy-to-use web service that allows for rapid creation of complex charts, from heatmaps to histograms. Upload data to create and style charts with Plotly's online spreadsheet. Fork others' plots.
+Plotly.js The open source javascript graphing library that powers plotly.
+
+Redash - open-source platform to query and visualize data.
+
+Superset - a data exploration platform designed to be visual, intuitive and interactive, making it easy to slice, dice and visualize data and perform analytics at the speed of thought.
+
+Vega - a visualization grammar.[示例](https://vega.github.io/vega/examples/)
+Zeppelin - a notebook-style collaborative data analysis.
 
 # [数据工程](https://github.com/igorbarinov/awesome-data-engineering)  
 ### Charts and Dashboards  
