@@ -13,6 +13,31 @@ Metabase
  The simplest, fastest way to get business intelligence and analytics to everyone in your company
 
 ## 数据可视化
+
+【以下带web ui】
+Grafana - graphite dashboard frontend, editor and graph composer.  
+ambari使用了grafana.  (宋明明)
+Kibana - visualize logs and time-stamped data   (宋明明)
+
+IPython - provides a rich architecture for interactive computing.  
+
+Lumify - open source big data analysis and visualization platform
+
+（plot.ly是个云服务）
+Plot.ly - Easy-to-use web service that allows for rapid creation of complex charts, from heatmaps to histograms. Upload data to create and style charts with Plotly's online spreadsheet. Fork others' plots.  
+Plotly.js The open source javascript graphing library that powers plotly.   （孙振）
+
+Redash - open-source platform to query and visualize data.
+
+Superset - a data exploration platform designed to be visual, intuitive and interactive, making it easy to slice, dice and visualize data and perform analytics at the speed of thought.
+
+Vega - a visualization grammar.[示例](https://vega.github.io/vega/examples/)
+
+Zeppelin - a notebook-style collaborative data analysis.  （包含在了HDP中）
+
+
+
+【下面的是js库】
 https://github.com/samizdatco/arbor  
 js库,图形可视化, 多节点的网状图,动画,自动调整形状  
 
@@ -30,23 +55,6 @@ https://github.com/airbnb/superset
 
 http://chartd.co/  
 视网膜级折线图转化为一个图片  
-
-Grafana - graphite dashboard frontend, editor and graph composer.  
-ambari使用了grafana.  
-
-IPython - provides a rich architecture for interactive computing.
-Kibana - visualize logs and time-stamped data
-Lumify - open source big data analysis and visualization platform
-
-Plot.ly - Easy-to-use web service that allows for rapid creation of complex charts, from heatmaps to histograms. Upload data to create and style charts with Plotly's online spreadsheet. Fork others' plots.
-Plotly.js The open source javascript graphing library that powers plotly.
-
-Redash - open-source platform to query and visualize data.
-
-Superset - a data exploration platform designed to be visual, intuitive and interactive, making it easy to slice, dice and visualize data and perform analytics at the speed of thought.
-
-Vega - a visualization grammar.[示例](https://vega.github.io/vega/examples/)
-Zeppelin - a notebook-style collaborative data analysis.
 
 # [数据工程](https://github.com/igorbarinov/awesome-data-engineering)  
 ### Charts and Dashboards  
