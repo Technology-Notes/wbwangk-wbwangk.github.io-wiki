@@ -1,4 +1,5 @@
 [原始文档地址](http://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/ch_Installing_Ambari.htmle)  
+相关文档：[大数据本地开发环境](https://github.com/imaidev/imaidev.github.io/wiki/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83)  
 曾经尝试从[源代码](https://github.com/apache/ambari)构建Ambari，使用maven，耗时几个小时，但没有成功。  
 使用官方apt源在ubuntu14下安装Ambari server的方法：
 ```
