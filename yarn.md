@@ -3,7 +3,7 @@ yarn通过ambari装在u1403上。下文中域名u1403.ambari.apache.org的IP地�
 ```
 192.168.14.103 u1403.ambari.apache.org
 ```
-（参考了书《hadoop yarn 权威指南》Arun C. Murthy等著）。  
+（参考了书《hadoop yarn 权威指南》Arun C. Murthy等著，下称参考书）。  
 
 在u1403上执行mapreduce的例子：
 ```
@@ -148,3 +148,5 @@ $ yarn jar /usr/hdp/2.5.3.0-37/hadoop-mapreduce/hadoop-mapreduce-examples.jar
   wordmedian: A map/reduce program that counts the median length of the words in the input files.
   wordstandarddeviation: A map/reduce program that counts the standard deviation of the length of the words in the input files.
 ```
+### 安装YARN
+安装的主力是一个开源工具pdsh([parallel distributed shell](http://sourceforge.net/projects/pdsh))。pdsh能远程地在主机上执行命令行或文件中命令。pdsh发行版中包含的pdcp命令能分发复制文件。
