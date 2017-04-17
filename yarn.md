@@ -9,7 +9,8 @@ yarn通过ambari装在u1403上。下文中域名u1403.ambari.apache.org的IP地�
 $ yarn jar /usr/hdp/2.5.3.0-37/hadoop-mapreduce/hadoop-mapreduce-examples.jar pi 16 1000
 Number of Maps  = 16
 Samples per Map = 1000
-（然后提示没有权限）
+（然后提示没有权限：）
+ Permission denied: user=yarn, access=WRITE, inode="/user/yarn/QuasiMonteCarlo_1490724309339_665171043/in":hdfs:hdfs:drwxr-xr-x
 ```
 切换用户后执行：
 ```
@@ -119,4 +120,4 @@ Estimated value of Pi is 3.14250000000000000000
 ```
 http://u1403.ambari.apache.org:8088/cluster/apps/ACCEPTED
 ```
-可以看到作业被接受了。然后在```http://u1403.ambari.apache.org:8088/cluster/apps/RUNNING```中看到作业正在执行。最后在```http://u1403.ambari.apache.org:8088/cluster/apps/FINISHED```页面中看到它(job_1490716389565_0001)。
+可以看到作业被接受了。然后在```http://u1403.ambari.apache.org:8088/cluster/apps/RUNNING```中看到作业正在执行。最后在```http://u1403.ambari.apache.org:8088/cluster/apps/FINISHED```页面中看到作业(job_1490716389565_0001)执行结束。
