@@ -34,4 +34,5 @@ Now try logging into the machine, with:   "ssh 'root@big2'"
 and check to make sure that only the key(s) you wanted were added.
 # ssh root@big2   (发现不再提示密码了)
 root@big2:~#   （这个提示表示已经进入了big2）
+# cat ~/.ssh/authorized_keys    (可以看到big1的公钥被填加到了这个文件中)
 ```
