@@ -149,4 +149,10 @@ $ yarn jar /usr/hdp/2.5.3.0-37/hadoop-mapreduce/hadoop-mapreduce-examples.jar
   wordstandarddeviation: A map/reduce program that counts the standard deviation of the length of the words in the input files.
 ```
 ### 安装YARN
-安装的主力是一个开源工具pdsh([parallel distributed shell](http://sourceforge.net/projects/pdsh))。pdsh能远程地在主机上执行命令行或文件中命令。pdsh发行版中包含的pdcp命令能分发复制文件。
+安装的主力是一个开源工具pdsh([parallel distributed shell](http://sourceforge.net/projects/pdsh))。pdsh能远程地在主机上执行命令行或文件中命令。pdsh发行版中包含的pdcp命令能分发复制文件。（参考书的50页）  
+ 1. 安装pdsh 
+```
+$ apt install pdsh
+```
+ 2. 免密码ssh
+参考[SSH入门](https://github.com/wbwangk/wbwangk.github.io/wiki/SSH%E5%85%A5%E9%97%A8)。
