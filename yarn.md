@@ -155,4 +155,21 @@ $ yarn jar /usr/hdp/2.5.3.0-37/hadoop-mapreduce/hadoop-mapreduce-examples.jar
 $ apt install pdsh
 ```
  2. 免密码ssh
-参考[SSH入门](https://github.com/wbwangk/wbwangk.github.io/wiki/SSH%E5%85%A5%E9%97%A8)。
+参考[SSH入门](https://github.com/wbwangk/wbwangk.github.io/wiki/SSH%E5%85%A5%E9%97%A8)。  
+ 3. 使用pdsh
+测试pdsh：
+```
+$ pdsh -w ssh:u1402 hostname
+u1402: u1402
+```
+为了同时在多台机器上执行命令，首先创建一个all_hosts的文件：
+```
+u1402
+u1403
+```
+然后执行：
+```
+$ pdsh -R ssh -w ^all_hosts date    (-R指定rcmd模块为ssh)
+u1403: Wed Mar 29 01:13:35 UTC 2017
+u1402: Wed Mar 29 01:05:26 UTC 2017
+```
