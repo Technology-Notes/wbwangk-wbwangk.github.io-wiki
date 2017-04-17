@@ -3,6 +3,7 @@ yarn通过ambari装在u1403上。下文中域名u1403.ambari.apache.org的IP地�
 ```
 192.168.14.103 u1403.ambari.apache.org
 ```
+（参考了书《hadoop yarn 权威指南》Arun C. Murthy等著）。  
 
 在u1403上执行mapreduce的例子：
 ```
@@ -120,4 +121,30 @@ Estimated value of Pi is 3.14250000000000000000
 ```
 http://u1403.ambari.apache.org:8088/cluster/apps/ACCEPTED
 ```
-可以看到作业被接受了。然后在```http://u1403.ambari.apache.org:8088/cluster/apps/RUNNING```中看到作业正在执行。最后在```http://u1403.ambari.apache.org:8088/cluster/apps/FINISHED```页面中看到作业(job_1490716389565_0001)执行结束。
+可以看到作业被接受了。然后在```http://u1403.ambari.apache.org:8088/cluster/apps/RUNNING```中看到作业正在执行。最后在```http://u1403.ambari.apache.org:8088/cluster/apps/FINISHED```页面中看到作业(job_1490716389565_0001)执行结束。  
+通过命令可以查看这个jar包中包含的应用清单(pi只是其中一个)：
+```
+$ yarn jar /usr/hdp/2.5.3.0-37/hadoop-mapreduce/hadoop-mapreduce-examples.jar
+  aggregatewordcount: An Aggregate based map/reduce program that counts the words in the input files.
+  aggregatewordhist: An Aggregate based map/reduce program that computes the histogram of the words in the input files.
+  bbp: A map/reduce program that uses Bailey-Borwein-Plouffe to compute exact digits of Pi.
+  dbcount: An example job that count the pageview counts from a database.
+  distbbp: A map/reduce program that uses a BBP-type formula to compute exact bits of Pi.
+  grep: A map/reduce program that counts the matches of a regex in the input.
+  join: A job that effects a join over sorted, equally partitioned datasets
+  multifilewc: A job that counts words from several files.
+  pentomino: A map/reduce tile laying program to find solutions to pentomino problems.
+  pi: A map/reduce program that estimates Pi using a quasi-Monte Carlo method.
+  randomtextwriter: A map/reduce program that writes 10GB of random textual data per node.
+  randomwriter: A map/reduce program that writes 10GB of random data per node.
+  secondarysort: An example defining a secondary sort to the reduce.
+  sort: A map/reduce program that sorts the data written by the random writer.
+  sudoku: A sudoku solver.
+  teragen: Generate data for the terasort
+  terasort: Run the terasort
+  teravalidate: Checking results of terasort
+  wordcount: A map/reduce program that counts the words in the input files.
+  wordmean: A map/reduce program that counts the average length of the words in the input files.
+  wordmedian: A map/reduce program that counts the median length of the words in the input files.
+  wordstandarddeviation: A map/reduce program that counts the standard deviation of the length of the words in the input files.
+```
