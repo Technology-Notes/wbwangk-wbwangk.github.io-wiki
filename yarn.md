@@ -119,35 +119,9 @@ Estimated value of Pi is 3.14250000000000000000
 ```
 实测中，作业不是马上就执行的。通过浏览器查看：
 ```
-http://u1403.ambari.apache.org:8088/cluster/apps/ACCEPTED
+http://u1403.ambari.apache.org:8088/cluster
 ```
-可以看到作业被接受了。然后在```http://u1403.ambari.apache.org:8088/cluster/apps/RUNNING```中看到作业正在执行。最后在```http://u1403.ambari.apache.org:8088/cluster/apps/FINISHED```页面中看到作业(job_1490716389565_0001)执行结束。  
-通过命令可以查看这个jar包中包含的应用清单(pi只是其中一个)：
-```
-$ yarn jar /usr/hdp/2.5.3.0-37/hadoop-mapreduce/hadoop-mapreduce-examples.jar
-  aggregatewordcount: An Aggregate based map/reduce program that counts the words in the input files.
-  aggregatewordhist: An Aggregate based map/reduce program that computes the histogram of the words in the input files.
-  bbp: A map/reduce program that uses Bailey-Borwein-Plouffe to compute exact digits of Pi.
-  dbcount: An example job that count the pageview counts from a database.
-  distbbp: A map/reduce program that uses a BBP-type formula to compute exact bits of Pi.
-  grep: A map/reduce program that counts the matches of a regex in the input.
-  join: A job that effects a join over sorted, equally partitioned datasets
-  multifilewc: A job that counts words from several files.
-  pentomino: A map/reduce tile laying program to find solutions to pentomino problems.
-  pi: A map/reduce program that estimates Pi using a quasi-Monte Carlo method.
-  randomtextwriter: A map/reduce program that writes 10GB of random textual data per node.
-  randomwriter: A map/reduce program that writes 10GB of random data per node.
-  secondarysort: An example defining a secondary sort to the reduce.
-  sort: A map/reduce program that sorts the data written by the random writer.
-  sudoku: A sudoku solver.
-  teragen: Generate data for the terasort
-  terasort: Run the terasort
-  teravalidate: Checking results of terasort
-  wordcount: A map/reduce program that counts the words in the input files.
-  wordmean: A map/reduce program that counts the average length of the words in the input files.
-  wordmedian: A map/reduce program that counts the median length of the words in the input files.
-  wordstandarddeviation: A map/reduce program that counts the standard deviation of the length of the words in the input files.
-```
+当作业执行成功后，点击屏幕上History链接可以看到作业的历史摘要。  
 ### 安装YARN
 安装的主力是一个开源工具pdsh([parallel distributed shell](http://sourceforge.net/projects/pdsh))。pdsh能远程地在主机上执行命令行或文件中命令。pdsh发行版中包含的pdcp命令能分发复制文件。（参考书的50页）  
  1. 安装pdsh 
