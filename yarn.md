@@ -148,3 +148,10 @@ u1403: Wed Mar 29 01:13:35 UTC 2017
 u1402: Wed Mar 29 01:05:26 UTC 2017
 ```
 上述结果显示：date命令在u1402和u1403两个主机上都执行成功了。也就是说，pdsh可以批量在多个主机上执行命令。  
+
+## YARN的管理
+ResourceManager是YARN的主节点，NodeManager是YARN的工作节点。安装了NodeManager的主机才会置于YARN的管理之下。  
+在Ambari的管理界面中，通过Hosts/Actions/All Hosts/Node Managers/Add来新增NodeManager节点。   
+YARN可以管理长生命周期的作业，如Hive。  
+YARN的主要价值是将hadoop变成共享集群，并将分散的数据集中起来，成为中心化数据仓库。  
+在Capacity调度器中，通常情况下一个队列代表一个组织，队列的容量代表了该组织有权使用的能力（集群的）。YARN的队列是有层级的（树形结构），父队列和叶子队列。层级队列首先确保子队列共享组织的资源，然后才允许其他组织使用该队列空闲的资源。
