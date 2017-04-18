@@ -173,3 +173,4 @@ $ pdsh -R ssh -w ^all_hosts date    (-R指定rcmd模块为ssh)
 u1403: Wed Mar 29 01:13:35 UTC 2017
 u1402: Wed Mar 29 01:05:26 UTC 2017
 ```
+上述结果显示：date命令在u1402和u1403两个主机上都执行成功了。也就是说，pdsh可以批量在多个主机上执行命令。  
