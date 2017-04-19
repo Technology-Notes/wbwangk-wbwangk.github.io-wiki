@@ -27,3 +27,14 @@ mapred-queue-acls.xml中可以定义哪些用户或用户组可以向哪个队�
 可以控制那些群组的用户可以分布式文件系统的后台服务进行通讯。  
 在hadoop-policy.xml文件中有更多的选项能够对Hadoop服务(包括内部通信鞋业)访问进行控制。  
 
+#### Hadoop与Kerberos
+在配置文件/etc/hadoop/conf/core-site.xml中默认值是：
+```
+    <property>
+      <name>hadoop.security.authentication</name>
+      <value>simple</value>
+    </property>
+```
+如果开启kerberos，需要把simple替换为kerberos。  
+
+
