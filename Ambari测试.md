@@ -163,6 +163,8 @@ $ cd /usr/share/java
 $ wget https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
 $ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-42.0.0.jar
 ```
+### Ambari Security
+[Apache Ambari Security](http://docs.hortonworks.com/HDPDocuments/Ambari-2.5.0.3/bk_ambari-security/content/ch_amb_sec_guide.html)
 
 ### jdk jce
 ```
