@@ -165,7 +165,22 @@ $ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresq
 ```
 ### Ambari Security
 [Apache Ambari Security](http://docs.hortonworks.com/HDPDocuments/Ambari-2.5.0.3/bk_ambari-security/content/ch_amb_sec_guide.html)
-
+在u1404（非HDP集群节点）安装Install the KDC Server：
+```
+$ apt-get install krb5-kdc krb5-admin-server
+```
+第一次尝试时，提示krb5-user依赖冲突。用手机当热点执行apt-get update后，问题解决。  
+安装过程中出现提示窗口让输入Default Kerberos version 5 realm，保留默认值AMBARI.APACHE.ORG。然后出现两次让输入hostname，都输入的"u1404.ambari.apache.org"。最后提示说这个向导没有自动建立一个kerberos realm，如果想建立就执行命令"krb5_newrealm"。相关说明在/usr/share/doc/krb5-kdc/README.KDC中。  
+```
+$ krb5_newrealm
+master key name 'K/M@AMBARI.APACHE.ORG'
+Enter KDC database master key:    (输入两次密码)
+```
+启动KDC server和KDC admin server：
+```
+$ service krb5-kdc restart
+$ service krb5-admin-server restart
+```
 ### jdk jce
 ```
 $ add-apt-repository ppa:webupd8team/java
@@ -173,7 +188,7 @@ $ apt-get update
 $ apt-get install oracle-java8-installer
 $ apt install oracle-java8-unlimited-jce-policy
 ```
-### 安装kerberos
+### 安装kerberos client
 principal: webb/admin@AMBARI.APACHE.ORG  
 passwd: vagrant
 
