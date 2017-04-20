@@ -36,5 +36,9 @@ mapred-queue-acls.xml中可以定义哪些用户或用户组可以向哪个队�
     </property>
 ```
 如果开启kerberos，需要把simple替换为kerberos。  
+我选择让Ambari自动安装kerberos，参考[Ambari测试](https://github.com/wbwangk/wbwangk.github.io/wiki/Ambari%E6%B5%8B%E8%AF%95#ambari-security)。  
+当使用ambari安装完kerberos后，会发现上面的core-site.xml中simple被修改成了kerberos，文件中还有其他的一些相关配置变化。  
+
+
 
 
