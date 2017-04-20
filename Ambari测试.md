@@ -219,9 +219,21 @@ Kadmin host中输入"u1404.ambari.apache.org"，在Admin principal中输入"root
 ```
 $ apt install krb5-user  (如果提示包依赖错误，就用手机上网执行apt-get udpate)
 ```
-安装后问题解决，继续执行向导。  
+安装后问题解决，继续执行向导。实测中碰到服务重启失败的情况，强行结束向导，然后手工重启有问题的hadoop服务。  
+
+查看主体清单的方法：在u1404节点（安装KDC的节点）上执行：
+```
+$ kadmin.local
+kadmin.local: list_principals  
+HTTP/u1402.ambari.apache.org@AMBARI.APACHE.ORG
+HTTP/u1403.ambari.apache.org@AMBARI.APACHE.ORG
+K/M@AMBARI.APACHE.ORG
+admin/admin@AMBARI.APACHE.ORG
+(略)
+```
 
 #### 安装kerberos碰到的问题
+ambari启用kerberos后所有服务要重启，其中datanode服务报告内存溢出。将datanode所在VM的内存由2048改成3048后，datanode服务重启成功。  
 
 某次安装kerberos客户端时报错：
 ```
