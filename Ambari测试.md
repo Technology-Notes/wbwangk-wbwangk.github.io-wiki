@@ -163,8 +163,11 @@ $ cd /usr/share/java
 $ wget https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
 $ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-42.0.0.jar
 ```
-### Ambari Security
+
+## Ambari Security
 [Apache Ambari Security](http://docs.hortonworks.com/HDPDocuments/Ambari-2.5.0.3/bk_ambari-security/content/ch_amb_sec_guide.html)
+
+#### 1.安装KDC Server
 在u1404（非HDP集群节点）安装Install the KDC Server：
 ```
 $ apt-get install krb5-kdc krb5-admin-server
@@ -181,18 +184,46 @@ Enter KDC database master key:    (输入两次密码)
 $ service krb5-kdc restart
 $ service krb5-admin-server restart
 ```
-### jdk jce
+#### 2.创建Kerberos Admin
+通过创建admin主体来建立KDC admin：
 ```
-$ add-apt-repository ppa:webupd8team/java
-$ apt-get update
-$ apt-get install oracle-java8-installer
-$ apt install oracle-java8-unlimited-jce-policy
+$ kadmin.local -q "addprinc root/admin"
+Enter password for principal "root/admin@AMBARI.APACHE.ORG":    (输入两次密码)
+Principal "admin/admin@AMBARI.APACHE.ORG" created.
 ```
-### 安装kerberos client
-principal: webb/admin@AMBARI.APACHE.ORG  
-passwd: vagrant
+将刚创建的admin主体添加到KDC ACL中：
+```
+$ echo "*/admin@AMBARI.APACHE.ORG *" >> /etc/krb5kdc/kadm5.acl
+$ service krb5-admin-server restart
+```
 
-向u1404安装kerberos客户端时报错：
+#### 3.安装jce
+在u1401、u1402、u1403三个节点上安装JCE：
+```
+$ add-apt-repository ppa:webupd8team/java    （如果出现提示，回车继续）
+$ apt-get update
+$ apt-get install oracle-java8-installer   （这个貌似不用装，因为ambari自己装了oracle jdk）
+$ apt install oracle-java8-unlimited-jce-policy  （有弹窗让接受协议）
+$ export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+```
+在u1401上（ambari server所在节点）按[这个说明](http://docs.hortonworks.com/HDPDocuments/Ambari-2.5.0.3/bk_ambari-security/content/distribute_and_install_the_jce.html)下载JCE策略文件，并解压到```$JAVA_HOME/jre/lib/security/```目录下。  
+重启ambarserver。  
+
+#### 4.在ambari中启动kerberos安装向导
+由于已经在u1404上部署了KDC，所有在向导中选择“Existing MIT KDC”（已经存在的MIT KDC）。  
+KDC hosts中输入"u1404.ambari.apache.org"，在realm中输入"AMBARI.APACHE.ORG"。点击test KDC connection按钮，应显示连接成功。  
+Kadmin host中输入"u1404.ambari.apache.org"，在Admin principal中输入"root/admin@AMBARI.APACHE.ORG"，输入密码，点击next按钮。  
+页面切换到了“Install and Test Kerberos Client”，并开始安装kerberos client。  
+过了一段时间后报错，发现是版本依赖（见下文）的问题。切换为用手机热点上网（公司网更新ubuntu14会有部分包报错），然后在u1402和u1403上执行apt-get update。点击“Retry”按钮继续向导。  
+安装完成kerberos client后执行测试，但测试出错，说kadmin找不到。猜测是u1401节点未安装kerberos客户端导致，所以在u1401节点上执行：
+```
+$ apt install krb5-user  (如果提示包依赖错误，就用手机上网执行apt-get udpate)
+```
+安装后问题解决，继续执行向导。  
+
+#### 安装kerberos碰到的问题
+
+某次安装kerberos客户端时报错：
 ```
 $  apt-get install krb5-user
 The following packages have unmet dependencies:
