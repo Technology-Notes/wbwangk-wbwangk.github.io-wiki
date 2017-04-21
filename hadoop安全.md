@@ -40,5 +40,8 @@ mapred-queue-acls.xml中可以定义哪些用户或用户组可以向哪个队�
 当使用ambari安装完kerberos后，会发现上面的core-site.xml中simple被修改成了kerberos，文件中还有其他的一些相关配置变化。  
 
 
+## Kerberos and SPNEGO
+http://www.thekspace.com/home/component/content/article/54-kerberos-and-spnego.html
+Kerberos一般部署在C/S环境，很少用于web应用和瘦客户端环境。SPNEGO提供了一个机制，通过HTTP协议将kerberos扩展到了web应用。
 
 
