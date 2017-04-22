@@ -80,4 +80,7 @@ Alice为了使用myservice，她需要提交一个有效的服务票据(service 
 4. 当成功解密包含TGT的消息后，Alice向位于kdc.example.com的TGS请求myservice/server1.exapmle.com@EXAMPLE.COM的服务票据，TGT随请求一起发出。
 5. TGS验证TGT，提供给Alice一个服务票据(service ticket)，服务票据使用主体myservice/server.example.com@EXAMPLE.COM的密码(key)进行加密。
 6. Alice现在提交服务票据到myservice，myservice可以随后使用myservice/server1.example.com@EXAMPLE.COM的密码来解密票据。
-7. 服务myservice准许Alice使用服务，因为她已经被成功认证。
+7. 服务myservice准许Alice使用服务，因为她已经被成功认证。  
+![](https://github.com/wbwangk/wbwangk.github.io/blob/master/images/Kerbberos_workflow_example.png?raw=true)  
+
+#### [MIT Kerberos](http://web.mit.edu/~kerberos/)
