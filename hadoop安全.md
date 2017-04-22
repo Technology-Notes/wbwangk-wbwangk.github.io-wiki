@@ -143,4 +143,42 @@ Valid starting Expires Service principal
 No credentials cache found (ticket cache FILE:/tmp/krb5cc_5000
 [alice@server1 ~]$
 ```
- 
+### 第5章 id和认证
+
+Kerberos没有提供先进id功能，如分组和角色。特别是，Kerberos将id表示为一个简单的两部分字符串(或表示服务时的三部分字符串) ，一个短名称和一个领域。
+
+#### kerberos主体映射到用户名
+Kerberos使用了一个两部分字符串（如alice@EXAMPLE.COM）或三部分字符串（如hdfs/namenode.example.com@EXAMPLE.COM）,包含名称、领域和一个可选的实例名或主机名(hostname)。Hadoop将kerberos主体名称映射为本地用户名。 映射策略定义在krb5.conf文件的```auth_to_local```参数中，或core-site.xml中的hadoop特定规则hadoop.security.auth_to_local参数中。  
+
+#### hadoop用户到用户组映射
+hadoop用参数hadoop.security.group.mapping去控制用户到用户组的映射。默认实现是通过原生调用或本地shell命令，并利用标准UNIX接口去查找用户到组的映射。如果集群中各个主机定义的用户组不同，会导致用户到组的映射不一致。对于hadoop，映射发生在NodeNode、JobTracker(对于MR1)和ResourceManager(对于YARN/MR2)。
+
+#### Hadoop用户供给
+hadoop集群需要一个统一的用户数据库，并且将用户同步到集群中所有服务器的本地操作系统中。并且要控制这些用户在本地操作系统中权限。
+
+#### 认证
+
+Table 5-4. Hadoop ecosystem authentication methods  
+
+Service | Protocol | Methods
+--------|----------|--------
+HDFS | RPC | Kerberos, delegation token
+HDFS | Web UI | SPNEGO (Kerberos), pluggable
+HDFS| REST (WebHDFS)| SPNEGO (Kerberos), delegation token
+HDFS| REST (HttpFS)| SPNEGO (Kerberos), delegation token
+MapReduce| RPC| Kerberos, delegation token
+MapReduce| Web UI| SPNEGO (Kerberos), pluggable
+YARN| RPC| Kerberos, delegation token
+YARN| Web UI| SPNEGO (Kerberos), pluggable
+Hive Server 2| Thrift| Kerberos, LDAP (username/password)
+Hive Metastore| Thrift| Kerberos, LDAP (username/password)
+Impala| Thrift| Kerberos, LDAP (username/password)
+HBase| RPC| Kerberos, delegation token
+HBase| Thrift Proxy| None
+HBase| REST Proxy| SPNEGO (Kerberos)
+Accumulo| RPC| Username/password, pluggable
+Accumulo| Thrift Proxy| Username/password, pluggable
+Solr| HTTP| Based on HTTP container
+Oozie| REST| SPNEGO (Kerberos, delegation token)
+Hue| Web UI| Username/password (database, PAM, LDAP), SAML, OAuth, SPNEGO (Kerberos), remote user (HTTP proxy)
+ZooKeeper| RPC| Digest (username/password), IP, SASL (Kerberos), pluggable
