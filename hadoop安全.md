@@ -156,7 +156,7 @@ hadoop用参数hadoop.security.group.mapping去控制用户到用户组的映射
 #### Hadoop用户供给
 hadoop集群需要一个统一的用户数据库，并且将用户同步到集群中所有服务器的本地操作系统中。并且要控制这些用户在本地操作系统中权限。
 
-#### 认证
+### 认证
 
 Table 5-4. Hadoop ecosystem authentication methods  
 
@@ -182,3 +182,25 @@ Solr| HTTP| Based on HTTP container
 Oozie| REST| SPNEGO (Kerberos, delegation token)
 Hue| Web UI| Username/password (database, PAM, LDAP), SAML, OAuth, SPNEGO (Kerberos), remote user (HTTP proxy)
 ZooKeeper| RPC| Digest (username/password), IP, SASL (Kerberos), pluggable
+
+#### Kerberos
+
+Hadoop支持两种认证机制：simple和kerberos。simple模式下，hadoop服务器信任所有的客户端。simple模式仅适合POC或实验室环境。  
+HDFS、MapReduce、YARN、HBase、Oozie和ZooKeeper都支持Kerberos作为客户端的一个认证机制，但实现因服务和接口有所不同。  
+对于以RPC为基础的协议，Simple Authentication and Security Layer (SASL)框架被用于在协议底层添加认证。理论上，所有SASL机制都应支持，实际上，仅支持GSSAPI(需要Kerberos V5)和DISGEST-MD5。  
+Oozie没有RPC协议，只提供REST接口。Oozie使用 Simpleand Protected GSSAPI Negotiation Mechanism (SPNEGO),一个通过HTTP进行Kerberos认证的协议。HDFS、MapReduce、YARN、Oozie和Hue的web接口，以及HDFS (both WebHDFS and HttpFS)和HBase的REST接口也支持SPNEGO。对于SASL和SPNEGO，
+
+Alice使用kerberos通过HDFS NameNode认证的步骤：  
+1. Alice向位于kdc.example.com的TGS请求一个服务票据，请求的HDFS服务id是hdfs/namenode.example.com@EXAMPLE.COM，随请求附上她的TGT。  
+2. TGS验证TGT，然后为Alice提供一个服务票据(service ticket)，服务票据用主体hdfs/namenode.example.com@EXAMPLE.COM的key(密码)加密。  
+3. Alice发送服务票据到NameNode(通过SASL)，NameNode可以用hdfs/namenode.example.com@EXAMPLE.COM的key(也就是它自己的)解密和验证这个票据。
+
+#### 用户名和密码认证
+
+Zookeeper支持通过用户名和密码的认证。用户名和密码认证由摘要认证供应商实现，供应商会生成用户名和密码的SHA-1摘要。
+
+#### 令牌(Tokens)
+
+### 冒充(Impersonation)
+Hadoop生态系统中有许多服务代表最终用户执行操作。为了确保安全，这些服务必须对客户端进行认证，以确保客户端可以冒充那些用户。 Oozie、Hive (in HiveServer2)和Hue都支持冒充最终用户访问HDFS、MapReduce、YARN或HBase。  
+冒充有时被称为代理(proxying)。可以执行冒充的用户被称为代理人(proxy)。启用冒充的配置参数是hadoop.proxyuser.<proxy>.hosts和hadoop.proxyuser.<proxy>.groups，<proxy>是执行冒充的用户的用户名。
