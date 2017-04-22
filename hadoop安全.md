@@ -40,8 +40,44 @@ mapred-queue-acls.xml中可以定义哪些用户或用户组可以向哪个队�
 当使用ambari安装完kerberos后，会发现上面的core-site.xml中simple被修改成了kerberos，文件中还有其他的一些相关配置变化。  
 
 
-## Kerberos and SPNEGO
+## 研究Kerberos and SPNEGO
+#### Kerberos and SPNEGO
 http://www.thekspace.com/home/component/content/article/54-kerberos-and-spnego.html
 Kerberos一般部署在C/S环境，很少用于web应用和瘦客户端环境。SPNEGO提供了一个机制，通过HTTP协议将kerberos扩展到了web应用。
 
+[认证模式之Spnego模式](http://blog.csdn.net/wangyangzhizhou/article/details/51163782)
 
+## O'reilly Hadoop Security
+
+kerberos主体(principal)分成两类：用户主体UPN和服务主体SPN。  
+KDC由三个组件组成：Kerberos数据库，认证服务（AS）和票证授予服务（TGS）。  
+
+#### 主体principal命名规范
+UPN的命名规范：  
+ - alice@EXAMPLE.COM  用户alice在领域EXAMPLE.COM  
+ - bob/admin@EXAMPLE.COM 管理员用户bob在领域EXAMPLE.COM  
+SPN的命令规范：  
+ - hdfs/node1.example.com@EXAMPLE.COM  该主体代表了hdfs 服务的SPN ，位于Kerberos领域EXAMPLE.COM 的主机node1.example.com上  
+
+#### Kerberos术语缩写
+术语 | 名称 | 描述
+----|-------|---------------
+TGT | Ticket-granting ticket | 一个特殊票据类型，发放给被AS认证成功的用户
+TGS | Ticket-granting service | 一个验证TGT和授予服务票据的KDC服务
+服务票据| service ticket | 用TGT向TGS换取，相当于令牌
+
+#### Kerberos流程：一个简单例子
+例子使用的数据如下：
+ - EXAMPLE.COM   Kerberos领域(realm)
+ - Alice  一个系统的用户，UPN是alice@EXAMPLE.COM
+ - myservice  主机server1.example.com上的一个服务，SPN是myservice/server1.example.com@EXAMPLE.COM
+ - kdc.example.com   Kerberos领域EXAMPLE.COM的KDC
+
+Alice为了使用myservice，她需要提交一个有效的服务票据(service ticket)到myservice。下面的步骤显示了她是怎么做的：  
+1. Alice需要获得一个TGT。为了得到它，她发出一个请求到位于kdc.example.com的KDC，以便证明她是主体alice@EXAMPLE.COM。
+2. AS的响应提供了一个TGT，TGT被主体alice@EXAMPLE.COM的密码加密。
+3. 收到加密的消息后，Alice被提示输入主体alice@EXAMPLE.COM的密码，以便解密消息。
+4. 当成功解密包含TGT的消息后，Alice向位于kdc.example.com的TGS请求myservice/server1.exapmle.com@EXAMPLE.COM的服务票据，TGT随请求一起发出。
+5. TGS验证TGT，提供给Alice一个服务票据(service ticket)，服务票据使用主体myservice/server.example.com@EXAMPLE.COM的密码(key)进行加密。
+6. Alice现在提交服务票据到myservice，myservice可以随后使用myservice/server1.example.com@EXAMPLE.COM的密码来解密票据。
+7. 服务myservice准许Alice使用服务，因为她已经被成功认证。
