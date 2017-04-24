@@ -1,4 +1,4 @@
-##《Hadoop集群与安全》
+# 《Hadoop集群与安全》
 #### HDFS安全
 采用了类似linux文件系统的权限模式。每个文件都拥有用户、组所有者以及权限设置。这些权限控制了用户对于特定目录或文件的访问。  
 操作系统用户和用户在分布式文件系统中分配的权限之间并没有直接的联系。在更改目录或文件的所有者时，Hadoop并不会检查用户是否真正存在。
@@ -40,14 +40,15 @@ mapred-queue-acls.xml中可以定义哪些用户或用户组可以向哪个队�
 当使用ambari安装完kerberos后，会发现上面的core-site.xml中simple被修改成了kerberos，文件中还有其他的一些相关配置变化。  
 
 
-## 研究Kerberos and SPNEGO
+## 《Kerberos and SPNEGO》
 #### Kerberos and SPNEGO
 http://www.thekspace.com/home/component/content/article/54-kerberos-and-spnego.html
 Kerberos一般部署在C/S环境，很少用于web应用和瘦客户端环境。SPNEGO提供了一个机制，通过HTTP协议将kerberos扩展到了web应用。
 
 [认证模式之Spnego模式](http://blog.csdn.net/wangyangzhizhou/article/details/51163782)
 
-# O'reilly Hadoop Security
+
+# 《O'reilly Hadoop Security》
 
 kerberos主体(principal)分成两类：用户主体UPN和服务主体SPN。  
 KDC由三个组件组成：Kerberos数据库，认证服务（AS）和票证授予服务（TGS）。  
@@ -144,7 +145,7 @@ Valid starting Expires Service principal
 No credentials cache found (ticket cache FILE:/tmp/krb5cc_5000
 [alice@server1 ~]$
 ```
-### 第5章 id和认证
+## 第5章 id和认证
 
 Kerberos没有提供先进id功能，如分组和角色。特别是，Kerberos将id表示为一个简单的两部分字符串(或表示服务时的三部分字符串) ，一个短名称和一个领域。
 
@@ -297,4 +298,11 @@ keytab文件的建议存放目录是$HADOOP_CONF_DIR目录(一般是/etc/hadoop/
 ```
 上例中的```_HOST```是通配符，实际执行时会被替换为具体的主机名。  
 （其他Hadoop服务的配置文件略。）  
+
 ## 第6章 授权
+
+身份验证仅仅是整体安全性故事的一部分，还需要一种方法来对经过身份验证的用户可以访问的操作或数据进行建模。以这种方式保护资源称为授权。
+
+### HDFS授权
+每次尝试访问HDFS中的文件或目录必须首先通过授权检查。HDFS采用与POSIX兼容的文件系统通用的授权方案。权限由三个不同类别的用户管理：所有者，组和其他人。读取，写入和执行权限可以独立授予每个类。  
+无论文件或目录的权限如何，NameNode运行的用户（通常为hdfs）和dfs.permis sions.superusergroup（默认为超组）中定义的组中的任何成员都可以读取，写入或删除任何文件和目录。就HDFS而言，它们在Linux系统上相当于root。
