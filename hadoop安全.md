@@ -47,7 +47,7 @@ Kerberos一般部署在C/S环境，很少用于web应用和瘦客户端环境。
 
 [认证模式之Spnego模式](http://blog.csdn.net/wangyangzhizhou/article/details/51163782)
 
-## O'reilly Hadoop Security
+# O'reilly Hadoop Security
 
 kerberos主体(principal)分成两类：用户主体UPN和服务主体SPN。  
 KDC由三个组件组成：Kerberos数据库，认证服务（AS）和票证授予服务（TGS）。  
@@ -56,8 +56,9 @@ KDC由三个组件组成：Kerberos数据库，认证服务（AS）和票证授�
 UPN(用户主体名称)的命名规范：  
  - alice@EXAMPLE.COM  用户alice在领域EXAMPLE.COM  
  - bob/admin@EXAMPLE.COM 管理员用户bob在领域EXAMPLE.COM  
+
 SPN(服务主体名称)的命令规范：  
- - hdfs/node1.example.com@EXAMPLE.COM  该主体代表了hdfs 服务的SPN ，位于Kerberos领域EXAMPLE.COM 的主机node1.example.com上  
+ - hdfs/node1.example.com@EXAMPLE.COM  该主体代表了hdfs 服务的SPN ，位于Kerberos领域EXAMPLE.COM 的主机node1.example.com上。（a service name, a hostname, and a realm） 
 
 #### Kerberos术语
 术语 | 名称 | 描述
@@ -204,3 +205,96 @@ Zookeeper支持通过用户名和密码的认证。用户名和密码认证由�
 ### 冒充(Impersonation)
 Hadoop生态系统中有许多服务代表最终用户执行操作。为了确保安全，这些服务必须对客户端进行认证，以确保客户端可以冒充那些用户。 Oozie、Hive (in HiveServer2)和Hue都支持冒充最终用户访问HDFS、MapReduce、YARN或HBase。  
 冒充有时被称为代理(proxying)。可以执行冒充的用户被称为代理人(proxy)。启用冒充的配置参数是hadoop.proxyuser.<proxy>.hosts和hadoop.proxyuser.<proxy>.groups，<proxy>是执行冒充的用户的用户名。
+
+#### 配置
+当位置好kerberos认证后，所有用户和守护进程必须提供有效的凭据才能访问RPC接口。 这意味着你必须为集群中的每一个服务器/守护进程对创建一个kerberos服务凭据。回顾一下服务主体名称(SPN)的概念，它有三部分组成：一个服务名，一个主机名，和一个领域。在hadoop中，每个作为特定服务组成部分的守护进程使用这个服务名称(对于HDFS是hdfs，对于MapReduce是mapred，对于YARN是yarn)。另外，如果你想为各种web接口启用kerberos认证，那么你还需要为HTTP服务名称提供主体。  
+
+假设有一个hadoop集群的主机和服务如下表：  
+Table 5-5. Service layout
+
+Hostname| Daemon
+--------|-------
+nn1.example.com| NameNode
+ |JournalNode
+nn2.example.com| NameNode
+  |JournalNode
+snn.example.com| SecondaryNameNode
+ | JournalNode
+rm.example.com| ResourceManager
+jt.example.com| JobTracker
+ | JobHistoryServer
+dn1.example.com| DataNode
+ |TaskTracker
+ |NodeManager
+dn2.example.com| DataNode
+ |TaskTracker
+ |NodeManager
+dn3.example.com| DataNode
+ |TaskTracker
+ |NodeManager
+
+第一步是在kerberos KDC上创建所有需要的SPN，然后为每个服务器上的每个守护进程到处一个keytab文件。需要的SPN列表如下：
+
+Table 5-6. Required Kerberos principals
+
+Hostname| Daemon| Keytab file| SPN
+--------|-------|------------|-----
+nn1.example.com| NameNode/JournalNode |hdfs.keytab |hdfs/nn1.example.com@EXAMPLE.COM
+ | | |HTTP/nn1.example.com@EXAMPLE.COM
+nn2.example.com |NameNode/JournalNode |hdfs.keytab |hdfs/nn2.example.com@EXAMPLE.COM
+ | | |HTTP/nn2.example.com@EXAMPLE.COM
+snn.example.com |SecondaryNameNode/JournalNode |hdfs.keytab |hdfs/snn.example.com@EXAMPLE.COM
+ | | |HTTP/snn.example.com@EXAMPLE.COM
+rm.example.com |ResourceManager |yarn.keytab |yarn/rm.example.com@EXAMPLE.COM
+jt.example.com |JobTracker |mapred.keytab |mapred/jt.example.com@EXAMPLE.COM
+ | | |HTTP/jt.example.com@EXAMPLE.COM
+ |JobHistoryServer |mapred.keytab |mapred/jt.example.com@EXAMPLE.COM
+dn1.example.com |DataNode |hdfs.keytab |hdfs/dn1.example.com@EXAMPLE.COM
+ | | |HTTP/dn1.example.com@EXAMPLE.COM
+ |TaskTracker |mapred.keytab |mapred/dn1.example.com@EXAMPLE.COM
+ | | |HTTP/dn1.example.com@EXAMPLE.COM
+ |NodeManager |yarn.keytab |yarn/dn1.example.com@EXAMPLE.COM
+ | | |HTTP/dn1.example.com@EXAMPLE.COM
+dn2.example.com |DataNode |hdfs.keytab |hdfs/dn2.example.com@EXAMPLE.COM
+ | | |HTTP/dn2.example.com@EXAMPLE.COM
+ |TaskTracker |mapred.keytab |mapred/dn2.example.com@EXAMPLE.COM
+ | | |HTTP/dn2.example.com@EXAMPLE.COM
+ |NodeManager |yarn.keytab |yarn/dn2.example.com@EXAMPLE.COM
+ | | |HTTP/dn2.example.com@EXAMPLE.COM
+dn3.example.com |DataNode |hdfs.keytab |hdfs/dn3.example.com@EXAMPLE.COM
+ | | |HTTP/dn3.example.com@EXAMPLE.COM
+ |TaskTracker |mapred.keytab |mapred/dn3.example.com@EXAMPLE.COM
+ | | |HTTP/dn3.example.com@EXAMPLE.COM
+ |NodeManager |yarn.keytab |yarn/dn3.example.com@EXAMPLE.COM
+ | | |HTTP/dn3.example.com@EXAMPLE.COM
+
+keytab文件的建议存放目录是$HADOOP_CONF_DIR目录(一般是/etc/hadoop/conf)。  
+当创建好需要的SPN，并将keytab文件分发好，需要配置Hadoop使用Kerberos认证。首先，设置core-site.xml文件的hadoop.security.authentication参数：
+```xml
+<property>
+ <name>hadoop.security.authentication</name>
+ <value>kerberos</value>
+ </property>
+```
+以HDFS的配置文件是hdfs-site.xml。NameNode服务的配置如下：
+```xml
+<property>
+ <name>dfs.block.access.token.enable</name>
+ <value>true</value>
+ </property>
+ <property>
+ <name>dfs.namenode.keytab.file</name>
+ <value>hdfs.keytab</value>
+ </property>
+ <property>
+ <name>dfs.namenode.kerberos.principal</name>
+ <value>hdfs/_HOST@EXAMPLE.COM</value>
+ </property>
+ <property>
+ <name>dfs.namenode.kerberos.internal.spnego.principal</name>
+ <value>HTTP/_HOST@EXAMPLE.COM</value>
+ </property>
+```
+上例中的```_HOST```是通配符，实际执行时会被替换为具体的主机名。  
+（其他Hadoop服务的配置文件略。）  
+## 第6章 授权
