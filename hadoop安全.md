@@ -326,9 +326,9 @@ Hadoop支持将ACL定义到作业队列。这些ACL控制哪些用户可以提�
  - Client configuration files
 
 下面是一些典型的边缘节点类型：
- - Data Gateway
+ - Data Gateway  
 HDFS HttpFS and NFS gateway, HBase Thrift server and REST server, Flume agent  
-  - SQL Gateway
+  - SQL Gateway  
 Hive HiveServer2 and WebHCatServer, Impala load-balancing proxy (e.g., HAP‐roxy)
- - User Portal
+ - User Portal  
 Hue server and Kerberos ticket renewer, Oozie server, client configuration files  
