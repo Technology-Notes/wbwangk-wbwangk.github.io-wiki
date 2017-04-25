@@ -203,9 +203,9 @@ Zookeeper支持通过用户名和密码的认证。用户名和密码认证由�
 
 #### 令牌(Tokens)
 
-### 冒充(Impersonation)
-Hadoop生态系统中有许多服务代表最终用户执行操作。为了确保安全，这些服务必须对客户端进行认证，以确保客户端可以冒充那些用户。 Oozie、Hive (in HiveServer2)和Hue都支持冒充最终用户访问HDFS、MapReduce、YARN或HBase。  
-冒充有时被称为代理(proxying)。可以执行冒充的用户被称为代理人(proxy)。启用冒充的配置参数是hadoop.proxyuser.<proxy>.hosts和hadoop.proxyuser.<proxy>.groups，<proxy>是执行冒充的用户的用户名。
+### 模拟(Impersonation)
+Hadoop生态系统中有许多服务代表最终用户执行操作。为了确保安全，这些服务必须对客户端进行认证，以确保客户端可以模拟那些用户。 Oozie、Hive (in HiveServer2)和Hue都支持模拟最终用户访问HDFS、MapReduce、YARN或HBase。  
+模拟有时被称为代理(proxying)。可以执行模拟的用户被称为代理人(proxy)。启用模拟的配置参数是hadoop.proxyuser.<proxy>.hosts和hadoop.proxyuser.<proxy>.groups，<proxy>是执行模拟的用户的用户名。
 
 #### 配置
 当位置好kerberos认证后，所有用户和守护进程必须提供有效的凭据才能访问RPC接口。 这意味着你必须为集群中的每一个服务器/守护进程对创建一个kerberos服务凭据。回顾一下服务主体名称(SPN)的概念，它有三部分组成：一个服务名，一个主机名，和一个领域。在hadoop中，每个作为特定服务组成部分的守护进程使用这个服务名称(对于HDFS是hdfs，对于MapReduce是mapred，对于YARN是yarn)。另外，如果你想为各种web接口启用kerberos认证，那么你还需要为HTTP服务名称提供主体。  
