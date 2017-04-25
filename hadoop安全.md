@@ -312,3 +312,23 @@ Hadoop支持服务级别授权。授权策略保存在hadoop-policy.xml中。在
 ### MapReduce和YARN授权
 无论MapReduce还是YARN都不需要控制数据访问，而是要控制集群资源，如CPU、内存、磁盘I/O和网络I/O。服务级别授权仅可以控制到特定协议(protocol)，如谁可以提交一个作业到集群，但无法细致到控制集群资源的访问。  
 Hadoop支持将ACL定义到作业队列。这些ACL控制哪些用户可以提交作业到特定队列，还可以控制哪些用户可以管理(administer)队列。
+
+## 第11章 数据提取和客户端访问安全
+#### 边缘节点
+边缘节点托管web接口、代理和客户端配置。边缘节点部署的服务有：  
+ - HDFS HttpFS and NFS gateway
+ - Hive HiveServer2 and WebHCatServer
+ - Network proxy/load balancer for Impala
+ - Hue server and Kerberos ticket renewer
+ - Oozie server
+ - HBase Thrift server and REST server
+ - Flume agent
+ - Client configuration files
+
+下面是一些典型的边缘节点类型：
+ - Data Gateway
+HDFS HttpFS and NFS gateway, HBase Thrift server and REST server, Flume agent  
+  - SQL Gateway
+Hive HiveServer2 and WebHCatServer, Impala load-balancing proxy (e.g., HAP‐roxy)
+ - User Portal
+Hue server and Kerberos ticket renewer, Oozie server, client configuration files  
