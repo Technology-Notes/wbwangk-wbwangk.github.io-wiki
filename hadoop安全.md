@@ -332,3 +332,61 @@ HDFS HttpFS and NFS gateway, HBase Thrift server and REST server, Flume agent
 Hive HiveServer2 and WebHCatServer, Impala load-balancing proxy (e.g., HAP‐roxy)
  - User Portal  
 Hue server and Kerberos ticket renewer, Oozie server, client configuration files  
+
+### Hadoop命令行接口
+核心Hadoop命令行工具（hdfs、yarn和mapred）仅支持Kerberos或授权令牌进行身份验证。认证这些命令的最简单的方法是在执行命令之前使用kinit 获取Kerberos票证授予票据(ticket-granting ticket)。
+```
+$ kinit webb3@AMBARI.APACHE.ORG                (登录使用kerberos的kinit工具)
+$ hdfs dfs -mkdir /tmp/webb          (创建/tmp/webb目录)
+$ hdfs dfs -ls /tmp                  (查看/tmp目录)
+...
+drwxr-xr-x   - webb3     hdfs          0 2017-04-25 02:31 /tmp/webb     (这是新创建的目录，注意这个目录的拥有者是webb3)
+```
+
+#### hive命令行测试
+HDFS的superuser是hdfs。当haddop集群启用kerberos后，hdfs的主体并没有在KDC中建立。测试中碰到针对HDFS的权限不足时，可能会用到HDFS的超级用户，可以用kadmin命令来在KDC创建hdfs的主体。在u1404上执行：
+```
+$ kadmin
+kadmin:  add_principal hdfs      
+Enter password for principal "hdfs@AMBARI.APACHE.ORG":            (需要输入hdfs的密码)
+Re-enter password for principal "hdfs@AMBARI.APACHE.ORG":         (再次输入hdfs的密码)
+Principal "hdfs@AMBARI.APACHE.ORG" created.
+```
+使用hive命令行工具beeline连接HiveServer2。其中```jdbc:hive2://u1403.ambari.apache.org:10000/default```是JDBC URL，```principal=hive/u1403.ambari.apache.org@AMBARI.APACHE.ORG```是连接使用的Hive Kerberos主体。beeline命令以感叹号!开始。
+```
+$ kinit webb3@AMBARI.APACHE.ORG          (使用主体webb3访问Hive)
+$ beeline
+Beeline version 1.2.1000.2.5.3.0-37 by Apache Hive
+beeline> !connect jdbc:hive2://u1403.ambari.apache.org:10000/default;principal=hive/u1403.ambari.apache.org@AMBARI.APACHE.ORG
+Connecting to jdbc:hive2://u1403.ambari.apache.org:10000/default;principal=hive/u1403.ambari.apache.org@AMBARI.APACHE.ORG
+Enter username for jdbc:hive2://u1403.ambari.apache.org:10000/default;principal=hive/u1403.ambari.apache.org@AMBARI.APACHE.ORG:
+Enter password for jdbc:hive2://u1403.ambari.apache.org:10000/default;principal=hive/u1403.ambari.apache.org@AMBARI.APACHE.ORG:
+Connected to: Apache Hive (version 1.2.1000.2.5.3.0-37)
+Driver: Hive JDBC (version 1.2.1000.2.5.3.0-37)
+Transaction isolation: TRANSACTION_REPEATABLE_READ
+```
+下面在Hive创建一个外部表，表文件存放在前面创建的HDFS```/tmp/webb/student```目录下：
+```
+0: jdbc:hive2://u1403.ambari.apache.org:10000> CREATE EXTERNAL TABLE student(name string, age int, gpa double) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'STORED AS TEXTFILE LOCATION '/tmp/webb/student';
+0: jdbc:hive2://u1403.ambari.apache.org:10000> show tables;    （显示hive中数据库表清单）
++---------------+--+
+|   tab_name    |
++---------------+--+
+| student       |
++---------------+--+
+3 rows selected (0.284 seconds)
+0: jdbc:hive2://u1403.ambari.apache.org:10000> SELECT * FROM student;       （显示hive表student中数据，可看到列名，数据空）
++---------------+--------------+--------------+--+
+| student.name  | student.age  | student.gpa  |
++---------------+--------------+--------------+--+
++---------------+--------------+--------------+--+
+No rows selected (0.425 seconds)
+```
+下面利用直接利用hdfs命令行看看HDFS中hive建立的/tmp/webb/student文件：
+```
+$ hdfs dfs -ls /tmp/webb
+Found 1 items
+drwxr-xr-x   - webb3 hdfs          0 2017-04-25 07:48 /tmp/webb/student
+```
+看到hive表对应到HDFS中是个同名的目录。  
+
