@@ -1,10 +1,56 @@
-ranger官网地址：ranger.apache.org  
-使用vagrant VM + ubuntu1-6.10 + openjdk-8-jdk测试。
-### 构建
+ranger是一个hadoop安全服务，开源自hortonworks，官网地址：ranger.apache.org。另一个类似的hadoop安全服务[sentry](sentry.apache.org)开源自cloudera。  
+
+当试图使用ambari部署ranger时，ambari的提示如下：
+ 1. You must have an MySQL/Oracle/Postgres/MSSQL/SQL Anywhere Server database instance running to be used by Ranger.
+ 2. In Assign Masters step of this wizard, you will be prompted to specify which host for the Ranger Admin. On that host, you must have DB Client installed for Ranger to access to the database. (Note: This is applicable for only Ranger 0.4.0)
+ 3. Ensure that the access for the DB Admin user is enabled in DB server from any host.
+ 4. Execute the following command on the Ambari Server host. Replace database-type with mysql|oracle|postgres|mssql|sqlanywhere and /jdbc/driver/path based on the location of corresponding JDBC driver:
 ```
-$ git clone https://git-wip-us.apache.org/repos/asf/ranger.git
-$ cd ranger
-$ mvn clean
-$ mvn -DskipTests=false clean compile package install assembly:assembly 
+ambari-server setup --jdbc-db={database-type} --jdbc-driver={/jdbc/driver/path}
 ```
-执行Maven命令前需要设置JAVA_HOME。
+第一条说的是，部署ranger需要有一个运行的数据库环境，如mysql、postgres等。第二条说，要部署ranger的服务器上要先安装对应数据库的客户端。第三条说的是，确保知道数据库的管理员账号和密码，并且可以从其他机器上访问。第四条说，需要设置ambari-server的jdbc驱动。  
+
+部署ambari-server时，它自动安装了一个postgres数据库。下面试图直接使用这个ambari-server自带的postgres来安装ranger。这样省得再额外安装一个数据库。  
+
+#### 测试和调整postgres server
+查看Ambari安装文档，文档说server默认安装了一个PostgreSQL数据库。启动postgresql进程的linux用户名是postgres，数据库名是ambari。数据库的默认用户名和密码是ambari/bigdata。   
+
+在Ambari server所在的机器(u1401)上运行：
+```
+$ sudo -u postgres psql
+postgres=# alter user postgres with password 'vagrant';              (调整数据库用户postgres的密码)
+```
+postgres就是管理员账号，在利用ambari安装ranger的向导页面上需要输入管理员账号和密码。  
+ambari会利用postgres的权限创建ranger数据库，创建叫rangeradmin的数据库用户。当然，数据库ranger和用户rangeradmin都是可以配置个性的名称。  
+
+postgresql数据库默认是不允许从远程客户端访问它的。为了让ranger可以远程访问postgres，还要修改postgresql的配置文件/etc/postgresql/9.3/main/pg_hba.conf，在文件的最后添加：
+```
+host all all 0.0.0.0 0.0.0.0 md5      #表示运行任何IP连接
+``` 
+重启postgresql：  
+```
+etc/init.d/postgresql restart
+```
+#### 安装postgres客户端并测试远程连接
+计划在u1402上安装ranger，所以需要在u1402上安装postgres客户端：  
+```
+$ apt install postgresql-client
+$ psql -h u1401 -U postgres -d ambari  (提示输入密码就输入vagrant)
+ambari=>                  (这种提示表示进入了postgres的交互式环境)
+```
+-U表示数据库用户，-d表示数据库名。  
+
+#### ambari设置jdbc驱动
+在ambari-server所在机器（u1401）上下载postgres的jdbc驱动，并执行ambari配置：
+```
+$ cd /usr/share/java
+$ wget https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
+$ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-42.0.0.jar
+```
+#### 通过ambari安装ranger
+在ambari中通过菜单Services/Actions/Add Service打开安装向导，选择ranger服务。到配置页面后按下面
+DB FLAVOR下拉框选择POSTGRES； 
+Ranger DB host输入u1401.ambari.apache.org;  
+Database Administrator (DBA) username中输入postgres，密码输入vagrant。点击测试连接按钮，应该可以成功。  
+solr审计URL随便输入：http://solr_host:6083/solr/ranger_audits。  
+当提示输入主体时输入：root/admin@AMBARI.APACHE.ORG  
