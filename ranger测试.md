@@ -13,6 +13,7 @@ ambari-server setup --jdbc-db={database-type} --jdbc-driver={/jdbc/driver/path}
 部署ambari-server时，它自动安装了一个postgres数据库。下面试图直接使用这个ambari-server自带的postgres来安装ranger。这样省得再额外安装一个数据库。  
 
 #### 测试和调整postgres server
+参考postgres[入门文档](http://www.ruanyifeng.com/blog/2013/12/getting_started_with_postgresql.html)。  
 查看Ambari安装文档，文档说server默认安装了一个PostgreSQL数据库。启动postgresql进程的linux用户名是postgres，数据库名是ambari。数据库的默认用户名和密码是ambari/bigdata。   
 
 在Ambari server所在的机器(u1401)上运行：
