@@ -1,5 +1,5 @@
 ranger是一个hadoop安全服务，开源自hortonworks，官网地址：ranger.apache.org。另一个类似的hadoop安全服务[sentry](sentry.apache.org)开源自cloudera。  
-
+## 安装Ranger
 当试图使用ambari部署ranger时，ambari的提示如下：
  1. You must have an MySQL/Oracle/Postgres/MSSQL/SQL Anywhere Server database instance running to be used by Ranger.
  2. In Assign Masters step of this wizard, you will be prompted to specify which host for the Ranger Admin. On that host, you must have DB Client installed for Ranger to access to the database. (Note: This is applicable for only Ranger 0.4.0)
@@ -56,6 +56,7 @@ Database Administrator (DBA) username中输入postgres，密码输入vagrant。�
 solr审计URL随便输入：http://solr_host:6083/solr/ranger_audits。  
 当提示输入主体时输入：root/admin@AMBARI.APACHE.ORG  
 
+## 配置Ranger
 ### 在ambari中启用ranger插件
 通过Services/Ranger/configs进入Ranger配置页面，选择Ranger Plugin选项卡。由于我已经安装了HDFS/YARN/Hive，在选项卡中显示了HDFS Ranger Plugin、YARN Ranger Plugin、Hive Ranger Plugin三个选项，三个选项都选On，然后点Save按钮。  
 重启受影响的多个服务。  
@@ -95,3 +96,19 @@ Ranger service config user | rangerhivelookup@AMBARI.APACHE.ORG
 Ranger service config password | rangerhivelookup
 common.name.for.certificate | (空)
  4. 点Save按钮，重启Hive服务。
+
+## 使用Ranger为Hadoop提供授权
+当用户被认证后，需要确定他的访问权限。授权定义用户对资源的访问权限。你可以用Ranger建立和管理针对Hadoop各种服务的访问权限。你可以建立基于标签的服务，挺对这些服务添加访问策略。使用基于标签(tag-based)的策略，允许你跨越多个Hadoop组件控制资源访问权限，而不用在每个组件中建立单独的服务和策略。你可以使用Ranger TagSync去同步Ranger标签库到外部元数据服务，如Apache Atlas。
+
+### 关于Ranger策略
+#### Ranger基于资源的策略
+Ranger允许你为特定Hadoop资源(HDFS、HBase、Hive等)创建服务，和添加访问策略到这些服务。
+#### Ranger基于标签的策略
+ - Ranger标签授权的一个重要特征是资源分类与访问授权的分离。不同的资源包含了不同的数据，则分别表打上不同的标签。如HDFS文件包含了社会安全号码、信用卡号、敏感健康数据可以分别被标签为PII/PCI/PHI。
+ - 使用基于标签的策略，允许你跨越多个Hadoop组件来控制资源访问，而不同为每个组件单独建立服务或策略。
+ - 标签明细被保存在标签库中。Ranger TagSync可以用于在标签库和外部元数据服务(如Apache Altas)之间同步标签。
+#### 标签和策略评估
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/3/figures/Ranger-Policy-Evaluation-Flow-with-Tags.png)
+
+### 使用Ranger控制台
+
