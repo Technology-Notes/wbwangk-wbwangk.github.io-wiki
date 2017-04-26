@@ -12,7 +12,7 @@ ambari-server setup --jdbc-db={database-type} --jdbc-driver={/jdbc/driver/path}
 
 部署ambari-server时，它自动安装了一个postgres数据库。下面试图直接使用这个ambari-server自带的postgres来安装ranger。这样省得再额外安装一个数据库。  
 
-#### 测试和调整postgres server
+### 测试和调整postgres server
 参考postgres[入门文档](http://www.ruanyifeng.com/blog/2013/12/getting_started_with_postgresql.html)。  
 查看Ambari安装文档，文档说server默认安装了一个PostgreSQL数据库。启动postgresql进程的linux用户名是postgres，数据库名是ambari。数据库的默认用户名和密码是ambari/bigdata。   
 
@@ -32,7 +32,7 @@ host all all 0.0.0.0 0.0.0.0 md5      #表示运行任何IP连接
 ```
 etc/init.d/postgresql restart
 ```
-#### 安装postgres客户端并测试远程连接
+### 安装postgres客户端并测试远程连接
 计划在u1402上安装ranger，所以需要在u1402上安装postgres客户端：  
 ```
 $ apt install postgresql-client
@@ -41,17 +41,57 @@ ambari=>                  (这种提示表示进入了postgres的交互式环境
 ```
 -U表示数据库用户，-d表示数据库名。  
 
-#### ambari设置jdbc驱动
+### ambari设置jdbc驱动
 在ambari-server所在机器（u1401）上下载postgres的jdbc驱动，并执行ambari配置：
 ```
 $ cd /usr/share/java
 $ wget https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
 $ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-42.0.0.jar
 ```
-#### 通过ambari安装ranger
+### 通过ambari安装ranger
 在ambari中通过菜单Services/Actions/Add Service打开安装向导，选择ranger服务。到配置页面后按下面
 DB FLAVOR下拉框选择POSTGRES； 
 Ranger DB host输入u1401.ambari.apache.org;  
 Database Administrator (DBA) username中输入postgres，密码输入vagrant。点击测试连接按钮，应该可以成功。  
 solr审计URL随便输入：http://solr_host:6083/solr/ranger_audits。  
 当提示输入主体时输入：root/admin@AMBARI.APACHE.ORG  
+
+### 在ambari中启用ranger插件
+通过Services/Ranger/configs进入Ranger配置页面，选择Ranger Plugin选项卡。由于我已经安装了HDFS/YARN/Hive，在选项卡中显示了HDFS Ranger Plugin、YARN Ranger Plugin、Hive Ranger Plugin三个选项，三个选项都选On，然后点Save按钮。  
+重启受影响的多个服务。  
+对于启用了Kerberos的集群，还需要额外操作。  
+
+#### 对于HDFS的额外操作
+对于Kerberos集群，启用Ranger HDFS插件，还需要额外的操作：
+ 1. 在u1402上创建一个操作系统用户rangerhdfslookup：
+```
+$ adduser rangerhdfslookup
+```
+通过菜单Services=>Ranger=>Quick Links=>Ranger Admin UI进入Ranger管理员界面(http://u1402:6080)。用户名口令是admin/admin。通过菜单Settings=>Users/Groups可以看到Ranger中用户，确保看到新建的rangerhdfslookup用户已经同步过来了。
+ 2. 在Kerberos KDC(u1404)上新建一个rangerhdfslookup的主体：
+```
+$ kadmin.local -q 'addprinc -pw rangerhdfslookup rangerhdfslookup@AMBARI.APACHE.ORG'   (密码是rangerhdfslookup)
+```
+ 3. 导航到Ambari的HDFS服务，点Config选项卡，进入advanced ranger-hdfs-plugin-properties，更新参数：
+
+ 参数名称 | 值
+---------|--------
+Ranger repository config user | rangerhdfslookup@AMBARI.APACHE.ORG
+Ranger repository config password | rangerhdfslookup
+common.name.for.certificate | (空)
+ 4. 点Save按钮，重启HDFS服务。
+
+#### 对Hive的额外操作
+对于Kerberos集群，启用Ranger Hive插件，还需要额外的操作：
+ 1. 创建操作系统用户rangerhivelookup，象HDFS一样，确保这个用户被同步到了Ranger Admin。
+ 2. 为rangerhivelookup创建Kerberos主体：
+```
+$ kadmin.local -q 'addprinc -pw rangerhivelookup rangerhivelookup@AMBARI.APACHE.ORG'
+```
+ 3. 导航到Ambari的Hive服务，点Config选项卡，进入advanced ranger-hive-plugin-properties，更新参数：
+ 参数名称 | 值
+---------|--------
+Ranger service config user | rangerhivelookup@AMBARI.APACHE.ORG
+Ranger service config password | rangerhivelookup
+common.name.for.certificate | (空)
+ 4. 点Save按钮，重启Hive服务。
