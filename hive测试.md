@@ -28,3 +28,10 @@ Database URL : jdbc:postgresql://u1401.ambari.apache.org:5432/hive
 ```
 点击Test connection按钮测试数据库连接。   
 之后出现输入ambari admin主体和密码。在主体输入：root/admin@AMBARI.APACHE.ORG。  
+
+#### 3.（可选）配置ambari server JDBC驱动
+安装hive的向导页面可能出现提示配置ambari serverjdbc驱动，则需要在u1401(ambari server安装节点)上执行：
+```
+$ wget -P /usr/share/java https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
+$ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-42.0.0.jar
+```
