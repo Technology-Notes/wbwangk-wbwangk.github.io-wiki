@@ -30,7 +30,7 @@ host all all 0.0.0.0 0.0.0.0 md5      #表示运行任何IP连接
 ``` 
 重启postgresql：  
 ```
-etc/init.d/postgresql restart
+/etc/init.d/postgresql restart
 ```
 ### 安装postgres客户端并测试远程连接
 计划在u1402上安装ranger，所以需要在u1402上安装postgres客户端：  
