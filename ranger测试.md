@@ -90,6 +90,7 @@ common.name.for.certificate | (空)
 $ kadmin.local -q 'addprinc -pw rangerhivelookup rangerhivelookup@AMBARI.APACHE.ORG'
 ```
  3. 导航到Ambari的Hive服务，点Config选项卡，进入advanced ranger-hive-plugin-properties，更新参数：
+
  参数名称 | 值
 ---------|--------
 Ranger service config user | rangerhivelookup@AMBARI.APACHE.ORG
