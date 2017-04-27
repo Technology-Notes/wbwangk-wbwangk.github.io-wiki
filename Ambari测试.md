@@ -142,13 +142,13 @@ $ apt install postgresql-client
 $ psql -h 192.168.14.101 -U ambari -d ambari  (提示输入密码就输入bigdata)
 ```
 -U表示数据库用户，-d表示数据库名。  
-还要修改postgresql的配置文件/etc/postgresql/9.3/main/pg_hba.conf，在文件的最后添加：
+还要修改postgresql的配置文件，以便从远程访问postgresql：
 ```
-host all all 0.0.0.0 0.0.0.0 md5      #表示运行任何IP连接
+$ echo "host all all 0.0.0.0 0.0.0.0 md5" >> /etc/postgresql/9.3/main/pg_hba.conf
 ``` 
 重启postgresql：  
 ```
-etc/init.d/postgresql restart
+/etc/init.d/postgresql restart
 ```
 而在postgresql所在机器的本地执行：
 ```
@@ -157,10 +157,9 @@ postgres=# alter user postgres with password 'bigdata';
 ```
 可以进入postgres的交互式命令行。postgres是启动数据库进程的linux用户。上述操作将postgres用户的密码改成了```bigdata```。在安装ranger的时候需要postgresql的管理员账户及密码。
 
-安装ranger时要求ambari server重新setup：
+安装ranger时要求ambari server配置jdbc驱动：
 ```
-$ cd /usr/share/java
-$ wget https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
+$ wget -P /usr/share/java https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
 $ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-42.0.0.jar
 ```
 
@@ -177,18 +176,18 @@ $ apt-get install krb5-kdc krb5-admin-server
 ```
 $ krb5_newrealm
 master key name 'K/M@AMBARI.APACHE.ORG'
-Enter KDC database master key:    (输入两次密码)
+Enter KDC database master key:    (输入两次密码，密码是vagrant)
 ```
 启动KDC server和KDC admin server：
 ```
-$ service krb5-kdc restart
-$ service krb5-admin-server restart
+$ service krb5-kdc restart                     （如果不执行krb5_newrealm就无法启动这个服务）
+$ service krb5-admin-server restart            （如果不执行krb5_newrealm就无法启动这个服务）
 ```
 #### 2.创建Kerberos Admin
 通过创建admin主体来建立KDC admin：
 ```
 $ kadmin.local -q "addprinc root/admin"
-Enter password for principal "root/admin@AMBARI.APACHE.ORG":    (输入两次密码)
+Enter password for principal "root/admin@AMBARI.APACHE.ORG":    (输入两次密码，密码是vagrant)
 Principal "admin/admin@AMBARI.APACHE.ORG" created.
 ```
 将刚创建的admin主体添加到KDC ACL中：
@@ -198,6 +197,7 @@ $ service krb5-admin-server restart
 ```
 
 #### 3.安装jce
+(实测发现,不需要安装JCE也可以启用kerberos)。  
 在u1401、u1402、u1403三个节点上安装JCE：
 ```
 $ add-apt-repository ppa:webupd8team/java    （如果出现提示，回车继续）
