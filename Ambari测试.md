@@ -172,7 +172,7 @@ $ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresq
 ```
 $ apt-get install krb5-kdc krb5-admin-server
 ```
-第一次尝试时，提示krb5-user依赖冲突。用手机当热点执行apt-get update后，问题解决。  
+第一次尝试时，提示krb5-user依赖冲突。用手机当热点执行apt-get update后，问题解决。更彻底的解决办法是利用163源替换ubuntu官方源，可参考[这个](https://github.com/imaidev/imaidev.github.io/wiki/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83#ubuntu%E4%B8%8B%E7%9A%84%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87)。  
 安装过程中出现提示窗口让输入Default Kerberos version 5 realm，保留默认值AMBARI.APACHE.ORG。然后出现两次让输入hostname，都输入的"u1404.ambari.apache.org"。最后提示说这个向导没有自动建立一个kerberos realm，如果想建立就执行命令"krb5_newrealm"。相关说明在/usr/share/doc/krb5-kdc/README.KDC中。  
 ```
 $ krb5_newrealm
