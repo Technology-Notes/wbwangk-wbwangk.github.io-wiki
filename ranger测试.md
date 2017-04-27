@@ -68,8 +68,8 @@ solr审计URL随便输入：http://solr_host:6083/solr/ranger_audits。
 ```
 $ adduser rangerhdfslookup
 ```
-通过菜单Services=>Ranger=>Quick Links=>Ranger Admin UI进入Ranger管理员界面(http://u1402:6080)。用户名口令是admin/admin。通过菜单Settings=>Users/Groups可以看到Ranger中用户，确保看到新建的rangerhdfslookup用户已经同步过来了。
- 2. 在Kerberos KDC(u1404)上新建一个rangerhdfslookup的主体：
+通过菜单Services=>Ranger=>Quick Links=>Ranger Admin UI进入Ranger管理员界面(```http://u1402:6080```)。用户名口令是admin/admin。通过菜单Settings=>Users/Groups可以看到Ranger中用户，确保看到新建的rangerhdfslookup用户已经同步过来了。
+ 2. 在Kerberos KDC(u1404)上新建一个rangerhdfslookup的主体：  
 ```
 $ kadmin.local -q 'addprinc -pw rangerhdfslookup rangerhdfslookup@AMBARI.APACHE.ORG'   (密码是rangerhdfslookup)
 ```
