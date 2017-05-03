@@ -52,6 +52,7 @@ Kerberos一般部署在C/S环境，很少用于web应用和瘦客户端环境。
 
 kerberos主体(principal)分成两类：用户主体UPN和服务主体SPN。  
 KDC由三个组件组成：Kerberos数据库，认证服务（AS）和票证授予服务（TGS）。  
+A Kerberos realm is a set of managed nodes that share the same Kerberos database.    
 
 #### 主体principal命名规范
 UPN(用户主体名称)的命名规范：  
