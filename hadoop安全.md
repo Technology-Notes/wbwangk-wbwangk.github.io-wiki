@@ -56,7 +56,6 @@ KDC由三个组件组成：Kerberos数据库，认证服务（AS）和票证授�
 ```
 A Kerberos realm is a set of managed nodes that share the same Kerberos database.
 A Kerberos principal is a service or user that is known to the Kerberos system. 
-主体名称构成:  principal-name/instance-name@realm-name    
 ```
 #### 主体principal命名规范
 UPN(用户主体名称)的命名规范：  
