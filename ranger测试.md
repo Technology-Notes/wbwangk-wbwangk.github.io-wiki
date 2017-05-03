@@ -64,7 +64,7 @@ solr审计URL随便输入：http://solr_host:6083/solr/ranger_audits。
 
 #### 对于HDFS的额外操作
 对于Kerberos集群，启用Ranger HDFS插件，还需要额外的操作：
- 1. 在u1402上创建一个操作系统用户rangerhdfslookup：
+ 1. 在u1402（Ranger安装节点）上创建一个操作系统用户rangerhdfslookup：
 ```
 $ adduser rangerhdfslookup
 ```
@@ -84,7 +84,7 @@ common.name.for.certificate | (空)
 
 #### 对Hive的额外操作
 对于Kerberos集群，启用Ranger Hive插件，还需要额外的操作：
- 1. 创建操作系统用户rangerhivelookup，象HDFS一样，确保这个用户被同步到了Ranger Admin。  
+ 1. 在Ranger安装节点创建操作系统用户rangerhivelookup，象HDFS一样，确保这个用户被同步到了Ranger Admin。  
  2. 为rangerhivelookup创建Kerberos主体：
 ```
 $ kadmin.local -q 'addprinc -pw rangerhivelookup rangerhivelookup@AMBARI.APACHE.ORG'
