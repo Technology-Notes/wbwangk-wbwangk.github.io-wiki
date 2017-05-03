@@ -1,3 +1,5 @@
+[HDP SECURITY DOC](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/ch_hdp-security-guide-overview.html)
+
 # 《Hadoop集群与安全》
 #### HDFS安全
 采用了类似linux文件系统的权限模式。每个文件都拥有用户、组所有者以及权限设置。这些权限控制了用户对于特定目录或文件的访问。  
