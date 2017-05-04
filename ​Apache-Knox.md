@@ -29,14 +29,14 @@ NN = NameNode，RM =资源管理器，DN = DataNode，NM = NodeManager
 #### Knox支持的Hadoop服务
 
 Apache Knox Gateway支持Kerberized和Non-Kerberized集群中的以下Hadoop服务版本：  
-​
+
 服务 | 版本  
-----|------  
+---- | ------  
 YARN | 2.6.0  
 WebHDFS | 2.6.0  
 WebHCat/Templeton | 0.13.0  
 Oozie | 4.1.0  
-HBase/Stargate | 0.98.4  
+​HBase/Stargate | 0.98.4  
 Hive（通过WebHCat） | 0.14.0  
 Hive（通过JDBC） | 0.14.0  
 Ambari | 2.4.0  
