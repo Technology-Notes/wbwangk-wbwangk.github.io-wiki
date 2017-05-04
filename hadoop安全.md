@@ -19,20 +19,24 @@ HDP包括功能强大的数据安全功能，可在组件技术上工作，并�
 
 ### HDP安全功能
 HDP使用Apache Ranger提供集中的安全管理和管理。Ranger管理门户是安全管理的中心接口。您可以使用Ranger创建和更新策略，然后存储在策略数据库中。Ranger插件（轻量级Java程序）嵌入在每个集群组件的进程中。  
-![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_plugin_architecture.png)
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_plugin_architecture.png)  
 这些插件从中央服务器提取策略，并将其存储在文件中。当用户请求通过该组件时，这些插件拦截请求并根据安全策略进行评估。插件还可以从用户请求中收集数据，并按照单独的线程将此数据发送回审计服务器。  
 
 #### 1.管理(Administration)
 为了提供一致的安全管理和管理，Hadoop管理员需要一个集中的用户界面，可用于在所有Hadoop堆栈组件中一致地定义，管理和管理安全策略：
-![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_centralized_admin.png)
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_centralized_admin.png)  
 Ranger集中安全管理
 
 Apache Ranger管理控制台为Hadoop安全的其他四个支柱提供了一个中心管理点。
-![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_admin_console.png)
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_admin_console.png)  
 游侠管理控制台
 
-
 #### 2. 认证和周边安全
+通过强大的认证建立用户身份是Hadoop中安全访问的基础。用户需要可靠地识别自己，然后在整个Hadoop集群中传播身份才能访问集群资源。Hortonworks使用Kerberos进行身份验证。Kerberos是用于对Hadoop集群中的用户和资源进行身份验证的行业标准。HDP还包括Ambari，它简化了Kerberos设置，配置和维护。
+
+Apache Knox Gateway用于帮助确保Hortonworks客户的周边安全。使用诺克斯，企业可以自信地将Hadoop REST API扩展到没有Kerberos复杂性的新用户，同时还保持企业安全策略的合规性。Knox为Hadoop REST API提供了一个中心网关，这些API具有不同程度的授权，身份验证，SSL和SSO功能，可以为Hadoop提供单个接入点。
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/apache_knox_overview.png)  
+Apache Knox功能
 #### 3. 授权
 #### 4. 审计
 #### 5. 数据保护
