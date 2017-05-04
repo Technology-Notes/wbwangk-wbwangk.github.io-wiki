@@ -51,6 +51,7 @@ Ranger通过用户界面管理访问控制，确保跨Hadoop数据访问组件�
  - Knox
  - Solr
  - Kafka
+
 Ranger在每个Hadoop组件中使用标准授权API，并且可以对用于访问数据湖的任何方法执行集中管理的策略。  
 ![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_policy_definition.png)  
 游侠安全政策定义  
