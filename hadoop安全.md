@@ -105,7 +105,7 @@ A Kerberos principal is a service or user that is known to the Kerberos system.
 ```
 
 #### Kerberos主体
-Hadoop中的每个服务和子服务都必须有自己的主体。给定领域的主体名称由一个主名称和一个实例名称组成，实例名称为运行该服务的主机的FQDN。由于服务不使用密码登录来获取其票据，因此其主体的身份验证凭据存储在从Kerberos数据库提取的密钥表文件中，并将其本地存储在服务主体上的服务主体的安全目录中。
+Hadoop中的每个服务和子服务都必须有自己的主体。给定领域的主体名称由一个主名称和一个实例名称组成，实例名称为运行该服务的主机的FQDN。由于服务不使用密码登录来获取其票据，因此其主体的身份验证凭据存储在从Kerberos数据库提取的密钥表文件中，并将其本地存储在服务主体上的服务主体的安全目录中。  
 ![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/2/figures/Principals_and_Keytabs.png)  
 
 主体和Keytab的命名约定：  
