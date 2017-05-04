@@ -122,7 +122,9 @@ Ambari主体 | 描述
 冒烟和“headless”服务用户 | 由Ambari用于执行服务“冒烟”检查并运行警报健康检查。
 Ambari服务器用户 | 当集群启用Kerberos时，组件REST端点（例如YARN ATS组件）需要[SPNEGO](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/ch_enable_spnego_auth_for_hadoop.html)身份验证。Ambari Server需要访问这些API，并需要Kerberos主体才能通过SPNEGO针对这些API进行身份验证。
 
-
+#### kerberos安装
+kerberos KDC的安装参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/Ambari%E6%B5%8B%E8%AF%95#ambari-security)。  
+[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/kerberos%E6%B5%8B%E8%AF%95)是kerberos的客户端使用测试。  
 
 # 《O'reilly Hadoop Security》
 
