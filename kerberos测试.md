@@ -1,3 +1,5 @@
+Kerberos KDC的安装参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/Ambari%E6%B5%8B%E8%AF%95#ambari-security)  
+
 #### 环境介绍
 u1401：ambari-server
 u1402、u1403：HDFS  
