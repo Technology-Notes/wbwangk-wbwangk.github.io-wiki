@@ -1,5 +1,6 @@
-# [HDP SECURITY DOC](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/ch_hdp-security-guide-overview.html)
-#### hadoop安全性概述
+# HDP SECURITY
+[原文](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/ch_hdp-security-guide-overview.html)  
+### hadoop安全性概述
 hadoop安全性的挑战：  
  - 在Hadoop中，文件系统被分区和分发，需要在多个点进行授权检查。
  - 提交的作业将稍后在与客户端认证并提交作业的节点不同的节点上执行。
