@@ -1,4 +1,43 @@
-[HDP SECURITY DOC](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/ch_hdp-security-guide-overview.html)
+# [HDP SECURITY DOC](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/ch_hdp-security-guide-overview.html)
+#### hadoop安全性概述
+hadoop安全性的挑战：  
+ - 在Hadoop中，文件系统被分区和分发，需要在多个点进行授权检查。
+ - 提交的作业将稍后在与客户端认证并提交作业的节点不同的节点上执行。
+ - 辅助服务，如工作流系统，代表用户访问Hadoop(用户模拟)。
+ - Hadoop集群可扩展到数千台服务器和数万个并发任务。
+
+Hortonworks采用基于五个核心安全特性的整体方法：
+ 1. 管理(Administration)
+ 2. 认证和周边安全
+ 3. 授权
+ 4. 审计
+ 5. 数据保护
+
+不能通过使用各种各样的点解决方案来实现Hadoop堆栈的全面保护。安全性必须是构建Data Lake的平台的组成部分。这种自下而上的方法使得可以通过中央管理点来实施和管理整个堆栈的安全性，从而防止差距和不一致。  
+HDP包括功能强大的数据安全功能，可在组件技术上工作，并与现有的EDW，RDBMS和MPP系统集成。  
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/hdp_overview.png)
+
+### HDP安全功能
+HDP使用Apache Ranger提供集中的安全管理和管理。Ranger管理门户是安全管理的中心接口。您可以使用Ranger创建和更新策略，然后存储在策略数据库中。Ranger插件（轻量级Java程序）嵌入在每个集群组件的进程中。  
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_plugin_architecture.png)
+这些插件从中央服务器提取策略，并将其存储在文件中。当用户请求通过该组件时，这些插件拦截请求并根据安全策略进行评估。插件还可以从用户请求中收集数据，并按照单独的线程将此数据发送回审计服务器。  
+
+#### 1.管理(Administration)
+为了提供一致的安全管理和管理，Hadoop管理员需要一个集中的用户界面，可用于在所有Hadoop堆栈组件中一致地定义，管理和管理安全策略：
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_centralized_admin.png)
+Ranger集中安全管理
+
+Apache Ranger管理控制台为Hadoop安全的其他四个支柱提供了一个中心管理点。
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/1/figures/ranger_admin_console.png)
+游侠管理控制台
+
+
+#### 2. 认证和周边安全
+#### 3. 授权
+#### 4. 审计
+#### 5. 数据保护
+
+
 
 # 《Hadoop集群与安全》
 #### HDFS安全
