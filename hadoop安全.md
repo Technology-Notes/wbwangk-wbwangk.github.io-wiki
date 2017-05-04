@@ -74,26 +74,60 @@ Ranger还提供了一个收集访问审计历史并报告此数据的集中框�
 
 ## 认证
 #### Kerberos的概述
-强大的认证和建立用户身份是Hadoop安全访问的基础。用户需要能够可靠地“识别”自身，然后在整个Hadoop集群中传播该身份。一旦这样做，这些用户可以访问资源（如文件或目录）或与集群进行交互（如运行MapReduce作业）。除了用户之外，Hadoop集群资源本身（如主机和服务）需要彼此认证，以避免潜在的恶意系统或守护程序的“构成”受信任的组件，以获取对数据的访问。
+强大的认证和建立用户身份是Hadoop安全访问的基础。  
+用户需要能够可靠地“证明”自身，然后在整个Hadoop集群中传播该身份。一旦这样做，这些用户可以访问资源（如文件或目录）或与集群进行交互（如运行MapReduce作业）。除了用户之外，Hadoop集群资源本身（如主机和服务）需要彼此认证，以避免潜在的恶意系统或守护程序的“构成”受信任的组件，以获取对数据的访问。
 
-Hadoop使用Kerberos作为用户和服务的强身份验证和身份传播的基础。Kerberos是第三方认证机制，其中用户和服务依赖第三方（Kerberos服务器）来对每个认证机制进行认证。Kerberos服务器本身被称为密钥分发中心或KDC。在高层次上，它有三个部分：
- - 用户和服务（称为**主体**）及其各自的Kerberos密码的数据库
- - 一个**认证服务器（AS）**执行初始认证并颁发票证授予票证（TGT）
- - 一个票据授权服务器（TGS）发出基于初始后续服务票证TGT
-一个用户主要来自AS请求认证。AS返回使用用户主体的Kerberos密码加密的TGT，该密码仅对用户主体和AS已知。用户主体使用其Kerberos密码在本地解密TGT，从该点开始，直到票证过期，用户主体可以使用TGT从TGS获取服务票据。服务票是允许校长访问各种服务的。
+Hadoop使用Kerberos作为用户和服务的强身份验证和身份传播的基础。Kerberos是第三方认证机制，其中用户和服务依赖第三方（Kerberos服务器）来对每个认证机制进行认证。Kerberos服务器本身被称为**密钥分发中心**或**KDC**。在高层次上，它有三个部分：  
+ - 一个存放用户和服务（称为**主体**）及其各自的Kerberos密码的数据库  
+ - 一个**认证服务器**（AS）执行初始认证并颁发**票证授予票证**（TGT）  
+ - 一个**票据授权服务器**（TGS）发出基于初始后续**服务票证TGT**  
+一个**用户主体**来自AS请求认证。AS返回使用用户主体的Kerberos密码加密的TGT，该密码仅对用户主体和AS已知。用户主体使用其Kerberos密码在本地解密TGT，从该点开始，直到票证过期，用户主体可以使用TGT从TGS获取服务票据。服务票是允许校长访问各种服务的。
 
-因为集群资源（主机或服务）每次无法提供密码来解密TGT，所以他们使用一个特殊文件，称为密钥表，其中包含资源主体的身份验证凭据。Kerberos服务器控制的主机，用户和服务集合称为领域。
+因为集群资源（主机或服务）每次无法提供密码来解密TGT，所以他们使用一个特殊文件，称为Keytab，其中包含资源主体的身份验证凭据。Kerberos服务器控制的主机，用户和服务集合称为**领域**。
+
+术语:  
+
+术语 | 描述  
+-----|-----  
+密钥分配中心或KDC | 在启用Kerberos的环境中用于验证的受信任来源。  
+Kerberos KDC服务器 | 作为密钥分发中心（KDC）的机器或服务器。  
+Kerberos客户端 | 集群中的任何针对KDC认证的机器。  
+主体principal | 针对KDC认证的用户或服务的唯一名称。  
+Keytab | 包含一个或多个主体及其键的文件。   
+领域realm | 包含KDC和多个客户端的Kerberos网络。  
+KDC管理帐号 | Ambari用于在KDC中创建主体并生成密钥表的管理帐户。  
+
+另一篇文章中对相关术语的定义([链接](http://publib.boulder.ibm.com/tividd/td/framework/GC32-0803-00/en_US/HTML/plan20.htm))：
+```
+A Kerberos realm is a set of managed nodes that share the same Kerberos database.
+A Kerberos principal is a service or user that is known to the Kerberos system. 
+```
+
+#### Kerberos主体
+Hadoop中的每个服务和子服务都必须有自己的主体。给定领域的主体名称由一个主名称和一个实例名称组成，实例名称为运行该服务的主机的FQDN。由于服务不使用密码登录来获取其票据，因此其主体的身份验证凭据存储在从Kerberos数据库提取的密钥表文件中，并将其本地存储在服务主体上的服务主体的安全目录中。
+![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/2/figures/Principals_and_Keytabs.png)  
+
+主体和Keytab的命名约定：  
+
+名称 | 约定 | 范例
+-----|-----|-------
+校长 | $service_component_name/$FQDN@EXAMPLE.COM | nn/c6401.ambari.apache.org@EXAMPLE.COM
+Keytabs | $service_component_abbreviation.service.keytab | /etc/security/keytabs/nn.service.keytab
+
+除了Hadoop 服务主体外，Ambari本身还需要一套Ambari主体来执行服务“冒烟”检查，执行警报健康检查和从集群组件检索度量。Ambari主体的Keytab文件会驻留在群集的每台主机上，就像一般服务主体的Keytab文件一样。  
+
+Ambari主体 | 描述
+----------|-------
+冒烟和“headless”服务用户 | 由Ambari用于执行服务“冒烟”检查并运行警报健康检查。
+Ambari服务器用户 | 当集群启用Kerberos时，组件REST端点（例如YARN ATS组件）需要[SPNEGO](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/ch_enable_spnego_auth_for_hadoop.html)身份验证。Ambari Server需要访问这些API，并需要Kerberos主体才能通过SPNEGO针对这些API进行身份验证。
+
 
 
 # 《O'reilly Hadoop Security》
 
 kerberos主体(principal)分成两类：用户主体UPN和服务主体SPN。  
 KDC由三个组件组成：Kerberos数据库，认证服务（AS）和票证授予服务（TGS）。  
-[tip:](http://publib.boulder.ibm.com/tividd/td/framework/GC32-0803-00/en_US/HTML/plan20.htm)
-```
-A Kerberos realm is a set of managed nodes that share the same Kerberos database.
-A Kerberos principal is a service or user that is known to the Kerberos system. 
-```
+
 #### 主体principal命名规范
 UPN(用户主体名称)的命名规范：  
  - alice@EXAMPLE.COM  用户alice在领域EXAMPLE.COM  
