@@ -1,9 +1,9 @@
 # HDP SECURITY
 [原文](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/ch_hdp-security-guide-overview.html)  
 ### hadoop安全性概述
-hadoop安全性的挑战：  
+hadoop是一个复杂的分布式系统，hadoop安全性面对的挑战：  
  - 在Hadoop中，文件系统被分区和分发，需要在多个点进行授权检查。
- - 提交的作业将稍后在与客户端认证并提交作业的节点不同的节点上执行。
+ - 在某节点提交的作业，稍后将在其他节点上执行。
  - 辅助服务，如工作流系统，代表用户访问Hadoop(用户模拟)。
  - Hadoop集群可扩展到数千台服务器和数万个并发任务。
 
