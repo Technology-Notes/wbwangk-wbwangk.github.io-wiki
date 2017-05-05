@@ -42,3 +42,4 @@ Hive（通过JDBC） | 0.14.0
 Ambari | 2.4.0  
 Ranger | 0.6.0  
 
+安装后Knox被部署在```/usr/hdp/current/knox-server```。  
