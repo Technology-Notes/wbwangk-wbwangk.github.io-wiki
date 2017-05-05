@@ -1,53 +1,90 @@
-Kerberos KDC的安装参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/Ambari%E6%B5%8B%E8%AF%95#ambari-security)  
 
-#### 环境介绍
-u1401：ambari-server
-u1402、u1403：HDFS  
-u1404：kerberos KDC
 
-#### 创建用户
-在u1404上执行：
+### 未启用kerberos的HDFS
+未启用kerberos时HDFS是没有认证和权限控制的：
 ```
-$ kadmin.local -q "addprinc webb3"                          (添加主体webb3)
-Enter password for principal "webb3@AMBARI.APACHE.ORG":     (输入两次密码)
+$ curl http://u1401.ambari.apache.org:50070/webhdfs/v1/user?op=LISTSTATUS
+{"FileStatuses":{"FileStatus":[
+{"accessTime":0,"blockSize":0,"childrenNum":6,"fileId":16388,"group":"hdfs","length":0,"modificationTime":1493881416749,"owner":"ambari-qa","pathSuffix":"ambari-qa","permission":"770","replication":0,"storagePolicy":0,"type":"DIRECTORY"},
+{"accessTime":0,"blockSize":0,"childrenNum":0,"fileId":16444,"group":"hdfs","length":0,"modificationTime":1493278869398,"owner":"hcat","pathSuffix":"hcat","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"},
+{"accessTime":0,"blockSize":0,"childrenNum":0,"fileId":16455,"group":"hdfs","length":0,"modificationTime":1493278917798,"owner":"hive","pathSuffix":"hive","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"}
+]}}
 ```
-#### 登录
-在u1402上登录webb3：
+而通过浏览器访问：```http://u1401.ambari.apache.org:50070/explorer.html#/user```  
+发现浏览器也是调用```/webhdfs/v1/user?op=LISTSTATUS```这个API。  
+使用命令行访问HDFS:
 ```
-$ kinit webb3@AMBARI.APACHE.ORG                (登录使用kerberos的kinit工具)
-Password for webb3@AMBARI.APACHE.ORG:          (输入主体webb3的密码)
-$ klist                                        (klist显示凭据缓存)
-Ticket cache: FILE:/tmp/krb5cc_0
-Default principal: webb3@AMBARI.APACHE.ORG     (webb3是默认主体)
+$ hdfs dfs -ls /user
+Found 3 items
+drwxrwx---   - ambari-qa hdfs          0 2017-05-04 07:03 /user/ambari-qa
+drwxr-xr-x   - hcat      hdfs          0 2017-04-27 07:41 /user/hcat
+drwxr-xr-x   - hive      hdfs          0 2017-04-27 07:41 /user/hive
+```
+### 启用了kerberos的HDFS
+```
+$ curl http://u1401.ambari.apache.org:50070/webhdfs/v1/user?op=LISTSTATUS
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
+<title>Error 401 Authentication required</title>
+</head>
+<body><h2>HTTP ERROR 401</h2>
+<p>Problem accessing /webhdfs/v1/user. Reason:
+<pre>    Authentication required</pre></p><hr /><i><small>Powered by Jetty://</small></i><br/>   
+```
+提示“需要认证”了。   
+使用命令行访问启用了kerberos的HDFS:
+```
+$ hdfs dfs -ls /user
+17/05/04 08:47:03 WARN ipc.Client: Exception encountered while connecting to the server :
+...  (省略)
+ls: Failed on local exception: java.io.IOException: javax.security.sasl.SaslException: GSS initiate failed [Caused by GSSException: No valid credentials provided (Mechanism level: Failed to find any Kerberos tgt)]; Host Details : local host is: "u1401.ambari.apache.org/192.168.14.101"; destination host is: "u1401.ambari.apache.org":8020;
+```
+提示没有提供有效的凭据。  
 
+### kerberos的HDFS授权
+
+在KDC上创建两个测试用的用户webb和webb2：
+```
+$ kadmin.local -q "addprinc webb"                          (添加主体webb)
+Enter password for principal "webb@AMBARI.APACHE.ORG":     (输入两次密码)
+$ kadmin.local -q "addprinc webb2"                          (添加主体webb2)
+Enter password for principal "webb@AMBARI.APACHE.ORG":     (输入两次密码)
+```
+下面分别用webb和webb2登录，并创建目录：
+```
+$ kinit webb                                   (登录使用kerberos客户端的kinit命令)
+Password for webb3@AMBARI.APACHE.ORG:          (输入主体webb的密码)
+$ klist                                        (klist显示当前登录的用户是webb)
+Default principal: webb@AMBARI.APACHE.ORG
 Valid starting       Expires              Service principal
-04/25/2017 02:02:29  04/25/2017 12:02:29  krbtgt/AMBARI.APACHE.ORG@AMBARI.APACHE.ORG
-        renew until 05/02/2017 02:02:27
+05/05/2017 00:43:28  05/05/2017 10:43:28  krbtgt/AMBARI.APACHE.ORG@AMBARI.APACHE.ORG
+        renew until 05/12/2017 00:43:25
+$ hdfs dfs -mkdir /tmp/webb                    (用webb用户在HDFS上创建/tmp/webb目录)
+$ kinit webb2                                  (切换为webb2登录，会提示输入密码)
+$ hdfs dfs -mkdir /tmp/webb2                   (用webb2用户在HDFS上创建/tmp/webb2目录)
+$ hdfs dfs -ls /tmp                            (显示HDFS中/tmp目录下的内容)
+Found 17 items
+...(省略)
+drwxr-xr-x   - webb      hdfs          0 2017-05-04 11:33 /tmp/webb
+drwxr-xr-x   - webb2     hdfs          0 2017-05-04 11:36 /tmp/webb2
 ```
-#### 访问HDFS
-仍在u1402上操作HDFS，当前的默认主体是webb3。显示HDFS的目录：
+通过上面的文件列表可以看到新创建的两个目录的拥有者(owner)分别是webb和webb2。  
+HDFS采用与POSIX兼容的文件系统通用的授权方案。权限由三个不同类别的用户管理：拥有者，组和其他人。读取，写入和执行权限可以独立授予每个类。  
+（当前用户是webb2）修改一下/tmp/webb2的文件权限：
 ```
-$ hdfs dfs -ls /
-Found 9 items
-drwxrwxrwx   - yarn   hadoop          0 2017-03-28 18:06 /app-logs
-drwxr-xr-x   - hdfs   hdfs            0 2017-03-28 16:04 /apps
-drwxr-xr-x   - yarn   hadoop          0 2017-03-28 15:52 /ats
-drwxr-xr-x   - hdfs   hdfs            0 2017-03-28 15:52 /hdp
-drwxr-xr-x   - mapred hdfs            0 2017-03-28 15:52 /mapred
-drwxrwxrwx   - mapred hadoop          0 2017-03-28 15:53 /mr-history
-drwxrwxrwx   - spark  hadoop          0 2017-04-25 02:29 /spark-history
-drwxrwxrwx   - hdfs   hdfs            0 2017-04-20 02:43 /tmp
-drwxr-xr-x   - hdfs   hdfs            0 2017-03-28 18:05 /user
+$ hdfs dfs -chmod 700 /tmp/webb2          (只有文件拥有者可以改权限)
+$ hdfs dfs -ls /tmp
+Found 17 items
+...(省略)
+drwxr-xr-x   - webb      hdfs          0 2017-05-04 11:33 /tmp/webb
+drwx------   - webb2     hdfs          0 2017-05-04 11:36 /tmp/webb2
 ```
-在HDFS上创建/tmp/webb目录：
+当修改成700权限后，只有文件拥有者可以修改和查看，其他用户都没有了权限。可以切换成webb用户测试一下：
 ```
-$ hdfs dfs -mkdir /tmp/webb          (创建/tmp/webb目录)
-$ hdfs dfs -ls /tmp                  (查看/tmp目录)
-Found 5 items
-drwxr-xr-x   - hdfs      hdfs          0 2017-03-28 15:52 /tmp/entity-file-history
-drwx-wx-wx   - ambari-qa hdfs          0 2017-03-28 16:09 /tmp/hive
--rwxr-xr-x   3 hdfs      hdfs       1724 2017-04-20 02:44 /tmp/ida8c0670e_date432017
--rwxr-xr-x   3 hdfs      hdfs       1425 2017-03-28 10:54 /tmp/ida8c0670e_date532817
-drwxr-xr-x   - webb3     hdfs          0 2017-04-25 02:31 /tmp/webb     (这是新创建的目录)
+$ kinit webb                        (输入密码)
+$ hdfs dfs -ls /tmp/webb2
+...(略)
+ls: Permission denied: user=webb, access=READ_EXECUTE, inode="/tmp/webb2":webb2:hdfs:drwx------
 ```
-可以看到新创建目录/tmp/webb3的拥有者是webb3。这说明kerberos用户与HDFS集成的很好。
+如果每个租户的HDFS目录权限都默认设定为700，则只有租户自己可以查看和存取目录下的文件。  
