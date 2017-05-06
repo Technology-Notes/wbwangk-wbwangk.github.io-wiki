@@ -43,3 +43,17 @@ Ambari | 2.4.0
 Ranger | 0.6.0  
 
 安装后Knox被部署在```/usr/hdp/current/knox-server```。  
+
+### 认证配置
+Knox支持两种类型的提供者：  
+ - 认证提供者  
+ - 联邦提供者  
+认证提供者直接接受用户的凭据，并通过特定的用户数据库进行验证。而联邦提供者只验证由可信认证中心（IdP）为用户颁发的令牌（不直接验证凭据）。
+
+提供者有基于名称的配置。存在多种认证提供者类型：  
+ - Anonymous  
+诺克斯用于让代理的服务或用户界面进行自己的身份验证。
+ - ShiroProvider  
+对于LDAP/AD身份验证，使用用户名和密码。没有SPNEGO/Kerberos支持。
+ - HadoopAuth  
+对于SPNEGO/Kerberos身份验证，使用委派令牌。没有LDAP/AD支持。
