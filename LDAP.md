@@ -41,8 +41,13 @@ $ cat /etc/hosts
 ```
 $ sudo apt install slapd ldap-utils
 ```
-安装过程中会要求输入管理员用户的密码。该管理员用户的的DN是:```cn=admin,dc=ambari,dc=apache,dc=org```。安装后的LDAP数据库位于```/etc/ldap/slapd.d/```。可以看到这个目录下有个```cn=config```的下级目录。  
-ldapsearch是搜索命令：
+安装过程中会要求输入管理员用户的密码。该管理员用户的的DN是:```cn=admin,dc=ambari,dc=apache,dc=org```。安装后的LDAP数据库位于```/etc/ldap/slapd.d/```。  
+slapd是openldap的后台进程名，该进程默认监听389端口：
+```
+$ netstat -anp | grep 389
+tcp        0      0 0.0.0.0:389             0.0.0.0:*               LISTEN      5860/slapd
+```
+ldapsearch是ldap搜索命令：
 ```
 $ sudo ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config dn
 dn: cn=config
