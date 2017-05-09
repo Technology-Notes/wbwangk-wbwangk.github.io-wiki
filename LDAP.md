@@ -122,6 +122,16 @@ cn: John Doe
 gidNumber: 5000
 ```
 
-## LDAP认证
+## Kerberos与LDAP
+要将Kerberos与LDAP进行集成，首先需要在LDAP服务器上安装```krb5-kdc-ldap```包：
+```
+$ sudo apt install krb5-kdc-ldap
+```
+然后，解压```kerberos.schema.gz```:
+```
+$ sudo gzip -d /usr/share/doc/krb5-kdc-ldap/kerberos.schema.gz
+$ sudo cp /usr/share/doc/krb5-kdc-ldap/kerberos.schema /etc/ldap/schema/
+```
+再后，kerberos schema需要添加到```cn-config```树中。
 
  
