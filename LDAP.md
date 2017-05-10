@@ -138,6 +138,7 @@ dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org
 cn: John Doe
 gidNumber: 5000
 $ ldapsearch -x -LLL -H ldap:/// -b dc=ambari,dc=apache,dc=org 'uid=john' cn gidNumber   (多了个-H参数而已，搜索结果一样)
+$ ldapsearch -x -LLL -H ldap://u1401.ambari.apache.org -b dc=ambari,dc=apache,dc=org 'uid=john' cn gidNumber  (也一样)
 ```
 被搜索的内容是```'uid=john' cn gidNumber```，其他的是ldapsearch的参数。   
 
