@@ -4,11 +4,17 @@ LDAP条目数据结构
  - 条目(entry)  
 条目由多个属性组成，属性包含了条目的数据。条目都有一个名称，叫DN。如果使用数据库属于，属性就像一条数据库记录的字段。
  - DN(distinguished name)  
-DN是由逗号分隔的多个RDN组成的字符串。DN是唯一标识符，有时称为目录条目的主键。
+DN是条目的唯一标识，是由逗号分隔的多个RDN组成的字符串。通过DN的层次型语法结构，可以方便地表示出条目在LDAP树中的位置，通常用于检索。
  - RDN(relative distinguished name)  
 一个RDN是由一个或多个属性名称/值对组合。例如，```cn=Jay Sekora```可以是一个RDN(cn代表"通用名称common name")。属性名是```cn```，值是```Jay Sekora```。
  - 目录信息树(DIT)  
 一个LDAP目录是一个由数据条目组成的树形结构，称为DIT。  
+ - Base DN
+LDAP目录树的最顶部就是根，也就是所谓的“Base DN"。
+ - Schema
+对象类（ObjectClass）、属性类型（AttributeType）、语法（Syntax）分别约定了条目、属性、值。所以这些构成了模式(Schema)——对象类的集合。条目数据在导入时通常需要接受模式检查，它确保了目录中所有的条目数据结构都是一致的。
+ - LDIF
+LDIF（LDAP Data Interchange Format，数据交换格式）是LDAP数据库信息的一种文本格式，用于数据的导入导出。
 
 遍历树形去生成一个DN：  
 ![](http://figures.oreilly.com/tagoreillycom20090511oreillybooks296268I_book_d1e1/figs/I_mediaobject_d1e40961-web.png)  
