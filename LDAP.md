@@ -34,7 +34,7 @@ uid=rsmith, ou=system, ou=people, dc=ccs, dc=hogwarts, dc=edu
  - l：location? 指一个地名，如一个城市或者其他地理区域的名字。
  - mail：电子信箱地址。
  - o：organizationName，指一个组织的名字。
- - ou：organizationalUnitName，指一个组织单元的名字。
+ - ou：organizationalUnitName，指一个组织下级单元的名字，即组织下的部门。
  - sn：surname，指一个人的姓。
  - telephoneNumber：电话号码，应该带有所在的国家的代码。
  - uid：userid，通常指某个用户的登录名，与Linux系统中用户的uid不同。
