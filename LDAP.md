@@ -152,6 +152,79 @@ $ ldapsearch -x -LLL -H ldap://u1401.ambari.apache.org -b dc=ambari,dc=apache,dc
 RDN为```cn=config```的目录成为slapd-config DIT，是slapd的配置数据库。
 SASL有几大工业实现标准：Kerveros V5、DIGEST-MD5、EXTERNAL、PLAIN、LOGIN。EXTERNAL一般用于初始化添加schema时使用。
 
+### LDAP认证
+启动一个专门的虚拟机u1410来安装LDAP客户端，*libnss-ldap*：
+```
+$ sudo apt install libnss-ldap
+```
+当提示让输入LDAP服务器URI时输入：```ldap://u1401.ambari.apache.org```；  
+当提示让输入Search Base时输入：```dc=ambari,dc=apache,dc=org```；  
+LDAP版本选择3； Make local root Database admin时选择yes；  
+Does the LDAP database require login? 选择no；  
+LDAP account for root时输入：``` cn=admin,dc=ambari,dc=apache,dc=org```；  
+最后输入root口令，输入了1。  
+如果想重新设置可以这样：
+```
+$ sudo dpkg-reconfigure ldap-auth-config
+```
+界面配置的结果存放在/etc/ldap.conf文件中。下面为NSS配置LDAP profile：
+```
+$ sudo auth-client-config -t nss -p lac_ldap
+```
+配置系统使用LDAP做认证：
+```
+$ sudo pam-auth-update
+```
+在弹出的窗口中需要保证LDAP认证的选项被选中。现在可以使用LDAP做认证了。  
+查看一下/etc/ldap.conf，看是否存在以下配置：
+```
+uri ldap://u1401.ambari.apache.org
+```
+实测发现，如果配置成```uri ldapi://u1401.ambari.apache.org```不行。估计是LDAP Server没有正确启用TLS。  
+现在测试一下使用LDAP的用户登录：
+```
+$ sudo su - john
+No directory, logging in with HOME=/
+john@u1410:/$
+```
+john这个用户是之前的测试添加到LDAP数据库中的。由于在当前操作系统下没有/home/john目录，所以提示john用户的HOME目录变成了根目录。
+
+### 用户和用户组管理
+先在u1401上安装一个需要用到的软件包*ldapscritps*：
+```
+$ sudo apt install ldapscripts
+```
+编辑配置文件/etc/ldapscripts/ldapscripts.conf，修改配置为以下的样子：
+```
+SERVER="ldap://localhost"
+BINDDN='cn=admin,dc=ambari,dc=apache,dc=org'
+BINDPWDFILE="/etc/ldapscripts/ldapscripts.passwd"
+SUFFIX='dc=ambari,dc=apache,dc=org'
+GSUFFIX='ou=Groups'
+USUFFIX='ou=People'
+MSUFFIX='ou=Computers'
+GIDSTART=10000
+UIDSTART=10000
+MIDSTART=10000
+```
+创建密码文件，并确保这个文件只能被rootDN读取：
+```
+sudo sh -c "echo -n '1' > /etc/ldapscripts/ldapscripts.passwd"
+sudo chmod 400 /etc/ldapscripts/ldapscripts.passwd
+```
+```1```是我的rootDN密码，是安装slapd过程中弹出提示窗口中输入的那个密码。如果你创建的rootDN密码不是1，就改成你自己设置的密码。  
+创建一个新用户并创建密码，miners是用户组（这个用户组是前文创建的）：
+```
+$ sudo ldapadduser george miners
+$ sudo ldapsetpasswd george
+$ ldapsearch -x -LLL -b dc=ambari,dc=apache,dc=org george  (在ldap数据库中搜索刚刚创建的用户)
+```
+创建用户组：
+```
+$ sudo ldapaddgroup qa
+```
+用ldapsearch也可以搜索到ldap数据库中的qa用户组条目。  
+--------------------------------------------------------------------------------
 ## Kerberos与LDAP
 要将Kerberos与LDAP进行集成，首先需要在LDAP服务器上安装```krb5-kdc-ldap```包：
 ```
