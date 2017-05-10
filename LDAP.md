@@ -224,7 +224,7 @@ $ ldapsearch -x -LLL -b dc=ambari,dc=apache,dc=org george  (在ldap数据库中�
 $ sudo ldapaddgroup qa
 ```
 用ldapsearch也可以搜索到ldap数据库中的qa用户组条目。  
---------------------------------------------------------------------------------
+
 ## Kerberos与LDAP
 要将Kerberos与LDAP进行集成，首先需要在LDAP服务器上安装```krb5-kdc-ldap```包：
 ```
