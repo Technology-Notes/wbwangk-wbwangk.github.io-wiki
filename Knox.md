@@ -219,3 +219,10 @@ $ curl -i -k -u john:johnldap -X GET \
     'https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS'
 (返回值略)
 ```
+
+#### SPNEGO/Kerberos认证
+
+要配置SPNEGO/Kerberos认证需要在hadoop集群拓扑文件中增加一个"HadoopAuth"认证提供者。启用后，Knox网关就会用Kerberos/SPNEGO认证用户对Knox的访问。  
+通过ambari修改knox的配置文件，在配置文件的Advanced atopology小节中修改的配置文件如下：
+```
+```
