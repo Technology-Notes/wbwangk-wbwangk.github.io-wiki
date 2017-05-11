@@ -42,8 +42,6 @@ Hive（通过JDBC） | 0.14.0
 Ambari | 2.4.0  
 Ranger | 0.6.0  
 
-安装后Knox被部署在```/usr/hdp/current/knox-server```。  
-
 ### 认证配置
 Knox支持两种类型的提供者：  
  - 认证提供者  
@@ -57,3 +55,146 @@ Knox支持两种类型的提供者：
 对于LDAP/AD身份验证，使用用户名和密码。没有SPNEGO/Kerberos支持。
  - HadoopAuth  
 对于SPNEGO/Kerberos身份验证，使用委派令牌。没有LDAP/AD支持。
+
+#### ShiroProvider(LDAP认证)
+用ambari安装的knox，默认安装目录是```/usr/hdp/current/knox-server```。默认cluster-name是default，对应的配置文件是：
+```
+/usr/hdp/current/knox-server/conf/topologies/default.xml
+```
+通过ambari修改knox的配置文件，在配置文件的Advanced admin-topology小节中修改的配置文件如下：
+```
+ <topology>
+        <gateway>
+             <provider>
+                <role>authentication</role>
+                <name>ShiroProvider</name>
+                <enabled>true</enabled>
+                <param>
+                    <name>sessionTimeout</name>
+                    <value>30</value>
+                </param>
+                <param>
+                    <name>main.ldapRealm</name>
+                    <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm</value>
+                </param>
+                <param>
+                    <name>main.ldapRealm.userDnTemplate</name>
+                    <value>uid={0},ou=people,dc=ambari,dc=apache,dc=org</value>
+                </param>
+                <param>
+                    <name>main.ldapRealm.contextFactory.url</name>
+                    <value>ldap://{{knox_host_name}}</value>
+                </param>
+                <param>
+                    <name>main.ldapRealm.contextFactory.authenticationMechanism</name>
+                    <value>simple</value>
+                </param>
+                <param>
+                    <name>urls./**</name>
+                    <value>authcBasic</value>
+                </param>
+            </provider>
+            <provider>
+                <role>authorization</role>
+                <name>AclsAuthz</name>
+                <enabled>true</enabled>
+                <param>
+                    <name>knox.acl</name>
+                    <value>admin;*;*</value>
+                </param>
+            </provider>
+            <provider>
+                <role>identity-assertion</role>
+                <name>Default</name>
+                <enabled>true</enabled>
+            </provider>
+        </gateway>
+        <service>
+            <role>KNOX</role>
+        </service>
+    </topology>
+```
+只修改了两个参数，一个是将```main.ldapRealm.userDnTemplate```的值定义为```uid={0},ou=people,dc=ambari,dc=apache,dc=org```；另一个是将```main.ldapRealm.contextFactory.url```定义为```ldap://{{knox_host_name}}```，因未启用TLS所以没有定义为```ldapi://{{knox_host_name}}:33389```。
+
+在配置文件的Advanced topology小节中，修改位置文件如下：
+```
+<topology>
+            <gateway>
+                <provider>
+                    <role>authentication</role>
+                    <name>ShiroProvider</name>
+                    <enabled>true</enabled>
+                    <param>
+                        <name>sessionTimeout</name>
+                        <value>30</value>
+                    </param>
+                    <param>
+                        <name>main.ldapRealm</name>
+                        <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm</value>
+                    </param>
+                    <param>
+                        <name>main.ldapRealm.userDnTemplate</name>
+                        <value>uid={0},ou=people,dc=ambari,dc=apache,dc=org</value>
+                    </param>
+                    <param>
+                        <name>main.ldapRealm.contextFactory.url</name>
+                        <value>ldap://{{knox_host_name}}</value>
+                    </param>
+                    <param>
+                        <name>main.ldapRealm.contextFactory.authenticationMechanism</name>
+                        <value>simple</value>
+                    </param>
+                    <param>
+                        <name>urls./**</name>
+                        <value>authcBasic</value>
+                    </param>
+                </provider>
+                <provider>
+                    <role>identity-assertion</role>
+                    <name>Default</name>
+                    <enabled>true</enabled>
+                </provider>
+                <provider>
+                    <role>authorization</role>
+                    <name>XASecurePDPKnox</name>
+                    <enabled>true</enabled>
+                </provider>
+            </gateway>
+            <service>
+                <role>NAMENODE</role>
+                <url>hdfs://{{namenode_host}}:{{namenode_rpc_port}}</url>
+            </service>
+            <service>
+                <role>JOBTRACKER</role>
+                <url>rpc://{{rm_host}}:{{jt_rpc_port}}</url>
+            </service>
+            <service>
+                <role>WEBHDFS</role>
+                {{webhdfs_service_urls}}
+            </service>
+            <service>
+                <role>WEBHCAT</role>
+                <url>http://{{webhcat_server_host}}:{{templeton_port}}/templeton</url>
+            </service>
+            <service>
+                <role>OOZIE</role>
+                <url>http://{{oozie_server_host}}:{{oozie_server_port}}/oozie</url>
+            </service>
+            <service>
+                <role>WEBHBASE</role>
+                <url>http://{{hbase_master_host}}:{{hbase_master_port}}</url>
+            </service>
+            <service>
+                <role>HIVE</role>
+                <url>http://{{hive_server_host}}:{{hive_http_port}}/{{hive_http_path}}</url>
+            </service>
+            <service>
+                <role>RESOURCEMANAGER</role>
+                <url>http://{{rm_host}}:{{rm_port}}/ws</url>
+            </service>
+        </topology>
+```
+修改的配置项仍是```main.ldapRealm.userDnTemplate```和```main.ldapRealm.contextFactory.url```。  
+Advanced knoxsso-topology小节也同样修改userDnTemplate和contextFactory.url。  
+在ambari界面中点击Save按钮保存，并重启相关服务后。会发现```/usr/hdp/current/knox-server/conf/topologies/```目录下的admin.xml、default.xml和knoxsso.xml都按ambari中的修改更新了。  
+
