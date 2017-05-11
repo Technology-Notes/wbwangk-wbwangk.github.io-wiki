@@ -150,7 +150,7 @@ uid=john：一个查找用户john的“过滤器”；
 cn gidNumber：请求和显示特定属性（默认是显示全部属性）。   
 
 ### 修改slapd配置数据库
-RDN为```cn=config```的目录成为slapd-config DIT，是slapd的配置数据库。
+RDN为```cn=config```的目录成为slapd-config DIT，是slapd的配置数据库。  
 (一). 使用*ldapmodify*增加一个"索引"(DbIndex属性)到*{1}hdb,cn=config*数据库。创建一个叫uid_index.ldif的文件，包括以下内容：
 ```
 dn: olcDatabase={1}hdb,cn=config
