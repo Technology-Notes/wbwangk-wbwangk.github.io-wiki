@@ -198,3 +198,12 @@ Knox支持两种类型的提供者：
 Advanced knoxsso-topology小节也同样修改userDnTemplate和contextFactory.url。  
 在ambari界面中点击Save按钮保存，并重启相关服务后。会发现```/usr/hdp/current/knox-server/conf/topologies/```目录下的admin.xml、default.xml和knoxsso.xml都按ambari中的修改更新了。  
 
+#### ShiroProvider(LDAP认证)测试
+需要准备LDAP环境。参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)LDAP测试的文档。  
+按上述文档进行的测试在u1401上安装了OpenLDAP，并创建了一个测试用户john（dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org），该用户的密码是johnldap。使用该用户测试Knox：
+```
+$ curl -i -k -u john:johnldap -X GET \
+    'https://localhost:8443/gateway/default/webhdfs/v1/tmp/?op=LISTSTATUS'
+HTTP/1.1 403 Forbidden
+```
+可以故意输入错误的密码，如john:1到-u参数，会返回401错误。这说明Knox网关与LDAP的认证集成是正确的，但没有授权。
