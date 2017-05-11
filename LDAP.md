@@ -180,11 +180,9 @@ dn: cn={1}cosine,cn=schema,cn=config
 dn: cn={2}nis,cn=schema,cn=config
 dn: cn={3}inetorgperson,cn=schema,cn=config
 ```
-在下面的例子中我们增加一个CORBA schema。
-（略，因为与后面的“kerberos和LDAP”操作近似）
-
-
-SASL有几大工业实现标准：Kerveros V5、DIGEST-MD5、EXTERNAL、PLAIN、LOGIN。EXTERNAL一般用于初始化添加schema时使用。
+在下面的例子中我们增加一个CORBA schema。  
+（略，因为与后面的“kerberos和LDAP”操作近似）  
+（注：SASL有几大工业实现标准：Kerveros V5、DIGEST-MD5、EXTERNAL、PLAIN、LOGIN。EXTERNAL一般用于初始化添加schema时使用。）  
 
 ### LDAP认证
 启动一个专门的虚拟机u1410来安装LDAP客户端，*libnss-ldap*：
