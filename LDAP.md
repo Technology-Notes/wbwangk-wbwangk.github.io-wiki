@@ -42,7 +42,7 @@ uid=rsmith, ou=system, ou=people, dc=ccs, dc=hogwarts, dc=edu
 既然LDAP用于表示用户，则用户DN可以由域名、组织、用户名三大部分组成，即一到几个DC，o或ou，cn。  
 
 ## 安装OpenLDAP
-[ubuntu官方文档的LDAP部分](https://help.ubuntu.com/lts/serverguide/openldap-server.html)  
+[ubuntu14官方文档的LDAP部分](https://help.ubuntu.com/14.04/serverguide/openldap-server.html)  
 [OpenLDAP官方用户手册](http://www.openldap.org/software/man.cgi)(点击Section Indexes后面的数字)  
 [OpenLDAP管理员文档](http://www.openldap.org/doc/)  
 本测试使用的[大数据本地开发环境](https://github.com/imaidev/imaidev.github.io/wiki/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83)的u1401主机。查看一下主机的域名定义：
@@ -89,7 +89,7 @@ dn: cn=admin,dc=ambari,dc=apache,dc=org
 ```cn=admin,dc=ambari,dc=apache,dc=org```是这个DIT的管理员(rootDN)。这个管理员是安装过程中创建的。  
 
 ### 向LDAP数据库中添加记录
-OpenLDAP的默认后端会把数据存放在LDIF格式的文本文件中。下面测试通过手工创建这种LDIF格式的文件来向数据库中添加条目。  
+OpenLDAP的默认后端会把数据存放在LDIF格式的文本文件中。下面测试通过创建LDIF格式的文件来向数据库中添加条目。  
 将添加的内容有：
  1. 一个叫*People*的节点，用于存放用户
  2. 一个叫*Groups*的节点，用于存放用户组
@@ -146,10 +146,44 @@ gidNumber: 5000
 $ ldapsearch -x -LLL -H ldap:/// -b dc=ambari,dc=apache,dc=org 'uid=john' cn gidNumber   (多了个-H参数而已，搜索结果一样)
 $ ldapsearch -x -LLL -H ldap://u1401.ambari.apache.org -b dc=ambari,dc=apache,dc=org 'uid=john' cn gidNumber  (也一样)
 ```
-被搜索的内容是```'uid=john' cn gidNumber```，其他的是ldapsearch的参数。   
+uid=john：一个查找用户john的“过滤器”；  
+cn gidNumber：请求和显示特定属性（默认是显示全部属性）。   
 
 ### 修改slapd配置数据库
 RDN为```cn=config```的目录成为slapd-config DIT，是slapd的配置数据库。
+(一). 使用*ldapmodify*增加一个"索引"(DbIndex属性)到*{1}hdb,cn=config*数据库。创建一个叫uid_index.ldif的文件，包括以下内容：
+```
+dn: olcDatabase={1}hdb,cn=config
+add: olcDbIndex
+olcDbIndex: uid eq,pres,sub
+```
+执行以下命令：
+```
+$ sudo ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f uid_index.ldif
+modifying entry "olcDatabase={1}hdb,cn=config"
+```
+可以执行下列命令来确认修改是否成功：
+```
+$ sudo ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b \
+     cn=config '(olcDatabase={1}hdb)' olcDbIndex
+dn: olcDatabase={1}hdb,cn=config
+olcDbIndex: objectClass eq
+olcDbIndex: uid eq,pres,sub
+```
+(二). 添加一个schema。为此，首先要转换到LDIF格式。你可以在/etc/ldap/schema目录下发现没有转换的schema。  
+在增加schema前，可以查看一下已经安装的schema：
+```
+$ sudo ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=schema,cn=config dn
+dn: cn=schema,cn=config
+dn: cn={0}core,cn=schema,cn=config
+dn: cn={1}cosine,cn=schema,cn=config
+dn: cn={2}nis,cn=schema,cn=config
+dn: cn={3}inetorgperson,cn=schema,cn=config
+```
+在下面的例子中我们增加一个CORBA schema。
+（略，因为与后面的“kerberos和LDAP”操作近似）
+
+
 SASL有几大工业实现标准：Kerveros V5、DIGEST-MD5、EXTERNAL、PLAIN、LOGIN。EXTERNAL一般用于初始化添加schema时使用。
 
 ### LDAP认证
