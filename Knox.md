@@ -57,6 +57,28 @@ Knox支持两种类型的提供者：
  - HadoopAuth  
 对于SPNEGO/Kerberos身份验证，使用委派令牌。没有LDAP/AD支持。
 
+### Knox网关的网址映射
+网关配置文件（即{GATEWAY_HOME}/conf/gateway-site.xml）中定义gateway-port（默认8443）、gateway-path(默认是gateway)。而GATEWAY_HOME的默认路径是/usr/hdp/current/knox-server。  
+集群拓扑描述符（{GATEWAY_HOME}/conf/topologies/{cluster-name}.xml）定义了knox管理的hadoop集群。  
+*可以到```{GATEWAY_HOME}/conf/topologies/```目录下看看有哪几个xml文件，一般会有amdin.xml、default.xml和knoxsso.xml等。*  
+下面实现了各个hadoop服务的原始URL和通过knox网关后的URL：  
+- WebHDFS
+  - 网关： ```https://{gateway-host}:{gateway-port}/{gateway-path}/{cluster-name}/webhdfs```
+  - 集群： ```http://{webhdfs-host}:50070/webhdfs```
+- WebHCat（Templeton）
+  - 网关： ```https://{gateway-host}:{gateway-port}/{gateway-path}/{cluster-name}/templeton```
+  - 集群： ```http://{webhcat-host}:50111/templeton}```
+- Oozie的
+  - 网关： ```https://{gateway-host}:{gateway-port}/{gateway-path}/{cluster-name}/oozie```
+  - 集群： ```http://{oozie-host}:11000/oozie}```
+- HBase的
+  - 网关： ```https://{gateway-host}:{gateway-port}/{gateway-path}/{cluster-name}/hbase```
+  - 集群： ```http://{hbase-host}:8080```
+- Hive JDBC
+  - 网关： ```jdbc:hive2://{gateway-host}:{gateway-port}/;ssl=true;sslTrustStore={gateway-trust-store-path};trustStorePassword={gateway-trust-store-password};transportMode=http;httpPath={gateway-path}/{cluster-name}/hive```
+  - 集群： ```http://{hive-host}:10001/cliservice```
+
+
 #### ShiroProvider(LDAP认证)
 用ambari安装的knox，默认安装目录是```/usr/hdp/current/knox-server```。默认cluster-name是default，对应的配置文件是：
 ```
@@ -123,10 +145,106 @@ $ curl -i -k -u john:johnldap -X GET \
     'https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS'
 (返回值略)
 ```
+curl -k -i --negotiate -u : https://localhost:8443/gateway/sandbox/webhdfs/v1/tmp?op=LISTSTATUS
 
 #### SPNEGO/Kerberos认证
 
 要配置SPNEGO/Kerberos认证需要在hadoop集群拓扑文件中增加一个"HadoopAuth"认证提供者。启用后，Knox网关就会用Kerberos/SPNEGO认证用户对Knox的访问。  
 通过ambari修改knox的配置文件，在配置文件的Advanced atopology小节中修改的配置文件如下：
 ```
+<provider>
+  <role>authentication</role>
+  <name>HadoopAuth</name>
+  <enabled>true</enabled>
+  <param>
+    <name>config.prefix</name>
+    <value>hadoop.auth.config</value>
+  </param>
+  <param>
+    <name>hadoop.auth.config.signature.secret</name>
+    <value>knox-signature-secret</value>
+  </param>
+  <param>
+    <name>hadoop.auth.config.type</name>
+    <value>kerberos</value>
+  </param>
+  <param>
+    <name>hadoop.auth.config.simple.anonymous.allowed</name>
+    <value>false</value>
+  </param>
+  <param>
+    <name>hadoop.auth.config.token.validity</name>
+    <value>1800</value>
+  </param>
+  <param>
+    <name>hadoop.auth.config.cookie.domain</name>
+    <value>ambari.apache.org</value>
+  </param>
+  <param>
+    <name>hadoop.auth.config.cookie.path</name>
+    <value>gateway/default</value>
+  </param>
+  <param>
+    <name>hadoop.auth.config.kerberos.principal</name>
+    <value>HTTP/_HOST@AMBARI.APACHE.ORG</value>
+  </param>
+  <param>
+    <name>hadoop.auth.config.kerberos.keytab</name>
+    <value>/etc/security/keytabs/spnego.service.keytab</value>
+  </param>
+  <param>
+    <name>hadoop.auth.config.kerberos.name.rules</name>
+    <value>DEFAULT</value>
+  </param>
+</provider>
+```
+（需要额外提示的是config.prefix参数(默认是hadoop.auth.config)，它指定了多个参数的前缀）  
+在ambari界面中点击Save按钮保存，并通过橙黄色按钮重启相关服务。之后会发现```/usr/hdp/current/knox-server/conf/topologies/```目录下的default.xml修改更新了。  
+用kerberos客户端登录：
+```
+$ kinit webb
+Password for webb@AMBARI.APACHE.ORG:           （输入webb用户的密码）
+```
+用kinit登录后，kerberos会话就可以跨客户端请求使用，如curl。以下curl命令可用于从HDFS请求目录列表，同时通过-negotiate标志与SPNEGO进行身份验证：
+```
+$ curl -k -i --negotiate -u : https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
+```
+(待补充)
+
+## 授权
+本章内容源自[knox的apache官网文档](http://knox.apache.org/books/knox-0-12-0/user-guide.html#Authorization)  
+#### 服务级别授权
+Knox Gateway具有开箱即用的授权提供者程序，允许管理员限制对Hadoop集群中各个服务的访问。该提供者利用简单熟悉的ACL模式来通过指定允许访问的用户，组和IP地址来保护Hadoop资源。  
+使用ACL授权的配置如下：
+```
+<provider>
+    <role>authorization</role>
+    <name>AclsAuthz</name>
+    <enabled>true</enabled>
+</provider>
+```
+上述默认设置没有包含任何ACL清单，因此对于访问Hadoop服务没有任何限制。了保护资源和指定用户、组或IP的访问权限，需要提供如下参数：
+```
+<param>
+    <name>{serviceName}.acl</name>
+    <value>username[,*|username...];group[,*|group...];ipaddr[,*|ipaddr...]</value>
+</param>
+```
+#### 身份断言的例子
+身份断言提供者的主要映射方面对于理解为了充分利用该提供者的授权特征是重要的。
+此功能允许我们将经过身份验证的主体映射到后端中的Hadoop服务的断定或假冒主体。
+```
+        <provider>
+            <role>identity-assertion</role>
+            <name>Default</name>
+            <enabled>true</enabled>
+            <param>
+                <name>principal.mapping</name>
+                <value>guest=hdfs;</value>
+            </param>
+            <param>
+                <name>group.principal.mapping</name>
+                <value>*=users;hdfs=admin</value>
+            </param>
+        </provider>
 ```
