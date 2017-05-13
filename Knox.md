@@ -90,7 +90,7 @@ core-site.xml中定义了knox了安装主机(hadoop.proxyuser.knox.hosts)和可�
     <value>FQDN_OF_KNOX_HOST</value>
 </property>
 ```
-在我的测试中FQDN_OF_KNOX_HOST被替换为```u1401.ambari.apache.org```，也就是安装knox网关的虚拟机。
+在我的测试中FQDN_OF_KNOX_HOST被替换为```u1401.ambari.apache.org```，也就是安装knox网关的虚拟机。把```users```修改成了```*```，即允许knox代理（仿冒）所有用户组的用户。  
 
 #### ShiroProvider(LDAP认证)
 用ambari安装的knox，默认安装目录是```/usr/hdp/current/knox-server```。默认cluster-name是default，对应的配置文件是：
