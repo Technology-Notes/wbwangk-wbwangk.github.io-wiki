@@ -78,6 +78,19 @@ Knox支持两种类型的提供者：
   - 网关： ```jdbc:hive2://{gateway-host}:{gateway-port}/;ssl=true;sslTrustStore={gateway-trust-store-path};trustStorePassword={gateway-trust-store-password};transportMode=http;httpPath={gateway-path}/{cluster-name}/hive```
   - 集群： ```http://{hive-host}:10001/cliservice```
 
+#### knox 配置
+core-site.xml中定义了knox了安装主机(hadoop.proxyuser.knox.hosts)和可以代理的用户组(hadoop.proxyuser.knox.groups)。
+```
+<property>
+    <name>hadoop.proxyuser.knox.groups</name>
+    <value>users</value>
+</property>
+<property>
+    <name>hadoop.proxyuser.knox.hosts</name>
+    <value>FQDN_OF_KNOX_HOST</value>
+</property>
+```
+在我的测试中FQDN_OF_KNOX_HOST被替换为```u1401.ambari.apache.org```，也就是安装knox网关的虚拟机。
 
 #### ShiroProvider(LDAP认证)
 用ambari安装的knox，默认安装目录是```/usr/hdp/current/knox-server```。默认cluster-name是default，对应的配置文件是：
@@ -145,7 +158,7 @@ $ curl -i -k -u john:johnldap -X GET \
     'https://localhost:8443/gateway/default/webhdfs/v1/?op=LISTSTATUS'
 (返回值略)
 ```
-curl -k -i --negotiate -u : https://localhost:8443/gateway/sandbox/webhdfs/v1/tmp?op=LISTSTATUS
+curl -k -i --negotiate -u : https://localhost:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
 
 #### SPNEGO/Kerberos认证
 
