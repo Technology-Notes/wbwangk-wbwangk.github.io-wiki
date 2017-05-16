@@ -90,6 +90,16 @@ ls: Permission denied: user=webb, access=READ_EXECUTE, inode="/tmp/webb2":webb2:
 如果每个租户的HDFS目录权限都默认设定为700，则只有租户自己可以查看和存取目录下的文件。  
 
 ## kerberos命令备忘
+#### 主体
+在KDC中新增主体：
+```
+$ kadmin.local
+kadmin.local:  addprinc webb
+WARNING: no policy specified for webb@AMBARI.APACHE.ORG; defaulting to no policy
+Enter password for principal "webb@AMBARI.APACHE.ORG":
+Re-enter password for principal "webb@AMBARI.APACHE.ORG":
+Principal "webb@AMBARI.APACHE.ORG" created.
+```
 
 #### keytab
 为主体webb@AMBARI.APACHE.ORG生成keytab文件，文件名是webb.keytab（当前目录下生成）
@@ -108,7 +118,7 @@ $ kinit -k -t webb.keytab webb
 ```
 显示keytab文件中主体和加密类型：
 ```
-klist -e -k webb.keytab
+$ klist -e -k webb.keytab
 Keytab name: FILE:webb.keytab
 KVNO Principal
 ---- --------------------------------------------------------------------------
@@ -120,5 +130,15 @@ KVNO Principal
    3 webb@AMBARI.APACHE.ORG (arcfour-hmac)
    3 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
    3 webb@AMBARI.APACHE.ORG (des-cbc-crc)
-
+```
+以上是安装了启用了kerberos的AMBARI下的keytab。而仅安装kerberos后测试的结果是：
+```
+$  klist -e -k webb.keytab
+Keytab name: FILE:webb.keytab
+KVNO Principal
+---- --------------------------------------------------------------------------
+   2 webb@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
+   2 webb@AMBARI.APACHE.ORG (arcfour-hmac)
+   2 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
+   2 webb@AMBARI.APACHE.ORG (des-cbc-crc)
 ```
