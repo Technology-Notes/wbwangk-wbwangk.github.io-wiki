@@ -88,3 +88,21 @@ $ hdfs dfs -ls /tmp/webb2
 ls: Permission denied: user=webb, access=READ_EXECUTE, inode="/tmp/webb2":webb2:hdfs:drwx------
 ```
 如果每个租户的HDFS目录权限都默认设定为700，则只有租户自己可以查看和存取目录下的文件。  
+
+## kerberos命令备忘
+
+#### keytab
+为主体webb@AMBARI.APACHE.ORG生成keytab文件，文件名是webb.keytab（当前目录下生成）
+```
+$ kadmin.local
+kadmin.local:  ktadd -k webb.keytab webb@AMBARI.APACHE.ORG
+Entry for principal webb@AMBARI.APACHE.ORG with kvno 3, encryption type aes256-cts-hmac-sha1-96 added to keytab WRFILE:webb.keytab.
+Entry for principal webb@AMBARI.APACHE.ORG with kvno 3, encryption type arcfour-hmac added to keytab WRFILE:webb.keytab.
+Entry for principal webb@AMBARI.APACHE.ORG with kvno 3, encryption type des3-cbc-sha1 added to keytab WRFILE:webb.keytab.
+Entry for principal webb@AMBARI.APACHE.ORG with kvno 3, encryption type des-cbc-crc added to keytab WRFILE:webb.keytab.
+kadmin.local:  exit
+```
+使用keytab文件登录（而不是密码）：
+```
+$ kinit -k -t webb.keytab webb
+```
