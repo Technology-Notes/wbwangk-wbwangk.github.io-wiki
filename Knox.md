@@ -227,6 +227,7 @@ $ curl -k -i --negotiate -u : http://u1401.ambari.apache.org:50070/webhdfs/v1/tm
 $ curl -k -i --negotiate -u : https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
 $ curl -k -i --negotiate -u : https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp/webb/t1.txt?op=OPEN
 ```
+第一个请求是取HDFS中/tmp目录下对象清单；第二个请求是请求/tmp/webb/t1.txt对象的内容。
 (待补充)
 
 ## 授权
