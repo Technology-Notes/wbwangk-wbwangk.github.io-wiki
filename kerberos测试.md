@@ -106,3 +106,19 @@ kadmin.local:  exit
 ```
 $ kinit -k -t webb.keytab webb
 ```
+显示keytab文件中主体和加密类型：
+```
+klist -e -k webb.keytab
+Keytab name: FILE:webb.keytab
+KVNO Principal
+---- --------------------------------------------------------------------------
+   2 webb@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
+   2 webb@AMBARI.APACHE.ORG (arcfour-hmac)
+   2 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
+   2 webb@AMBARI.APACHE.ORG (des-cbc-crc)
+   3 webb@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
+   3 webb@AMBARI.APACHE.ORG (arcfour-hmac)
+   3 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
+   3 webb@AMBARI.APACHE.ORG (des-cbc-crc)
+
+```
