@@ -33,7 +33,7 @@ ubuntu下的kerberos客户端叫做krb5-user：
 ```
 $ apt install krb5-user  (如果提示包依赖错误，就用手机上网执行apt-get udpate)
 ```
-安装过程中如果让输入KDC，则输入```u1404.ambari.apache.org```；如果让输入realm则输入```AMBARI.APACHE.ORG```。  
+安装过程中如果让输入KDC，则输入```u1404.ambari.apache.org```；如果让输入realm则输入```AMBARI.APACHE.ORG```；如果让输入管理服务器也输入地址```u1404.ambari.apache.org```。  
 
 #### 4. 简单测试
 查看主体清单的方法：在u1404节点（安装KDC的节点）上执行：
