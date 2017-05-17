@@ -142,3 +142,19 @@ KVNO Principal
    2 webb@AMBARI.APACHE.ORG (des3-cbc-sha1)
    2 webb@AMBARI.APACHE.ORG (des-cbc-crc)
 ```
+
+### Kerberos认证测试
+用kinit登录kerberos，然后使用CURL访问REST API，需要在CURL命令行上增加```--negotiate -u : ```参数。例如：
+```
+$ klist -e -k /etc/security/keytabs/hdfs.headless.keytab
+Keytab name: FILE:/etc/security/keytabs/hdfs.headless.keytab
+KVNO Principal
+---- --------------------------------------------------------------------------
+   1 hdfs-hdp1@AMBARI.APACHE.ORG (aes256-cts-hmac-sha1-96)
+   1 hdfs-hdp1@AMBARI.APACHE.ORG (des-cbc-md5)
+   1 hdfs-hdp1@AMBARI.APACHE.ORG (aes128-cts-hmac-sha1-96)
+   1 hdfs-hdp1@AMBARI.APACHE.ORG (des3-cbc-sha1)
+   1 hdfs-hdp1@AMBARI.APACHE.ORG (arcfour-hmac)
+$ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp1@AMBARI.APACHE.ORG
+$ curl -k -i --negotiate -u : http://u1401.ambari.apache.org:50070/webhdfs/v1/tmp?op=LISTSTATUS
+```
