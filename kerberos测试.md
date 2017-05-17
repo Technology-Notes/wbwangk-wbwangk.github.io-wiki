@@ -1,4 +1,51 @@
+## Kerberos安装
 
+#### 1.安装KDC Server
+在u1404（非HDP集群节点）安装Install the KDC Server：
+```
+$ apt-get install krb5-kdc krb5-admin-server
+```
+第一次尝试时，提示krb5-user依赖冲突。用手机当热点执行apt-get update后。  
+安装过程中出现提示窗口让输入Default Kerberos version 5 realm，保留默认值AMBARI.APACHE.ORG。然后出现两次让输入hostname，都输入的"u1404.ambari.apache.org"。最后提示说这个向导没有自动建立一个kerberos realm，如果想建立就执行命令"krb5_newrealm"。相关说明在/usr/share/doc/krb5-kdc/README.KDC中。  
+```
+$ krb5_newrealm
+master key name 'K/M@AMBARI.APACHE.ORG'
+Enter KDC database master key:    (输入两次密码，密码是vagrant)
+```
+必须使用krb5_newrealm创建realm，否则无法启动下列服务。  
+启动KDC server和KDC admin server：
+```
+$ service krb5-kdc restart                     （如果不执行krb5_newrealm就无法启动这个服务）
+$ service krb5-admin-server restart            （如果不执行krb5_newrealm就无法启动这个服务）
+```
+#### 2.创建Kerberos Admin
+通过创建admin主体来建立KDC admin：
+```
+$ kadmin.local -q "addprinc root/admin"         (输入两次密码，密码是vagrant)
+```
+将刚创建的admin主体添加到KDC ACL中：
+```
+$ echo "*/admin@AMBARI.APACHE.ORG *" >> /etc/krb5kdc/kadm5.acl
+$ service krb5-admin-server restart
+```
+#### 3.kerberos客户端安装
+ubuntu下的kerberos客户端叫做krb5-user：
+```
+$ apt install krb5-user  (如果提示包依赖错误，就用手机上网执行apt-get udpate)
+```
+安装过程中如果让输入KDC，则输入```u1404.ambari.apache.org```；如果让输入realm则输入```AMBARI.APACHE.ORG```。  
+
+#### 4. 简单测试
+查看主体清单的方法：在u1404节点（安装KDC的节点）上执行：
+```
+$ kadmin.local
+kadmin.local: list_principals  
+HTTP/u1402.ambari.apache.org@AMBARI.APACHE.ORG
+HTTP/u1403.ambari.apache.org@AMBARI.APACHE.ORG
+K/M@AMBARI.APACHE.ORG
+admin/admin@AMBARI.APACHE.ORG
+(略)
+```
 
 ### 未启用kerberos的HDFS
 未启用kerberos时HDFS是没有认证和权限控制的：
