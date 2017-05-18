@@ -147,7 +147,10 @@ Enter password for principal "webb@AMBARI.APACHE.ORG":
 Re-enter password for principal "webb@AMBARI.APACHE.ORG":
 Principal "webb@AMBARI.APACHE.ORG" created.
 ```
-
+或者：
+```
+$ kadmin.local -q "addprinc hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG"
+```
 #### keytab
 为主体webb@AMBARI.APACHE.ORG生成keytab文件，文件名是webb.keytab（当前目录下生成）
 ```
