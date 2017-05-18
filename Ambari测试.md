@@ -200,6 +200,7 @@ $ service krb5-admin-server restart
 (实测发现,不需要安装JCE也可以启用kerberos)。  
 在u1401、u1402、u1403三个节点上安装JCE：
 ```
+$ apt-get install software-properties-common -y
 $ add-apt-repository ppa:webupd8team/java    （如果出现提示，回车继续）
 $ apt-get update
 $ apt-get install oracle-java8-installer   （这个貌似不用装，因为ambari自己装了oracle jdk）
