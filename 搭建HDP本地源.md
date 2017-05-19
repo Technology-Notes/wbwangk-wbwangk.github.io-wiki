@@ -70,15 +70,13 @@ repo/HDP-UTILS-1.1.0.21/repos/centos6
 对于部署HDP的集群中的所有机器都要创建HDP本地源的库描述文件。  
 对于ubuntu14:
 ```
-$ cd /etc/apt/sources.list.d
-$ wget http://repo.imaicloud.com/AMBARI-2.4.2.0/ubuntu142.4.2.0-136/ambari.list
-$ wget http://repo.imaicloud.com/HDP/ubuntu14/HDP.list
+$ wget -P /etc/apt/sources.list.d http://repo.imaicloud.com/AMBARI-2.4.2.0/ubuntu/142.4.2.0-136/ambari.list
+$ wget -P /etc/apt/sources.list.d http://repo.imaicloud.com/HDP/ubuntu14/HDP.list
 $ apt-get update
 ```
 对于centos6：
 ```
-$ cd /etc/yum.repos.d/
-$ wget http://repo.imaicloud.com/AMBARI-2.4.2.0/centos6/2.4.2.0-136/ambari.repo
-$ wget http://repo.imaicloud.com/HDP/centos6/2.x/updates/2.5.3.0/hdp.repo
+$ wget -P /etc/yum.repos.d http://repo.imaicloud.com/AMBARI-2.4.2.0/centos6/2.4.2.0-136/ambari.repo
+$ wget -P /etc/yum.repos.d http://repo.imaicloud.com/HDP/centos6/2.x/updates/2.5.3.0/hdp.repo
 $ yum update
 ```
