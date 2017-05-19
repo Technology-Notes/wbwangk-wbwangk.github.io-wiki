@@ -58,17 +58,25 @@ $ tar -xzf ambari-2.4.2.0-ubuntu14.tar.gz
 注意，[参考1]的官方文档中，HDP的Base URL是```http://<web.server>/hdp/HDP```，本文中去掉了hdp这个目录。  
 9.105上实际部署的HDP版本可能与之前描述的不同（目前部署的ambari2.4.2.0），但原理相同。目前9.105上的本地源目录：
 ```
-repo/Ambari-2.4.2.0/centos6
-repo/Ambari-2.4.2.0/ubuntu14
-repo/HDP/centos6/2.x/updates/2.6.0.3
+repo/AMBARI-2.4.2.0/centos6
+repo/AMBARI-2.4.2.0/ubuntu14
+repo/HDP/centos6/2.x/updates/2.5.3.0
 repo/HDP/ubuntu14
+repo/HDP-UTILS-1.1.0.21/repos/ubuntu14
+repo/HDP-UTILS-1.1.0.21/repos/centos6
 ```
 
 
-### 
-建立Amabiri本地源描述文件：
+### 库描述文件 
+对于ubuntu14:
 ```
-$ echo "deb http://$(hostname)/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136 Ambari main" > ambari.list
-$ curl http://$(hostname)/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136/ambari.list   （测试一下）
+$ cd /etc/apt/sources.list.d
+$ wget http://repo.imaicloud.com/AMBARI-2.4.2.0/ubuntu142.4.2.0-136/ambari.list
 ```
+对于centos6：
+```
+$ cd /etc/yum.repos.d/
+$ wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.4.2.0/ambari.repo
+```
+
 如果curl返回ambari.list的文件内容，说明用nginx搭建的apt本地源运行正常。其中```http://$(hostname)/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136```就是Base URL。  
