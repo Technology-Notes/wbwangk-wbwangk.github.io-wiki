@@ -65,18 +65,19 @@ repo/HDP/ubuntu14
 repo/HDP-UTILS-1.1.0.21/repos/ubuntu14
 repo/HDP-UTILS-1.1.0.21/repos/centos6
 ```
-
-
 ### 库描述文件 
+对于部署HDP的集群中的所有机器都要创建HDP本地源的库描述文件。  
 对于ubuntu14:
 ```
 $ cd /etc/apt/sources.list.d
 $ wget http://repo.imaicloud.com/AMBARI-2.4.2.0/ubuntu142.4.2.0-136/ambari.list
+$ wget http://repo.imaicloud.com/HDP/ubuntu14/HDP.list
+$ apt-get update
 ```
 对于centos6：
 ```
 $ cd /etc/yum.repos.d/
-$ wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.4.2.0/ambari.repo
+$ wget http://repo.imaicloud.com/AMBARI-2.4.2.0/centos6/2.4.2.0-136/ambari.repo
+$ wget http://repo.imaicloud.com/HDP/centos6/2.x/updates/2.5.3.0/hdp.repo
+$ yum update
 ```
-
-如果curl返回ambari.list的文件内容，说明用nginx搭建的apt本地源运行正常。其中```http://$(hostname)/AMBARI-2.4.2.0/ubuntu14/2.4.2.0-136```就是Base URL。  
