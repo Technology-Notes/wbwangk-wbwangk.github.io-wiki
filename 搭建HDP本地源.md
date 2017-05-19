@@ -55,6 +55,7 @@ $ tar -xzf ambari-2.4.2.0-ubuntu14.tar.gz
  - Ambari Base URL : ```http://<web.server>/Ambari-2.5.0.3/<OS>```
  - HDP Base URL : ```http://<web.server>/HDP/<OS>/2.x/updates/<latest.version>```
  - HDP-UTILS Base URL : ```http://<web.server>/HDP-UTILS-<version>/repos/<OS>```  
+
 注意，[参考1]的官方文档中，HDP的Base URL是```http://<web.server>/hdp/HDP```，本文中去掉了hdp这个目录。  
 9.105上实际部署的HDP版本可能与之前描述的不同（目前部署的ambari2.4.2.0），但原理相同。目前9.105上的本地源目录：
 ```
