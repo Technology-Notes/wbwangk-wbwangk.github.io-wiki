@@ -34,34 +34,37 @@ server {
 ```
 $ cd /opt/nginx/repo
 $ wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.5.0.3/ambari-2.5.0.3-centos6.tar.gz
-$ wget http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.6.0.3/HDP-2.6.0.3-centos6-rpm.tar.gz
+$ wget http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.5.3.0/HDP-2.5.3.0-centos6-rpm.tar.gz
 $ wget http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/centos6/HDP-UTILS-1.1.0.21-centos6.tar.gz
 ```
 然后下载ubuntu14的([参考3](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/hdp_25_repositories.html))：
 ```
 $ wget http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0/ambari-2.4.2.0-ubuntu14.tar.gz
-$ wget http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.5.3.0/HDP-2.5.3.0-centos6-rpm.tar.gz
-$ wget http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/centos6/HDP-UTILS-1.1.0.21-centos6.tar.gz
+$ wget http://public-repo-1.hortonworks.com/HDP/ubuntu14/2.x/updates/2.5.3.0/HDP-2.5.3.0-ubuntu14-deb.tar.gz
+$ wget http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/ubuntu14/HDP-UTILS-1.1.0.21-ubuntu14.tar.gz
 ```
 上面的参考2和参考3网页中每个tarball都显示有md5，可以用下列命令计算出md5码，以避免下载不完整：
 ```
-$ openssl md5 ambari-2.4.2.0-ubuntu14.tar.gz   (计算Tarball的MD5码，应与上述网页上公布的一样。这一步式可选的)
+$ openssl md5 ambari-2.4.2.0-ubuntu14.tar.gz
 ```
 解压tarball的命令类似：
 ```
 $ tar -xzf ambari-2.4.2.0-ubuntu14.tar.gz
 ```
-解压后需要确认一下Amarbi、HDP、HDP-UTILS的目录结构。
+解压后需要确认一下Amarbi、HDP、HDP-UTILS的目录结构:  
+ - Ambari Base URL : ```http://<web.server>/Ambari-2.5.0.3/<OS>```
+ - HDP Base URL : ```http://<web.server>/HDP/<OS>/2.x/updates/<latest.version>```
+ - HDP-UTILS Base URL : ```http://<web.server>/HDP-UTILS-<version>/repos/<OS>```  
+注意，[参考1]的官方文档中，HDP的Base URL是```http://<web.server>/hdp/HDP```，本文中去掉了hdp这个目录。  
+9.105上实际部署的HDP版本可能与之前描述的不同（目前部署的ambari2.4.2.0），但原理相同。目前9.105上的本地源目录：
 ```
-Ambari Base URL
-http://<web.server>/Ambari-2.5.0.3/<OS>
-
-HDP Base URL
-http://<web.server>/hdp/HDP/<OS>/2.x/updates/<latest.version>
-
-HDP-UTILS Base URL
-http://<web.server>/hdp/HDP-UTILS-<version>/repos/<OS>
+repo/Ambari-2.4.2.0/centos6
+repo/Ambari-2.4.2.0/ubuntu14
+repo/HDP/centos6/2.x/updates/2.6.0.3
+repo/HDP/ubuntu14
 ```
+
+
 ### 
 建立Amabiri本地源描述文件：
 ```
