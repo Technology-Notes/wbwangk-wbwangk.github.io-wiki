@@ -182,7 +182,7 @@ ps的参数：
 -l ：listening，列出当前监听服务  
 -p ：program，列出服务程序的PID  
 
-## 更大的box
+### 更大的box
 上面提到的box ubuntu/xenial64默认的虚拟硬盘较小，只有10G，很多时候不大够用。现在发现一个更大的ubuntu box：bento/ubuntu-16.10。具体的操作如下：
 ```
 $ vagrant box add bento/ubuntu-16.10
@@ -191,3 +191,36 @@ $ vagrant init bento/ubuntu-16.10
 $ vagrant up && vagrant ssh
 ```
 这个box的官方地址是[https://github.com/chef/bento](https://github.com/chef/bento)。
+
+### 软符号链接
+命令格式：
+```
+$ ln -s 目标文件或目录 符号链接名
+```
+例如：
+```
+$ ln -s ../HDP HDP
+```
+对上面命令的解释：由于把HDP目录移动到了上级目录下，建立一个软符号链接保证以前的程序可以在老路径下找到HDP目录。
+
+### AWK 
+语法：
+```
+$ awk '{pattern + action}' {filenames}
+$ awk -F '分隔符' '{pattern + action}' {filenames}         （默认分隔符是空格，-F参数可以指定其他分隔符）
+```
+举个例子：
+```
+$ last -n 5             
+root     pts/1   192.168.1.100  Tue Feb 10 11:21   still logged in
+root     pts/1   192.168.1.100  Tue Feb 10 00:46 - 02:28  (01:41)
+root     pts/1   192.168.1.100  Mon Feb  9 11:41 - 18:30  (06:48)
+dmtsai   pts/1   192.168.1.100  Mon Feb  9 11:41 - 11:41  (00:00)
+root     tty1                   Fri Sep  5 14:09 - 14:10  (00:01)
+$ last -n 5 | awk  '{print $1 " " $2}'
+root pts/1
+root pts/1
+root pts/1
+dmtsai pts/1
+root tty1
+```
