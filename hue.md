@@ -1,5 +1,32 @@
 ### 准备
-gethue.com背书的Ambari定制HUE服务的项目位于[ambari-hue-service](https://github.com/EsharEditor/ambari-hue-service)。  
+gethue.com背书的Ambari定制HUE服务的项目位于[ambari-hue-service](https://github.com/EsharEditor/ambari-hue-service)。 
+测试环境的三台VM是(操作系统centos6.8)c6801/c6802/c6803，是Ambari安装的HDP。环境搭建参考[这个](https://github.com/imaidev/imaidev.github.io/wiki/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83)文档的centos6部分。  
+在c6801上执行：
+```
+$ VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+$ rm -rf /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE  
+$ sudo git clone https://github.com/EsharEditor/ambari-hue-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE
+```
+可以把上面的VERSION定义一行添加到文件```~/.bashrc```的最后，以便这个环境变量随时可用。  
+重启ambari：
+```
+$ ambari-server restart
+```
+gethue.com上有hue 3.10/3.11/3.12的下载链接，但需要翻墙。翻墙后下载到了repo.imaicloud.com下，地址是：
+```
+http://repo.imaicloud.com/hue/hue-3.10.0.tgz
+http://repo.imaicloud.com/hue/hue-3.11.0.tgz
+http://repo.imaicloud.com/hue/hue-3.12.0.tgz
+```
+修改```/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE/package/scripts/params.py```：
+```
+download_url = 'http://repo.imaicloud.com/hue/hue-3.12.0.tgz'
+```
+然后重启ambari-server:
+```
+$ ambari-server restart
+```
+# ubuntu14下通过ambari安装HUE 
 
 ubuntu下的/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE/metainfo.xml需要增加以下内容。默认的xml文件中定义的依赖包并不适合ubuntu。
 ```
