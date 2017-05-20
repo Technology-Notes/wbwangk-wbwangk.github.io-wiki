@@ -67,6 +67,7 @@ $ /etc/init.d/hue restart
 #### 验证Hue安装
 在浏览器中输入这个地址：```http://c6801.ambari.apache.org:8000/dump_config```。如果Hue安装正确，会出现Hue登录界面。登录界面提示：*由于这是您第一次登录，请选择任何用户名和密码。一定要记住这些，因为 它们将成为您的Hue超级用户凭据。*  可以输入类似admin/admin当Hue的管理员账号。  
 登录后可以点File Browser菜单看看HDFS上的文件清单。  
+可以点击About > Configuration 看看配置，点击About > Check 检查配置问题。  
 
 # ambari-hue-service
 ### 准备
@@ -89,14 +90,44 @@ http://repo.imaicloud.com/hue/hue-3.10.0.tgz
 http://repo.imaicloud.com/hue/hue-3.11.0.tgz
 http://repo.imaicloud.com/hue/hue-3.12.0.tgz
 ```
-修改```/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE/package/scripts/params.py```：
+```EsharEditor/ambari-hue-service```项目的```/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE/package/scripts/params.py```脚本中有个download_url的变量：
 ```
-download_url = 'http://repo.imaicloud.com/hue/hue-3.12.0.tgz'
+#download_url = 'cat /etc/yum.repos.d/HDP.repo | grep "baseurl" | awk -F \'=\' \'{print $2"hue/hue-3.11.0.tgz"}\''
+download_url = 'cat /etc/yum.repos.d/HDP.repo | grep "baseurl" | awk -F \'=\' \'{print $2"/hue/hue-3.11.0.tgz"}\''
+```
+HDP的本地源中是没有上述包的，为了解决该文件，在HDP的本地源目录下建立符号链接：
+```
+$ cd /opt/nginx/repo/HDP/centos6/2.x/updates/2.5.3.0/hue
+$ ln -s /opt/nginx/repo/hue/hue-3.10.0.tgz hue-3.10.0.tgz
+$ ln -s /opt/nginx/repo/hue/hue-3.11.0.tgz hue-3.11.0.tgz
+$ ln -s /opt/nginx/repo/hue/hue-3.12.0.tgz hue-3.12.0.tgz
 ```
 然后重启ambari-server:
 ```
 $ ambari-server restart
 ```
+### 安装解决的问题
+对EsharEditor/ambari-hue-service的修改主要集中在目录```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/HUE/package/scripts```下几个py源码中。
+1. download_url
+将```{print $2"hue/hue-3.11.0.tgz"}```修改成了```{print $2"/hue/hue-3.11.0.tgz"}```(加了个斜杠,params.py)。  
+2. tar解压路径
+按common.py脚本的预期，hue将解压到```/usr/local/hue```目录下。实际上tar命令解压后的路径是```/usr/local/hue-3.11.0```。为了解决这个问题，在params.py中定义了一个hue_version变量(params.py)：
+```
+hue_version = "hue-3.11.0"
+#hue_dir = format('{hue_install_dir}/hue')
+hue_dir = format('{hue_install_dir}/{hue_version}')
+```
+注释掉的是原来的写法。  
+3. 符号链接
+如果符号链接存在就报错，现在增加-f参数，可以覆盖原有符号链接(common.py)：
+```
+#Execute('ln -s {0} /usr/hdp/current/hue-server'.format(params.hue_dir))
+Execute('ln -f -s {0} /usr/hdp/current/hue-server'.format(params.hue_dir))
+```
+做以上修改后，可以通过Ambari成功安装Hue。  
+
+#### 服务启动
+
 # ubuntu14下通过ambari安装HUE 
 
 ubuntu下的/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE/metainfo.xml需要增加以下内容。默认的xml文件中定义的依赖包并不适合ubuntu。
@@ -167,3 +198,4 @@ $ kadmin.local
 kadmin.local:  ktadd -k hue.keytab hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG
 $ mv hue.keytab /etc/security/keytabs/        (将hue.keytab移动到HDP默认的keytabs目录)
 ```
+
