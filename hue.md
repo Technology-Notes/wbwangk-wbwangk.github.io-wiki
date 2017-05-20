@@ -1,3 +1,74 @@
+# 手工部署HUE到HDP
+本次部署参考了HDP官方文档[Command Line Installation](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_command-line-installation/content/installing_hue.html)。  
+- 部署环境：vagrant管理下的3台VM(c6801/c6802/c6803)；  
+- 操作系统：centos6.8；
+- Ambari管理下的HDP组件：HDFS/YARN/MR2/ZooKeeper/AmbariMetrics。  
+- HUE安装源：HDP本地源([参考](https://github.com/wbwangk/wbwangk.github.io/wiki/%E6%90%AD%E5%BB%BAHDP%E6%9C%AC%E5%9C%B0%E6%BA%90))  
+检测一下安装源是否可用：
+```
+$ cat /etc/yum.repos.d/HDP.repo
+[HDP-2.5]
+name=HDP-2.5
+baseurl=http://repo.imaicloud.com/HDP/centos6/2.x/updates/2.5.3.0
+
+$ yum list hue hue-*
+Installed Packages
+hue.x86_64                                    2.6.1.2.5.3.0-37.el6                           @HDP-2.5
+hue-beeswax.x86_64                            2.6.1.2.5.3.0-37.el6                           @HDP-2.5
+hue-common.x86_64                             2.6.1.2.5.3.0-37.el6                           @HDP-2.5
+hue-hcatalog.x86_64                           2.6.1.2.5.3.0-37.el6                           @HDP-2.5
+hue-oozie.x86_64                              2.6.1.2.5.3.0-37.el6                           @HDP-2.5
+hue-pig.x86_64                                2.6.1.2.5.3.0-37.el6                           @HDP-2.5
+hue-server.x86_64                             2.6.1.2.5.3.0-37.el6                           @HDP-2.5
+```
+#### 配置HDP支持HUE
+通过Ambmari界面停止：NameNode服务。
+通过Ambari在HDFS服务的Custom core-site配置中增加一下参数(点击Add Property)：
+```
+hadoop.proxyuser.hue.groups = *
+hadoop.proxyuser.hue.hosts = *
+```
+#### 安装hue包
+通过Ambari停止所有的HDP服务。  
+执行以下命令安装hue：
+```
+$ yum install hue
+```
+#### 修改hue配置文件
+hue配置文件位于```/etc/hue/conf/hue.ini```。  
+1. 配置HDFS集群
+在配置文件的[hadoop][[hdfs_clusters]] [[[default]]]小节中： 
+```
+fs_defaultfs=hdfs://c6801.ambari.apache.org:8020
+webhdfs_url=http://c6801.ambari.apache.org:50070/webhdfs/v1/
+```
+2. 配置YARN(MR2)集群
+在配置文件的[hadoop][[yarn_clusters]] [[[default]]]小节中：
+```
+resourcemanager_api_url=http://c6802.ambari.apache.org:8088
+resourcemanager_rpc_url=http://c6802.ambari.apache.org:8050
+proxy_api_url=http://c6802.ambari.apache.org:8088
+history_server_api_url=http://c6802.ambari.apache.org:19888
+app_timeline_server_api_url=http://c6802.ambari.apache.org:8188
+node_manager_api_url=http://c6802.ambari.apache.org:8042
+```
+通过Ambari界面查看各个组件安装的主机FQDN。  
+本测试环境没有安装其他的HDP服务，只配置了上述服务。  
+
+#### 启停hue服务
+启动、停止、重启分别执行下列命令：
+```
+$ /etc/init.d/hue start
+$ /etc/init.d/hue stop
+$ /etc/init.d/hue restart
+```
+这里当然执行启动命令。  
+
+#### 验证Hue安装
+在浏览器中输入这个地址：```http://c6801.ambari.apache.org:8000/dump_config```。如果Hue安装正确，会出现Hue登录界面。登录界面提示：*由于这是您第一次登录，请选择任何用户名和密码。一定要记住这些，因为 它们将成为您的Hue超级用户凭据。*  可以输入类似admin/admin当Hue的管理员账号。  
+登录后可以点File Browser菜单看看HDFS上的文件清单。  
+
+# ambari-hue-service
 ### 准备
 gethue.com背书的Ambari定制HUE服务的项目位于[ambari-hue-service](https://github.com/EsharEditor/ambari-hue-service)。 
 测试环境的三台VM是(操作系统centos6.8)c6801/c6802/c6803，是Ambari安装的HDP。环境搭建参考[这个](https://github.com/imaidev/imaidev.github.io/wiki/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83)文档的centos6部分。  
