@@ -199,7 +199,12 @@ kadmin.local:  ktadd -k hue.keytab hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG
 $ mv hue.keytab /etc/security/keytabs/        (将hue.keytab移动到HDP默认的keytabs目录)
 ```
 # 编译Hue
-安装编译环境需要的包(centos)：
+按HUE官方github库的[提示](https://github.com/cloudera/hue)，安装编译环境需要的包(centos)：
 ```
-yum install ant gcc gcc-c++ wget tar asciidoc krb5-devel libxml2-devel libxslt-devel openldap-devel python-devel python-simplejson python-setuptools sqlite-devel rsync saslwrapper-devel pycrypto gmp-devel libyaml-devel cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi libffi-devel
+yum install ant gcc gcc-c++ wget tar asciidoc krb5-devel libxml2-devel libxslt-devel openldap-devel python-devel python-simplejson python-setuptools sqlite-devel rsync saslwrapper-devel pycrypto gmp-devel libyaml-devel cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi libffi-devel mysql-devel openssl-devel make apache-maven libtidy 
+```
+实测中发现如果未安装gcc-c++，make apss在下面的位置报错
+```
+Entering directory `/opt/hue/desktop'
+make -C core env-install
 ```
