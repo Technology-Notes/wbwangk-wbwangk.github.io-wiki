@@ -134,7 +134,7 @@ Execute('ln -f -s {0} /usr/hdp/current/hue-server'.format(params.hue_dir))
 #    owner = params.hue_user
 #  )
 ```
-如果以上代码在，通过ambari启动hue服务的时候报ecodeing错误。
+如果以上代码在，通过ambari启动hue服务的时候报ecodeing错误。  
 5. supervisor.log写权限
 在hue-install.log报告没有写入/opt/hue/logs/supervisor.log的权限。解决办法如下：
 ```
