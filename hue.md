@@ -125,6 +125,23 @@ hue_dir = format('{hue_install_dir}/{hue_version}')
 Execute('ln -f -s {0} /usr/hdp/current/hue-server'.format(params.hue_dir))
 ```
 做以上修改后，可以通过Ambari成功安装Hue。  
+4. pseudo-distributed.ini
+{ambari-hue-service}/package/scripts/setup_hue.py文件中注释掉了以下几行：
+```
+# Logger.info(format("Creating {hue_conf_dir}/pseudo-distributed.ini config file"))
+#  File(format("{hue_conf_dir}/pseudo-distributed.ini"), 
+#    content = InlineTemplate(params.hue_pseudodistributed_content), 
+#    owner = params.hue_user
+#  )
+```
+如果以上代码在，通过ambari启动hue服务的时候报ecodeing错误。
+5. supervisor.log写权限
+在hue-install.log报告没有写入/opt/hue/logs/supervisor.log的权限。解决办法如下：
+```
+$ chmod +w /opt/hue/logs
+$ chmod +w /opt/hue/logs/*
+```
+赋予了用户hue针对上述目录的权限。感觉这个问题与在当前机器上进行的编译、本地调试有关。按说正常不会出现。由于在本机上进行了编译和调试，导致/opt/hue/logs目录的拥有者是root，按说这个目录的拥有者应是hue用户。  
 
 #### 服务启动
 
@@ -199,12 +216,46 @@ kadmin.local:  ktadd -k hue.keytab hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG
 $ mv hue.keytab /etc/security/keytabs/        (将hue.keytab移动到HDP默认的keytabs目录)
 ```
 # 编译Hue
-按HUE官方github库的[提示](https://github.com/cloudera/hue)，安装编译环境需要的包(centos)：
+按HUE官方github库的[提示](https://github.com/cloudera/hue)，编译环境需要先装Oracle JDK。  
+更详细的手册在[这里](https://github.com/cloudera/hue/blob/bedc719efbaa1a09fbb27a699d3fe9f1ad31fabf/docs/manual.txt#L56)。  
+首先，卸载已有JDK的方法：
+```
+$ rpm -qa | grep java      或  rpm -qa | grep jdk
+java-1.8.0-openjdk-headless-1.8.0.131-0.b11.el6_9.x86_64
+$ rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.131-0.b11.el6_9.x86_64
+```
+到[Oracle Java下载页面](http://www.oracle.com/technetwork/java/javase/downloads/index.html)下载RPM包。直接用wget不行，先下载到windows下，然后进git bash，然后用scp复制到centos中(命令如scp jdk-8u131-linux-x64.rpm root@c6801:/opt)。  
+```
+$ rpm -ivh jdk-8u131-linux-x64.rpm  或  yum install jdk-8u131-linux-x64.rpm
+```
+安装编译需要的其他包(centos)：
 ```
 yum install ant gcc gcc-c++ wget tar asciidoc krb5-devel libxml2-devel libxslt-devel openldap-devel python-devel python-simplejson python-setuptools sqlite-devel rsync saslwrapper-devel pycrypto gmp-devel libyaml-devel cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi libffi-devel mysql-devel openssl-devel make apache-maven libtidy 
 ```
-实测中发现如果未安装gcc-c++，make apss在下面的位置报错
+实测中发现如果未安装gcc-c++，则执行make apps报错：
 ```
 Entering directory `/opt/hue/desktop'
 make -C core env-install
 ```
+下载hue源码，然后编译：
+```
+$ git clone https://github.com/cloudera/hue.git
+$ cd hue
+$ make apps > hue_make.log 2>&1
+```
+make apps后面的代码是为了把编译过程输出到文件，以便以查错。  
+#### 测试hue
+```
+$ build/env/bin/hue runserver
+$ curl -L http://127.0.0.1:8000
+```
+#### 打包和本地源
+把编译结果打包成tarball：
+```
+$ cd ..    
+$ tar -zcvf hue.tgz hue     (把hue目录打包成hue.tgz)
+$ scp hue.tgz root@repo.imaicloud.com:/opt/nginx/repo/hue/           (将hue.tgz上传到本地源)
+$ cd /opt/nginx/repo/HDP/centos6/2.x/updates/2.5.3.0/hue
+$ ln -s /opt/nginx/repo/hue/hue.tgz hue.tgz      (配合ambari-hue-service的下载路径)
+```
+新生成的barball的下载路径是```http://repo.imaicloud.com/hue/hue.tgz```。  
