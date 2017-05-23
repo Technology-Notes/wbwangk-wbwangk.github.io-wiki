@@ -166,13 +166,13 @@ ubuntu下的/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE/me
       <package><name>libtidy-0.99-0</name></package>
       <package><name>libxml2-dev</name></package>
       <package><name>libxslt-dev</name></package>
-      <package><name>make</name></package>
+      <!--package><name>make</name></package-->
       <package><name>maven</name></package>
       <package><name>libldap2-dev</name></package>
       <package><name>python-dev</name></package>
       <package><name>python-setuptools</name></package>
-      <package><name>libgmp3-dev</name></package>
-      <package><name>libz-dev</name></package>
+      <!--package><name>libgmp3-dev</name></package-->
+      <!--package><name>libz-dev</name></package-->
     </packages>
   </osSpecific>
 </osSpecifics>
