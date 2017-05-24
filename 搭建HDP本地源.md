@@ -83,7 +83,7 @@ $ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos6/2.x/up
 ```
 【centos7】：
 ```
-$ wget -O /etc/yum.repos.d/ambari.repo http://repo.imaicloud.com/AMBARI-2.4.2.0/centos6/2.4.2.0-136/ambari.repo
+$ wget -O /etc/yum.repos.d/ambari.repo http://repo.imaicloud.com/ambari/centos7/2.x/updates/2.5.0.3/ambari.repo
 $ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos7/2.x/updates/2.5.3.0/hdp.repo
 ```
 
