@@ -62,21 +62,39 @@ $ tar -xzf ambari-2.4.2.0-ubuntu14.tar.gz
 repo/AMBARI-2.4.2.0/centos6
 repo/AMBARI-2.4.2.0/ubuntu14
 repo/HDP/centos6/2.x/updates/2.5.3.0
+repo/HDP/centos7/2.x/updates/2.5.3.0
 repo/HDP/ubuntu14
 repo/HDP-UTILS-1.1.0.21/repos/ubuntu14
 repo/HDP-UTILS-1.1.0.21/repos/centos6
+repo/HDP-UTILS-1.1.0.21/repos/centos7
 ```
+根据上述路径，将repo替换为域名就是BaseURL，如```http://repo.imaicloud.com/HDP/centos7/2.x/updates/2.5.3.0```就HDP2.5.3在centos7的BaseURL。  
 ### 库描述文件 
 对于部署HDP的集群中的所有机器都要创建HDP本地源的库描述文件。  
-对于ubuntu14:
+【ubuntu14】:
 ```
 $ wget -O /etc/apt/sources.list.d/ambari.list http://repo.imaicloud.com/AMBARI-2.4.2.0/ubuntu/142.4.2.0-136/ambari.list
 $ wget -O /etc/apt/sources.list.d/HDP.list http://repo.imaicloud.com/HDP/ubuntu14/HDP.list
-$ apt-get update -y
 ```
-对于centos6：
+【centos6】：
 ```
 $ wget -O /etc/yum.repos.d/ambari.repo http://repo.imaicloud.com/AMBARI-2.4.2.0/centos6/2.4.2.0-136/ambari.repo
 $ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos6/2.x/updates/2.5.3.0/hdp.repo
-$ yum update -y
+```
+【centos7】：
+```
+$ wget -O /etc/yum.repos.d/ambari.repo http://repo.imaicloud.com/AMBARI-2.4.2.0/centos6/2.4.2.0-136/ambari.repo
+$ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos7/2.x/updates/2.5.3.0/hdp.repo
+```
+
+### 使用163源
+163源centos的[官方帮助](http://mirrors.163.com/.help/centos.html)。  
+```
+$ wget -O /etc/yum.repo.d/CentOS7-Base-163.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
+```
+在CentOS7-Base-163.repo中有个变量```$releasever```解析不正确（解析成了7server），直接手工替换成了```7```。  
+然后执行：
+```
+$ yum clean all
+$ yum makecache
 ```
