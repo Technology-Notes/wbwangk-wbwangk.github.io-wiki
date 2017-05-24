@@ -119,7 +119,7 @@ hue_version = "hue-3.11.0"
 #hue_dir = format('{hue_install_dir}/hue')
 hue_dir = format('{hue_install_dir}/{hue_version}')
 ```
-注释掉的是原来的写法。  
+注释掉的是原来的写法。手工打包的hue.tgz，如果包中的路径是hue，而不带版本号，则不需要做这个修改。  
 3. 符号链接
 如果符号链接存在就报错，现在增加-f参数，可以覆盖原有符号链接(common.py)：
 ```
@@ -152,18 +152,19 @@ $ chmod +w /opt/hue/logs/*
   Link("/usr/hdp/current/hadoop-client/lib/hue-plugins-3.12.0-SNAPSHOT.jar",to = "{0}/desktop/libs/hadoop/java-lib/hue-plugins-3.12.0-SNAPSHOT.jar".format(params.hue_dir))
 ```
 不明白原来的写法的目的。根据直觉改写了。原写法在ubuntu14下执行报错，但在centos6下没问题。  
-7. (安装)符号链接hue-server已存在
-{ambari-hue-service}/package/scripts/common.py中，创建符号链接提示“文件已经存在”，需要手工删除。
-```
-Execute('ln -s {0} /usr/hdp/current/hue-server'.format(params.hue_dir))
-```
-8. (启动)使用github.com/cloudera/hue下载包
+
+7. (启动)使用github.com/cloudera/hue下载包
 该下载包中没有build目录，自然就没有```build/env/bin/supervisor```文件，导致日志文件中报错：
 ```
 $ cat /var/log/hue/hue-install.log
 -su: /usr/local/hue-release-3.12.0/build/env/bin/supervisor: No such file or directory
 ```
-download_url只能用手工编译的tar包。
+说明github.com/cloudera/hue下载包不能用，download_url只能用手工编译的tar包。  
+8. /opt/hue目录不存在
+手工编译使用的目录是/opt/hue, 启动hue服务提示找不到/opt/hue/build/env/bin目录。临时解决方案是建立一个软符号链接：
+```
+ln -s /usr/local/hue /opt/hue
+```
 #### 服务启动
 
 # ubuntu14下通过ambari安装HUE 
