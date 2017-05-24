@@ -93,8 +93,10 @@ http://repo.imaicloud.com/hue/hue-3.12.0.tgz
 ```EsharEditor/ambari-hue-service```项目的```/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE/package/scripts/params.py```脚本中有个download_url的变量：
 ```
 #download_url = 'cat /etc/yum.repos.d/HDP.repo | grep "baseurl" | awk -F \'=\' \'{print $2"hue/hue-3.11.0.tgz"}\''
-download_url = 'cat /etc/yum.repos.d/HDP.repo | grep "baseurl" | awk -F \'=\' \'{print $2"/hue/hue-3.11.0.tgz"}\''
+download_url = 'cat /etc/yum.repos.d/HDP.repo | grep "baseurl" | awk -F \'=\' \'{print $2"/hue/hue-3.11.0.tgz"}\''  (或)
+download_url = 'echo "https://github.com/cloudera/hue/archive/release-3.12.0.tar.gz"'
 ```
+由于从yum.repos.d目录取下载地址的写法并不适用与ubuntu，所以只能使用上面的第2种写法。    
 HDP的本地源中是没有上述包的，为了解决该文件，在HDP的本地源目录下建立符号链接：
 ```
 $ cd /opt/nginx/repo/HDP/centos6/2.x/updates/2.5.3.0/hue
@@ -143,6 +145,13 @@ $ chmod +w /opt/hue/logs/*
 ```
 赋予了用户hue针对上述目录的权限。感觉这个问题与在当前机器上进行的编译、本地调试有关。按说正常不会出现。由于在本机上进行了编译和调试，导致/opt/hue/logs目录的拥有者是root，按说这个目录的拥有者应是hue用户。  
 
+6. 符号链接hue-plugins-3.11.SNAPSHOT.jar
+```
+  Logger.info("Creating symlinks /usr/hdp/current/hadoop-client/lib/hue-plugins-3.11.0-SNAPSHOT.jar")
+#  Link("{0}/desktop/libs/hadoop/java-lib/*".format(params.hue_dir),to = "/usr/hdp/current/hadoop-client/lib")
+  Link("/usr/hdp/current/hadoop-client/lib/hue-plugins-3.12.0-SNAPSHOT.jar",to = "{0}/desktop/libs/hadoop/java-lib/hue-plugins-3.12.0-SNAPSHOT.jar".format(params.hue_dir))
+```
+不明白原来的写法的目的。根据直觉改写了。原写法在ubuntu14下执行报错，但在centos6下没问题。  
 #### 服务启动
 
 # ubuntu14下通过ambari安装HUE 
