@@ -94,7 +94,7 @@ http://repo.imaicloud.com/hue/hue-3.12.0.tgz
 ```
 #download_url = 'cat /etc/yum.repos.d/HDP.repo | grep "baseurl" | awk -F \'=\' \'{print $2"hue/hue-3.11.0.tgz"}\''
 download_url = 'cat /etc/yum.repos.d/HDP.repo | grep "baseurl" | awk -F \'=\' \'{print $2"/hue/hue-3.11.0.tgz"}\''  (或)
-download_url = 'echo "https://github.com/cloudera/hue/archive/release-3.12.0.tar.gz"'
+download_url = 'echo "http://repo.imaicloud.com/hue/hue.tgz"'
 ```
 由于从yum.repos.d目录取下载地址的写法并不适用与ubuntu，所以只能使用上面的第2种写法。    
 HDP的本地源中是没有上述包的，为了解决该文件，在HDP的本地源目录下建立符号链接：
@@ -152,6 +152,18 @@ $ chmod +w /opt/hue/logs/*
   Link("/usr/hdp/current/hadoop-client/lib/hue-plugins-3.12.0-SNAPSHOT.jar",to = "{0}/desktop/libs/hadoop/java-lib/hue-plugins-3.12.0-SNAPSHOT.jar".format(params.hue_dir))
 ```
 不明白原来的写法的目的。根据直觉改写了。原写法在ubuntu14下执行报错，但在centos6下没问题。  
+7. (安装)符号链接hue-server已存在
+{ambari-hue-service}/package/scripts/common.py中，创建符号链接提示“文件已经存在”，需要手工删除。
+```
+Execute('ln -s {0} /usr/hdp/current/hue-server'.format(params.hue_dir))
+```
+8. (启动)使用github.com/cloudera/hue下载包
+该下载包中没有build目录，自然就没有```build/env/bin/supervisor```文件，导致日志文件中报错：
+```
+$ cat /var/log/hue/hue-install.log
+-su: /usr/local/hue-release-3.12.0/build/env/bin/supervisor: No such file or directory
+```
+download_url只能用手工编译的tar包。
 #### 服务启动
 
 # ubuntu14下通过ambari安装HUE 
