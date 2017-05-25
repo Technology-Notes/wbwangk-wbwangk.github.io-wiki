@@ -57,10 +57,12 @@ $ tar -xzf ambari-2.4.2.0-ubuntu14.tar.gz
  - HDP-UTILS Base URL : ```http://<web.server>/HDP-UTILS-<version>/repos/<OS>```  
 
 注意，[参考1]的官方文档中，HDP的Base URL是```http://<web.server>/hdp/HDP```，本文中去掉了hdp这个目录。  
-9.105上实际部署的HDP版本可能与之前描述的不同（目前部署的ambari2.4.2.0），但原理相同。目前9.105上的本地源目录：
+#### 本地源的目录
+9.105上实际部署的HDP版本可能与之前描述的不同（目前部署的ambari2.4.2.0），但原理相同。目前9.105上的本地源目录（位于/opt/nginx下）：
 ```
 repo/AMBARI-2.4.2.0/centos6
 repo/AMBARI-2.4.2.0/ubuntu14
+repo/ambari/centos7/2.x/2.5.0.3
 repo/HDP/centos6/2.x/updates/2.5.3.0
 repo/HDP/centos7/2.x/updates/2.5.3.0
 repo/HDP/ubuntu14
@@ -68,7 +70,8 @@ repo/HDP-UTILS-1.1.0.21/repos/ubuntu14
 repo/HDP-UTILS-1.1.0.21/repos/centos6
 repo/HDP-UTILS-1.1.0.21/repos/centos7
 ```
-根据上述路径，将repo替换为域名就是BaseURL，如```http://repo.imaicloud.com/HDP/centos7/2.x/updates/2.5.3.0```就HDP2.5.3在centos7的BaseURL。  
+从目录上可以看出，9.105的本地源提供的下载有Ambari2.4.2.0(centos6/ubuntu14)、Ambari2.5.0.3(centos7)、HDP2.5.3.0(centos6/centos7/ubuntu14)、HDP-UTILS-1.1.0.21(centos6/centos7/ubuntu14)。  
+目录到URL的转换：将repo替换为域名就是BaseURL，如```http://repo.imaicloud.com/HDP/centos7/2.x/updates/2.5.3.0```就HDP2.5.3在centos7的BaseURL。  
 ### 库描述文件 
 对于部署HDP的集群中的所有机器都要创建HDP本地源的库描述文件。  
 【ubuntu14】:
