@@ -70,6 +70,7 @@ $ /etc/init.d/hue restart
 可以点击About > Configuration 看看配置，点击About > Check 检查配置问题。  
 
 # ambari-hue-service
+实测看，部署ambari-hue-service的HDP集群，需要先装YARN，否则报"找不到yarn-site配置文件"。  
 ### 准备
 gethue.com背书的Ambari定制HUE服务的项目位于[ambari-hue-service](https://github.com/EsharEditor/ambari-hue-service)。 
 测试环境的三台VM是(操作系统centos6.8)c6801/c6802/c6803，是Ambari安装的HDP。环境搭建参考[这个](https://github.com/imaidev/imaidev.github.io/wiki/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83)文档的centos6部分。  
