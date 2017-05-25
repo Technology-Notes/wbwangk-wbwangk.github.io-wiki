@@ -93,7 +93,7 @@ $ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos7/2.x/up
 ### 使用163源
 163源centos的[官方帮助](http://mirrors.163.com/.help/centos.html)。  
 ```
-$ wget -O /etc/yum.repo.d/CentOS7-Base-163.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
+$ wget -O /etc/yum.repos.d/CentOS7-Base-163.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
 ```
 在CentOS7-Base-163.repo中有个变量```$releasever```解析不正确（解析成了7server），直接手工替换成了```7```。  
 然后执行：
