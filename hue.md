@@ -1,5 +1,7 @@
-[手工部署HUE到HDP](#手工部署HUE到HDP)  
-[ambari-hue-service](#ambari-hue-service)
+目录：
+- [手工部署HUE到HDP](#手工部署HUE到HDP)  
+ - [ambari-hue-service](#ambari-hue-service)
+
 不是所有版本的HDP源都包含了HUE服务。HDP的ubuntu14版本就不含HUE服务，而HDP的centos6版本包含HUE服务。如果要使用HDP官方源部署HUE，只能在centos6环境下进行。  
 
 # 手工部署HUE到HDP
