@@ -271,7 +271,7 @@ $ rpm -ivh jdk-8u131-linux-x64.rpm  或  yum install jdk-8u131-linux-x64.rpm
 ```
 yum install git ant gcc gcc-c++ wget tar asciidoc krb5-devel libxml2-devel libxslt-devel openldap-devel python-devel python-simplejson python-setuptools sqlite-devel rsync saslwrapper-devel pycrypto gmp-devel libyaml-devel cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi libffi-devel mysql-devel openssl-devel make apache-maven libtidy 
 ```
-centos7下maven需要这样安装：```yum install maven```。  
+centos7下maven需要这样安装：```yum install maven```。 
 sqlite-devel的下载需要翻墙。可以手工下载和安装：
 ```
 $ wget http://repo.imaicloud.com/hue/sqlite-devel-3.7.17-8.el7.x86_64.rpm
@@ -300,3 +300,21 @@ $ cd /opt/nginx/repo/HDP/centos6/2.x/updates/2.5.3.0/hue
 $ ln -s /opt/nginx/repo/hue/hue.tgz hue.tgz      (配合ambari-hue-service的下载路径)
 ```
 新生成的barball的下载路径是```http://repo.imaicloud.com/hue/hue.tgz```。  
+
+### ubuntu14下编译hue
+
+准备编译需要的包：
+```
+apt-get install git ant gcc g++ wget tar libkrb5-dev libxml2-dev libxslt1-dev libldap2-dev python-dev python-setuptools libsqlite3-dev libsasl2-dev libsasl2-modules-gssapi-mit libmysqlclient-dev maven libtidy-0.99-0
+```
+安装oracle JDK：
+```
+$ apt list --installed | grep openjdk    (根据安装openjdk决定下面的remove)
+$ apt remove openjdk-7-jre
+$ apt remove openjdk-7-jre-headless
+$ apt-get install software-properties-common
+$ add-apt-repository ppa:webupd8team/java
+$ apt-get update
+$ apt-get install oracle-java8-installer
+```
+[注](/e/vagrant9/ambari-vagrant/ubuntu14.4/u1409)
