@@ -1,6 +1,6 @@
 
 [参考1](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/setting_up_a_local_repository.html)  
-计划搭建HDP的ubuntu14和centos6的本地源。  
+目标是搭建HDP的ubuntu14、centos7和centos6的本地源。  
 
 #### 什么是Base URL
 在网页[Ambari barball](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/ambari_repositories.html)中提到了Base URL。Base URL是库的基础地址。  
@@ -89,8 +89,14 @@ $ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos6/2.x/up
 $ wget -O /etc/yum.repos.d/ambari.repo http://repo.imaicloud.com/ambari/centos7/2.x/updates/2.5.0.3/ambari.repo
 $ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos7/2.x/updates/2.5.3.0/hdp.repo
 ```
+## HUE本地下载
+repo.imaicloud.com上提供了ubuntu14/centos6/centos7的3.12.0版本HUEtar包下载。目录分别是：
+ - **centos6**：https://repo.imaicloud.com/hue/hue-3.12.0-centos6.tgz  
+ - **centos7**: https://repo.imaicloud.com/hue/hue-3.12.0-centos7.tgz
+ - **ubuntu14**: https://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz  
 
-### 使用163源
+
+## 使用163源
 163源centos的[官方帮助](http://mirrors.163.com/.help/centos.html)。  
 ```
 $ wget -O /etc/yum.repos.d/CentOS7-Base-163.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
