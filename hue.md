@@ -94,6 +94,14 @@ $ /etc/init.d/hue restart
 为什么要自己编译HUE？因为无论githue.com还是HDP都没有为HUE提供各种版本linux的下载源。  
 测试发现，在centos6.8下编译的hue在centos7.0下运行不了（貌似因为python版本不同）。因此需要分别在centos6.8/centos7.3/ubuntu14.4下进行了编译。本章主要描述centos7.3和ubuntu14.4下的编译过程。  
 ## centos7.3下编译HUE
+使用下面的vagrant box搭建的centos7编译环境：
+```
+config.vm.box = "geerlingguy/centos7"
+```
+实测发现下面的box执行yum update有很多错误，不如上面的那个box：
+```
+config.vm.box = "bento/centos-7.3"
+```
 ### 准备
 按HUE官方github库的[提示](https://github.com/cloudera/hue)，编译环境需要先装Oracle JDK。  
 更详细的手册在[这里](https://github.com/cloudera/hue/blob/bedc719efbaa1a09fbb27a699d3fe9f1ad31fabf/docs/manual.txt#L56)。  
