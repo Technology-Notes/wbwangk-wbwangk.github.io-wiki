@@ -257,11 +257,12 @@ $ rpm -ivh jdk-8u131-linux-x64.rpm  或  yum install jdk-8u131-linux-x64.rpm
 yum install git ant gcc gcc-c++ wget tar asciidoc krb5-devel libxml2-devel libxslt-devel openldap-devel python-devel python-simplejson python-setuptools sqlite-devel rsync saslwrapper-devel pycrypto gmp-devel libyaml-devel cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi libffi-devel mysql-devel openssl-devel make apache-maven libtidy 
 ```
 centos7下maven需要这样安装：```yum install maven```。  
-实测中发现如果未安装gcc-c++，则执行make apps报错：
+sqlite-devel的下载需要翻墙。可以手工下载和安装：
 ```
-Entering directory `/opt/hue/desktop'
-make -C core env-install
+$ wget http://repo.imaicloud.com/hue/sqlite-devel-3.7.17-8.el7.x86_64.rpm
+$ yum install sqlite-devel-3.7.17-8.el7.x86_64.rpm
 ```
+
 下载hue源码，然后编译：
 ```
 $ git clone https://github.com/cloudera/hue.git
