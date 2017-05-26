@@ -138,7 +138,7 @@ $ mv hue.tgz hue-3.12.0-centos7.tgz               (文件改名)
 $ scp hue-3.12.0-centos7.tgz root@repo.imaicloud.com:/opt/nginx/repo/hue/           (将tar包上传到本地源)
 ```
 新生成的barball的下载路径是```http://repo.imaicloud.com/hue/hue-3.12.0-centos7.tgz```。  
-[注：编译环境](/e/t)
+(Vagrant：/e/t)
 
 ## ubuntu14下编译hue
 
@@ -162,8 +162,7 @@ $ apt-get install oracle-java8-installer
 $ scp hue-3.12.0-ubuntu14.tgz root@repo.imaicloud.com:/opt/nginx/repo/hue/           (将tar包上传到本地源)
 ```
 新生成的barball的下载路径是```http://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz```，大小大约400M。 
-```
-[注：编译环境](/e/vagrant9/ambari-vagrant/ubuntu14.4/u1409)
+(Vagrant:/e/vagrant9/ambari-vagrant/ubuntu14.4/u1409)
 
 # ambari-hue-service
 github上的[EsharEditor/ambari-hue-service]((https://github.com/EsharEditor/ambari-hue-service))库是将hue制作成了Ambari的服务，通过Ambari将hue部署到HDP集群。
