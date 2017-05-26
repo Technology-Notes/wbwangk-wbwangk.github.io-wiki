@@ -1,5 +1,5 @@
 不是所有版本的HDP源都包含了HUE服务。HDP的ubuntu14版本就不含HUE服务，而HDP的centos6版本包含HUE服务。如果要使用HDP官方源部署HUE，只能在centos6环境下进行。  
-----
+
 # 手工部署HUE到HDP
 本次部署参考了HDP官方文档[Command Line Installation](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_command-line-installation/content/installing_hue.html)。  
 - 部署环境：vagrant管理下的3台VM(c6801/c6802/c6803)；  
