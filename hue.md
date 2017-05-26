@@ -6,6 +6,7 @@
 
 
 不是所有版本的HDP源都包含了HUE服务。HDP的ubuntu14版本就不含HUE服务，而HDP的centos6版本包含HUE服务。如果要使用HDP官方源部署HUE，只能在centos6环境下进行。  
+从测试历程上，首先是手工把HUE在centos6下部署到了HDP，挺容易的；然后想利用HDP包含在centos6下hue安装包，通过ambari部署hue，没有成功；然后转向自己编译hue、自己打包到repo.imaicloud.com本地源，在centos6下的HDP集群成功；然后用同样hue tar包，在centos7下的HDP集群下部署，能部署成功但不能启动，才意识到centos6编译的tar包无法在centos7下运行；重新在centos7下编译hue，部署成功；又在ubuntu14下编译hue，通过ambari部署到ubuntu14下的HDP集群，也成功。  
 
 # 手工部署HUE到centos6下的HDP
 本次部署参考了HDP官方文档[Command Line Installation](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_command-line-installation/content/installing_hue.html)。
