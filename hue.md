@@ -222,7 +222,7 @@ $ ambari-server restart
 一般会在“Install, Start and Test”一步出问题，逐个解决。貌似ubuntu14比centos6/7出的问题少。  
 可能需要重启一些受影响的服务。然后用浏览器访问地址：```http://u1401.ambari.apache.org:8000```。会出现hue登录界面，这就表示安装成功了。也可直接输入ip，即```192.168.14.101:8000```。  
 
-## Ambari安装hue
+## Ambari安装hue（未完成）
 #### 准备hue元数据库
 直接使用Ambari自带的PostgreSQL数据库，为HUE创建数据库hue和数据库用户hue：
 ```
