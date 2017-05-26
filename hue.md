@@ -1,6 +1,9 @@
 目录：
 - [手工部署HUE到HDP](#手工部署HUE到HDP)  
- - [ambari-hue-service](#ambari-hue-service)
+- [编译Hue](#编译Hue)
+- [ambari-hue-service](#ambari-hue-service)
+- ubuntu14下通过ambari安装HUE 
+
 
 不是所有版本的HDP源都包含了HUE服务。HDP的ubuntu14版本就不含HUE服务，而HDP的centos6版本包含HUE服务。如果要使用HDP官方源部署HUE，只能在centos6环境下进行。  
 
@@ -84,6 +87,84 @@ $ /etc/init.d/hue restart
 登录后可以点File Browser菜单看看HDFS上的文件清单。  
 可以点击About > Configuration 看看配置，点击About > Check 检查配置问题。  
 需要说明的是，HDP的HUE版本的界面与githue.com版本(最新的是3.12.0版本)有所不同，可能是HDP内置的HUE版本较古老。  
+
+# 编译Hue
+为什么要自己编译HUE？因为无论githue.com还是HDP都没有为HUE提供各种版本linux的下载源。  
+测试发现，在centos6.8下编译的hue在centos7.0下运行不了（貌似因为python版本不同）。为此分别在centos6.8/centos7.3/ubuntu14.4下进行了编译。本文主要描述centos7.3和ubuntu14.4下的编译过程。  
+## centos7.3下编译HUE
+### 准备
+按HUE官方github库的[提示](https://github.com/cloudera/hue)，编译环境需要先装Oracle JDK。  
+更详细的手册在[这里](https://github.com/cloudera/hue/blob/bedc719efbaa1a09fbb27a699d3fe9f1ad31fabf/docs/manual.txt#L56)。  
+首先，卸载已有JDK的方法：
+```
+$ rpm -qa | grep java      或  rpm -qa | grep jdk
+java-1.8.0-openjdk-headless-1.8.0.131-0.b11.el6_9.x86_64
+$ rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.131-0.b11.el6_9.x86_64
+```
+到[Oracle Java下载页面](http://www.oracle.com/technetwork/java/javase/downloads/index.html)下载RPM包。直接用wget不行，需要先下载到windows下。现已经把安装包上传到repo.imaicloud.com。
+```
+$ wget http://repo.imaicloud.com/hue/jdk-8u131-linux-x64.rpm
+$ rpm -ivh jdk-8u131-linux-x64.rpm  或  yum install jdk-8u131-linux-x64.rpm
+```
+安装编译需要的其他包(centos6)：
+```
+yum install git ant gcc gcc-c++ wget tar asciidoc krb5-devel libxml2-devel libxslt-devel openldap-devel python-devel python-simplejson python-setuptools sqlite-devel rsync saslwrapper-devel pycrypto gmp-devel libyaml-devel cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi libffi-devel mysql-devel openssl-devel make apache-maven libtidy 
+```
+centos7下maven需要这样安装：```yum install maven```。 
+sqlite-devel的下载需要翻墙。可以手工下载和安装：
+```
+$ wget http://repo.imaicloud.com/hue/sqlite-devel-3.7.17-8.el7.x86_64.rpm
+$ yum install sqlite-devel-3.7.17-8.el7.x86_64.rpm
+```
+### 下载源码和编译
+下载hue源码，然后编译：
+```
+$ git clone https://github.com/cloudera/hue.git
+$ cd hue
+$ make apps > hue_make.log 2>&1
+```
+make apps后面的代码是为了把编译过程输出到文件，以便以查错。  
+#### 测试hue
+```
+$ build/env/bin/hue runserver
+$ curl -L http://127.0.0.1:8000
+```
+#### 打包和本地源
+把编译结果打包成tarball：
+```
+$ cd ..    
+$ tar -zcvf hue.tgz hue     (把hue目录打包成hue.tgz)
+$ mv hue.tgz hue-3.12.0-centos7.tgz               (文件改名)
+$ scp hue-3.12.0-centos7.tgz root@repo.imaicloud.com:/opt/nginx/repo/hue/           (将tar包上传到本地源)
+```
+新生成的barball的下载路径是```http://repo.imaicloud.com/hue/hue-3.12.0-centos7.tgz```。  
+[注：编译环境](/e/t)
+
+## ubuntu14下编译hue
+
+准备编译需要的包：
+```
+apt-get install git ant gcc g++ wget tar libkrb5-dev libxml2-dev libxslt1-dev libldap2-dev python-dev python-setuptools libsqlite3-dev libsasl2-dev libsasl2-modules-gssapi-mit libmysqlclient-dev maven libtidy-0.99-0 libffi-dev libssl-dev
+```
+安装oracle JDK：
+```
+$ apt list --installed | grep openjdk    (根据安装openjdk决定下面的remove)
+$ apt remove openjdk-7-jre
+$ apt remove openjdk-7-jre-headless
+$ apt-get install software-properties-common
+$ add-apt-repository ppa:webupd8team/java
+$ apt-get update
+$ apt-get install oracle-java8-installer
+```
+编译、打包同centos下。
+上传tar包到imaicloud.com本地源：
+```
+$ scp hue-3.12.0-ubuntu14.tgz root@repo.imaicloud.com:/opt/nginx/repo/hue/           (将tar包上传到本地源)
+```
+新生成的barball的下载路径是```http://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz```，大小大约400M。 
+```
+[注：编译环境](/e/vagrant9/ambari-vagrant/ubuntu14.4/u1409)
+
 # ambari-hue-service
 实测看，部署ambari-hue-service的HDP集群，需要先装YARN，否则报"找不到yarn-site配置文件"。  
 ### 准备
@@ -93,7 +174,7 @@ gethue.com背书的Ambari定制HUE服务的项目位于[ambari-hue-service](http
 ```
 $ VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
 $ rm -rf /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE  
-$ sudo git clone https://github.com/EsharEditor/ambari-hue-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE
+$ sudo git clone https://github.com/imaidev/ambari-hue-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE
 ```
 可以把上面的VERSION定义一行添加到文件```~/.bashrc```的最后，以便这个环境变量随时可用。  
 重启ambari：
@@ -181,40 +262,29 @@ $ cat /var/log/hue/hue-install.log
 ```
 ln -s /usr/local/hue /opt/hue
 ```
-#### 服务启动
+#### 卸载HUE
+通过Ambari界面卸载HUE服务，然后手工删除hue相关目录：
+```
+rm -rf /usr/local/hue*         (或 rm -rf /opt/hue*)
+rm -rf /var/log/hue
+rm -rf /var/run/hue
+rm /usr/hdp/current/hadoop-client/lib/hue-plugins-3.12.0-SNAPSHOT.jar
+```
 
 # ubuntu14下通过ambari安装HUE 
-
-ubuntu下的/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE/metainfo.xml需要增加以下内容。默认的xml文件中定义的依赖包并不适合ubuntu。
+参照前面centos7下的说明，下载ambari-hue-service到Ambari的服务目录下。  
+imaidev/ambari-hue-server默认是部署在centos7环境下，需要修改修在链接。编辑文件```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/HUE/package/scripts/params.py```中的内容：
 ```
-<osSpecifics>
-  <osSpecific>
-    <osFamily>ubuntu14</osFamily>
-    <packages>
-      <package><name>ant</name></package>
-      <package><name>gcc</name></package>
-      <package><name>g++</name></package>
-      <package><name>libffi-dev</name></package>
-      <package><name>libkrb5-dev</name></package>
-      <package><name>libmysqlclient-dev</name></package>
-      <package><name>libsasl2-dev</name></package>
-      <package><name>libsasl2-modules-gssapi-mit</name></package>
-      <package><name>libsqlite3-dev</name></package>
-      <package><name>libssl-dev</name></package>
-      <package><name>libtidy-0.99-0</name></package>
-      <package><name>libxml2-dev</name></package>
-      <package><name>libxslt-dev</name></package>
-      <!--package><name>make</name></package-->
-      <package><name>maven</name></package>
-      <package><name>libldap2-dev</name></package>
-      <package><name>python-dev</name></package>
-      <package><name>python-setuptools</name></package>
-      <!--package><name>libgmp3-dev</name></package-->
-      <!--package><name>libz-dev</name></package-->
-    </packages>
-  </osSpecific>
-</osSpecifics>
+download_url = 'echo "http://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz"'
 ```
+默认安装目录是```/opt/hue```，确保这个目录不存在。  
+重启ambari服务：
+```
+$ ambari-server restart
+```
+通过ambari界面添加服务，在服务清单中可以看到多了一个HUE服务。选中HUE服务，一路按默认值点next按钮。hue一般默认装在u1401节点上。如果启用了kerberos需要输入管理员的主体和密码（如root/amdin@AMBARI.APACHE.ORG）。  
+一般会在“Install, Start and Test”一步出问题，逐个解决。貌似ubuntu14比centos6/7出的问题少。  
+可能需要重启一些受影响的服务。然后用浏览器访问地址：```http://u1401.ambari.apache.org:8000```。会出现hue登录界面，这就表示安装成功了。也可直接输入ip，即```192.168.14.101:8000```。  
 
 ## Ambari安装hue
 #### 准备hue元数据库
@@ -253,68 +323,3 @@ $ kadmin.local
 kadmin.local:  ktadd -k hue.keytab hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG
 $ mv hue.keytab /etc/security/keytabs/        (将hue.keytab移动到HDP默认的keytabs目录)
 ```
-# 编译Hue
-按HUE官方github库的[提示](https://github.com/cloudera/hue)，编译环境需要先装Oracle JDK。  
-更详细的手册在[这里](https://github.com/cloudera/hue/blob/bedc719efbaa1a09fbb27a699d3fe9f1ad31fabf/docs/manual.txt#L56)。  
-首先，卸载已有JDK的方法：
-```
-$ rpm -qa | grep java      或  rpm -qa | grep jdk
-java-1.8.0-openjdk-headless-1.8.0.131-0.b11.el6_9.x86_64
-$ rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.131-0.b11.el6_9.x86_64
-```
-到[Oracle Java下载页面](http://www.oracle.com/technetwork/java/javase/downloads/index.html)下载RPM包。直接用wget不行，需要先下载到windows下。现已经把安装包上传到repo.imaicloud.com。
-```
-$ wget http://repo.imaicloud.com/hue/jdk-8u131-linux-x64.rpm
-$ rpm -ivh jdk-8u131-linux-x64.rpm  或  yum install jdk-8u131-linux-x64.rpm
-```
-安装编译需要的其他包(centos6)：
-```
-yum install git ant gcc gcc-c++ wget tar asciidoc krb5-devel libxml2-devel libxslt-devel openldap-devel python-devel python-simplejson python-setuptools sqlite-devel rsync saslwrapper-devel pycrypto gmp-devel libyaml-devel cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi libffi-devel mysql-devel openssl-devel make apache-maven libtidy 
-```
-centos7下maven需要这样安装：```yum install maven```。 
-sqlite-devel的下载需要翻墙。可以手工下载和安装：
-```
-$ wget http://repo.imaicloud.com/hue/sqlite-devel-3.7.17-8.el7.x86_64.rpm
-$ yum install sqlite-devel-3.7.17-8.el7.x86_64.rpm
-```
-
-下载hue源码，然后编译：
-```
-$ git clone https://github.com/cloudera/hue.git
-$ cd hue
-$ make apps > hue_make.log 2>&1
-```
-make apps后面的代码是为了把编译过程输出到文件，以便以查错。  
-#### 测试hue
-```
-$ build/env/bin/hue runserver
-$ curl -L http://127.0.0.1:8000
-```
-#### 打包和本地源
-把编译结果打包成tarball：
-```
-$ cd ..    
-$ tar -zcvf hue.tgz hue     (把hue目录打包成hue.tgz)
-$ scp hue.tgz root@repo.imaicloud.com:/opt/nginx/repo/hue/           (将hue.tgz上传到本地源)
-$ cd /opt/nginx/repo/HDP/centos6/2.x/updates/2.5.3.0/hue
-$ ln -s /opt/nginx/repo/hue/hue.tgz hue.tgz      (配合ambari-hue-service的下载路径)
-```
-新生成的barball的下载路径是```http://repo.imaicloud.com/hue/hue.tgz```。  
-
-### ubuntu14下编译hue
-
-准备编译需要的包：
-```
-apt-get install git ant gcc g++ wget tar libkrb5-dev libxml2-dev libxslt1-dev libldap2-dev python-dev python-setuptools libsqlite3-dev libsasl2-dev libsasl2-modules-gssapi-mit libmysqlclient-dev maven libtidy-0.99-0
-```
-安装oracle JDK：
-```
-$ apt list --installed | grep openjdk    (根据安装openjdk决定下面的remove)
-$ apt remove openjdk-7-jre
-$ apt remove openjdk-7-jre-headless
-$ apt-get install software-properties-common
-$ add-apt-repository ppa:webupd8team/java
-$ apt-get update
-$ apt-get install oracle-java8-installer
-```
-[注](/e/vagrant9/ambari-vagrant/ubuntu14.4/u1409)
