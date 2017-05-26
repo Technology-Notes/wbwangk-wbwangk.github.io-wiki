@@ -1,13 +1,13 @@
 目录：
-- [手工部署HUE到HDP](#手工部署HUE到HDP)  
+- [手工部署HUE到centos6下的HDP](#手工部署HUE到centos6下的HDP)  
 - [编译Hue](#编译Hue)
 - [ambari-hue-service](#ambari-hue-service)
-- ubuntu14下通过ambari安装HUE 
+- [笔记:部署hue碰到的问题](#部署hue碰到的问题)
 
 
 不是所有版本的HDP源都包含了HUE服务。HDP的ubuntu14版本就不含HUE服务，而HDP的centos6版本包含HUE服务。如果要使用HDP官方源部署HUE，只能在centos6环境下进行。  
 
-# 手工部署HUE到HDP
+# 手工部署HUE到centos6下的HDP
 本次部署参考了HDP官方文档[Command Line Installation](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_command-line-installation/content/installing_hue.html)。
 为了进行本次测试，需要先搭建基于centos6的大数据环境。参考[大数据本地开发环境](https://github.com/imaidev/imaidev.github.io/wiki/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83)，只是要使用```ambari-vagrant/centos6.8```目录下Vagrantfile来启动虚拟机。然后安装Ambari，再利用Ambari部署HDP。    
 - 部署环境：vagrant管理下的3台VM(c6801/c6802/c6803)；  
@@ -90,7 +90,7 @@ $ /etc/init.d/hue restart
 
 # 编译Hue
 为什么要自己编译HUE？因为无论githue.com还是HDP都没有为HUE提供各种版本linux的下载源。  
-测试发现，在centos6.8下编译的hue在centos7.0下运行不了（貌似因为python版本不同）。为此分别在centos6.8/centos7.3/ubuntu14.4下进行了编译。本文主要描述centos7.3和ubuntu14.4下的编译过程。  
+测试发现，在centos6.8下编译的hue在centos7.0下运行不了（貌似因为python版本不同）。因此需要分别在centos6.8/centos7.3/ubuntu14.4下进行了编译。本章主要描述centos7.3和ubuntu14.4下的编译过程。  
 ## centos7.3下编译HUE
 ### 准备
 按HUE官方github库的[提示](https://github.com/cloudera/hue)，编译环境需要先装Oracle JDK。  
@@ -166,9 +166,10 @@ $ scp hue-3.12.0-ubuntu14.tgz root@repo.imaicloud.com:/opt/nginx/repo/hue/      
 [注：编译环境](/e/vagrant9/ambari-vagrant/ubuntu14.4/u1409)
 
 # ambari-hue-service
-实测看，部署ambari-hue-service的HDP集群，需要先装YARN，否则报"找不到yarn-site配置文件"。  
+github上的[EsharEditor/ambari-hue-service]((https://github.com/EsharEditor/ambari-hue-service))库是将hue制作成了Ambari的服务，通过Ambari将hue部署到HDP集群。
+
+## 在centos6下通过ambari部署hue
 ### 准备
-gethue.com背书的Ambari定制HUE服务的项目位于[ambari-hue-service](https://github.com/EsharEditor/ambari-hue-service)。 
 测试环境的三台VM是(操作系统centos6.8)c6801/c6802/c6803，是Ambari安装的HDP。环境搭建参考[这个](https://github.com/imaidev/imaidev.github.io/wiki/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83)文档的centos6部分。  
 在c6801上执行：
 ```
@@ -177,35 +178,87 @@ $ rm -rf /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE
 $ sudo git clone https://github.com/imaidev/ambari-hue-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE
 ```
 可以把上面的VERSION定义一行添加到文件```~/.bashrc```的最后，以便这个环境变量随时可用。  
+不同的操作系统需要不同的hue安装包，repo.imaicloud.com上现有三个操作系统的HUE-3.12.0安装包：
+ - **centos6**：https://repo.imaicloud.com/hue/hue-3.12.0-centos6.tgz  
+ - **centos7**: https://repo.imaicloud.com/hue/hue-3.12.0-centos7.tgz
+ - **ubuntu14**: https://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz  
+
+编辑文件```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/HUE/package/scripts/params.py```中的代码，根据操作系统选择正确的tar包，如ubuntu14下需要修改成：
+```
+download_url = 'echo "http://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz"'
+```
 重启ambari：
 ```
 $ ambari-server restart
 ```
-gethue.com上有hue 3.10/3.11/3.12的下载链接，但需要翻墙。翻墙后下载到了repo.imaicloud.com下，地址是：
+通过ambari界面添加服务，在服务清单中可以看到多了一个HUE服务。选中HUE服务，一路按默认值点next按钮。hue一般默认装在u1401节点上。如果启用了kerberos需要输入管理员的主体和密码（如root/amdin@AMBARI.APACHE.ORG）。  
+一般会在“Install, Start and Test”一步出问题，逐个解决。  
+可能需要重启一些受影响的服务。然后用浏览器访问地址：```http://u1401.ambari.apache.org:8000```。会出现hue登录界面，这就表示安装成功了。也可直接输入ip，即```192.168.14.101:8000```。  
+
+#### 卸载HUE
+通过Ambari界面卸载HUE服务，然后手工删除hue相关目录：
 ```
-http://repo.imaicloud.com/hue/hue-3.10.0.tgz
-http://repo.imaicloud.com/hue/hue-3.11.0.tgz
-http://repo.imaicloud.com/hue/hue-3.12.0.tgz
+rm -rf /opt/hue*         (原来是 rm -rf /usr/local/hue*)
+rm -rf /var/log/hue
+rm -rf /var/run/hue
+rm /usr/hdp/current/hadoop-client/lib/hue-plugins-3.12.0-SNAPSHOT.jar
 ```
-```EsharEditor/ambari-hue-service```项目的```/var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE/package/scripts/params.py```脚本中有个download_url的变量：
+#### centos7下部署hue
+与centos6基本一样，下载的hue包是hue-3.12.0-centos7.tgz。
+
+## ubuntu14下通过ambari部署HUE 
+参照前面centos6下的说明，下载ambari-hue-service到Ambari的服务目录下。  
+imaidev/ambari-hue-server默认是部署在centos7环境下，需要修改修在链接。编辑文件```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/HUE/package/scripts/params.py```中的内容：
 ```
-#download_url = 'cat /etc/yum.repos.d/HDP.repo | grep "baseurl" | awk -F \'=\' \'{print $2"hue/hue-3.11.0.tgz"}\''
-download_url = 'cat /etc/yum.repos.d/HDP.repo | grep "baseurl" | awk -F \'=\' \'{print $2"/hue/hue-3.11.0.tgz"}\''  (或)
-download_url = 'echo "http://repo.imaicloud.com/hue/hue.tgz"'
+download_url = 'echo "http://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz"'
 ```
-由于从yum.repos.d目录取下载地址的写法并不适用与ubuntu，所以只能使用上面的第2种写法。    
-HDP的本地源中是没有上述包的，为了解决该文件，在HDP的本地源目录下建立符号链接：
-```
-$ cd /opt/nginx/repo/HDP/centos6/2.x/updates/2.5.3.0/hue
-$ ln -s /opt/nginx/repo/hue/hue-3.10.0.tgz hue-3.10.0.tgz
-$ ln -s /opt/nginx/repo/hue/hue-3.11.0.tgz hue-3.11.0.tgz
-$ ln -s /opt/nginx/repo/hue/hue-3.12.0.tgz hue-3.12.0.tgz
-```
-然后重启ambari-server:
+默认安装目录是```/opt/hue```，确保这个目录不存在。  
+重启ambari服务：
 ```
 $ ambari-server restart
 ```
-### 安装解决的问题
+通过ambari界面添加服务，在服务清单中可以看到多了一个HUE服务。选中HUE服务，一路按默认值点next按钮。hue一般默认装在u1401节点上。如果启用了kerberos需要输入管理员的主体和密码（如root/amdin@AMBARI.APACHE.ORG）。  
+一般会在“Install, Start and Test”一步出问题，逐个解决。貌似ubuntu14比centos6/7出的问题少。  
+可能需要重启一些受影响的服务。然后用浏览器访问地址：```http://u1401.ambari.apache.org:8000```。会出现hue登录界面，这就表示安装成功了。也可直接输入ip，即```192.168.14.101:8000```。  
+
+## Ambari安装hue
+#### 准备hue元数据库
+直接使用Ambari自带的PostgreSQL数据库，为HUE创建数据库hue和数据库用户hue：
+```
+$ sudo -u postgres psql
+postgres=# CREATE USER hue WITH PASSWORD '1';              (新建一个数据库用户hue，密码是1)
+CREATE ROLE     (这是个成功的提示)
+postgres=# CREATE DATABASE hue OWNER hue;                (创建用户数据库hue，并指定所有者为hue)
+CREATE DATABASE
+```
+#### Ambari向导
+Hue Metastore配置:
+```
+DB FLAVOR = PostgreSQL
+Database Name = hue
+Database Username = hue
+Database Password = 1
+Hue Metastore Host = u1401.ambari.apache.org
+Hue Metastore Port = 5432
+```
+将PostgreSQL Configs的开关打开：
+```
+PostgreSQL Nice Name = "PostgreSQL DB"   （默认）
+PostgreSQL User = hue
+PostgreSQL Password = 1
+PostgreSQL Database Name = hue
+PostgreSQL Host = u1401.ambari.apache.org
+PostgreSQL Port = 5432
+PostgreSQL Options = {}
+```
+之后提示“Configure principal name and keytab location for service users and hadoop service components.” 说明需要手工创建HUE的主体和相应的keytab。
+```
+$ kadmin.local -q "addprinc hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG"
+$ kadmin.local
+kadmin.local:  ktadd -k hue.keytab hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG
+$ mv hue.keytab /etc/security/keytabs/        (将hue.keytab移动到HDP默认的keytabs目录)
+```
+# 部署hue碰到的问题
 对EsharEditor/ambari-hue-service的修改主要集中在目录```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/HUE/package/scripts```下几个py源码中。
 1. download_url
 将```{print $2"hue/hue-3.11.0.tgz"}```修改成了```{print $2"/hue/hue-3.11.0.tgz"}```(加了个斜杠,params.py)。  
@@ -262,64 +315,5 @@ $ cat /var/log/hue/hue-install.log
 ```
 ln -s /usr/local/hue /opt/hue
 ```
-#### 卸载HUE
-通过Ambari界面卸载HUE服务，然后手工删除hue相关目录：
-```
-rm -rf /usr/local/hue*         (或 rm -rf /opt/hue*)
-rm -rf /var/log/hue
-rm -rf /var/run/hue
-rm /usr/hdp/current/hadoop-client/lib/hue-plugins-3.12.0-SNAPSHOT.jar
-```
-
-# ubuntu14下通过ambari安装HUE 
-参照前面centos7下的说明，下载ambari-hue-service到Ambari的服务目录下。  
-imaidev/ambari-hue-server默认是部署在centos7环境下，需要修改修在链接。编辑文件```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/HUE/package/scripts/params.py```中的内容：
-```
-download_url = 'echo "http://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz"'
-```
-默认安装目录是```/opt/hue```，确保这个目录不存在。  
-重启ambari服务：
-```
-$ ambari-server restart
-```
-通过ambari界面添加服务，在服务清单中可以看到多了一个HUE服务。选中HUE服务，一路按默认值点next按钮。hue一般默认装在u1401节点上。如果启用了kerberos需要输入管理员的主体和密码（如root/amdin@AMBARI.APACHE.ORG）。  
-一般会在“Install, Start and Test”一步出问题，逐个解决。貌似ubuntu14比centos6/7出的问题少。  
-可能需要重启一些受影响的服务。然后用浏览器访问地址：```http://u1401.ambari.apache.org:8000```。会出现hue登录界面，这就表示安装成功了。也可直接输入ip，即```192.168.14.101:8000```。  
-
-## Ambari安装hue
-#### 准备hue元数据库
-直接使用Ambari自带的PostgreSQL数据库，为HUE创建数据库hue和数据库用户hue：
-```
-$ sudo -u postgres psql
-postgres=# CREATE USER hue WITH PASSWORD '1';              (新建一个数据库用户hue，密码是1)
-CREATE ROLE     (这是个成功的提示)
-postgres=# CREATE DATABASE hue OWNER hue;                (创建用户数据库hue，并指定所有者为hue)
-CREATE DATABASE
-```
-#### Ambari向导
-Hue Metastore配置:
-```
-DB FLAVOR = PostgreSQL
-Database Name = hue
-Database Username = hue
-Database Password = 1
-Hue Metastore Host = u1401.ambari.apache.org
-Hue Metastore Port = 5432
-```
-将PostgreSQL Configs的开关打开：
-```
-PostgreSQL Nice Name = "PostgreSQL DB"   （默认）
-PostgreSQL User = hue
-PostgreSQL Password = 1
-PostgreSQL Database Name = hue
-PostgreSQL Host = u1401.ambari.apache.org
-PostgreSQL Port = 5432
-PostgreSQL Options = {}
-```
-之后提示“Configure principal name and keytab location for service users and hadoop service components.” 说明需要手工创建HUE的主体和相应的keytab。
-```
-$ kadmin.local -q "addprinc hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG"
-$ kadmin.local
-kadmin.local:  ktadd -k hue.keytab hue/u1401.ambari.apache.org@AMBARI.APACHE.ORG
-$ mv hue.keytab /etc/security/keytabs/        (将hue.keytab移动到HDP默认的keytabs目录)
-```
+9. 提示"找不到yarn-site配置文件"  
+通过ambari先装YARN，再装hue，不再报错。  
