@@ -1,7 +1,8 @@
 不是所有版本的HDP源都包含了HUE服务。HDP的ubuntu14版本就不含HUE服务，而HDP的centos6版本包含HUE服务。如果要使用HDP官方源部署HUE，只能在centos6环境下进行。  
 
 # 手工部署HUE到HDP
-本次部署参考了HDP官方文档[Command Line Installation](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_command-line-installation/content/installing_hue.html)。  
+本次部署参考了HDP官方文档[Command Line Installation](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_command-line-installation/content/installing_hue.html)。
+为了进行本次测试，需要先搭建基于centos6的大数据环境。参考[大数据本地开发环境](https://github.com/imaidev/imaidev.github.io/wiki/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83)，只是要使用```ambari-vagrant/centos6.8```目录下Vagrantfile来启动虚拟机。然后安装Ambari，再利用Ambari部署HDP。    
 - 部署环境：vagrant管理下的3台VM(c6801/c6802/c6803)；  
 - 操作系统：centos6.8；
 - Ambari管理下的HDP组件：HDFS/YARN/MR2/ZooKeeper/AmbariMetrics。  
@@ -39,13 +40,13 @@ $ yum install hue
 #### 修改hue配置文件
 hue配置文件位于```/etc/hue/conf/hue.ini```。  
 1. 配置HDFS集群
-在配置文件的[hadoop][[hdfs_clusters]] [[[default]]]小节中： 
+在配置文件的```[hadoop][[hdfs_clusters]] [[[default]]]```小节中： 
 ```
 fs_defaultfs=hdfs://c6801.ambari.apache.org:8020
 webhdfs_url=http://c6801.ambari.apache.org:50070/webhdfs/v1/
 ```
 2. 配置YARN(MR2)集群
-在配置文件的[hadoop][[yarn_clusters]] [[[default]]]小节中：
+在配置文件的```[hadoop][[yarn_clusters]] [[[default]]]```小节中：
 ```
 resourcemanager_api_url=http://c6802.ambari.apache.org:8088
 resourcemanager_rpc_url=http://c6802.ambari.apache.org:8050
@@ -54,7 +55,7 @@ history_server_api_url=http://c6802.ambari.apache.org:19888
 app_timeline_server_api_url=http://c6802.ambari.apache.org:8188
 node_manager_api_url=http://c6802.ambari.apache.org:8042
 ```
-通过Ambari界面查看各个组件安装的主机FQDN。  
+需要先通过Ambari界面查看各个组件安装的主机FQDN，不同环境下的主机HQDN可能不同。  
 本测试环境没有安装其他的HDP服务，只配置了上述服务。  
 
 #### 启停hue服务
@@ -67,10 +68,18 @@ $ /etc/init.d/hue restart
 这里当然执行启动命令。  
 
 #### 验证Hue安装
-在浏览器中输入这个地址：```http://c6801.ambari.apache.org:8000/dump_config```。如果Hue安装正确，会出现Hue登录界面。登录界面提示：*由于这是您第一次登录，请选择任何用户名和密码。一定要记住这些，因为 它们将成为您的Hue超级用户凭据。*  可以输入类似admin/admin当Hue的管理员账号。  
+确保你的windows主机配置文件hosts(如c:/windows/system32/drivers/etc/hosts)中定义了:
+```
+192.168.68.101 c6801.ambari.apache.org
+```
+在浏览器中输入这个地址：
+```http://c6801.ambari.apache.org:8000/dump_config```。
+如果Hue安装正确，会出现Hue登录界面。登录界面提示：  
+*由于这是您第一次登录，请选择任何用户名和密码。一定要记住这些，因为 它们将成为您的Hue超级用户凭据。*    
+可以输入类似admin/admin当Hue的管理员账号。  
 登录后可以点File Browser菜单看看HDFS上的文件清单。  
 可以点击About > Configuration 看看配置，点击About > Check 检查配置问题。  
-
+需要说明的是，HDP的HUE版本的界面与githue.com版本(最新的是3.12.0版本)有所不同，可能是HDP内置的HUE版本较古老。  
 # ambari-hue-service
 实测看，部署ambari-hue-service的HDP集群，需要先装YARN，否则报"找不到yarn-site配置文件"。  
 ### 准备
