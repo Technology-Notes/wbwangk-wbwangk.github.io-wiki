@@ -247,11 +247,12 @@ $ rpm -qa | grep java      或  rpm -qa | grep jdk
 java-1.8.0-openjdk-headless-1.8.0.131-0.b11.el6_9.x86_64
 $ rpm -e --nodeps java-1.8.0-openjdk-headless-1.8.0.131-0.b11.el6_9.x86_64
 ```
-到[Oracle Java下载页面](http://www.oracle.com/technetwork/java/javase/downloads/index.html)下载RPM包。直接用wget不行，先下载到windows下，然后进git bash，然后用scp复制到centos中(命令如scp jdk-8u131-linux-x64.rpm root@c6801:/opt)。  
+到[Oracle Java下载页面](http://www.oracle.com/technetwork/java/javase/downloads/index.html)下载RPM包。直接用wget不行，需要先下载到windows下。现已经把安装包上传到repo.imaicloud.com。
 ```
+$ wget http://repo.imaicloud.com/hue/jdk-8u131-linux-x64.rpm
 $ rpm -ivh jdk-8u131-linux-x64.rpm  或  yum install jdk-8u131-linux-x64.rpm
 ```
-安装编译需要的其他包(centos)：
+安装编译需要的其他包(centos6)：
 ```
 yum install ant gcc gcc-c++ wget tar asciidoc krb5-devel libxml2-devel libxslt-devel openldap-devel python-devel python-simplejson python-setuptools sqlite-devel rsync saslwrapper-devel pycrypto gmp-devel libyaml-devel cyrus-sasl-plain cyrus-sasl-devel cyrus-sasl-gssapi libffi-devel mysql-devel openssl-devel make apache-maven libtidy 
 ```
