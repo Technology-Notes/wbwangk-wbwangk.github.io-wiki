@@ -1,6 +1,6 @@
 
 [参考1](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/setting_up_a_local_repository.html)  
-目标是搭建HDP的ubuntu14、centos7和centos6的本地源。hortonworks.com虽然提供了官方源，但受国际网络速度影响，安装时很容易出错。本地源的地址是repo.imaicloud.com。   
+目标是搭建HDP的ubuntu14、centos7和centos6的本地源。hortonworks.com虽然提供了官方源，但受国际网络速度影响，安装时很容易出错。本地源的地址是repo.imaicloud.com，只能通过浪潮内网访问，可以用浏览器访问这个地址看看。   
 
 #### 什么是Base URL
 在网页[Ambari barball](https://docs.hortonworks.com/HDPDocuments/Ambari-2.4.2.0/bk_ambari-installation/content/ambari_repositories.html)中提到了Base URL。Base URL是库的基础地址。  
