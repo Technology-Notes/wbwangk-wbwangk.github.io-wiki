@@ -289,6 +289,17 @@ $  curl -b c.txt -k -i -H 'WWW-Authenticate: Negotiate YGwGCSqGSIb3EgECAgIAb10wW
 ```
 ```curl -c c.txt```参数表示把http响应中的Set-Cookie字段写入了本地的c.txt文件。```curl -b c.txt```表示带着c.txt文件中的cookie内容发送请求，并利用```-H```参数设置了令牌。  
 
+现在用浏览器(我用的windows下chrome)访问地址```http://u1401.ambari.apache.org:50070```,会弹出类似基础认证的窗口让输入用户名口令，但无论输入啥都报告401或403错误:
+```
+HTTP ERROR 403
+Problem accessing /index.html. Reason: 
+    GSSException: Defective token detected (Mechanism level: GSSHeader did not find the right tag)
+```
+利用chrome插件EditThisCookie，在u1401.ambari.apache.org域中写入之前用curl返回的cookie：
+```
+hadoop.auth="u=guest&p=guest/u1401.ambari.apache.org@AMBARI.APACHE.ORG&t=kerberos&e=1487947765114&s=fNpq9FYy2DA19Rah7586rgsAieI="
+```
+然后浏览器就能显示正确的HDFS下文件清单了。这说明服务器端的配置正确，但浏览器端无法像kinit一样建立kerberos上下文。  
 
 ## 授权
 本章内容源自[knox的apache官网文档](http://knox.apache.org/books/knox-0-12-0/user-guide.html#Authorization)  
