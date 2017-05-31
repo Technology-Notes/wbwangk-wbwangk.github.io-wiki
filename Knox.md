@@ -289,7 +289,7 @@ $  curl -b c.txt -k -i -H 'WWW-Authenticate: Negotiate YGwGCSqGSIb3EgECAgIAb10wW
 ```
 ```curl -c c.txt```参数表示把http响应中的Set-Cookie字段写入了本地的c.txt文件。```curl -b c.txt```表示带着c.txt文件中的cookie内容发送请求，并利用```-H```参数设置了令牌。  
 
-现在用浏览器(我用的windows下chrome)访问地址```http://u1401.ambari.apache.org:50070```,会弹出类似基础认证的窗口让输入用户名口令，但无论输入啥都报告401或403错误:
+现在用浏览器(我用的windows下chrome)访问地址```https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS```,会弹出类似基础认证的窗口让输入用户名口令，但无论输入啥都报告401或403错误:
 ```
 HTTP ERROR 403
 Problem accessing /index.html. Reason: 
