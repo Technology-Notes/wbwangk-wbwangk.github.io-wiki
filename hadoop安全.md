@@ -541,3 +541,4 @@ Kerberos一般部署在C/S环境，很少用于web应用和瘦客户端环境。
 
 [认证模式之Spnego模式](http://blog.csdn.net/wangyangzhizhou/article/details/51163782)
 
+[Hadoop Security Concepts](https://community.hortonworks.com/articles/102957/hadoop-security-concepts.html)  
