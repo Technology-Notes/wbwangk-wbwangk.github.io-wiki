@@ -143,7 +143,7 @@ core-site.xml中定义了knox了安装主机(hadoop.proxyuser.knox.hosts)和可�
 按上述文档进行的测试在u1401上安装了OpenLDAP，并创建了一个测试用户john（dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org），该用户的密码是johnldap。使用该用户测试Knox：
 ```
 $ curl -i -k -u john:johnldap -X GET \
-    'https://localhost:8443/gateway/default/webhdfs/v1/tmp/webb?op=LISTSTATUS'
+    'https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp/webb?op=LISTSTATUS'
 {"FileStatuses":{"FileStatus":[{"accessTime":1493947036270,"blockSize":134217728,"childrenNum":0,"fileId":22980,"group":"hdfs","length":3,"modificationTime":1493947036592,"owner":"webb","pathSuffix":"t1.txt","permission":"644","replication":3,"storagePolicy":0,"type":"FILE"}]}}
 ```
 可以故意输入错误的密码，如john:1到-u参数，则：
