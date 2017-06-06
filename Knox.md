@@ -372,3 +372,54 @@ Knox Gateway具有开箱即用的授权提供者程序，允许管理员限制�
             </param>
         </provider>
 ```
+
+## Ambari单点登录到Knox
+[原文](https://cwiki.apache.org/confluence/display/KNOX/Ambari+via+KnoxSSO+and+Default+IDP)  
+Knox提供了基于表单的认证(默认IDP)。利用它，可以实现Ambari与Knox的单点登录。  
+knox提供的登录页面URL：
+```
+https://u1401.ambari.apache.org:8443/gateway/knoxsso/knoxauth/login.html
+```
+登录页的样子：
+![](https://cwiki.apache.org/confluence/download/attachments/62690515/Screen%20Shot%202016-04-03%20at%2011.56.21%20PM.png?version=1&modificationDate=1459742722000&api=v2)  
+对应用来说，单点登录的端点是：
+```
+https://u1401.ambari.apache.org:8443/gateway/knoxsso/api/v1/websso
+```
+可以把上面的URL输入到浏览器中测试，发现当没有登录时，会被重定向到登录页面URL。由于登录页面URL是可以配置的，这带来了灵活性，比如可以自己开发个性化登录页。  
+之前无论是测试Knox与LDAP的集成(ShiroProvider)还是SPNEGO/Kerberos认证(HadoopAuth)，都操作的Ambari中Knox配置的```Advanced topology```，而单点登录需要操作的是Ambari中Knox配置的```Advanced knoxsso-topology```。  
+在配置中修改了如下内容：
+```
+<param>
+  <name>knoxsso.redirect.whitelist.regex</name>
+  <value>^https?:\/\/(u14\d\d\.ambari\.apache\.org|localhost|127\.0\.0\.1|0:0:0:0:0:0:0:1|::1):[0-9].*$</value>
+</param>
+```
+这样是为了接受来自u1401-u1410等节点的重定向请求?  
+
+#### 提取Knox的gateway-identity公钥
+```
+$ cd /usr/hdp/current/knox-server
+$ keytool -exportcert -keystore data/security/keystores/gateway.jks -alias gateway-identity -rfc -file gateway.pem
+Enter keystore password:{master secret}
+Certificate stored in file <gateway.pem>
+$ cat gateway.pem
+–—BEGIN CERTIFICATE–— 
+(公钥略)
+–—END CERTIFICATE–—
+```
+生成了gateway.pem的文件，里面是公钥。过程中用到的[master secret](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.4.0/bk_Security_Guide/content/manage_master_secret.html)保存在文件```data/security/master```中（密文）。好像是安装knox时输入的。  
+重启knox服务。然后设置ambari单点登录：
+```
+$ ambari-server setup-sso
+Using python  /usr/bin/python
+Setting up SSO authentication properties...
+Do you want to configure SSO authentication [y/n] (y)?y
+Provider URL [URL]: https://u1401.ambari.apache.org:8443/gateway/knoxsso/api/v1/websso
+Public Certificate pem (empty) (empty line to finish input):
+（输入或粘贴文件gateway.pem中的公钥，并回车两次）
+Do you want to configure advanced properties [y/n] (n) ?n
+Ambari Server 'setup-sso' completed successfully.
+$ ambari-server restart
+```
+尝试
