@@ -125,8 +125,12 @@ $ ambari-agent start
 ```
 ### 用ambari安装HDP
 通过宿主机的浏览器进入http://u1401:8080，admin/admin登录。  
-通过界面只能创建一个集群。通过REST API可以创建多个集群。IDAP提供了界面来部署多个集群。
+通过界面只能创建一个集群。通过REST API可以创建多个集群。IDAP提供了界面来部署多个集群。  
 
+参考：Ambari日志的位置：
+```
+/var/log/ambari-server/ambari-server.log
+```
 ## Ambari安装的清理
 [参考](http://blog.csdn.net/wk022/article/details/49278419)  
 
