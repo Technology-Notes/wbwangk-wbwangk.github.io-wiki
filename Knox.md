@@ -276,11 +276,12 @@ Content-Length: 276
  
 {"FileStatuses":{"FileStatus":[{"accessTime":0,"blockSize":0,"childrenNum":1,"fileId":16398,"group":"hdfs","length":0,"modificationTime":1487855904191,"owner":"hdfs","pathSuffix":"entity-file-history","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"}]}}
 ```
-服务器首先返回401(Authentication required)，并在响应头上放置了```WWW-Authenticate: Negotiate```标志。curl在```--negotiate```标志的作用下利用本地kerberos会话生成了Negotiate token：
+服务器首先返回401(Authentication required)，并在响应头上放置了```WWW-Authenticate: Negotiate```标志。这个Negotiate表示要挑战浏览器（收到这个挑战后，在windows的chrome表现为弹出让输入用户名口令的窗口）。而在linux下的curl的则调用了自己的GSS-Negotiate功能来计算出一个请求来再次调用同一个URL，如果在curl中加入--verbose参数可以看到请求增加的内容：
 ```
-WWW-Authenticate: Negotiate YGwGCSqGSIb3EgECAgIAb10wW6ADAgEFoQMCAQ+iTzBNoAMCARCiRgRE26GeVRA0WkP7eb3csszuxUnSBDFK0NWH2+ai5pFY1onksiVOqjLkY8YS1xF5CshT4IwfrOHz6ivG6218X6oOSb0oCaU=
+> GET /webhdfs/v1/tmp?op=LISTSTATUS HTTP/1.1
+> Authorization: Negotiate YIIC4QYJKoZIhvcSAQICAQBuggLQMIICzKADAgEFoQMCAQ6iBwMFACAAAACjggGcYYIBmDCCAZSgAwIBBaETGxFBTUJBUkkuQVBBQ0hFLk9SR6IqMCigAwIBA6EhMB8bBEhUVFAbF3UxNDAxLmFtYmFyaS5hcGFjaGUub3Jno4IBSjCCAUagAwIBEKEDAgEBooIBOASCATQsvtJkb821p1278/N+uJkQLdSHxwFjikXItktYEUizskJu5l4BkQhs/SPF0Zq0QrSxzMMB9x7WO90w1edyM8lv5oaMNPs7nzTOIYDW52K47NdIY/TwDScNlFubWAg/Aq5b9wxrLrJ7r+G7J9DheYLUTglgztIV0jqFlWFgxr6ZGtkGHx4QdMDeGQDmcdeGEQWlNYbrkO1D5iMCLWySZe3ijBZ77DU22F5ukS6BiCAVbAVouRPCTe22ey19kknygqvsc8TcVS7/5kKcNL1CbZsiJUxwaEeDRNjEFCmRp4and0hO3l2iAc0P+hsCuTBz2oEtQaUV4tCgJ78V7sFRHcT+un/nfLd7P246odeOFOR/e4KOBMH56+WpyabbbH4cZJ3wFcB4dldkj0BKZftIG5pRV2v2g6SCARUwggERoAMCARCiggEIBIIBBFbDBLfvzjDA97j0RqFkxWG7GP97uDOSO3sJ5sgdajePDG/nvP+TBMelraUiJFPe/MZX9aInDyrod4RTTZ4oqoYyyrYte2wuczSuuzcJd1tpzDkSq64EtC9ZU/Ir9Ix0OrFtgmL+Cq4YbrB3FRtzq59xRaiPzDAnwAwG57f6lrBOKpwCLflOiNj7cKiDuDhczSM3p+G0ZE1o9VkDhP5RkXBD8+vSrAZtqM6HrmJ+BukmpNvPMDXGN9eijgfMDC2g1IY2afViC8a2ZiuLVvKnBc8yn+bkwXxejJXMEzz9t0z/qWCF8RPrsRnRHsT87wRuqXrdzT8Awsb6R0qHJhmbfduRyd3C
+> User-Agent: curl/7.35.0
 ```
-并在cookie中写入了hadoop.auth。
 
 上述请求还可以这样发送：
 ```
@@ -289,6 +290,7 @@ $  curl -b c.txt -k -i -H 'WWW-Authenticate: Negotiate YGwGCSqGSIb3EgECAgIAb10wW
 ```
 ```curl -c c.txt```参数表示把http响应中的Set-Cookie字段写入了本地的c.txt文件。```curl -b c.txt```表示带着c.txt文件中的cookie内容发送请求，并利用```-H```参数设置了令牌。  
 
+#### windows下chrome测试
 现在用浏览器(我用的windows下chrome)访问地址```https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS```,会弹出类似基础认证的窗口让输入用户名口令，但无论输入啥都报告401或403错误:
 ```
 HTTP ERROR 403
@@ -300,6 +302,37 @@ Problem accessing /index.html. Reason:
 hadoop.auth="u=guest&p=guest/u1401.ambari.apache.org@AMBARI.APACHE.ORG&t=kerberos&e=1487947765114&s=fNpq9FYy2DA19Rah7586rgsAieI="
 ```
 然后浏览器就能显示正确的HDFS下文件清单了。这说明服务器端的配置正确，但浏览器端无法像kinit一样建立kerberos上下文。  
+windows下可以安装kerberos客户端，但目前还没有找到在windows下利用kinit登录到u1401.ambari.apache.org的办法。可能与windows自带的kerberos功能冲突了。  
+
+### linux桌面下SPNEGO测试(firefox)
+利用vagrant安装了ubuntu16桌面系统，在Vagrantfile中配置的box：
+```
+u1408.vm.box = "box-cutter/ubuntu1404-desktop"
+```
+利用virtaulbox的菜单"设备->安装增强功能"调大了ubuntu桌面的分辨率（要先为VM添加光驱）。  
+在ubuntu桌面上组合按键"ctrl+alt+f2"进入命令行状态，按"ctrl+alt+f7"返回图形界面。在命令行状态下安装kerberos客户端并登录：
+```
+$ apt install krb5-user
+```
+需要注意的是ubuntu桌面系统的当前用户是vagrant而不是root。执行kinit也必须在vagrant用户下，否则图形界面中的firefox将无法与kinit共享会话。按"ctrl+alt+f2"，以vagrant用户登录(密码也是vagrant)。
+```
+$ kinit guest/u1401.ambari.apache.org@AMBARI.APACHE.ORG
+```
+#### 启用firefox的negotiate认证
+火狐默认不启用negotiate认证。需要在火狐中手工配置启用negotiate的URI。  
+按"ctrl+alt+f7"返回桌面，点击桌面左侧的火狐图标，在火狐地址栏输入：```about:config```并回车。然后在search输入框中输入"negotiate"，双击配置项```network.negotiate-auth.trusted-uris```，输入```.ambari.apache.org```(别忽略最前面的点)。  
+
+#### 测试firefox的negotiate认证
+在火狐浏览器地址栏中输入：
+```
+https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS
+```
+火狐可能会提示"你的连接是不安全的"，点"高级"按钮将这个地址添加到例外。然后就可以看到浏览器以json格式显示了HDFS中```/tmp```目录下的文件清单。  
+这说明firefox与kerberos客户端共享了会话。在火狐中按"shift+ctrl+i"进入调试模式，刷新URL请求，可以看到cookie的内容：
+```
+hadoop.auth="u=guest&p=guest/u1401.ambari.apache.org@AMBARI.APACHE.ORG&t=kerberos&e=1487947765114&s=fNpq9FYy2DA19Rah7586rgsAieI="
+```
+由于cookie的存在，浏览器不会每次请求都与kerberos客户端交互，只有cookie失效后，浏览器才会与kerberos客户交互，重新认证。
 
 ## 授权
 本章内容源自[knox的apache官网文档](http://knox.apache.org/books/knox-0-12-0/user-guide.html#Authorization)  
