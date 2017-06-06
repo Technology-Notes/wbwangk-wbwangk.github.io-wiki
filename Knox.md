@@ -305,6 +305,7 @@ hadoop.auth="u=guest&p=guest/u1401.ambari.apache.org@AMBARI.APACHE.ORG&t=kerbero
 windows下可以安装kerberos客户端，但目前还没有找到在windows下利用kinit登录到u1401.ambari.apache.org的办法。可能与windows自带的kerberos功能冲突了。  
 
 ### linux桌面下SPNEGO测试(firefox)
+[参考](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/5/html/Deployment_Guide/sso-config-firefox.html)  
 利用vagrant安装了ubuntu16桌面系统，在Vagrantfile中配置的box：
 ```
 u1408.vm.box = "box-cutter/ubuntu1404-desktop"
