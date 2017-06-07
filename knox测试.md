@@ -312,9 +312,11 @@ Do you want to configure advanced properties [y/n] (n) ?n
 Ambari Server 'setup-sso' completed successfully.
 $ ambari-server restart
 ```
-在浏览器中输入：```http://
-
-## 备忘
+在浏览器中输入：```https://u1401.ambari.apache.org:8080```，用户会被重定向到knox的登录界面。用john:johnldap用户进行了登录，但ambari中并没有这个用户，所以knox登录成功后仍然弹出了ambari的登录界面。似乎需要将knox和ambari的后台配置为同一个LDAP服务器。而在我的测试中ambari的后台并不是LDAP。chrome中报告的错误是：
+```
 Status Code:500 Cannot find user from JWT. Please, ensure LDAP is configured and users are synced.
+```
+## 备忘
+
 knox安装目录: ```/usr/hdp/current/knox-server```。  
 ambari的knox目录：```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/KNOX```。  
