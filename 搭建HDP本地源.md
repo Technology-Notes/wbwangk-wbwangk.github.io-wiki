@@ -90,10 +90,10 @@ $ wget -O /etc/yum.repos.d/ambari.repo http://repo.imaicloud.com/ambari/centos7/
 $ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos7/2.x/updates/2.5.3.0/hdp.repo
 ```
 ## HUE本地下载
-repo.imaicloud.com上提供了ubuntu14/centos6/centos7的3.12.0版本HUEtar包下载。目录分别是：
- - **centos6**：https://repo.imaicloud.com/hue/hue-3.12.0-centos6.tgz  
- - **centos7**: https://repo.imaicloud.com/hue/hue-3.12.0-centos7.tgz
- - **ubuntu14**: https://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz  
+repo.imaicloud.com上提供了ubuntu14/centos6/centos7的HUE 3.12.0版本tar包下载。目录分别是：
+ - **centos6**：http://repo.imaicloud.com/hue/hue-3.12.0-centos6.tgz  
+ - **centos7**: http://repo.imaicloud.com/hue/hue-3.12.0-centos7.tgz
+ - **ubuntu14**: http://repo.imaicloud.com/hue/hue-3.12.0-ubuntu14.tgz  
 
 
 ## 使用163源
