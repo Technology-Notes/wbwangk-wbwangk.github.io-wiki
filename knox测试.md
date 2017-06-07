@@ -316,7 +316,7 @@ $ ambari-server restart
 ```
 Status Code:500 Cannot find user from JWT. Please, ensure LDAP is configured and users are synced.
 ```
-## 测试Knox的用户映射
+## 测试Knox的用户模拟
 需要先说明的是，hadoop测试集群的三个节点的操作系统均没有一个john的用户。Knox启用的是ShiroProvider认证方式。现在通过Knox的网关API在HDFS上创建一个```/tmp/john```的目录，注意这个目录的拥有者：
 ```
 $ curl -k -i -u john:johnldap -X PUT "https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp/john?op=MKDIRS"
