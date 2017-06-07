@@ -14,6 +14,11 @@ core-site.xml中定义了knox了安装主机(hadoop.proxyuser.knox.hosts)和可�
 在测试中FQDN_OF_KNOX_HOST被替换为```u1401.ambari.apache.org```，也就是安装knox网关的虚拟机。把```users```修改成了```*```，即允许knox代理（仿冒）所有用户组的用户。  
 
 ## 两种认证方式的测试
+ - ShiroProvider  
+对于LDAP/AD身份验证，使用用户名和密码。没有SPNEGO/Kerberos支持。
+ - HadoopAuth  
+对于SPNEGO/Kerberos身份验证，使用委派令牌。没有LDAP/AD支持。
+
 #### ShiroProvider(LDAP认证)
 用ambari安装的knox，默认安装目录是```/usr/hdp/current/knox-server```。默认cluster-name是default，对应的配置文件是：
 ```
@@ -293,7 +298,7 @@ $ cat gateway.pem
 (公钥略)
 –—END CERTIFICATE–—
 ```
-生成了gateway.pem的文件，里面是公钥。过程中用到的[master secret](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.4.0/bk_Security_Guide/content/manage_master_secret.html)保存在文件```data/security/master```中（密文）。好像是安装knox时输入的。  
+生成了gateway.pem的文件，里面是公钥。过程中用到的[master secret](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.4.0/bk_Security_Guide/content/manage_master_secret.html)保存在文件```data/security/master```中（密文）。master secret好像是安装knox时定义的，也叫主密码。  
 重启knox服务。然后设置ambari单点登录：
 ```
 $ ambari-server setup-sso
@@ -310,5 +315,6 @@ $ ambari-server restart
 在浏览器中输入：```http://
 
 ## 备忘
+Status Code:500 Cannot find user from JWT. Please, ensure LDAP is configured and users are synced.
 knox安装目录: ```/usr/hdp/current/knox-server```。  
 ambari的knox目录：```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/KNOX```。  
