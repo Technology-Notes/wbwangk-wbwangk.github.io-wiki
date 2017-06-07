@@ -316,6 +316,31 @@ $ ambari-server restart
 ```
 Status Code:500 Cannot find user from JWT. Please, ensure LDAP is configured and users are synced.
 ```
+## 测试Knox的用户映射
+需要先说明的是，hadoop测试集群的三个节点的操作系统均没有一个john的用户。Knox启用的是ShiroProvider认证方式。现在通过Knox的网关API在HDFS上创建一个```/tmp/john```的目录，注意这个目录的拥有者：
+```
+$ curl -k -i -u john:johnldap -X PUT "https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp/john?op=MKDIRS"
+$ curl  -k -u john:johnldap -X GET 'https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS'
+（省略一些返回值）
+      {
+        "accessTime": 0,
+        "blockSize": 0,
+        "childrenNum": 0,
+        "fileId": 44214,
+        "group": "hdfs",
+        "length": 0,
+        "modificationTime": 1496819976113,
+        "owner": "john",
+        "pathSuffix": "john",
+        "permission": "755",
+        "replication": 0,
+        "storagePolicy": 0,
+        "type": "DIRECTORY"
+      },
+```
+这个新建目录的拥有者是john。看上去简单。实际上这里面包含了“用户模拟”。knox服务使用自己的kerberos凭据访问HDFS，但成功模拟了最终用户john在HDFS上创建目录。  
+关于用户模拟的原理可看考[hadoop安全](https://github.com/wbwangk/wbwangk.github.io/wiki/hadoop%E5%AE%89%E5%85%A8)。  
+
 ## 备忘
 
 knox安装目录: ```/usr/hdp/current/knox-server```。  
