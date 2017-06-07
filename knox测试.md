@@ -320,3 +320,4 @@ Status Code:500 Cannot find user from JWT. Please, ensure LDAP is configured and
 
 knox安装目录: ```/usr/hdp/current/knox-server```。  
 ambari的knox目录：```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/KNOX```。  
+[Support HUE interacting with a Hadoop cluster via the Gateway](https://issues.apache.org/jira/browse/KNOX-44)  
