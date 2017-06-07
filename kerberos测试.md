@@ -1,4 +1,5 @@
 ## Kerberos安装
+[参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/_kerberos_overview.html)  
 
 #### 1.安装KDC Server
 在u1404（非HDP集群节点）安装Install the KDC Server：
