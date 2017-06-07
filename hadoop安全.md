@@ -283,10 +283,16 @@ Zookeeper支持通过用户名和密码的认证。用户名和密码认证由�
 
 ### 模拟(Impersonation)
 Hadoop生态系统中有许多服务代表最终用户执行操作。为了确保安全，这些服务必须对客户端进行认证，以确保客户端可以模拟那些用户。 Oozie、Hive (in HiveServer2)和Hue都支持模拟最终用户访问HDFS、MapReduce、YARN或HBase。  
-模拟有时被称为代理(proxying)。可以执行模拟的用户(可以代理其他用户的用户)被称为代理人(proxy)。启用模拟的配置参数是```hadoop.proxyuser.<proxy>.hosts```和```hadoop.proxyuser.<proxy>.groups```，```<proxy>```是执行模拟的用户的用户名。值是逗号隔开的主机列表/用户组列表，或```*```表示全部主机/用户组。  
+模拟有时被称为代理(proxying)。可以执行模拟的用户(可以代理其他用户的用户)被称为代理人(proxy)。启用模拟的配置参数有三个，可以任意组合这三个参数：
+```
+hadoop.proxyuser.<proxy>.hosts               (指定模拟可以从哪台机器上发起)
+hadoop.proxyuser.<proxy>.groups              (指定可以被模拟的用户所在的用户组)
+hadoop.proxyuser.<proxy>.users               (指定可以被模拟的用户有哪几个)
+```
+其中```<proxy>```是执行模拟的用户的用户名，一般是超级用户，如hue、knox。值是逗号隔开的主机列表/用户组/用户列表，或```*```表示全部主机/用户组/用户。  
 如果你想要Hue和Oozie具有代理功能，但你想限制Oozie只能代理*oozie-users*用户组的用户，那么你最好使用类似下面的配置：
 ```
- <!-- Configure Hue impersonation from hue.example.com -->
+ <!-- 允许超级用户hue从节点hue.example.com上模拟所有用户组的最终用户 -->
  <property>
    <name>hadoop.proxyuser.hue.hosts</name>
    <value>hue.example.com</value>
@@ -295,10 +301,7 @@ Hadoop生态系统中有许多服务代表最终用户执行操作。为了确�
    <name>hadoop.proxyuser.hue.groups</name>
    <value>*</value>
  </property>
-<!--
- Configure Oozie impersonation from oozie01.example.com and
- oozie02.example.com for users in oozie-users
- -->
+<!-- 允许超级用户oozie从节点oozie01.example.com和oozie02.example.com上模拟用户组oozie-users中的最终用户 -->
  <property>
    <name>hadoop.proxyuser.oozie.hosts</name>
    <value>oozie01.example.com,oozie02.example.com</value>
@@ -308,7 +311,7 @@ Hadoop生态系统中有许多服务代表最终用户执行操作。为了确�
    <value>oozie-users</value>
  </property>
 ```
-
+如果群集以安全模式运行，超级用户必须具有Kerberos凭据才能模拟另一个用户。
 #### 配置
 当位置好kerberos认证后，所有用户和守护进程必须提供有效的凭据才能访问RPC接口。 这意味着你必须为集群中的每一个服务器/守护进程对创建一个kerberos服务凭据。回顾一下服务主体名称(SPN)的概念，它有三部分组成：一个服务名，一个主机名，和一个领域。在hadoop中，每个作为特定服务组成部分的守护进程使用这个服务名称(对于HDFS是hdfs，对于MapReduce是mapred，对于YARN是yarn)。另外，如果你想为各种web接口启用kerberos认证，那么你还需要为HTTP服务名称提供主体。  
 
