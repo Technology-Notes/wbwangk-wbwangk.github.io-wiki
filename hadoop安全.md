@@ -409,8 +409,20 @@ keytab文件的建议存放目录是$HADOOP_CONF_DIR目录(一般是/etc/hadoop/
 身份验证仅仅是整体安全性故事的一部分，还需要一种方法来对经过身份验证的用户可以访问的操作或数据进行建模。以这种方式保护资源称为授权。
 
 ### HDFS授权
-每次尝试访问HDFS中的文件或目录必须首先通过授权检查。HDFS采用与POSIX兼容的文件系统通用的授权方案。权限由三个不同类别的用户管理：所有者，组和其他人。读取，写入和执行权限可以独立授予每个类。  
-无论文件或目录的权限如何，NameNode运行的用户（通常为hdfs）和dfs.permis sions.superusergroup（默认为超组）中定义的组中的任何成员都可以读取，写入或删除任何文件和目录。就HDFS而言，它们在Linux系统上相当于root。
+[参考](https://hadoop.apache.org/docs/r2.7.2/hadoop-project-dist/hadoop-hdfs/HdfsPermissionsGuide.html)  
+每次尝试访问HDFS中的文件或目录必须首先通过授权检查。HDFS采用与POSIX兼容的文件系统通用的授权方案。权限由三个不同类别的用户管理：所有者，组和其他人。读取，写入和执行权限可以独立授予每个类。对于文件，需要r权限才能读取文件，并且需要w权限才能写入或附加到文件中。对于目录，需要r权限来列出目录的内容，创建或删除文件或目录所需的w权限，并且需要x权限来访问目录的子目录。  
+
+#### 用户身份
+从Hadoop 0.22开始，Hadoop支持两种不同的操作模式来确定用户的身份，由hadoop.security.authentication属性指定：
+- simple
+     在这种操作模式下，客户端进程的身份由主机操作系统决定。在类Unix系统上，用户名等同于`whoami`。  
+- kerberos
+      在Kerberos操作中，客户端进程的身份由其Kerberos凭据确定。例如，在Kerberos环境中，用户可以使用kinit实用程序来获取Kerberos票证授权（TGT），并使用klist来确定其当前的主体。将Kerberos主体映射到HDFS用户名时，除了主要的所有组件都将被删除。例如，一个主体todd/foobar@CORP.COMPANY.COM将作为HDFS上的简单用户名todd。  
+不管操作模式如何，用户身份机制对于HDFS本身是外在的。HDFS中没有规定创建用户身份，建立组或处理用户凭据。  
+
+#### 组映射
+一旦用户名被确定如上所述，组列表由组映射服务确定，由hadoop.security.group.mapping属性配置。  
+可以通过org.apache.hadoop.security.LdapGroupsMapping将替代实现直接连接到LDAP服务器来解析组列表。但是，只有在必需的组仅存在于LDAP中且不在Unix服务器上实现时，才应使用此提供程序。  
 #### 服务级别授权
 Hadoop支持服务级别授权。授权策略保存在hadoop-policy.xml中。在该xml中可以定义“权力清单（如提交作业到集群的权力）”与用户（用户组）的对应。用户之间用逗号隔开，用户与用户组之间用空格隔开。以空格开始表示只定义了用户组，以空格结尾表示只定义了用户。  
 
