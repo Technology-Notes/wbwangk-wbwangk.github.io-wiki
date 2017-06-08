@@ -312,7 +312,7 @@ Do you want to configure advanced properties [y/n] (n) ?n
 Ambari Server 'setup-sso' completed successfully.
 $ ambari-server restart
 ```
-在浏览器中输入：```https://u1401.ambari.apache.org:8080```，用户会被重定向到knox的登录界面。在chrome中使用DevTools监测到的重定向请求（UrlEncode后）：
+在浏览器中输入：```http://u1401.ambari.apache.org:8080```，用户会被重定向到knox的登录界面。在chrome中使用DevTools监测到的重定向请求（UrlEncode后）：
 ```
 https://u1401.ambari.apache.org:8443/gateway/knoxsso/api/v1/websso?originalUrl=http://u1401.ambari.apache.org:8080/#/login?redirected=true
 ```
