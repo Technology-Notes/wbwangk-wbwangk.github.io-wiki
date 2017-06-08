@@ -263,7 +263,7 @@ hadoop.auth="u=guest&p=guest/u1401.ambari.apache.org@AMBARI.APACHE.ORG&t=kerbero
 由于cookie的存在，浏览器不会每次请求都与kerberos客户端交互，只有cookie失效后，浏览器才会与kerberos客户交互，重新认证。
 
 ## Ambari单点登录到Knox
-[原文](https://cwiki.apache.org/confluence/display/KNOX/Ambari+via+KnoxSSO+and+Default+IDP)  
+[原文](https://cwiki.apache.org/confluence/display/KNOX/Ambari+via+KnoxSSO+and+Default+IDP)，也可参考[HDP的有关文档](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/setting_up_knox_sso_for_ambari.html)   
 Knox提供了基于表单的认证(默认IDP)。利用它，可以实现Ambari与Knox的单点登录。  
 knox提供的登录页面URL：
 ```
@@ -341,15 +341,24 @@ Set-Cookie: hadoop-jwt=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJqb2huIiwiaXNzIjoiS05PWFNT
 ```
 {"alg":"RS256"}.{"sub":"john","iss":"KNOXSSO","exp":1496882245}.(乱码)
 ```
+这个JWT令牌有在线工具可以解析和验证，地址：```https://jwt.io/#debugger```。将前面的```eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJqb2huIiwiaXNzIjoiS05PWFNTTyIsImV4cCI6MTQ5Njg4MjI0NX0.(略)```复制到工具的Encoded输入框中，然后在VERIFY SIGNATURE框中粘贴前文提到的knox公钥（公钥包括–—BEGIN CERTIFICATE–—和END这两行，但在执行ambari-server setup-sso粘贴时却不能包含这两行），如果令牌验证通过，下面大按钮就显示“Signature Verified”。  
+
 http响应的最后是指定了重定向的地址，这个地址是最初通过url参数originalUrl传递给Knox的：
 ```
 Location: http://u1401.ambari.apache.org:8080/
 ```
 小结：通过这个请求/响应，KnoxSSO验证了john的密码，为域ambari.apache.org的根路径写入了JWT令牌，并重定向回Ambari的入口页面。
-但ambari中并没有这个用户，所以knox登录成功后仍然弹出了ambari的登录界面。似乎需要将knox和ambari的后台配置为同一个LDAP服务器。而在我的测试中ambari的后台并不是LDAP。chrome中报告的错误是：
+
+可以用CURL模拟JWT的发放过程：
 ```
-Status Code:500 Cannot find user from JWT. Please, ensure LDAP is configured and users are synced.
+$  curl -c t.txt -ivk -u john:johnldap https://u1401.ambari.apache.org:8443/gateway/knoxsso/api/v1/websso?originalUrl=http://u1401.ambari.apache.org:8080/
+(省略一些，-c t.txt参数表示将cookie内容写入t.txt文件中)
+Set-Cookie: hadoop-jwt=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJqb2huIiwiaXNzIjoiS05PWFNTTyIsImV4cCI6MTQ5NjkwMTE5M30.F9H2EMP-8uDx74AbNJTYlWoLRfm05uFRpvfheoP8fhmKSN_j4UZR1R9Updn0FZsG3OGBM8QsLO2u828yK6f-dPhg_0HntXxGjYE64lnX6_GoLOvBp1CugUGVGH5iOkgWUiKOW3xzxGI2oP3n3pSV_gdt5vKfq2RO8-fAT2r0Xg4;Path=/;Domain=.ambari.apache.org;HttpOnly
+Location: http://u1401.ambari.apache.org:8080/
+$ curl -b t.txt -iv http://u1401.ambari.apache.org:8080/
 ```
+下面的curl请求模拟了ambari收到附带JWT的请求，```-b t.txt```参数表示把t.txt文件中的cookie信息一起发出。如果ambari配置正确则应直跳过登录页面，直接把用户重定向到ambari内部首页。  
+
 ## 测试Knox的用户模拟
 需要先说明的是，hadoop测试集群的三个节点的操作系统均没有一个john的用户。Knox启用的是ShiroProvider认证方式。现在通过Knox的网关API在HDFS上创建一个```/tmp/john```的目录，注意这个目录的拥有者：
 ```
