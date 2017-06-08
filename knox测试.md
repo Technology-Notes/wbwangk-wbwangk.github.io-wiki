@@ -312,7 +312,41 @@ Do you want to configure advanced properties [y/n] (n) ?n
 Ambari Server 'setup-sso' completed successfully.
 $ ambari-server restart
 ```
-在浏览器中输入：```https://u1401.ambari.apache.org:8080```，用户会被重定向到knox的登录界面。用john:johnldap用户进行了登录，但ambari中并没有这个用户，所以knox登录成功后仍然弹出了ambari的登录界面。似乎需要将knox和ambari的后台配置为同一个LDAP服务器。而在我的测试中ambari的后台并不是LDAP。chrome中报告的错误是：
+在浏览器中输入：```https://u1401.ambari.apache.org:8080```，用户会被重定向到knox的登录界面。在chrome中使用DevTools监测到的重定向请求（UrlEncode后）：
+```
+https://u1401.ambari.apache.org:8443/gateway/knoxsso/api/v1/websso?originalUrl=http://u1401.ambari.apache.org:8080/#/login?redirected=true
+```
+重定向的响应还是个302的重定向，以下是响应中Location值：
+```
+Location: https://u1401.ambari.apache.org:8443/gateway/knoxsso/knoxauth/login.html?originalUrl=http://u1401.ambari.apache.org:8080/#/login?redirected=true
+```
+上面的websso和login.html两个URL均在前文中提到。  
+输入用户名```john```和密码```johnldap```后点登录，发出的请求：
+```
+https://u1401.ambari.apache.org:8443/gateway/knoxsso/api/v1/websso?originalUrl=http://u1401.ambari.apache.org:8080/
+(请求头中的信息如下，Basic后面的乱码是john:johnldap的base64编码)
+Authorization:Basic am9objpqb2hubGRhcA==
+```
+从上面的请求可以看出，KnoxSSO的表单认证(默认IDP)遵循了http基础认证规范。  
+再看响应，Knox验证john密码通过，返回了307重定向，并在设置cookie：
+```
+Set-Cookie: JSESSIONID=1tgu9opzwl60m10c5ogw2yf5da; Path=/gateway/knoxsso
+Set-Cookie: rememberMe=deleteMe; Path=/gateway/knoxsso
+```
+然后在根路径上写入了hadoop-jwt的cookie：
+```
+Set-Cookie: hadoop-jwt=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJqb2huIiwiaXNzIjoiS05PWFNTTyIsImV4cCI6MTQ5Njg4MjI0NX0.(略);Path=/;Domain=.ambari.apache.org
+```
+这个JWT令牌base64解码后：
+```
+{"alg":"RS256"}.{"sub":"john","iss":"KNOXSSO","exp":1496882245}.(乱码)
+```
+http响应的最后是指定了重定向的地址，这个地址是最初通过url参数originalUrl传递给Knox的：
+```
+Location: http://u1401.ambari.apache.org:8080/
+```
+小结：通过这个请求/响应，KnoxSSO验证了john的密码，为域ambari.apache.org的根路径写入了JWT令牌，并重定向回Ambari的入口页面。
+但ambari中并没有这个用户，所以knox登录成功后仍然弹出了ambari的登录界面。似乎需要将knox和ambari的后台配置为同一个LDAP服务器。而在我的测试中ambari的后台并不是LDAP。chrome中报告的错误是：
 ```
 Status Code:500 Cannot find user from JWT. Please, ensure LDAP is configured and users are synced.
 ```
