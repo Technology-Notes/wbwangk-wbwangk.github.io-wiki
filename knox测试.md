@@ -311,6 +311,7 @@ Public Certificate pem (empty) (empty line to finish input):
 Do you want to configure advanced properties [y/n] (n) ?n
 Ambari Server 'setup-sso' completed successfully.
 $ ambari-server restart
+(要取消SSO，就再次运行ambar-server setup-sso并重启服务)
 ```
 在浏览器中输入：```http://u1401.ambari.apache.org:8080```，用户会被重定向到knox的登录界面。在chrome中使用DevTools监测到的重定向请求（UrlEncode后）：
 ```
