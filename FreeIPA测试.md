@@ -101,3 +101,4 @@ freeipa.server.hostname: c7001.ambari.apache.org
 freeipa.server.master.password: 1   
 freeipa.server.realm: AMBARI.APACHE.ORG
 ```
+在windows下安装LDAP浏览器[JXplorer](http://www.jxplorer.org)。  
