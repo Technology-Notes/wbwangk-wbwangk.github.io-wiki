@@ -1,3 +1,4 @@
+## 手工部署FreeIPA
 在centos7上部署。首先要检查```/etc/hosts```(相当于DNS)、```/etc/hostname```和本机IP，三者要匹配，否则安装会出错。主机名要用全限定名（如expample.com，而不是类似c7007）。  
 ```
 $ cat /etc/hosts
@@ -78,3 +79,25 @@ https://c7007.ambari.apache.org
 通过浏览器的FreeIPA服务器将要求您接受您的客户端（浏览器）和服务器（ipa）之间的安全SSL通信的证书。按照提示接受异常。确保导入的证书来自FreeIPA服务器，而不是来自攻击者！
 
 当接受证书时，Web UI很可能会检测到它没有可用的Kerberos凭据，并显示用户和密码登录屏幕。只要正确配置浏览器，就可以按照登录屏幕上的链接运行配置工具。  
+
+## ambari-freeipa-service
+[原文](https://github.com/hortonworks-gallery/ambari-freeipa-service)   
+测试环境CENTOS7.0，三个VM分别是c7001/c7002/c7003。已经安装了Ambari和HDP集群，集群未启用kerberos，未安装OpenLDAP。  
+在c7001上，下载定义的Ambari服务freeipa：
+```
+$ VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
+$ sudo git clone https://github.com/hortonworks-gallery/ambari-freeipa-service.git   /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/FREEIPA-DEMO 
+$ ambari-server restart
+```
+浏览器输入地址c7001.ambari.apache.org，登录后添加服务，选择FreeIPA Server，自动选择安装在节点c7001。参数配置：
+```
+【Advanced freeipa-config】
+freeipa.server.admin.password: 1
+freeipa.server.dns.forwarder: 202.102.128.68
+freeipa.server.dns.setup: false
+freeipa.server.domain: ambari.apache.org
+freeipa.server.ds.password: 1
+freeipa.server.hostname: c7001.ambari.apache.org
+freeipa.server.master.password: 1   
+freeipa.server.realm: AMBARI.APACHE.ORG
+```
