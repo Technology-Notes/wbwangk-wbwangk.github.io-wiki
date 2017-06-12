@@ -297,23 +297,22 @@ https://c7007.ambari.apache.org
 ## ambari-freeipa-service
 [原文](https://github.com/hortonworks-gallery/ambari-freeipa-service)   
 测试环境CENTOS7.0，三个VM分别是c7001/c7002/c7003。已经安装了Ambari和HDP集群，集群未启用kerberos，未安装OpenLDAP。  
-添加163国内源：
+在要安装freeiap的节点上（我选择c7003）添加163国内源，如果只是用国外源实测安装freeipa不成功：
 ```
 $ wget -O /etc/yum.repos.d/CentOS7-Base-163.repo http://mirrors.163.com/.help/CentOS7-Base-163.repo
 $ yum update -y
 ```
-实测中发现CentOS7-Base-163.repo中有个变量$releasever的返回值有问题。预期返回"7"，实际返回的是"7server"，只能手工修改repo文件。估计跟使用的box是"centos7.0"，安装的是oracle linux，不是“真正”的centos7有关:
+实测中发现CentOS7-Base-163.repo中有个变量$releasever的返回值有问题。预期返回"7"，实际返回的是"7server"，只能手工修改repo文件。可能因为使用的box是"centos7.0"，安装的是oracle linux，不是“真正”的centos7有关:
 ```
 $ sed -i 's/$releasever/7/' /etc/yum.repos.d/CentOS7-Base-163.repo          (由于$是特殊符号，只能用单引号)
 ```
-
-在c7001上，下载定义的Ambari服务freeipa：
+在ambari所在的节点（我的是c7001）上，下载定制的Ambari服务freeipa：
 ```
 $ VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-$ sudo git clone https://github.com/hortonworks-gallery/ambari-freeipa-service.git   /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/FREEIPA-DEMO 
+$ sudo git clone https://github.com/imaidev/ambari-freeipa-service.git   /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/FREEIPA-DEMO 
 $ ambari-server restart
 ```
-浏览器输入地址c7001.ambari.apache.org，登录后添加服务，选择FreeIPA Server，自动选择安装在节点c7001。参数配置：
+浏览器输入地址Ambari(c7001.ambari.apache.org:8080)，登录后添加服务，选择FreeIPA Server，自动选择安装在节点c7001。但实测发现FreeIPA与Ambari有冲突（如freeipa的CA要占用8080端口），所以手工修改安装节点到c7003。参数配置：
 ```
 【Advanced freeipa-config】
 freeipa.server.admin.password: vagrant2                       (至少8位密码)
@@ -321,13 +320,10 @@ freeipa.server.dns.forwarder: 202.102.128.68
 freeipa.server.dns.setup: false
 freeipa.server.domain: ambari.apache.org
 freeipa.server.ds.password: vagrant2                          (至少8位密码)
-freeipa.server.hostname: c7001.ambari.apache.org
+freeipa.server.hostname: c7003.ambari.apache.org
 freeipa.server.master.password: vagrant2                      (至少8位密码)
 freeipa.server.realm: AMBARI.APACHE.ORG
 ```
-安装中发现其中的CA软件需要占用8080端口，这是Ambari占用的端口，导致部署失败。编辑Ambari配置文件，修改默认端口为8081：
-```
-$ echo "client.api.port=8081" >> /etc/ambari-server/conf/ambari.properties
-$ ambari-server restart
-```
+
+
 在windows下安装LDAP浏览器[JXplorer](http://www.jxplorer.org)。  
