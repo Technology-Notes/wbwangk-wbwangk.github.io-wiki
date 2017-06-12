@@ -257,6 +257,7 @@ files is the Directory Manager password
 ```
 $ ipa-server-install --hostname=c7004.ambari.apache.org --domain=ambari.apache.org --realm=AMBARI.APACHE.ORG --ds-password=vagrant2 --master-password=vagrant2 --admin-password=vagrant2 --unattended
 ```
+
 帮助、登录admin、创建用户，注意创建用户和设置密码是分开的：
 ```
 $ ipa help topics       (列出帮助主题)
@@ -296,8 +297,13 @@ https://c7007.ambari.apache.org
 如果按F12（或shift+ctrl+i）打开火狐的调试工具，可以看到这个SPNEGO认证过程。  
 通过浏览器的FreeIPA服务器将要求您接受您的客户端（浏览器）和服务器（ipa）之间的安全SSL通信的证书。按照提示接受异常。确保导入的证书来自FreeIPA服务器，而不是来自攻击者！
 
-当接受证书时，Web UI很可能会检测到它没有可用的Kerberos凭据，并显示用户和密码登录屏幕。只要正确配置浏览器，就可以按照登录屏幕上的链接运行配置工具。  
-
+当接受证书时，Web UI很可能会检测到它没有可用的Kerberos凭据，并显示用户和密码登录屏幕。只要正确配置浏览器，就可以按照登录屏幕上的链接运行配置工具。 
+ 
+卸载的命令：
+```
+$ iap-server-install --uninstall
+$ yum erase freeipa-server
+```
 ## ambari-freeipa-service
 [原文](https://github.com/hortonworks-gallery/ambari-freeipa-service)   
 测试环境CENTOS7.0，三个VM分别是c7001/c7002/c7003。已经安装了Ambari和HDP集群，集群未启用kerberos，未安装OpenLDAP。  
