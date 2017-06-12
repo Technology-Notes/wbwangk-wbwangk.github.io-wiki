@@ -30,7 +30,7 @@ $ echo "*/admin@AMBARI.APACHE.ORG *" >> /etc/krb5kdc/kadm5.acl
 $ service krb5-admin-server restart
 ```
 #### 3.kerberos客户端安装
-ubuntu下的kerberos客户端叫做krb5-user：
+ubuntu下的kerberos客户端叫做krb5-user(centos6/7下叫krb5-workstation)：
 ```
 $ apt install krb5-user  (如果提示包依赖错误，就用手机上网执行apt-get udpate)
 ```
