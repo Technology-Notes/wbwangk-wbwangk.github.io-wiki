@@ -253,6 +253,10 @@ Be sure to back up the CA certificates stored in /root/cacert.p12
 These files are required to create replicas. The password for these
 files is the Directory Manager password
 ```
+无提示安装的命令：
+```
+$ ipa-server-install --hostname=c7004.ambari.apache.org --domain=ambari.apache.org --realm=AMBARI.APACHE.ORG --ds-password=vagrant2 --master-password=vagrant2 --admin-password=vagrant2 --unattended
+```
 帮助、登录admin、创建用户，注意创建用户和设置密码是分开的：
 ```
 $ ipa help topics       (列出帮助主题)
