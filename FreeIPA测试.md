@@ -272,37 +272,33 @@ New Password: 1
 $ kinit guest               (使用新建的用户登录，需要重设密码)
 $ klist
 ```
-下面需要测试FreeIPA的界面(Web UI)，需要用到火狐浏览器。但目前安装的机器是个服务器，没有图形界面。启动另一个ubuntu桌面的虚拟机u1408（IP是192.168.14.108），并进入u1408。在/etc/hosts配置文件中添加新KDC的DNS解析：
-```
-echo "192.168.14.207 c7007.ambari.apache.org c7007" >> /etc/hosts
-```  
-u1408之前的KDC不是c7007，需要修改u1408的/etc/krb5.conf配置文件：
-```
-[realms]
-  AMBARI.APACHE.ORG = {
-     kdc = c7007.ambari.apache.org
-     admin_server = c7007.ambari.apache.org
- }
-```
-用火狐浏览器测试SPNEGO认证的背景知识参考"[linux桌面下SPNEGO测试(firefox)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#linux%E6%A1%8C%E9%9D%A2%E4%B8%8Bspnego%E6%B5%8B%E8%AF%95firefox)"。需要把".ambari.apache.org"加入negotiate信任域。  
-首先是获得KDC票据：
-```
-$ su - vagrant
-$ kinit admin
-```
-之所以切换为vagrant用户，是因为我安装的ubuntu14桌面的默认用户是vagrant。执行kinit和运行火狐浏览器必须同一个用户，否则无法共享kerberos票据。然后在火狐地址栏输入地址：
-```
-https://c7007.ambari.apache.org
-```
-如果按F12（或shift+ctrl+i）打开火狐的调试工具，可以看到这个SPNEGO认证过程。  
-通过浏览器的FreeIPA服务器将要求您接受您的客户端（浏览器）和服务器（ipa）之间的安全SSL通信的证书。按照提示接受异常。确保导入的证书来自FreeIPA服务器，而不是来自攻击者！
+测试FreeIPA的界面(Web UI)。在windows的浏览器中（如chrome）输入地址：```https://c7004.ambari.apache.org```(需要提前把这个域名的ip加入到windows的etc/hosts配置文件中)。会提出登录页面，由于windows并没有加入AMBARI.APACHE.ORG域，无法使用SPNEGO认证（参考"[linux桌面下SPNEGO测试(firefox)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#linux%E6%A1%8C%E9%9D%A2%E4%B8%8Bspnego%E6%B5%8B%E8%AF%95firefox)"）。取消弹出窗口，进入登录表单，输入admin/vagrant2，点登录，就进入了FreeIPA的界面。  
 
-当接受证书时，Web UI很可能会检测到它没有可用的Kerberos凭据，并显示用户和密码登录屏幕。只要正确配置浏览器，就可以按照登录屏幕上的链接运行配置工具。 
- 
 卸载的命令：
 ```
 $ iap-server-install --uninstall
 $ yum erase freeipa-server
+```
+## 配置freeipa
+刚安装的freeipa的kerberos访问控制列表如下:
+```
+$ cat /var/kerberos/krb5kdc/kadm5.acl
+*/admin@EXAMPLE.COM     *
+```
+域明显没有设置正确,修改成:
+```
+#/admin@AMBARI.APACHE.ORG     *
+```
+如果不修改这个ACL配置文件，freeipa内置的KDC将无法作为Ambari启用kerberos的服务器。会报告的错误是：
+```
+017-06-13 12:06:29,528 - Failed to create principal, hdp33-061317@AMBARI.APACHE.ORG - Failed to create service principal for hdp33-061317@AMBARI.APACHE.ORG
+STDOUT: Authenticating as principal admin@AMBARI.APACHE.ORG with password.
+Password for admin@AMBARI.APACHE.ORG: 
+Enter password for principal "hdp33-061317@AMBARI.APACHE.ORG": 
+Re-enter password for principal "hdp33-061317@AMBARI.APACHE.ORG": 
+
+STDERR: WARNING: no policy specified for hdp33-061317@AMBARI.APACHE.ORG; defaulting to no policy
+add_principal: Operation requires ``add'' privilege while creating "hdp33-061317@AMBARI.APACHE.ORG".
 ```
 ## ambari-freeipa-service
 [原文](https://github.com/hortonworks-gallery/ambari-freeipa-service)   
@@ -334,6 +330,7 @@ freeipa.server.hostname: c7003.ambari.apache.org
 freeipa.server.master.password: vagrant2                      (至少8位密码)
 freeipa.server.realm: AMBARI.APACHE.ORG
 ```
-
-
-在windows下安装LDAP浏览器[JXplorer](http://www.jxplorer.org)。  
+### KDC代理测试
+参考[另一篇wiki文章](https://github.com/wbwangk/wbwangk.github.io/wiki/kerberos%E6%B5%8B%E8%AF%95#kerberos%E4%BB%A3%E7%90%86%E6%B5%8B%E8%AF%95)。  
+### 使用LDAP工具
+在windows下安装LDAP浏览器[JXplorer](http://www.jxplorer.org)。打开界面后输入c7004.ambari.apache.org（端口默认），就可以连接上FreeIPA的LDAP，查看其中内容。  
