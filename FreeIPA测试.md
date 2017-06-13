@@ -330,6 +330,60 @@ freeipa.server.hostname: c7003.ambari.apache.org
 freeipa.server.master.password: vagrant2                      (至少8位密码)
 freeipa.server.realm: AMBARI.APACHE.ORG
 ```
+
+### Ambari 2.4 Kerberos with FreeIPA
+[原文](https://community.hortonworks.com/articles/59645/ambari-24-kerberos-with-freeipa.html)  
+HDP不支持kerberos凭据缓存的内存keyring存储。编辑ipa-server节点的/etc/krb5.conf文件，将:
+```
+default_ccache_name = KEYRING:persistent:%{uid}
+```
+修改为：
+```
+default_ccache_name = FILE:/tmp/krb5cc_%{uid}
+```
+#### 为ambari创建管理员用户
+```
+$ kinit admin@AMBARI.APACHE.ORG
+$ ipa user-add hadoopadmin --first=Hadoop --last=Admin
+$ ipa group-add-member admins --users=hadoopadmin
+$ ipa passwd hadoopadmin         (密码是vagrant2，备忘)
+```
+新用户必须加入admins用户组，否则会权限不足，ambari在启用kerberos时需要新建kerberos主体的权限。  
+Ambari还需要创建一个叫ambari-managed-principals的用户组。这个用户组目前还不能被Ambari的向导创建。创建用户组：
+```
+$ ipa group-add ambari-managed-principals
+```
+Because of the way FreeIPA automatically expires the new password, it is necessary to kinit as hadoopadmin and change the initial password. The password can be set to the same password unless the password policy prohibits password reuse:
+FreeIPA由于安全的考虑，会让新密码自动过期，因此有必要用hadoopadmin用户去kinit，修改初始密码：
+```
+$ kinit hadoopadmin@AMBARI.APACHE.ORG
+```
+如果要使用FreeIPA的DNS就执行：
+```
+$ echo "nameserver $ipaserver_ip_address" > /etc/resolv.conf
+```
+在HDP集群的所有节点上安装ipa-client并将节点加入FreeIPA服务器：
+```
+$ yum -y install ipa-client
+$ ipa-client-install --domain=ambari.apache.org \
+    --server=c7004.ambari.apache.org \
+    --realm=AMBARI.APACHE.ORG \
+    --principal=hadoopadmin@AMBARI.APACHE.ORG \
+    --enable-dns-updates
+```
+如果未使用DNS，最后这个参数```--enable-dns-updates```可以不加。  
+如果ambari完全支持freeIPA时，以上的客户端估计会自动安装，就像自动安装kerberos客户端一样。现在只能手工装。  
+还要在ambari服务器节点上安装：
+```
+$ yum -y install ipa-admintools
+```
+用浏览器打开URL(c7001是ambari服务器所在节点):
+```
+http://c7001.ambari.apache.org:8080/#/experimental
+```
+选中```enableipa```这个单选框。  
+运行启用kerberos的向导，发现多一个选项：```Existing IPA```。选择这个选项，就可以用IPA充当KDC了。输入的管理员主体是hadoopadmin@AMBARI.APACHE.ORG，其他的与一般的启用kerberos一样。  
+
 ### KDC代理测试
 参考[另一篇wiki文章](https://github.com/wbwangk/wbwangk.github.io/wiki/kerberos%E6%B5%8B%E8%AF%95#kerberos%E4%BB%A3%E7%90%86%E6%B5%8B%E8%AF%95)。  
 ### 使用LDAP工具
