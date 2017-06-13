@@ -209,3 +209,50 @@ KVNO Principal
 $ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp1@AMBARI.APACHE.ORG
 $ curl -k -i --negotiate -u : http://u1401.ambari.apache.org:50070/webhdfs/v1/tmp?op=LISTSTATUS
 ```
+
+### kerberos代理测试
+[参考](https://pypi.python.org/pypi/kdcproxy/0.3.1)  
+freeipa带有kerberos KDC代理功能。执行ipa-server-install的时候有提示：
+```
+Configuring the web interface (httpd). Estimated time: 1 minute
+  [16/21]: create KDC proxy user
+  [17/21]: create KDC proxy config
+  [18/21]: enable KDC proxy
+```
+通过KdcProxy可以让kinit客户端以https协议通过代理连接到KDC。  
+首先需要把freeipa的证书复制到客户端所在的机器上：
+```
+$ cd /etc/ipa
+$ openssl X509 -in ca.crt -out ca.pem
+$ scp ca.pem root@c7002:/etc/ssl/.    (复制到c7002节点)
+```
+配置c7002节点的kerberos客户端配置文件(/etc/krb5.conf)：
+```
+ [libdefaults]
+   default_realm = AMBARI.APACHE.ORG
+
+[realms]
+   AMBARI.APACHE.ORG = {
+     http_anchors = FILE:/etc/ssl/ca.pem
+     kdc = https://c7004.ambari.apache.org/KdcProxy
+     kpasswd_server = https://c7004.mbari.apache.org/KdcProxy
+```
+在c7002节点上测试KDC代理。环境变量KRBT_TRACE可以让kerberos调试信息输出到文件(/dev/stdout表示输出到屏幕)：
+```
+$ env KRB5_TRACE=/dev/stdout kinit admin
+[29875] 1497331322.495260: Getting initial credentials for admin@AMBARI.APACHE.ORG
+[29875] 1497331322.495434: Sending request (196 bytes) to AMBARI.APACHE.ORG
+[29875] 1497331322.495463: Resolving hostname c7004.ambari.apache.org
+[29875] 1497331322.619668: TLS certificate name matched "c7004.ambari.apache.org"
+[29875] 1497331322.623893: Sending HTTPS request to https 192.168.70.104:443
+[29875] 1497331322.629792: Received answer (272 bytes) from https 192.168.70.104:443
+[29875] 1497331322.629809: Terminating TCP connection to https 192.168.70.104:443
+[29875] 1497331322.630005: Response was not from master KDC
+[29875] 1497331322.630206: Received error from KDC: -1765328359/Additional pre-authentication required
+[29875] 1497331322.630269: Processing preauth types: 136, 19, 2, 133
+[29875] 1497331322.630288: Selected etype info: etype aes256-cts, salt "Ar>LhD/*\>smo3/3", params ""
+[29875] 1497331322.630296: Received cookie: MIT
+Password for admin@AMBARI.APACHE.ORG:
+（略）
+```
+从上面的调试信息可以看出kinit连接是通过https的443端口连接到KDC的。  
