@@ -262,6 +262,11 @@ hadoop.auth="u=guest&p=guest/u1401.ambari.apache.org@AMBARI.APACHE.ORG&t=kerbero
 ```
 由于cookie的存在，浏览器不会每次请求都与kerberos客户端交互，只有cookie失效后，浏览器才会与kerberos客户交互，重新认证。
 
+## SPNEGO原理浅析
+SPNEGO是基于GSSAPI的，SPENGO认证的发起方是浏览器(或类似客户端)，通信协议是HTTP。SPNEGO的由服务器端发起，会在http响应头上放置：
+```WWW-Authenticate:Negotiate```，浏览器收到这个响应后，会试图通过GSSAPI调用本地的kerberos客户端。如果本地存在kerberos票据缓存，kerberos客户端会将kerberos票据返回给GSSAPI调用者（猜的，反正是类似的东西）。浏览器收到票据，就构造出下一个http请求发往服务器，http请求头的格式是:``` Authorization: Negotiate YIIC4QYJKoZIhvcSAQ(后略)```。Authorization中应包含了kerberos票据。  
+如果本地没有kerberos票据缓存或服务器不认可票据，windows的IE/Chrome会弹出内置窗口让用户输入用户名口令（与基础认证类似）。
+
 ## Ambari单点登录到Knox
 [原文](https://cwiki.apache.org/confluence/display/KNOX/Ambari+via+KnoxSSO+and+Default+IDP)，也可参考[HDP的有关文档](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/setting_up_knox_sso_for_ambari.html)   
 Knox提供了基于表单的认证(默认IDP)。利用它，可以实现Ambari与Knox的单点登录。  
