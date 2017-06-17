@@ -20,11 +20,16 @@ core-site.xml中定义了knox了安装主机(hadoop.proxyuser.knox.hosts)和可�
 对于SPNEGO/Kerberos身份验证，使用委派令牌。没有LDAP/AD支持。
 
 #### ShiroProvider(LDAP认证)
-用ambari安装的knox，默认安装目录是```/usr/hdp/current/knox-server```。默认cluster-name是default，对应的配置文件是：
+用ambari安装的knox，默认安装目录是```/usr/hdp/current/knox-server```。默认cluster-name是default，对应的拓扑配置文件是：
 ```
 /usr/hdp/current/knox-server/conf/topologies/default.xml
 ```
-这个配置文件可以在ambari中通过界面修改，点击Knox服务后点config然后在配置文件的Advanced topology小节中。将第一个xml的第一个provider元素替换为下列内容：
+有两种方式创建LDAP服务器，一是手工安装OpenLDAP；二是使用Knox自带的Demo LDAP。  
+如果要手工安装OpenLDAP，参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)LDAP测试的文档。  
+如果要使用Knox自带的DemoLDAP服务器，则需要通过Ambari界面，点击左侧Knox菜单，然后在Knox服务页面上点击下拉菜单的```Start Demo LDAP```链接。  
+下面的测试使用的u1401上手工部署OpenLDAP，并在LDAP上创建了一个测试用户john（dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org），该用户的密码是johnldap。  
+
+下面通过ambari界面修改default.xml拓扑文件。点击Knox服务后点config然后在配置文件的Advanced topology小节中。将第一个xml的第一个provider元素替换为下列内容：
 ```
 <topology>
             <gateway>
@@ -64,10 +69,7 @@ core-site.xml中定义了knox了安装主机(hadoop.proxyuser.knox.hosts)和可�
 
 在ambari界面中点击Save按钮保存，并通过橙黄色按钮重启相关服务。之后会发现```/usr/hdp/current/knox-server/conf/topologies/```目录下的default.xml修改更新了。  
 
-#### ShiroProvider(LDAP认证)测试
-
-需要准备LDAP环境。参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)LDAP测试的文档。  
-按上述文档进行的测试在u1401上安装了OpenLDAP，并创建了一个测试用户john（dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org），该用户的密码是johnldap。使用该用户测试Knox：
+测试使用OpenLDAP中的用户john（dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org），该用户的密码是johnldap。使用该用户测试Knox：
 ```
 $ curl -i -k -u john:johnldap -X GET \
     'https://u1401.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp/webb?op=LISTSTATUS'
