@@ -111,5 +111,11 @@ Ranger允许你为特定Hadoop资源(HDFS、HBase、Hive等)创建服务，和�
 #### 标签和策略评估
 ![](http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.3/bk_security/content/figures/3/figures/Ranger-Policy-Evaluation-Flow-with-Tags.png)
 
-### 使用Ranger控制台
+## Ranger配置
+Ranger的认证方式有3种：  
+- LDAP
+- 活动目录(AD)
+- UNIX
+第3种指使用Ranger主机的操作系统用户/口令作为认证凭据，这也是默认的和配置最容易的认证方式。  
+
 
