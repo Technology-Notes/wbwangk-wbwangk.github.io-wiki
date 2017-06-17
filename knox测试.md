@@ -65,8 +65,8 @@ core-site.xml中定义了knox了安装主机(hadoop.proxyuser.knox.hosts)和可�
 在ambari界面中点击Save按钮保存，并通过橙黄色按钮重启相关服务。之后会发现```/usr/hdp/current/knox-server/conf/topologies/```目录下的default.xml修改更新了。  
 
 #### ShiroProvider(LDAP认证)测试
-首先需要通过ambari禁用kerberos，否则会报一些错误。  
-然后需要准备LDAP环境。参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)LDAP测试的文档。  
+
+需要准备LDAP环境。参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)LDAP测试的文档。  
 按上述文档进行的测试在u1401上安装了OpenLDAP，并创建了一个测试用户john（dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org），该用户的密码是johnldap。使用该用户测试Knox：
 ```
 $ curl -i -k -u john:johnldap -X GET \
