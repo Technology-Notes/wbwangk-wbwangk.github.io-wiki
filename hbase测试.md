@@ -8,6 +8,7 @@ $ kadmin
 kadmin: cpw hbase-hdp1        (修改hbase-hdp1主体密码)
 Enter password for principal "hbase-hdp1@AMBARI.APACHE.ORG": 1    (密码是1)
 ```
+hdp1是ambari集群的名字，实际主体的名称需要替换成你自己的集群名字。  
 先登录kerberos，然后利用hbase shell建表。如果不登录kerberos，建表会报错。  
 ```
 $ kinit hbase-hdp1            
