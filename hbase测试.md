@@ -16,3 +16,16 @@ $ hbase shell
 hbase(main):001:0> create 'sensor','temp','vibration','pressure'    (创建表)
 hbase(main):002:0> exit                                             (退出hbase shell)
 ```  
+创建一个文本文件hbase.csv，包含以下内容：
+```
+id, temp:in,temp:out,vibration,pressure:in,pressure:out
+5842,  50,     30,       4,      240,         340
+```
+把该文件上传到HDFS中：
+```
+$ hdfs dfs -copyFromLocal hbase.csv /tmp
+```
+执行Loadtsv语句
+```
+$ hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=,  -Dimporttsv.columns="HBASE_ROW_KEY,id,temp:in,temp:out,vibration,pressure:in,pressure:out" sensor hdfs://u1401.ambari.apache.org:/tmp/hbase.csv
+```
