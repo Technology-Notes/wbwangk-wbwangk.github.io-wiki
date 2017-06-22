@@ -30,14 +30,7 @@ $ kadmin.local -q "addprinc root/admin"         (输入两次密码，密码是v
 $ echo "*/admin@AMBARI.APACHE.ORG *" >> /etc/krb5kdc/kadm5.acl
 $ service krb5-admin-server restart
 ```
-#### 3.kerberos客户端安装
-ubuntu下的kerberos客户端叫做krb5-user(centos6/7下叫krb5-workstation)：
-```
-$ apt install krb5-user  (如果提示包依赖错误，就用手机上网执行apt-get udpate)
-```
-安装过程中如果让输入KDC，则输入```u1404.ambari.apache.org```；如果让输入realm则输入```AMBARI.APACHE.ORG```；如果让输入管理服务器也输入地址```u1404.ambari.apache.org```。  
-
-#### 4. 简单测试
+#### 3. 简单测试
 查看主体清单的方法：在u1404节点（安装KDC的节点）上执行：
 ```
 $ kadmin.local
@@ -47,6 +40,40 @@ HTTP/u1403.ambari.apache.org@AMBARI.APACHE.ORG
 K/M@AMBARI.APACHE.ORG
 admin/admin@AMBARI.APACHE.ORG
 (略)
+```
+#### 4.kerberos客户端安装
+ubuntu下安装kerberos客户端：
+```
+$ apt install krb5-user  (如果提示包依赖错误，就用手机上网执行apt-get udpate)
+```
+centos下安装kerberos客户端：
+```
+$ yum install krb5-workstation
+```
+安装过程中如果让输入KDC，则输入```u1404.ambari.apache.org```；如果让输入realm则输入```AMBARI.APACHE.ORG```；如果让输入管理服务器也输入地址```u1404.ambari.apache.org```。  
+
+#### 5.kerberos客户端的使用
+kerberos客户端的常用命令是kinit、klist、kdestroy、kpasswd。
+kinit用户登录。登录过程就是客户端从KDC获取票据TGT的过程。登录成功后，票据被缓存在本地。实际上就是建立了安全会话。  
+klist用户查看当前票据缓存中内容。  
+kdestroy用于退出登录，即销毁缓存中票据。  
+kpasswd用于修改用户(主体)口令。  
+```
+$ klist
+klist: No credentials cache found (ticket cache FILE:/tmp/krb5cc_0)
+```
+上面的结果表明缓存文件中没有票据。  
+```
+$ kinit webb
+Password for webb@AMBARI.APACHE.ORG:(输入密码)
+$ klist
+Ticket cache: FILE:/tmp/krb5cc_0
+Default principal: webb@AMBARI.APACHE.ORG
+
+Valid starting       Expires              Service principal
+06/22/2017 08:14:21  06/22/2017 18:14:21  krbtgt/AMBARI.APACHE.ORG@AMBARI.APACHE.ORG
+        renew until 06/29/2017 08:14:18
+$ kdestroy    (退出，如果再执行klist就会又显示No credentials cache found)
 ```
 
 ### 未启用kerberos的HDFS
