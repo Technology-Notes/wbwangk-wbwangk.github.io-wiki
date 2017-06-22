@@ -95,5 +95,16 @@ UserGroupInformation.loginUserFromKeytab(principal, keytabLocation)
 ```
 $ cd /opt/hdp-test-examples
 $ mvn clean test -P hdp-2.4.2    (耗时较长)
+Tests in error:
+  calculatingBuildingAverageShouldProperlyStoreAverage(com.jj.pig.BuildingAvgPigTest): Unable to open iterator for alias building_avg
+  makeSureTestDataFromFileProperlyProducesAverage(com.jj.pig.BuildingAvgPigTest): Unable to open iterator for alias building_avg
+....
+[ERROR] Please refer to /opt/hdp-test-examples/target/surefire-reports for the individual test results.
+[ERROR] -> [Help 1]
+org.apache.maven.lifecycle.LifecycleExecutionException: Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.10:test (default-test) on project hdp-test-examples: There are test failures.
+
+Please refer to /opt/hdp-test-examples/target/surefire-reports for the individual test results.
+....
 ```
+（等以后再查找问题所在！！！）
 这里是[完整代码](https://github.com/jjmeyer0/hdp-test-examples)  
