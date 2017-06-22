@@ -197,7 +197,7 @@ $ kinit -k -t webb.keytab webb
 ```
 显示keytab文件中主体和加密类型：
 ```
-$ klist -e -k webb.keytab
+$ klist -e -k webb.keytab 
 Keytab name: FILE:webb.keytab
 KVNO Principal
 ---- --------------------------------------------------------------------------
