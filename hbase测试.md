@@ -108,3 +108,15 @@ Please refer to /opt/hdp-test-examples/target/surefire-reports for the individua
 ```
 （等以后再查找问题所在！！！）
 这里是[完整代码](https://github.com/jjmeyer0/hdp-test-examples)  
+
+## HOWTO: Start and test HBase REST server in a kerberized environment
+[原文](https://community.hortonworks.com/articles/91425/howto-start-and-test-hbase-rest-server-in-a-kerber.html)  
+先确认你的HDP集群启用了kerberos并安装了hbase。  
+检查一下你的hbase服务的keytab，我的hbase服务安装在u1403节点上，所以在u1403节点上执行：
+```
+$ klist -kt /etc/security/keytabs/hbase.service.keytab
+Keytab name: FILE:/etc/security/keytabs/hbase.service.keytab
+KVNO Timestamp           Principal
+---- ------------------- ------------------------------------------------------
+   1 06/20/2017 14:45:57 hbase/u1403.ambari.apache.org@AMBARI.APACHE.ORG    (下略)
+```
