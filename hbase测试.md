@@ -1,5 +1,5 @@
 ## Import CSV data into HBase using importtsv
-[本文源自hortonworks社区文章](https://community.hortonworks.com/articles/4942/import-csv-data-into-hbase-using-importtsv.html)  
+[原文](https://community.hortonworks.com/articles/4942/import-csv-data-into-hbase-using-importtsv.html)  
 首先，利用Ambari部署Hbase，并在过程中启用了Phoenix。hbase安装在了u1403节点。  
 然后，由于集群启用了kerberos，需要用hbase的主体登录。首先要修改hbase主体的密码，否则没法用kinit登录KDC。在u1403上执行：
 ```
