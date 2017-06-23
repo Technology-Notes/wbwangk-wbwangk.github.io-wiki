@@ -163,7 +163,7 @@ $ curl --negotiate -u : 'http://u1403.ambari.apache.org:17000/status/cluster'
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"/>
 <title>Error 401 Authentication required</title>
  
-# kinit -kt hbase.service.keytab hbase/u1403.ambari.apache.org@AMBARI.APACHE.ORG
+# kinit -kt /etc/security/keytabs/hbase.service.keytab hbase/u1403.ambari.apache.org@AMBARI.APACHE.ORG
 # curl --negotiate -u : 'http://u1403.ambari.apache.org:17000/status/cluster'
 3 live servers, 0 dead servers, 10.6667 average load
  
@@ -172,4 +172,4 @@ $ curl --negotiate -u : 'http://u1403.ambari.apache.org:17000/status/cluster'
         requests=0, regions=11
         heapSizeMB=120        maxHeapSizeMB=502
 ```
-在有票据的情况下，实测响应超时。等以后再调试成功！！
+测试过程中层出现hbase RegionServer启动失败的情况，导致curl调用超时。从日志`hbase-hbase-master-u1403.log`上看，报告`Clock skew too great`，推测是三个节点的时间不一致，导致kerberos票据失效。调整了三个节点的时间([参考](https://github.com/wbwangk/wbwangk.github.io/wiki/0%E7%AC%94%E8%AE%B0#%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5ntpd))。重启所有HDP服务，curl终于正确返回结果了。  
