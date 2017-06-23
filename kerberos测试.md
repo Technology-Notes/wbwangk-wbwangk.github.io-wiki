@@ -285,6 +285,7 @@ Password for admin@AMBARI.APACHE.ORG:
 ```
 从上面的调试信息可以看出kinit连接是通过https的443端口连接到KDC的。  
 ## windows下kerberos认证(非AD)
+[原文](https://community.hortonworks.com/articles/28537/user-authentication-from-windows-workstation-to-hd.html)  
 在windows10专业版下进行的测试，win10已经加入了AD域。  
 - windows域是HOME.LANGCHAO.COM
 - HDP集群域是AMBARI.APACHE.ORG  
