@@ -1,6 +1,6 @@
 #### core-site.xml配置
-core-site.xml是hadoop的核心配置文件，它在Ambari中位于HDFS服务的配置中，在文件系统中位于```/etc/hadoop/conf```目录。  
-core-site.xml中定义了knox了安装主机(hadoop.proxyuser.knox.hosts)和可以代理的用户组(hadoop.proxyuser.knox.groups)。
+knox是一种用户代理程序，集群授权给knox后，它才能代理用户请求。通过修改hadoop的核心配置文件core-site.xml中相关参数来授权给knox代理用户请求的权限。  
+core-site.xml在文件系统中的位置是`/etc/hadoop/conf`，通过Ambari修改core-site.xml更方便。在Ambari中前往Service -> HDFS -> Configs -> Advanced -> Custom core-site，修改用`hadoop.proxyuser.knox.hosts`和`hadoop.proxyuser.knox.groups`参数：
 ```
 <property>
     <name>hadoop.proxyuser.knox.groups</name>
@@ -15,21 +15,22 @@ core-site.xml中定义了knox了安装主机(hadoop.proxyuser.knox.hosts)和可�
 
 ## 两种认证方式的测试
  - ShiroProvider  
-对于LDAP/AD身份验证，使用用户名和密码。没有SPNEGO/Kerberos支持。
+对于LDAP/AD身份验证，使用用户名和密码。没有SPNEGO/Kerberos支持。  
  - HadoopAuth  
-对于SPNEGO/Kerberos身份验证，使用委派令牌。没有LDAP/AD支持。
+对于SPNEGO/Kerberos身份验证，使用委派令牌。没有LDAP/AD支持。  
 
 #### ShiroProvider(LDAP认证)
 用ambari安装的knox，默认安装目录是```/usr/hdp/current/knox-server```。默认cluster-name是default，对应的拓扑配置文件是：
 ```
 /usr/hdp/current/knox-server/conf/topologies/default.xml
 ```
-有两种方式创建LDAP服务器，一是手工安装OpenLDAP；二是使用Knox自带的Demo LDAP。  
-如果要手工安装OpenLDAP，参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)LDAP测试的文档。  
-如果要使用Knox自带的DemoLDAP服务器，则需要通过Ambari界面，点击左侧Knox菜单，然后在Knox服务页面上点击下拉菜单的```Start Demo LDAP```链接。  
-下面的测试使用的u1401上手工部署OpenLDAP，并在LDAP上创建了一个测试用户john（dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org），该用户的密码是johnldap。  
+有两种方式创建LDAP服务器，一是手工安装OpenLDAP；二是使用Knox自带的Demo LDAP：
+- 如果要手工安装OpenLDAP，参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)LDAP测试的文档。  
+- 如果要使用Knox自带的DemoLDAP服务器，则在Ambari中前往 Services -> Knox -> Service Actions -> Start Demo LDAP。  
 
-下面通过ambari界面修改default.xml拓扑文件。点击Knox服务后点config然后在配置文件的Advanced topology小节中。将第一个xml的第一个provider元素替换为下列内容：
+下面的测试使用的u1401上手工部署OpenLDAP，并在LDAP上创建了一个测试用户john（dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org），该用户的密码是johnldap。初学者可以安装一个[JXplorer](http://www.jxplorer.org)来链接LDAP服务器查看其中的数据。    
+
+为了修改Knox的默认集群拓扑文件(default.xml)，前往 Services -> Knox -> Configs -> Advanced topology，将第一个xml的第一个provider元素替换为下列内容：
 ```
 <topology>
             <gateway>
