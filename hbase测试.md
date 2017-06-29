@@ -175,7 +175,8 @@ $ curl --negotiate -u : 'http://u1403.ambari.apache.org:17000/status/cluster'
 测试过程中层出现hbase RegionServer启动失败的情况，导致curl调用超时。从日志`hbase-hbase-master-u1403.log`上看，报告`Clock skew too great`，推测是三个节点的时间不一致，导致kerberos票据失效。调整了三个节点的时间([参考](https://github.com/wbwangk/wbwangk.github.io/wiki/0%E7%AC%94%E8%AE%B0#%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5ntpd))。重启所有HDP服务，curl终于正确返回结果了。  
 
 ## hbase shell入门
-使用Ambari部署hbase服务，在部署hbase master的节点：
+[原文](http://hbase.apache.org/book.html#quickstart)  
+使用Ambari部署hbase服务，在部署hbase master的节点上执行：
 ```
 $ hbase shell 
 hbase（main）：001：0> help
