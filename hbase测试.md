@@ -173,3 +173,88 @@ $ curl --negotiate -u : 'http://u1403.ambari.apache.org:17000/status/cluster'
         heapSizeMB=120        maxHeapSizeMB=502
 ```
 测试过程中层出现hbase RegionServer启动失败的情况，导致curl调用超时。从日志`hbase-hbase-master-u1403.log`上看，报告`Clock skew too great`，推测是三个节点的时间不一致，导致kerberos票据失效。调整了三个节点的时间([参考](https://github.com/wbwangk/wbwangk.github.io/wiki/0%E7%AC%94%E8%AE%B0#%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5ntpd))。重启所有HDP服务，curl终于正确返回结果了。  
+
+## hbase shell入门
+使用Ambari部署hbase服务，在部署hbase master的节点：
+```
+$ hbase shell 
+hbase（main）：001：0> help
+hbase（main）：002：0> help 'ddl'
+hbase（main）：003：0> help 'create'
+```
+键入help并按Enter键显示HBase Shell的一些基本使用信息，以及几个示例命令。请注意，表名，行，列都必须用引号括起来。hbase shell命令是分组的，create、list、desc、scan等都属于ddl组。
+
+1. 创建一个表。  
+使用create命令创建一个新表。您必须指定表名和列族名称。
+```
+hbase(main):001:0> create 'test', 'cf'
+0 row(s) in 0.4170 seconds
+
+=> Hbase::Table - test
+```
+2. 列出有关您的表的信息
+
+使用list命令：
+```
+hbase(main):002:0> list 'test'
+TABLE
+test
+1 row(s) in 0.0180 seconds
+
+=> ["test"]
+```
+3. 将数据放入您的表格中。
+
+要将数据放入表中，请使用put命令。
+```
+hbase(main):003:0> put 'test', 'row1', 'cf:a', 'value1'
+0 row(s) in 0.0850 seconds
+
+hbase(main):004:0> put 'test', 'row2', 'cf:b', 'value2'
+0 row(s) in 0.0110 seconds
+
+hbase(main):005:0> put 'test', 'row3', 'cf:c', 'value3'
+0 row(s) in 0.0100 seconds
+```
+在这里，我们插入三个值，一次一个。第一个插入位于row1，列cf:a，值为value1。HBase中的列由列族前缀组成，此示例中是cf，后跟一个冒号，然后是列限定符后缀，此示例中是a。
+
+4. 显示表中的数据。
+
+从HBase获取数据的方法之一是执行scan。使用scan命令扫描数据表。您可以设定扫描参数，这里没有限定参数，所有数据都被提取。
+```
+hbase(main):006:0> scan 'test'
+ROW                                      COLUMN+CELL
+ row1                                    column=cf:a, timestamp=1421762485768, value=value1
+ row2                                    column=cf:b, timestamp=1421762491785, value=value2
+ row3                                    column=cf:c, timestamp=1421762496210, value=value3
+3 row(s) in 0.0230 seconds
+```
+5. 获取一行数据。
+
+要一次获取一行数据，请使用该get命令。
+```
+hbase(main):007:0> get 'test', 'row1'
+COLUMN                                   CELL
+ cf:a                                    timestamp=1421762485768, value=value1
+1 row(s) in 0.0350 seconds
+```
+6. 禁用表。
+
+如果要删除表或更改其设置以及某些其他情况，则需要先使用该disable命令禁用表。您可以使用该enable命令重新启用它。
+```
+hbase(main):008:0> disable 'test'
+0 row(s) in 1.1820 seconds
+
+hbase(main):009:0> enable 'test'
+0 row(s) in 0.1770 seconds
+```
+
+7. 要删除表，请使用drop命令。
+```
+hbase(main):011:0> drop 'test'
+0 row(s) in 0.1370 seconds
+```
+
+8. 退出HBase Shell。
+
+要退出HBase Shell并从群集断开连接，请使用quit命令。HBase仍然在后台运行。
