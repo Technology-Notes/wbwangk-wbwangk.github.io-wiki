@@ -58,7 +58,10 @@ Exception in thread "main" java.lang.RuntimeException: org.apache.hadoop.securit
 $ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp1
 $ hdfs dfs -mkdir /user/root
 $ hdfs dfs -chown root /user/root
-$ kinit root/admin
 $ hive 
 Exception in thread "main" java.lang.RuntimeException: org.apache.tez.dag.api.SessionNotRunning: TezSession has already shutdown. Application application_1498799080862_0006 failed 2 times due to AM Container for appattempt_1498799080862_0006_000002 exited with  exitCode: -1000
+main : run as user is hdfs
+main : requested yarn user is hdfs
+Requested user hdfs is banned
 ```
+把上述的hdfs用户换成yarn、root、hive、webb等都试过，要么被ban，要么就是用户不存在。  
