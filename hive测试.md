@@ -36,3 +36,29 @@ Database URL : jdbc:postgresql://u1401.ambari.apache.org:5432/hive
 $ wget -P /usr/share/java https://jdbc.postgresql.org/download/postgresql-42.0.0.jar
 $ ambari-server setup --jdbc-db=postgres --jdbc-driver=/usr/share/java/postgresql-42.0.0.jar
 ```
+
+## 碰到的问题
+测试环境是启用kerberos的HDP 2.5.3。  
+执行hive试图进入交互环境：
+```
+$ hive
+Exception in thread "main" java.lang.RuntimeException: java.lang.RuntimeException: Unable to instantiate org.apache.hadoop.hive.ql.metadata.SessionHiveMetaStoreClient
+(略)
+Caused by: MetaException(message:Could not connect to meta store using any of the URIs provided. Most recent failure: org.apache.thrift.transport.TTransportException: GSS initiate failed
+```
+推测是因为没有登录kerberos。于是用root/admin(kerberos管理员)账号登录后执行hive：
+```
+$ kinit root/admin
+$ hive
+Exception in thread "main" java.lang.RuntimeException: org.apache.hadoop.security.AccessControlException: Permission denied: user=root, access=WRITE, inode="/user/root":hdfs:hdfs:drwxr-xr-x
+```
+提示hdfs中没有"/user/root"目录。  
+下面用hdfs的特权用户登录kerberos，创建"/user/root"目录，并修改拥有者为root：
+```
+$ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp1
+$ hdfs dfs -mkdir /user/root
+$ hdfs dfs -chown root /user/root
+$ kinit root/admin
+$ hive 
+Exception in thread "main" java.lang.RuntimeException: org.apache.tez.dag.api.SessionNotRunning: TezSession has already shutdown. Application application_1498799080862_0006 failed 2 times due to AM Container for appattempt_1498799080862_0006_000002 exited with  exitCode: -1000
+```
