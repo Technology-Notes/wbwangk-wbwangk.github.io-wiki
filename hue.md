@@ -326,3 +326,7 @@ ln -s /usr/local/hue /opt/hue
 ```
 9. 提示"找不到yarn-site配置文件"  
 通过ambari先装YARN，再装hue，不再报错。  
+
+10. 在Centos7.3安装的时候会发现libtidy-0.99-0这个包并不存在，需要更改为libtidy，在metainfo.xml 这个文件里修改。
+
+11. 如果ambari 的密码更改过，在安装hue之后启动的过程中会有错误，需要更改/var/lib/ambari-agent/cache/stacks/HDP/2.6/services/HUE/package/files/configs.sh这个文件里面PASSWD这给参数。
