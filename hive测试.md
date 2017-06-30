@@ -1,3 +1,4 @@
+[hortonworks hive教程](https://hortonworks.com/tutorial/how-to-process-data-with-apache-hive/)  
 ## 用ambari安装hive
 #### 1.为hive准备存储元数据的数据库
 参考postgres[入门文档](http://www.ruanyifeng.com/blog/2013/12/getting_started_with_postgresql.html)。  
