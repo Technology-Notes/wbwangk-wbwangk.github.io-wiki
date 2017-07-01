@@ -43,7 +43,13 @@ $ wget http://public-repo-1.hortonworks.com/ambari/ubuntu14/2.x/updates/2.4.2.0/
 $ wget http://public-repo-1.hortonworks.com/HDP/ubuntu14/2.x/updates/2.5.3.0/HDP-2.5.3.0-ubuntu14-deb.tar.gz
 $ wget http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/ubuntu14/HDP-UTILS-1.1.0.21-ubuntu14.tar.gz
 ```
-上面的参考2和参考3网页中每个tarball都显示有md5，可以用下列命令计算出md5码，以避免下载不完整：
+下面是下载最新的centos7下的ambari2.5.1.0和HDP2.6.1.0([参考4](https://docs.hortonworks.com/HDPDocuments/Ambari-2.5.1.0/bk_ambari-installation/content/hdp_26_repositories.html)):
+```
+$ wget http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.5.1.0/ambari-2.5.1.0-centos7.tar.gz
+$ wget http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/2.6.1.0/HDP-2.6.1.0-centos7-rpm.tar.gz
+$ wget http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.21/repos/centos7/HDP-UTILS-1.1.0.21-centos7.tar.gz
+```
+上面的参考2、3、4网页中每个tarball都显示有md5，可以用下列命令计算出md5码，以避免下载不完整：
 ```
 $ openssl md5 ambari-2.4.2.0-ubuntu14.tar.gz
 ```
@@ -63,8 +69,10 @@ $ tar -xzf ambari-2.4.2.0-ubuntu14.tar.gz
 repo/AMBARI-2.4.2.0/centos6
 repo/AMBARI-2.4.2.0/ubuntu14
 repo/ambari/centos7/2.x/2.5.0.3
+repo/ambari/centos7/2.x/2.5.1.0
 repo/HDP/centos6/2.x/updates/2.5.3.0
 repo/HDP/centos7/2.x/updates/2.5.3.0
+repo/HDP/centos7/2.x/updates/2.6.1.0
 repo/HDP/ubuntu14
 repo/HDP-UTILS-1.1.0.21/repos/ubuntu14
 repo/HDP-UTILS-1.1.0.21/repos/centos6
@@ -89,6 +97,12 @@ $ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos6/2.x/up
 $ wget -O /etc/yum.repos.d/ambari.repo http://repo.imaicloud.com/ambari/centos7/2.x/updates/2.5.0.3/ambari.repo
 $ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos7/2.x/updates/2.5.3.0/hdp.repo
 ```
+【centos7】ambari2.5.1.0和HDP2.6.1.0：
+```
+$ wget -O /etc/yum.repos.d/ambari.repo http://repo.imaicloud.com/ambari/centos7/2.x/updates/2.5.1.0/ambari.repo
+$ wget -O /etc/yum.repos.d/hdp.repo http://repo.imaicloud.com/HDP/centos7/2.x/updates/2.6.1.0/hdp.repo
+```
+
 ## HUE本地下载
 repo.imaicloud.com上提供了ubuntu14/centos6/centos7的HUE 3.12.0版本tar包下载。目录分别是：
  - **centos6**：http://repo.imaicloud.com/hue/hue-3.12.0-centos6.tgz  
