@@ -18,6 +18,11 @@ postgresql数据库默认是不允许从远程客户端访问它的。为了让h
 $ echo "host all all 0.0.0.0 0.0.0.0 md5" >> /etc/postgresql/9.3/main/pg_hba.conf
 $ /etc/init.d/postgresql restart            (重启postgresql)
 ```
+centos7下的操作：
+```
+$ echo "host all all 0.0.0.0 0.0.0.0 md5" >> /var/lib/pgsql/data/pg_hba.conf
+$ service postgresql restart
+```
 #### 2.ambari安装hive的向导
 在Hive Matestore参数页中选择“Existing PostgreSQL Database”。  
 然后输入其他参数：  
