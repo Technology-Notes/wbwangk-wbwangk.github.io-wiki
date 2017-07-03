@@ -147,13 +147,16 @@ $ apt install postgresql-client
 $ psql -h 192.168.14.101 -U ambari -d ambari  (提示输入密码就输入bigdata)
 ```
 -U表示数据库用户，-d表示数据库名。  
-还要修改postgresql的配置文件，以便从远程访问postgresql：
+还要修改postgresql的配置文件，以便从远程访问postgresql。
+如果是在ubuntu下：
 ```
 $ echo "host all all 0.0.0.0 0.0.0.0 md5" >> /etc/postgresql/9.3/main/pg_hba.conf
-``` 
-重启postgresql：  
+$ /etc/init.d/postgresql restart            （重启postgresql）
 ```
-/etc/init.d/postgresql restart
+centos7下的操作：
+```
+$ echo "host all all 0.0.0.0 0.0.0.0 md5" >> /var/lib/pgsql/data/pg_hba.conf
+$ service postgresql restart
 ```
 而在postgresql所在机器的本地执行：
 ```
