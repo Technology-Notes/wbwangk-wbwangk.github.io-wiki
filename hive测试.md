@@ -11,6 +11,7 @@ postgres=# CREATE USER hive WITH PASSWORD 'vagrant';              (新建一个�
 CREATE ROLE
 postgres=# CREATE DATABASE hive OWNER hive;                       (创建用户数据库hive，并指定所有者为hive)
 CREATE DATABASE
+postgre=# \q                                                      (退出)
 ```
 postgresql数据库默认是不允许从远程客户端访问它的。为了让hive可以远程访问postgres，还要修改postgresql的配置文件:，在文件的最后添加：
 ```
