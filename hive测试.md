@@ -13,7 +13,7 @@ postgres=# CREATE DATABASE hive OWNER hive;                       (创建用户�
 CREATE DATABASE
 postgre=# \q                                                      (退出)
 ```
-postgresql数据库默认是不允许从远程客户端访问它的。为了让hive可以远程访问postgres，还要修改postgresql的配置文件:，在文件的最后添加：
+postgresql数据库默认是不允许从远程客户端访问它的。为了让hive可以远程访问postgres，还要修改postgresql的配置文件:，在文件的最后添加配置项。如果是在ubuntu下：
 ```
 $ echo "host all all 0.0.0.0 0.0.0.0 md5" >> /etc/postgresql/9.3/main/pg_hba.conf
 $ /etc/init.d/postgresql restart            (重启postgresql)
