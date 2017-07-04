@@ -72,8 +72,9 @@ Requested user hdfs is banned
 ```
 把上述的hdfs用户换成yarn、root、hive、webb等都试过，要么被ban，要么就是用户不存在。  
 
-## beeline测试
+## 用beeline测试hive
 环境：centos7.3 kerberized HDP 2.6.1.0  
+beeline是hive2新加的命令行工具，原命令行工具hive已经不建议使用。实际上我的环境中hive不能正常执行，只能用beeline。  
 ```
 $ kinit -kt  /etc/security/keytabs/hive.service.keytab hive/c7302.ambari.apache.org@AMBARI.APACHE.ORG
 $ beeline -u "jdbc:hive2://c7302.ambari.apache.org:10000/default;principal=hive/c7302.ambari.apache.org@AMBARI.APACHE.ORG"
@@ -83,4 +84,26 @@ $ beeline -u "jdbc:hive2://c7302.ambari.apache.org:10000/default;principal=hive/
 +-----------+--+
 +-----------+--+
 No rows selected (0.11 seconds)
+> CREATE TABLE pokes (foo INT, bar STRING);
+> CREATE TABLE invites (foo INT, bar STRING) PARTITIONED BY (ds STRING);
+> SHOW TABLES;
++-----------+--+
+| tab_name  |
++-----------+--+
+| invites   |
+| pokes     |
++-----------+--+
+```
+hive的home目录由`hive-default.xml`配置文件中`hive.metastore.warehouse.dir`参数控制，默认是`/apps/hive/warehouse`。  
+创建完表后可以去看一下HDFS中的`/apps/hive/warehouse`目录：
+```
+$ hdfs dfs -ls /apps/hive/warehouse
+Found 2 items
+drwxrwxrwx   - hive hdfs          0 2017-07-04 02:59 /apps/hive/warehouse/invites
+drwxrwxrwx   - hive hdfs          0 2017-07-04 02:58 /apps/hive/warehouse/pokes
+```
+多的两个文件就是新创建的hive表。  
+加载文件到hive表：
+```
+> LOAD DATA LOCAL INPATH './examples/files/kv1.txt' OVERWRITE INTO TABLE pokes;
 ```
