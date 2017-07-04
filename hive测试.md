@@ -71,3 +71,16 @@ main : requested yarn user is hdfs
 Requested user hdfs is banned
 ```
 把上述的hdfs用户换成yarn、root、hive、webb等都试过，要么被ban，要么就是用户不存在。  
+
+## beeline测试
+环境：centos7.3 kerberized HDP 2.6.1.0  
+```
+$ kinit -kt  /etc/security/keytabs/hive.service.keytab hive/c7302.ambari.apache.org@AMBARI.APACHE.ORG
+$ beeline -u "jdbc:hive2://c7302.ambari.apache.org:10000/default;principal=hive/c7302.ambari.apache.org@AMBARI.APACHE.ORG"
+0: jdbc:hive2://c7302.ambari.apache.org:10000> show tables;
++-----------+--+
+| tab_name  |
++-----------+--+
++-----------+--+
+No rows selected (0.11 seconds)
+```
