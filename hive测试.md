@@ -33,7 +33,7 @@ Database Password : vagrant   vagrant
 JDBC Driver Class : org.postgresql.Driver
 Database URL : jdbc:postgresql://u1401.ambari.apache.org:5432/hive
 ```
-点击Test connection按钮测试数据库连接。   
+点击Test connection按钮测试数据库连接。如果测试不通过，可以尝试下一节的配置ambari JDBC驱动。     
 之后出现输入ambari admin主体和密码。在主体输入：root/admin@AMBARI.APACHE.ORG。  
 
 #### 3.（可选）配置ambari server JDBC驱动
