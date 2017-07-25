@@ -52,8 +52,12 @@ linux下一般是`/etc/krb5.conf`。内容：
 - SPNEGO
     简单和受保护的GSSAPI谈判机制（SPNEGO）。使kerberos支持HTTP协议（negotiate认证）。
 
-## MIT kerberos安装和使用
+## MIT kerberos安装
 服务器端参考[Kerberos管理(admin)](https://imaidata.github.io/blog/kerberos_admin/)    
 客户端参考[Kerberos使用(client)](https://imaidata.github.io/blog/kerberos_client/)  
 
-
+## kerberos使用
+- hadoop各服务的命令行
+- CURL(SPNEGO)
+- 浏览器(SPNEGO)
+- Java应用
