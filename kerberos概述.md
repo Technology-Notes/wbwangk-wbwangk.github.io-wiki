@@ -56,6 +56,15 @@ linux下一般是`/etc/krb5.conf`。内容：
 
 ## kerberos使用
 - hadoop各服务的命令行
-- CURL(SPNEGO)
-- 浏览器(SPNEGO)
+- curl
+- REST
+   [kerberized集群下HBase REST服务器的启动和测试](https://imaidata.github.io/blog/2017/06/27/kerberized%E9%9B%86%E7%BE%A4%E4%B8%8BHBase-REST%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%90%AF%E5%8A%A8%E5%92%8C%E6%B5%8B%E8%AF%95/)  
+   [Knox的HadoopAuth(SPNEGO和基于委派令牌的认证)](https://imaidata.github.io/blog/2017/06/27/Knox%E7%9A%84HadoopAuth(SPNEGO%E5%92%8C%E5%9F%BA%E4%BA%8E%E5%A7%94%E6%B4%BE%E4%BB%A4%E7%89%8C%E7%9A%84%E8%AE%A4%E8%AF%81)/)  
+- 浏览器
+   [windows下用kerberos客户端和火狐登录HDP域](https://imaidata.github.io/blog/2017/06/27/windows%E4%B8%8B%E7%94%A8kerberos%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%92%8C%E7%81%AB%E7%8B%90%E7%99%BB%E5%BD%95HDP%E5%9F%9F/)  
 - Java应用
+(https://imaidata.github.io/blog/2017/07/11/java%E8%BF%9E%E6%8E%A5HBASE(kerberized%E9%9B%86%E7%BE%A4)/)  
+   [JAAS认证](https://imaidata.github.io/blog/jaas/)  
+   [java使用SPNEGO认证](https://imaidata.github.io/blog/java_spnego/)  
+   [一个安全HDFS客户端的例子](https://imaidata.github.io/blog/2017/07/20/%E4%B8%80%E4%B8%AA%E5%AE%89%E5%85%A8HDFS%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E4%BE%8B%E5%AD%90/)  
+   [java连接HBASE(kerberized集群)]  
