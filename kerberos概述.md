@@ -23,8 +23,6 @@ $ klist -kt /etc/security/keytabs/hdfs.headless.keytab     (特殊用途：列�
 - kdestroy 登出
 - ktutil 工具，可用于生成密钥表(keytab)
 ```
-$ ktutil 
-```
 $ ktutil
     ktutil:  addent -password -p root/admin -k 1 -e RC4-HMAC
     ktutil:  wkt root.keytab  
