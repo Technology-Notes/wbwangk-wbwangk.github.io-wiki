@@ -30,7 +30,7 @@ $ ktutil
 - kpasswd 改密码
 
 ## 配置文件
-linux下一般是`/etc/krb5.conf`。内容：
+linux下一般是`/etc/krb5.conf`(Mac OS X中的配置文件位置是` /Library/Preferences/edu.mit.kerberos`)。简化的配置文件内容：
 ```
 [libdefaults]
   default_realm = AMBARI.APACHE.ORG
