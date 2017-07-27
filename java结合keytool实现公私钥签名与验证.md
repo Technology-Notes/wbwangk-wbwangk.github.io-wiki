@@ -1,7 +1,7 @@
 [参考](http://docs.oracle.com/javase/tutorial/security/toolfilex/step2.html)  
 
 ## keytool的使用
-keytool是JDK自带的一个密钥库管理工具。这里只用到了keytool的部分功能，包括生成密钥对，导出公钥等。keytool生成的公钥/私钥对存放到一个到了一个文件中，这个文件有密码保护，叫keystore。    
+keytool是JDK自带的一个密钥库管理工具。这里只用到了keytool的部分功能，包括生成密钥对，导出公钥等。keytool生成的公钥/私钥对存放到一个到了一个文件中，这个文件有密码保护，通称为keystore。    
 
 #### 生成密钥对
 ```
