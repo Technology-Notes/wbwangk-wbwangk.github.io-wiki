@@ -1,9 +1,8 @@
 [参考](http://docs.oracle.com/javase/tutorial/security/toolfilex/step2.html)  
 
-签名方生成密钥对（自动创建密钥库）、导出公钥。验证方将公钥导入密钥库。  
-keytool是JDK自带的一个密钥库管理工具。  
-## 签名方的操作
-签名方是个叫Stan的人。
+## keytool的使用
+keytool是JDK自带的一个密钥库管理工具。这里只用到了keytool的部分功能，包括生成密钥对，导出公钥等。keytool生成的公钥/私钥对存放到一个到了一个文件中，这个文件有密码保护，叫keystore。    
+
 #### 生成密钥对
 ```
 $ keytool -genkey -alias signLegal -keystore examplestanstore -validity 1800
@@ -23,52 +22,18 @@ $ keytool -export -keystore examplestanstore -alias signLegal -file StanSmith.ce
 ```
 导出的公钥存放在当前目录的StanSmith.cer文件中，是个二进制文件。  
 
-#### 生成jar并签名
-新建一个文本文件hello.txt，打成jar包：
-```
-$ jar cvfM hello.jar hello.txt
-```
-对jar包进行签名：
-```
-$ jarsigner -tsa http://tsa.starfieldtech.com -keystore examplestanstore -signedjar shello.jar hello.jar signLegal 
-```
-## 验证方的操作
-验证方是个叫Ruch的人。
-
-#### 导入公钥
-```
-$ keytool -import -alias stan -file StanSmith.cer -keystore exampleruthstore
-```
-如果密钥库exampleruthstore不存在，keytool会自动创建(新库会让输入两次口令)。  
-可以利用前文的`-list`参数查看一下新导入的公钥证书：
-```
-$ keytool -list -alias stan -keystore exampleruthstore
-stan, 2017-7-27, trustedCertEntry,
-证书指纹 (SHA1): 38:EB:50:A4:1D:87:E5:1B:9A:41:B0:9E:92:0D:8C:B7:41:BD:C4:AF
-```
-#### 验证jar
-```
-$ jarsigner -verify -verbose -keystore exampleruthstore shello.jar 
-(前略)
-- 由 "CN=Stan Smith, OU=Legal, O=Example2, L=New York, ST=NY, C=US" 签名
-    摘要算法: SHA-256
-    签名算法: SHA1withDSA, 1024 位密钥
-  由 "CN=Starfield Timestamp Authority - G1, O="Starfield Technologies, Inc.", L=Scottsdale, ST=Arizona, C=US" 于 星期四 七月 27 02:32:12 UTC 2017 加时间戳
-    时间戳摘要算法: SHA-256
-    时间戳签名算法: SHA1withRSA, 2048 位密钥
-
-jar 已验证。
-```
 ## java签名和验证
-[参考](http://docs.oracle.com/javase/tutorial/security/apisign/index.html)  
-[GenSig.java](http://docs.oracle.com/javase/tutorial/displayCode.html?code=http://docs.oracle.com/javase/tutorial/security/apisign/examples/GenSig.java)类生成密钥对，对输入的文件进行签名，输出了一个签名结果文件sig和公钥suepk。  
+参考了[java安全官方教程](http://docs.oracle.com/javase/tutorial/security/apisign/index.html)。    
+在该官方教程中，[GenSig.java](http://docs.oracle.com/javase/tutorial/displayCode.html?code=http://docs.oracle.com/javase/tutorial/security/apisign/examples/GenSig.java)类生成密钥对，对输入的文件进行签名，输出了一个签名结果文件sig和公钥suepk。  
 [VerSig.java](http://docs.oracle.com/javase/tutorial/security/apisign/examples/VerSig.java)类接受三个参数：公钥文件名(suepk)、签名文件(sig)、被签名的源文件名(hello.txt)。  
-执行：
+该教程解释了两个类的原理，并附加有源码。将源码下载并编译。创建一个hello.txt的文件作为被签名的目标文件，里面随便放点字符串。然后执行：
 ```
 $ java GenSig hello.txt                        (生成文件sig和suepk)
 $ java VerSig suepk sig hello.txt
 signature verifies: true
 ```
+在实际使用时，密钥对不可能每次在程序中重新生成。而keytool恰好可以生成并相对安全保存密钥对。所以下面结合了keytool和java实现的功能。  
+
 ## 结合keytool与java签名/验证
 [参考](http://docs.oracle.com/javase/tutorial/security/apisign/enhancements.html)  
 密钥对由keytool生成并保存到keystore中保护起来(keystore有密码)。公钥也从keystore中导出。GenSig.java类只需要从keystore中取得私钥进行签名即可。  
@@ -210,7 +175,9 @@ class VerSig2 {
 $ java VerSig2 StanSmith.cer sig hello.txt
 signature verifies: true
 ```
+
 ## openssl
+虽然也研究了一下openssl，但发现与java难以结合，难度也很大。例如它的教程中采用的是RSA，而上面的java使用的是DSA。所以只是贴在这里备忘，可以忽略。  
 [参考](http://users.dcc.uchile.cl/~pcamacho/tutorial/crypto/openssl/openssl_intro.html)  
 #### 生成私钥
 ```
