@@ -39,11 +39,13 @@ signature verifies: true
 密钥对由keytool生成并保存到keystore中保护起来(keystore有密码)。公钥也从keystore中导出。GenSig.java类只需要从keystore中取得私钥进行签名即可。  
 VerSig.java也要做适当的修改。貌似因为从keystore中导出的是证书而不是公钥，两者的封装格式估计有差异。  
 #### 具体步骤
-1. 利用`keytool -genkey`生成密钥对保存在keystore中
-2. 利用`keytool -export'从keystore中导出公钥证书
-3. 利用新类GenSig2.java生成签名，GenSig2.java会从keystore中取私钥
-4. 将公钥、签名、被签名文件发给验证方
-5. 验证方利用VerSig2.java进行验证
+1. 利用`keytool -genkey`生成密钥对保存在keystore中(库文件是examplestanstore)  
+2. 利用`keytool -export'从keystore中导出公钥证书(StanSmith.cer)  
+3. 利用新类GenSig2.java生成签名(文件名是sig)，GenSig2.java会从keystore中取私钥  
+4. 将公钥(StanSmith.cer)、签名(sig)、被签名文件(hello.txt)发给验证方  
+5. 验证方利用VerSig2.java进行验证  
+
+下面是GenSig2.java和VerSig2.java的源码和执行方式。
 #### GenSig2.java
 ```java
 import java.io.*;
