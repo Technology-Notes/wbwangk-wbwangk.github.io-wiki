@@ -3,3 +3,45 @@
 通过开始菜单打开“服务器管理器”窗口。点击顶部工具栏的“管理”->“添加角色和功能”。然后根据向导选择AD域控制器。安装完成后服务器会重启。  
 重启后发现“服务器管理”窗口的左侧菜单多了“AD DS"菜单，点击这个在右侧主窗口就可以看到新安装的域控制器了。  
 可以通过点击
+
+
+要修改主体的属性，请右键单击“Active Directory用户和计算机”窗口中的主体条目，然后选择“属性”。将出现对话框（图A-2 ）。选择帐户选项卡。底部附近是标题为“帐户选项”的复选框列表。特别要注意两个选项。这些选项是“为此帐户使用DES加密类型”选项和“不要求Kerberos”
+预认证“选项。这两个选项对于与Unix客户端和应用程序服务器的互操作性很重要。  
+
+```
+
+[libdefaults]
+  renew_lifetime = 7d
+  forwardable = true
+  default_realm = AMBARI.APACHE.ORG
+  ticket_lifetime = 24h
+  dns_lookup_realm = false
+  dns_lookup_kdc = false
+  default_ccache_name = /tmp/krb5cc_%{uid}
+#  default_tgs_enctypes = aes des3-cbc-sha1 rc4 des-cbc-md5
+#  default_tkt_enctypes = aes des3-cbc-sha1 rc4 des-cbc-md5
+  default_tgs_enctypes = rc4 des-cbc-md5
+  default_tkt_enctypes = des3-cbc-sha1 rc4 des-cbc-md5
+
+  allow_weak_crypto = true
+
+[logging]
+  default = FILE:/var/log/krb5kdc.log
+  admin_server = FILE:/var/log/kadmind.log
+  kdc = FILE:/var/log/krb5kdc.log
+
+[realms]
+  AMBARI.APACHE.ORG = {
+    admin_server = c7301.ambari.apache.org
+    kdc = c7301.ambari.apache.org
+  }
+  HOME.APACHE.ORG = {
+    kdc = home.apache.org
+  }
+[domain_realm]
+        .ambari.apache.org = AMBARI.APACHE.ORG
+         ambari.apache.org = AMBARI.APACHE.ORG
+         home.apache.org = HOME.APACHE.ORG
+         .home.apache.org = HOME.APACHE.ORG
+
+```
