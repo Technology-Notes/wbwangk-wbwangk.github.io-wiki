@@ -399,5 +399,16 @@ $ curl --negotiate -u : http://c7301.ambari.apache.org:50070/webhdfs/v1/user?op=
 ```
 从上面可以看出，虽然kinit登录的是APACHE.ORG，却可以访问AMBARI.APACHE.ORG的资源。  
 ### 单向信任
-
-（略）
+下面试图建立一个单向信任关系：AMBARI.APACHE.ORG信任APACHE.ORG。  
+先用`delprinc`将上文创建了4个`krbtgt`主体删除。然后在c7301、c7304上分别执行：
+```
+$ kadmin.local -q "addprinc -pw 1 krbtgt/AMBARI.APACHE.ORG@APACHE.ORG"
+```
+两个主体的密码要一样。在c7304上执行：
+```
+$ kinit root/admin@APACHE.ORG
+$ curl --negotiate -u : http://c7301.ambari.apache.org:50070/webhdfs/v1/user?op=LISTSTATUS
+{"FileStatuses":{"FileStatus":[
+(下略)
+```
+可以看到，建立单向互信只需要建立两个主体。  
