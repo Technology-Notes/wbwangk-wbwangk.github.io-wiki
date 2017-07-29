@@ -338,3 +338,66 @@ network.negotiate-auth.allow-non-fqdn = true
 ```
 #### 5.通过火狐打开HDP界面
 打开火狐，输入Ambari地址，如：```http://u1401.ambari.apache.org:8080```，逐次点击HDFS ->  Quick Links -> NameNode UI -> Utilities -> Browse the file system 或者直接打开```http://u1401.ambari.apache.org:50070/explorer.html```，就可以看到HDFS中文件清单了。  
+
+## 跨域信任
+AMBARI.APACHE.ORG领域管辖c7301、c7302、c703三个节点，KDC部署在c7301。在c7304上部署了一个新的KDC，领域(REALM)是APACHE.ORG。两个KDC的krb5.conf配置文件都包含下列内容：
+```
+[realms]
+  APACHE.ORG = {
+    admin_server = c7304.ambari.apache.org
+    kdc = c7304.ambari.apache.org
+  }
+  AMBARI.APACHE.ORG = {
+    admin_server = c7301.ambari.apache.org
+    kdc = c7301.ambari.apache.org
+  }
+
+[domain_realm]
+        c7301.ambari.apache.org = AMBARI.APACHE.ORG
+        c7302.ambari.apache.org = AMBARI.APACHE.ORG
+        c7303.ambari.apache.org = AMBARI.APACHE.ORG
+        c7304.ambari.apache.org = APACHE.ORG
+```
+c7301-c703部署的hadoop集群启用了kerberos。以http协议访问HDFS时，提示需要认证(negotiate)：
+```
+$ curl -i http://c7301.ambari.apache.org:50070/webhdfs/v1/user?op=LISTSTATUS
+HTTP/1.1 401 Authentication required
+(下略)
+```
+如果用kinit登录领域`AMBARI.APACHE.ORG`，然后再用同一个URL，就可以列出HDFS中`/user`目录下的内容，如：
+```
+$ kinit root/admin@AMBARI.APACHE.ORG
+$ curl --negotiate -u : http://c7301.ambari.apache.org:50070/webhdfs/v1/user?op=LISTSTATUS
+{"FileStatuses":{"FileStatus":[
+(下略)
+```
+### 双向互信
+下面建立两个领域`AMBARI.APACHE.ORG`域`APACHE.ORG`之间的跨域信任。之后，用kinit登录领域`APACHE.ORG`，再用curl访问上面的属于`AMBARI.APACHE.ORG`领域的链接。  
+
+为了建立两个领域的互信，需要在两个领域的KDC中分别创建两个特殊的主体(principal)：  
+```
+krbtgt/APACHE.ORG@AMBAIR.APACHE.ORG
+krbtgt/AMBARI.APACHE.ORG@APACHE.ORG
+```
+具体的操作如下：
+```
+$ vagrant ssh c7301
+$ sudo su - root
+$ kadmin.local -q "addprinc -pw 1 krbtgt/APACHE.ORG@AMBAIR.APACHE.ORG"
+$ kadmin.local -q "addprinc -pw 1 krbtgt/AMBARI.APACHE.ORG@APACHE.ORG"
+$ vagrant ssh c7304                 （执行这个命令前先退出VM c7301）
+$ sudo su - root
+$ kadmin.local -q "addprinc -pw 1 krbtgt/APACHE.ORG@AMBAIR.APACHE.ORG"
+$ kadmin.local -q "addprinc -pw 1 krbtgt/AMBARI.APACHE.ORG@APACHE.ORG"
+```
+测试一下跨域互信。在c7304上执行：
+```
+$ kinit root/admin@APACHE.ORG
+$ curl --negotiate -u : http://c7301.ambari.apache.org:50070/webhdfs/v1/user?op=LISTSTATUS
+{"FileStatuses":{"FileStatus":[
+(下略)
+```
+从上面可以看出，虽然kinit登录的是APACHE.ORG，却可以访问AMBARI.APACHE.ORG的资源。  
+### 单向信任
+
+（略）
