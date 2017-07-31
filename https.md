@@ -76,6 +76,7 @@ x509_extensions = usr_cert              # The extensions to add to the cert
 ```
 保存配置文件并重启OpenSSL。  
 
+## CA使用(未完)
 #### 1.各节点创建密钥库
 为hadoop集群中的个节点，用JDK的keytool创建一个密钥库，用于保存本服务器的证书私钥。以下测试默认在c7302节点上进行。  
 ```
@@ -103,6 +104,8 @@ Enter key password for <localhost>
 ```
 确保公用名称（CN）与服务器的完全限定域名（FQDN）匹配。客户端将CN与DNS域名进行比较，以确保它确实连接到所需的服务器，而不是恶意服务器。  
 
+#### 2.创建CA
+参考第一章。
 
 #### 3.将CA添加到各服务器的信任库
 ```
