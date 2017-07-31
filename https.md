@@ -178,3 +178,59 @@ $ keytool -keystore c7302.jks -alias localhost -import -file cert-signed
 Enter keystore password: vagrant
 Certificate reply was installed in keystore
 ```
+## Java安全教程
+[原文](http://docs.oracle.com/javase/tutorial/security/TOC.html)  
+
+#### 私钥/公钥对
+私钥对消息进行数字签名(sign)。公钥验证签名，确保签名是私钥签署的。（身份验证、不可否认）  
+
+#### 证书(certificate)
+证书包含公钥、公钥拥有者(subject)、签署者的签名、签署者(issuer)。可以简单认为证书包含公钥，以及证明公钥有效的签名。  
+自签名证书的subject与issuer相同。根证书是自签名证书。
+
+#### 密钥库(keystore)
+将密钥和对应公钥保存在一个受密码保护的数据库中，就叫密钥库。这是个jdk的术语，不是通用的。  
+密钥库中条目有两种：私钥/公钥对、可信公钥。或者叫私钥/证书对、可信证书。（记住，证书里只有公钥）  
+
+#### 为公钥证书生成证书签名请求(CSR)
+CSR是Certificate Signing Request的简写。  
+当使用keytool生成公钥/私钥对时，它创建了一个密钥库条目。条目中包含公钥和公钥的自签名证书，即证书使用相应的私钥进行签名。  
+如果想把签名换成CA签署的，需要生成“证书签名请求(CSR)”：
+```
+$ keytool -certreq -alias <alias> -file <csrFile> 
+```
+把生成的<csrFile>交给CA（如LetsEncrypt），CA用某种手段认可主体(subject)身份后，生成一个签名后的证书发回。  
+有时CA发回多个证书(证书链)，其中的每个证书都是链中的前一个证书签署的。  
+
+#### 导入CA的响应
+要将密钥库中的自签名证书覆盖为CA签署的证书，首先需要密钥库中创建一个“可信证书”条目，可信证书可以被CA的公钥认证。通过这样一个条目，可以验证CA的签名。可信证书要么是CA的证书(CA签署)，要么是证书链中的最后一个证书。  
+
+#### 将证书从CA导入为“受信任的证书”
+在导入从CA回复的证书之前，您需要在密钥库或cacerts文件中存在一个或多个“受信任的证书” 。  
+ - 如果CA返回的是证书链，只需要导入最顶层的证书。这个证书是“根”CA认证的某个下级CA的公钥证书。  
+ - 如果CA返回的是单个证书，需要导入CA的证书。如果CA证书不是自签名的，需要导入其上级CA的证书，依次类推，直到自签名的根证书。  
+
+#### 导入CA回复的证书
+一旦象前文描述的那样建立了“可信证书”库，就可以导入从CA回复的证书了。  
+导入CA回复证书的命令：
+```
+$ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <certReplyFile>
+```
+
+## Java安全套接字扩展（JSSE）
+[参考](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/JSSERefGuide.html#Introduction)  
+
+Java安全套接字扩展（JSSE）支持安全的Internet通信，它自1.4版本开始包含在JDK中。它为Java版本的SSL和TLS协议提供了框架和实现，并且包括数据加密，服务器身份验证，消息完整性和可选的客户端认证的功能。使用JSSE，开发人员可以通过TCP/IP为客户端和服务器数据安全通道，可运行任何应用程序协议（如超文本传输​​协议（HTTP），Telnet或FTP）。
+
+JSSE提供的加密功能：  
+
+密码算法脚注1 | 加密过程 | 密钥长度（位）  
+------------ | ------- | -------------  
+RSA | 认证和密钥交换 | 512以上  
+RC4 | 批量加密 | 128，128（40有效）  
+DES | 批量加密 | 64（56有效），64（有效40）  
+三重DES | 批量加密 | 192（112有效）  
+AES | 批量加密 | 256(注2),128  
+Diffie-Hellman | 主要协议 | 1024，512    
+DSA | 认证 | 1024  
+注2：使用AES_256的密码套件需要安装JCE无限强度管辖权策略文件  
