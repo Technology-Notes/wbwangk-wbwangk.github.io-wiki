@@ -220,17 +220,296 @@ $ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <cert
 ## Java安全套接字扩展（JSSE）
 [参考](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/JSSERefGuide.html#Introduction)  
 
-Java安全套接字扩展（JSSE）支持安全的Internet通信，它自1.4版本开始包含在JDK中。它为Java版本的SSL和TLS协议提供了框架和实现，并且包括数据加密，服务器身份验证，消息完整性和可选的客户端认证的功能。使用JSSE，开发人员可以通过TCP/IP为客户端和服务器数据安全通道，可运行任何应用程序协议（如超文本传输​​协议（HTTP），Telnet或FTP）。
+Java安全套接字扩展（JSSE）支持安全的Internet通信，它自1.4版本开始包含在JDK中。它为Java版本的SSL和TLS协议提供了框架和实现，并且包括数据加密，服务器身份验证，消息完整性和可选的客户端认证的功能。使用JSSE，开发人员可以通过TCP/IP为客户端和服务器数据安全通道，可运行任何应用程序协议（如超文本传输​​协议（HTTP），Telnet或FTP）。  
 
-JSSE提供的加密功能：  
+#### 为什么使用SSL?
+目前广泛使用的是SSL3.0和TLS1.0，两者的差异很小。SSL解决的问题：  
+ - 你不能总是确定与你进行沟通的实体真的是你认为的。  
+ - 网络数据可能被拦截，因此有可能被未经授权的第三方（有时称为攻击者）读取。  
+ - 拦截数据的攻击者可能会在将其发送到接收器之前进行修改。  
 
-密码算法脚注1 | 加密过程 | 密钥长度（位）  
------------- | ------- | -------------  
-RSA | 认证和密钥交换 | 512以上  
-RC4 | 批量加密 | 128，128（40有效）  
-DES | 批量加密 | 64（56有效），64（有效40）  
-三重DES | 批量加密 | 192（112有效）  
-AES | 批量加密 | 256(注2),128  
-Diffie-Hellman | 主要协议 | 1024，512    
-DSA | 认证 | 1024  
-注2：使用AES_256的密码套件需要安装JCE无限强度管辖权策略文件  
+#### SSL如何工作
+用于加密和解密通过网络传输的数据的算法通常分为两类：**密钥密码术**和**公钥密码术**。  
+**密钥密码术**的加密和解密密码相同，又叫对称加密。密钥加密的算法有：Data Encryption Standard (DES), Triple DES (3DES), Rivest Cipher 2 (RC2), and Rivest Cipher 4 (RC4).  
+
+**公钥密码术**的密钥分为私钥和公钥。公钥可以公开传播，私钥保存在安全的地方。公钥加密，只有对应的私钥能解密。私钥加密，只有对应的公钥能解密（这种特性还可以用来确认发送者身份）。  
+公钥密码术也被称为非对称密码术，因为不同的密钥用于加密和解密数据。经常与SSL一起使用的公知密钥加密算法是Rivest Shamir Adleman（RSA）算法。使用专门用于密钥交换的SSL的另一种公钥算法是Diffie-Hellman（DH）算法。公钥密码学需要大量的计算，使其非常慢。因此，它通常仅用于加密小块数据，例如秘密密钥，而不是大量的加密数据通信。  
+
+#### 公钥证书
+公钥证书可以被认为是护照的数字等价物。它由可信任的组织颁发，可为持有人提供身份证明。发布公钥证书的受信任组织称为证书颁发机构（CA）。  
+公钥证书包含以下字段：  
+
+ - 发行方  
+  发行证书的CA。如果用户信任颁发证书的CA，并且证书有效，则用户可以信任证书。  
+ - 有效期  
+  证书有有效期限。在验证证书的有效性时，应检查此日期。  
+ - 主体  
+  包括有关证书所代表的实体的信息。实体可以是个人或组织。  
+ - 主体的公钥  
+  证书提供的主要信息是主体的公钥。提供所有其他字段以确保此密钥的有效性。  
+ - 签名  
+  证书由颁发证书的CA进行数字签名。使用CA的私钥创建签名（签署），并确保证书的有效性。因为只有证书被签名，而不是SSL事务中发送的数据，SSL不提供不可否认性。  
+
+多个证书可以链接成**证书链**。当使用证书链时，第一个证书始终是发件人的证书。接下来是颁发发件人证书的实体的证书。如果链中有更多证书，那么每个证书都是颁发先前证书的上级CA。链中的最终证书是根CA的证书。根CA是广泛信任的公共证书颁发机构。几个根CA的信息通常存储在客户端的Internet浏览器中。该信息包括CA的公钥。着名的CA包括VeriSign，Entrust和GTE Cyber​​Trust。  
+
+#### HMAC(散列消息认证码)
+利用散列算法（SSL中常用MD5或SHA）生成消息认证码，加密后发送给对方。对方解开HMAC后，与消息进行校验，防止消息被篡改。  
+
+### JSSE类和接口
+![](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/classes1.jpg)  
+#### SSLEngine类
+![](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/sslengine.jpg)  
+
+SSLEngine该类的一个实例可以是以下状态之一：  
+ - 创建：准备配置
+ - 初步握手：执行认证和协商通信参数
+ - 应用数据：准备应用交换
+ - 重新握手：重新协商通信参数/认证; 握手数据可能与应用程序数据混合
+ - 关闭：准备关闭连接
+
+例1: 创建一个SSLEngine对象：
+```java
+import javax.net.ssl.*;
+import java.security.*;
+
+// Create and initialize the SSLContext with key material
+char[] passphrase = "passphrase".toCharArray();
+
+// First initialize the key and trust material
+KeyStore ksKeys = KeyStore.getInstance("JKS");
+ksKeys.load(new FileInputStream("testKeys"), passphrase);
+KeyStore ksTrust = KeyStore.getInstance("JKS");
+ksTrust.load(new FileInputStream("testTrust"), passphrase);
+
+// KeyManagers decide which key material to use
+KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+kmf.init(ksKeys, passphrase);
+
+// TrustManagers decide whether to allow connections
+TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+tmf.init(ksTrust);
+
+sslContext = SSLContext.getInstance("TLS");
+sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+
+// Create the engine
+SSLEngine engine = sslContext.createSSLengine(hostname, port);
+
+// Use as client
+engine.setUseClientMode(true);
+```
+#### 生成和处理SSL数据
+两个主要的SSLEngine方法是 wrap()和unwrap()。他们分别负责生成和使用网络数据。根据SSLEngine对象的状态，此数据可能是握手或应用程序数据。  
+例2: 使用非阻塞SocketChannel：
+```java
+// Create a nonblocking socket channel
+SocketChannel socketChannel = SocketChannel.open();
+socketChannel.configureBlocking(false);
+socketChannel.connect(new InetSocketAddress(hostname, port));
+
+// Complete connection
+while (!socketChannel.finishedConnect()) {
+    // do something until connect completed
+}
+
+// Create byte buffers to use for holding application and encoded data
+SSLSession session = engine.getSession();
+ByteBuffer myAppData = ByteBuffer.allocate(session.getApplicationBufferSize());
+ByteBuffer myNetData = ByteBuffer.allocate(session.getPacketBufferSize());
+ByteBuffer peerAppData = ByteBuffer.allocate(session.getApplicationBufferSize());
+ByteBuffer peerNetData = ByteBuffer.allocate(session.getPacketBufferSize());
+
+// Do initial handshake
+doHandshake(socketChannel, engine, myNetData, peerNetData);
+
+myAppData.put("hello".getBytes());
+myAppData.flip();
+
+while (myAppData.hasRemaining()) {
+    // Generate SSL/TLS encoded data (handshake or application data)
+    SSLEngineResult res = engine.wrap(myAppData, myNetData);
+
+    // Process status of call
+    if (res.getStatus() == SSLEngineResult.Status.OK) {
+        myAppData.compact();
+
+        // Send SSL/TLS encoded data to peer
+        while(myNetData.hasRemaining()) {
+            int num = socketChannel.write(myNetData);
+            if (num == 0) {
+                // no bytes written; try again later
+            }
+        }
+    }
+
+    // Handle other status:  BUFFER_OVERFLOW, CLOSED
+    ...
+}
+```
+示例3：从非阻塞SocketChannel读取数据  
+```java
+// Read SSL/TLS encoded data from peer
+int num = socketChannel.read(peerNetData);
+if (num == -1) {
+    // The channel has reached end-of-stream
+} else if (num == 0) {
+    // No bytes read; try again ...
+} else {
+    // Process incoming data
+    peerNetData.flip();
+    res = engine.unwrap(peerNetData, peerAppData);
+
+    if (res.getStatus() == SSLEngineResult.Status.OK) {
+        peerNetData.compact();
+
+        if (peerAppData.hasRemaining()) {
+            // Use peerAppData
+        }
+    }
+    // Handle other status:  BUFFER_OVERFLOW, BUFFER_UNDERFLOW, CLOSED
+    ...
+}
+```
+示例4：处理BUFFER_UNDERFLOW和BUFFER_OVERFLOW
+```java
+SSLEngineResult res = engine.unwrap(peerNetData, peerAppData);
+switch (res.getStatus()) {
+
+case BUFFER_OVERFLOW:
+    // Maybe need to enlarge the peer application data buffer.
+    if (engine.getSession().getApplicationBufferSize() > peerAppData.capacity()) {
+        // enlarge the peer application data buffer
+    } else {
+        // compact or clear the buffer
+    }
+    // retry the operation
+    break;
+
+case BUFFER_UNDERFLOW:
+    // Maybe need to enlarge the peer network packet buffer
+    if (engine.getSession().getPacketBufferSize() > peerNetData.capacity()) {
+        // enlarge the peer network packet buffer
+    } else {
+        // compact or clear the buffer
+    }
+    // obtain more inbound network data and then retry the operation
+    break;
+
+    // Handle other status: CLOSED, OK
+    ...
+}
+```
+示例5：检查和处理握手状态和总体状态
+```java
+void doHandshake(SocketChannel socketChannel, SSLEngine engine,
+        ByteBuffer myNetData, ByteBuffer peerNetData) throws Exception {
+
+    // Create byte buffers to use for holding application data
+    int appBufferSize = engine.getSession().getApplicationBufferSize();
+    ByteBuffer myAppData = ByteBuffer.allocate(appBufferSize);
+    ByteBuffer peerAppData = ByteBuffer.allocate(appBufferSize);
+
+    // Begin handshake
+    engine.beginHandshake();
+    SSLEngineResult.HandshakeStatus hs = engine.getHandshakeStatus();
+
+    // Process handshaking message
+    while (hs != SSLEngineResult.HandshakeStatus.FINISHED &&
+        hs != SSLEngineResult.HandshakeStatus.NOT_HANDSHAKING) {
+
+        switch (hs) {
+
+        case NEED_UNWRAP:
+            // Receive handshaking data from peer
+            if (socketChannel.read(peerNetData) < 0) {
+                // The channel has reached end-of-stream
+            }
+
+            // Process incoming handshaking data
+            peerNetData.flip();
+            SSLEngineResult res = engine.unwrap(peerNetData, peerAppData);
+            peerNetData.compact();
+            hs = res.getHandshakeStatus();
+
+            // Check status
+            switch (res.getStatus()) {
+            case OK :
+                // Handle OK status
+                break;
+
+            // Handle other status: BUFFER_UNDERFLOW, BUFFER_OVERFLOW, CLOSED
+            ...
+            }
+            break;
+
+        case NEED_WRAP :
+            // Empty the local network packet buffer.
+            myNetData.clear();
+
+            // Generate handshaking data
+            res = engine.wrap(myAppData, myNetData);
+            hs = res.getHandshakeStatus();
+
+            // Check status
+            switch (res.getStatus()) {
+            case OK :
+                myNetData.flip();
+
+                // Send the handshaking data to peer
+                while (myNetData.hasRemaining()) {
+                    socketChannel.write(myNetData);
+                }
+                break;
+
+            // Handle other status:  BUFFER_OVERFLOW, BUFFER_UNDERFLOW, CLOSED
+            ...
+            }
+            break;
+
+        case NEED_TASK :
+            // Handle blocking tasks
+            break;
+
+        // Handle other status:  // FINISHED or NOT_HANDSHAKING
+        ...
+        }
+    }
+
+    // Processes after handshaking
+    ...
+}
+```
+#### 处理阻塞任务
+```java
+if (res.getHandshakeStatus() == SSLEngineResult.HandshakeStatus.NEED_TASK) {
+    Runnable task;
+    while ((task = engine.getDelegatedTask()) != null) {
+        new Thread(task).start();
+    }
+}
+```
+#### 关闭
+示例6：关闭SSL / TLS连接:
+```java
+// Indicate that application is done with engine
+engine.closeOutbound();
+
+while (!engine.isOutboundDone()) {
+    // Get close message
+    SSLEngineResult res = engine.wrap(empty, myNetData);
+
+    // Check res statuses
+
+    // Send close message to peer
+    while(myNetData.hasRemaining()) {
+        int num = socketChannel.write(myNetData);
+        if (num == 0) {
+            // no bytes written; try again later
+        }
+        myNetData().compact();
+    }
+}
+
+// Close transport
+socketChannel.close();
+```
