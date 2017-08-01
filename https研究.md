@@ -513,3 +513,108 @@ while (!engine.isOutboundDone()) {
 // Close transport
 socketChannel.close();
 ```
+## java访问https链接
+现代浏览器都内嵌了一列可信CA的公钥证书。如果你访问一个不可信的https网站（一般是自建CA），浏览器会弹出警告，只有把要访问的网站加入“例外”目录，浏览器才运行继续访问。  
+Java也实现了类似机制。JDK自带的`$JAVA_HOME/jre/lib/security/cacerts`是个JKS格式的keystore文件，里面是默认的可信CA证书。本机装了多个JDK，查了一下发现了多个cacerts：  
+```
+$ find / -name cacerts
+/etc/pki/ca-trust/extracted/java/cacerts
+/etc/pki/java/cacerts    （符号链接，指向第一个cacerts）
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.x86_64/jre/lib/security/cacerts
+/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts
+```
+经测试，第一个管用。这与[JSSE官方文档](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#X509TrustManager)中说的文件位置不符。系统属性javax.net.ssl.trustStore可以定义另一个文件来代替cacerts。  
+  
+可以用`keytool`命令查看该文件内容：  
+```
+$ keytool -list -keystore <cacerts文件> -storepass changeit
+```
+#### java访问https网站的源码
+这个源码参考了[这个网页](https://zhidao.baidu.com/question/460681916465240325.html))：
+```java
+import java.io.BufferedReader;
+import java.net.URL;
+import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.InputStream;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.SSLSocketFactory;
+
+public class HttpsTest {
+/*
+* 处理https GET/POST请求
+* 请求地址、请求方法、参数
+* */
+  public static String httpsRequest(String requestUrl,String requestMethod,String outputStr) {
+    StringBuffer buffer=null;
+    try{
+       //创建SSLContext
+       SSLContext sslContext=SSLContext.getInstance("SSL");
+       //初始化
+       sslContext.init(null, null, new java.security.SecureRandom());;
+       //获取SSLSocketFactory对象
+       SSLSocketFactory ssf=sslContext.getSocketFactory();
+       URL url=new URL(requestUrl);
+       HttpsURLConnection conn=(HttpsURLConnection)url.openConnection();
+       conn.setDoOutput(true);
+       conn.setDoInput(true);
+       conn.setUseCaches(false);
+       conn.setRequestMethod(requestMethod);
+       //设置当前实例使用的SSLSoctetFactory
+       conn.setSSLSocketFactory(ssf);
+       conn.connect();
+       //往服务器端写内容
+       if(null!=outputStr) {
+          OutputStream os=conn.getOutputStream();
+          os.write(outputStr.getBytes("utf-8"));
+          os.close();
+        }
+        //读取服务器端返回的内容
+        InputStream is=conn.getInputStream();
+        InputStreamReader isr=new InputStreamReader(is,"utf-8");
+        BufferedReader br=new BufferedReader(isr);
+        buffer=new StringBuffer();
+        String line=null;
+        while((line=br.readLine())!=null) {
+          buffer.append(line);
+        }
+      } catch(Exception e){
+        e.printStackTrace();
+      }
+    return buffer.toString();
+  }
+
+  public static void main(String[] args) {
+    if(args.length==0) {
+      System.out.println("Please enter URL.");
+      return;
+    }
+    String s = httpsRequest(args[0],"GET",null);
+    System.out.println(s);
+  }
+}
+```
+编译运行：
+```
+$ javac HttpsTest.java
+$ java HttpsTest https://cn.bing.com
+(返回一堆html代码)
+$ java HttpsTest https://kyfw.12306.cn
+javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+(下略)
+```
+这是因为kyfw.12306.cn网址的服务器证书不是可信CA签署的。而“必应”bing.com的服务器证书是cacerts中某个可信CA签署的。  
+
+#### cacerts的修改测试
+为了测试cacerts的作用，现在把它改名，然后用一个空文件代替。实测中，下面的<cacerts file>被替换为`/etc/pki/java/cacerts`：
+```
+$ mv <cacerts file> <cacerts file>.old
+$ echo "" > <cacerts file>
+$ java HttpsTest https://cn.bing.com
+javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed:
+(下略)
+```
+必应网站也不行了，是因为cacerts文件中的证书被清空了。  
