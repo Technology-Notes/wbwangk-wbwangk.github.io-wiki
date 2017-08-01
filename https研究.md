@@ -514,21 +514,24 @@ while (!engine.isOutboundDone()) {
 socketChannel.close();
 ```
 ## java访问https链接
-现代浏览器都内嵌了一列可信CA的公钥证书。如果你访问一个不可信的https网站（一般是自建CA），浏览器会弹出警告，只有把要访问的网站加入“例外”目录，浏览器才运行继续访问。  
-Java也实现了类似机制。JDK自带的`$JAVA_HOME/jre/lib/security/cacerts`是个JKS格式的keystore文件，里面是默认的可信CA证书。本机装了多个JDK，查了一下发现了多个cacerts：  
+现代浏览器都内嵌了一列可信CA的公钥证书。如果你访问一个不可信的https网站（一般是自建CA），浏览器会弹出警告，只有把要访问的网站加入“例外”目录，浏览器才运行继续访问。Java也实现了类似机制。但OpenJDK和OracleJDK的机制有差异。OracleJDK使用自带的可信证书库(文件名为cacerts)，而OpenJDK则使用linux系统的证书体系。  
+
+### Oracle JDK访问https链接
+OracleJDK的[下载地址](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#X509TrustManager)，可以先在windows下下载，再scp到linux下。  
+OracleJDK自带可信证书库文件位置是`$JAVA_HOME/jre/lib/security/cacerts`，这是个JKS格式的keystore文件。可以这样查找可信证书库位置：
 ```
-$ find / -name cacerts
+$  find / -name cacerts
 /etc/pki/ca-trust/extracted/java/cacerts
-/etc/pki/java/cacerts    （符号链接，指向第一个cacerts）
-/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.x86_64/jre/lib/security/cacerts
-/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts
+/etc/pki/java/cacerts
+/usr/java/jdk1.8.0_131/jre/lib/security/cacerts
 ```
-经测试，第一个管用。这与[JSSE官方文档](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#X509TrustManager)中说的文件位置不符。系统属性javax.net.ssl.trustStore可以定义另一个文件来代替cacerts。  
-  
+前两个是同一个文件，是linux系统的可信证书库。第三个OracleJDK带的。  
 可以用`keytool`命令查看该文件内容：  
 ```
 $ keytool -list -keystore <cacerts文件> -storepass changeit
 ```
+`changeit`是密钥库的默认密码。 把`<cacerts文件>`替换成`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`。  
+下面编写一个java类来测试。  
 #### java访问https网站的源码
 这个源码参考了[这个网页](https://zhidao.baidu.com/question/460681916465240325.html))：
 ```java
@@ -609,7 +612,7 @@ javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: 
 这是因为kyfw.12306.cn网址的服务器证书不是可信CA签署的。而“必应”bing.com的服务器证书是cacerts中某个可信CA签署的。  
 
 #### cacerts的修改测试
-为了测试cacerts的作用，现在把它改名，然后用一个空文件代替。实测中，下面的<cacerts file>被替换为`/etc/pki/java/cacerts`：
+为了测试cacerts的作用，现在把它改名，然后用一个空文件代替。实测中，下面的<cacerts file>被替换为`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`：
 ```
 $ mv <cacerts file> <cacerts file>.old
 $ echo "" > <cacerts file>
@@ -618,3 +621,14 @@ javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: 
 (下略)
 ```
 必应网站也不行了，是因为cacerts文件中的证书被清空了。  
+
+### OpenJDK访问https链接
+卸载OracleJDK，安装OpenJDK。再查找`cacerts`文件：
+```
+$ find / -name cacerts
+/etc/pki/ca-trust/extracted/java/cacerts
+/etc/pki/java/cacerts    （符号链接，指向第一个cacerts）
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.x86_64/jre/lib/security/cacerts
+```
+再运行`java HttpsTest <URL>`，发现`$JAVA_HOME/jre/lib/security/cacerts`这个文件不再管用，管用的是`/etc/pki/ca-trust/extracted/java/cacerts`。  
+说明OpenJDK对于可信证书库的使用与OracleJDK不同，OpenJDK优先使用linux自带的可信证书库，而OracleJDK优先使用自带的。  
