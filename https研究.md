@@ -753,4 +753,9 @@ Executing request GET https://c7304.ambari.apache.org HTTP/1.1
 ----------------------------------------
 HTTP/1.1 200 OK
 ```
-可以看到，不报错了。说明nginx的公钥证书导入到JDK可信证书库的操作起作用了。如果用curl测试（不加-k参数），发现仍报错。  
+可以看到，不报错了。说明nginx的公钥证书导入到JDK可信证书库的操作起作用了。如果用curl测试（不加-k参数），发现仍报错。指定公钥证书的curl用法：
+```
+$ curl https://c7304.ambari.apache.org  --cacert /opt/ca/ca-cert
+(不报错，返回了网页)
+```  
+注意，curl的--cacert参数接受的是PEM格式的证书。把JKS格式的密钥库当参数传给curl是不行的，如`/etc/pki/java/cacerts`当curl参数不行。  
