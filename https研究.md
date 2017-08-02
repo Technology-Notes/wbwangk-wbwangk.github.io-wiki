@@ -632,3 +632,63 @@ $ find / -name cacerts
 ```
 再运行`java HttpsTest <URL>`，发现`$JAVA_HOME/jre/lib/security/cacerts`这个文件不再管用，管用的是`/etc/pki/ca-trust/extracted/java/cacerts`。  
 说明OpenJDK对于可信证书库的使用与OracleJDK不同，OpenJDK优先使用linux自带的可信证书库，而OracleJDK优先使用自带的。  
+
+## HttpClient访问https
+利用apache [HttpClient](https://hc.apache.org/)访问https的写法略有差异，但可信证书库的位置、作用等于java完全相同。下面测试在OracleJDK下进行。  
+```
+$ wget http://mirror.bit.edu.cn/apache//httpcomponents/httpclient/binary/httpcomponents-client-4.5.3-bin.tar.gz
+$ tar xzvf httpcomponents-client-4.5.3-bin.tar.gz
+$ vi HttpClientSSL.java
+```
+HttpClientSSL.java类的写法参考了[这个官方例子](https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/examples/org/apache/http/examples/client/ClientCustomSSL.java)。  
+```java
+import java.io.File;
+
+import org.apache.http.util.EntityUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+
+public class HttpClientSSL {
+
+    public final static void main(String[] args) throws Exception {
+        if(args.length==0) {
+                System.out.println("Please enter URL.");
+        return;
+        }
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpGet httpget = new HttpGet(args[0]);
+
+            System.out.println("Executing request " + httpget.getRequestLine());
+
+            CloseableHttpResponse response = httpclient.execute(httpget);
+            try {
+                HttpEntity entity = response.getEntity();
+
+                System.out.println("----------------------------------------");
+                System.out.println(response.getStatusLine());
+                EntityUtils.consume(entity);
+            } finally {
+                response.close();
+            }
+        } finally {
+            httpclient.close();
+        }
+    }
+}
+```
+编译执行：
+```
+$ javac -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL.java
+$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://cn.bing.com
+Executing request GET https://cn.bing.com HTTP/1.1
+----------------------------------------
+HTTP/1.1 200 OK
+$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://kyfw.12306.cn
+Executing request GET https://kyfw.12306.cn HTTP/1.1
+Exception in thread "main" javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+(下略)
+```
