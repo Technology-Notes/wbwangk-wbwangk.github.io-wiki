@@ -692,3 +692,65 @@ Executing request GET https://kyfw.12306.cn HTTP/1.1
 Exception in thread "main" javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 (下略)
 ```
+## nginx建立https服务器
+编辑文件`/etc/yum.repos.d/nginx.repo`：
+```
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/OS/OSRELEASE/$basearch/
+gpgcheck=0
+enabled=1
+```
+由于本地环境是centos7.3，将`OS`替换为`centos`，将`OSRELEASE`替换为`7`。然后：
+```
+$ yum update -y
+$ yum install nginx
+```
+生成密钥对：
+```
+$ openssl req -new -x509 -keyout ca-key -out ca-cert -days 365
+Common Name (eg, your name or your server's hostname) []:c7304.ambari.apache.org
+```
+common name要输入本机的主机名FSDN。会提示输入密码(PEM pass phrase)，记住密码(我输入的vagrant)。  
+编辑nginx配置文件`/etc/nginx/conf.d/default.conf`，添加以下内容：
+```
+server {
+    listen       443;
+    server_name  c7304.ambari.apache.org;
+                root /opt/ca;
+                ssl on;
+                ssl_certificate      /opt/ca/ca-cert;
+                ssl_certificate_key  /opt/ca/ca-key;
+
+    location / {
+        index  index.html index.htm;
+    }
+```
+别忘记在`/opt/ca/`目录下建一个index.html文件。  
+重启nginx，加载新的配置文件，测试https服务器：
+```
+$ nginx           (刚装上nginx时要执行，之后就不用了)
+$ ps -ef | grep nginx           (看看nginx进程是否已经启动)
+$ nginx -t                      (检查配置文件是正确，会提示输入密钥对的PEM pass phrase密码)
+$ nginx -s reload               (重新加载配置文件，修改nginx配置文件有执行这个命令，也要输入密码)
+$ curl -k https://c7304.ambari.apache.org         (测试一下，-k参数是因为服务器证书是自签名的，不是可信网站)
+```
+可以用前面的java程序测试一下https：
+```
+$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://c7304.ambari.apache.org
+```
+必然报错，因为服务器证书没加入到可信证书库中。
+
+#### 将公钥导入JDK可信证书库
+```
+$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -file /opt/ca/ca-cert -storepass changeit
+```
+可信证书的位置见前文。
+重新用java程序测试：
+```
+$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://c7304.ambari.apache.org
+Executing request GET https://c7304.ambari.apache.org HTTP/1.1
+----------------------------------------
+HTTP/1.1 200 OK
+```
+可以看到，不报错了。说明nginx的公钥证书导入到JDK可信证书库的操作起作用了。如果用curl测试（不加-k参数），发现仍报错。  
