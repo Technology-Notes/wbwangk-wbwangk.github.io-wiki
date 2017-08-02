@@ -216,6 +216,16 @@ $ keytool -certreq -alias <alias> -file <csrFile>
 ```
 $ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <certReplyFile>
 ```
+#### 查看某服务器的公钥证书
+```
+$ openssl s_client -connect xxxxx.com:443 |tee logfile
+```
+可以显示某网站的公钥证书及其他内容。其中`BEGIN CERTIFICATE`与`END CERTIFICATE`之间的内容就是服务器公钥证书。经测试可以正确返回的有：
+```
+$ openssl s_client -connect mail.inspur.com:443 |tee logfile
+$ openssl s_client -connect c7301.ambari.apache.org:8443 |tee logfile
+```
+上面端口8443是hadoop集群的apache knox的服务器。
 
 ## Java安全套接字扩展（JSSE）
 [参考](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/JSSERefGuide.html#Introduction)  
