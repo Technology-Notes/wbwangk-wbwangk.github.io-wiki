@@ -516,6 +516,8 @@ socketChannel.close();
 ## java访问https链接
 现代浏览器都内嵌了一列可信CA的公钥证书。如果你访问一个不可信的https网站（一般是自建CA），浏览器会弹出警告，只有把要访问的网站加入“例外”目录，浏览器才运行继续访问。Java也实现了类似机制。但OpenJDK和OracleJDK的机制有差异。OracleJDK使用自带的可信证书库(文件名为cacerts)，而OpenJDK则使用linux系统的证书体系。  
 
+以下测试的java程序放在c7304的`/opt/https`目录下。而`/opt/ca`目录存放了openssl生成的证书。  
+
 ### Oracle JDK访问https链接
 OracleJDK的[下载地址](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#X509TrustManager)，可以先在windows下下载，再scp到linux下。  
 OracleJDK自带可信证书库文件位置是`$JAVA_HOME/jre/lib/security/cacerts`，这是个JKS格式的keystore文件。可以这样查找可信证书库位置：
@@ -693,6 +695,8 @@ Exception in thread "main" javax.net.ssl.SSLHandshakeException: sun.security.val
 (下略)
 ```
 ## nginx建立https服务器
+[参考](https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04)  
+
 编辑文件`/etc/yum.repos.d/nginx.repo`：
 ```
 [nginx]
@@ -708,10 +712,9 @@ $ yum install nginx
 ```
 生成密钥对：
 ```
-$ openssl req -new -x509 -keyout ca-key -out ca-cert -days 365
-Common Name (eg, your name or your server's hostname) []:c7304.ambari.apache.org
+$ openssl req -new -newkey rsa:2048 -nodes -x509 -keyout nginx.key -out nginx.crt -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
 ```
-common name要输入本机的主机名FSDN。会提示输入密码(PEM pass phrase)，记住密码(我输入的vagrant)。  
+`-nodes`表示密钥不加密。不加这个参数会提示输入密码，而nginx不认加密后的key。如果不加`-x509`参数，产生的将是一个CSR(证书签名请求)。在正规的流程中，应产生CSR，CA签名后变成.crt。现在是测试，所以直接生成了证书（应该是自签名的）。  
 编辑nginx配置文件`/etc/nginx/conf.d/default.conf`，添加以下内容：
 ```
 server {
@@ -719,8 +722,8 @@ server {
     server_name  c7304.ambari.apache.org;
                 root /opt/ca;
                 ssl on;
-                ssl_certificate      /opt/ca/ca-cert;
-                ssl_certificate_key  /opt/ca/ca-key;
+                ssl_certificate      /opt/ca/nginx.crt;
+                ssl_certificate_key  /opt/ca/nginx.key;
 
     location / {
         index  index.html index.htm;
@@ -731,8 +734,8 @@ server {
 ```
 $ nginx           (刚装上nginx时要执行，之后就不用了)
 $ ps -ef | grep nginx           (看看nginx进程是否已经启动)
-$ nginx -t                      (检查配置文件是正确，会提示输入密钥对的PEM pass phrase密码)
-$ nginx -s reload               (重新加载配置文件，修改nginx配置文件有执行这个命令，也要输入密码)
+$ nginx -t                      (测试nginx配置文件)
+$ nginx -s reload               (重新加载配置文件，修改nginx配置文件有执行这个命令)
 $ curl -k https://c7304.ambari.apache.org         (测试一下，-k参数是因为服务器证书是自签名的，不是可信网站)
 ```
 可以用前面的java程序测试一下https：
@@ -743,11 +746,15 @@ $ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https:
 
 #### 将公钥导入JDK可信证书库
 ```
-$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -file /opt/ca/ca-cert -storepass changeit
+$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -file /opt/ca/nginx.crt -storepass changeit
 ```
-可信证书的位置见前文。
+有时要多次导入同名条目。如果提示重名，则删除条目的命令：
+```
+$ keytool -delete -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -storepass changeit
+```
 重新用java程序测试：
 ```
+$ cd /opt/https
 $ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://c7304.ambari.apache.org
 Executing request GET https://c7304.ambari.apache.org HTTP/1.1
 ----------------------------------------
@@ -755,7 +762,44 @@ HTTP/1.1 200 OK
 ```
 可以看到，不报错了。说明nginx的公钥证书导入到JDK可信证书库的操作起作用了。如果用curl测试（不加-k参数），发现仍报错。指定公钥证书的curl用法：
 ```
-$ curl https://c7304.ambari.apache.org  --cacert /opt/ca/ca-cert
+$ curl https://c7304.ambari.apache.org  --cacert /opt/ca/nginx.crt
 (不报错，返回了网页)
 ```  
 注意，curl的--cacert参数接受的是PEM格式的证书。把JKS格式的密钥库当参数传给curl是不行的，如`/etc/pki/java/cacerts`当curl参数不行。  
+
+## 双向SSL
+为客户端c7302创建密钥对：
+```
+$ openssl req -new -newkey rsa:2048 -nodes -x509 -keyout client.key -out client.crt -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7302"
+$ scp client.crt root@c7304:/opt/ca                (将客户端公钥复制到nginx所在机器)
+```
+配置nginx，增加两条配置：
+```
+server {
+    listen       443;
+    server_name  c7304.ambari.apache.org;
+                ssl on;
+                ssl_certificate      /opt/ca/nginx.crt;
+                ssl_certificate_key  /opt/ca/nginx.key;
+
+                ssl_client_certificate /opt/ca/client.crt;
+                ssl_verify_client on;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+```
+用`nginx -s reload`重启nginx。
+```
+$ curl https://c7304.ambari.apache.org  --cacert /opt/ca/nginx.crt --cert /opt/ca/client.crt
+```
+重新执行之前的java程序：
+```
+$ cd /opt/https
+$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://c7304.ambari.apache.org
+Executing request GET https://c7304.ambari.apache.org HTTP/1.1
+----------------------------------------
+HTTP/1.1 400 Bad Request
+```
+注意到返回值不再是`200 OK`。这说明nginx双向SSL的配置是起作用了。
