@@ -396,6 +396,19 @@ Executing request GET https://c7304.ambari.apache.org HTTP/1.1
 ----------------------------------------
 HTTP/1.1 200 OK
 ```
+### (三)OpenSSL搭建https服务器
+openssl自带了https服务器的模拟功能。在c7403上执行：
+```
+$ cd /opt/ca
+$ openssl s_server -accept 444 -cert nginx2.crt -key nginx2.key -www
+```
+为了不与nginx的https服务器冲突，用了444端口。  
+这个openssl的模拟服务器用curl测试：
+```
+$ curl https://c7304.ambari.apache.org:444  --cacert /root/CA/certs/ca-cert
+```
+java测试不再冗述。  
+
 
 ## 四、双向SSL
 双向SSL(two-way SSL)又叫Mutual Authentication。第三章主要讲单向SSL。单向SSL是客户端验证服务器是否可信。而双向SSL增加了服务器对客户端的可信验证。  
