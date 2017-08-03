@@ -358,6 +358,7 @@ $ openssl req -new -newkey rsa:2048 -nodes -keyout nginx2.key -out nginx2.csr -s
 命令格式同前文的自签名相比，去掉了一个`-x509`。输出的文件命名也改了.csr。生成好后可以cat命令看一下.csr文件的内容，发现它的开始一行是`-----BEGIN CERTIFICATE REQUEST-----`，而证书的开始行是`-----BEGIN CERTIFICATE-----`。  
 
 然后，是自建CA处理证书签名请求(CSR)，会提示输入CA私钥密码：
+```
 $ openssl ca -in nginx2.csr -out nginx2.crt
 ```
 可以用下列命令查看一下签名后的证书，能看到Issuer和Subject不一样了：
