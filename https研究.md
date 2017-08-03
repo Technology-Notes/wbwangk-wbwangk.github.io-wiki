@@ -412,16 +412,16 @@ java测试不再冗述。
 
 ## 四、双向SSL
 双向SSL(two-way SSL)又叫Mutual Authentication，或基于证书的相互认证，是指双方通过验证提供的数字证书相互认证，以便双方确保对方的身份。在技​​术术语中，它是指客户端（Web浏览器或客户端应用程序）向服务器（网站或服务器应用程序）进行身份验证，并且服务器也向客户端进行身份验证，验证过程用到了CA颁发的公钥证书/数字证书。
+双向SSL下客户端与服务器的交互过程：
+1. 客户端请求访问受保护的资源。  
+2. 服务器将其证书提交给客户端。  
+3. 客户端验证服务器的证书。  
+4. 如果成功，客户端将其证书发送到服务器。  
+5. 服务器验证客户端的凭据。  
+6. 如果成功，则服务器授予对客户端请求的受保护资源的访问权限。  
+对以上过程的详细描述可参考[这个](https://community.developer.visa.com/t5/Developer-Tools/What-is-Mutual-Authentication/ba-p/5757)。  
 
-客户端请求访问受保护的资源。
-服务器将其证书提交给客户端。
-客户端验证服务器的证书。
-如果成功，客户端将其证书发送到服务器。
-服务器验证客户端的凭据。
-如果成功，则服务器授予对客户端请求的受保护资源的访问权限。
-
-双向SSL(two-way SSL)又叫Mutual Authentication。第三章主要讲单向SSL。单向SSL是客户端验证服务器是否可信。而双向SSL增加了服务器对客户端的可信验证。  
-客户端设定为c7302节点。在c7302的`/opt/twowayssl`为客户端用户webb创建签名请求：
+为了实现双向SSL，需要为客户端生成私钥和证书。假定客户端设定为c7302节点。在c7302的`/opt/twowayssl`为客户端用户webb创建签名请求：
 ```
 $ openssl req -new -newkey rsa:2048 -nodes -keyout client.key -out client.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=webb"
 $ scp client.csr root@c7304:/opt/ca                (将客户端的证书签名请求发送到CA所在机器)
@@ -430,38 +430,40 @@ CA建立在c7304上（参见第五章），需要在c7304上对该CSR进行签�
 ```
 $ cd /opt/ca
 $ openssl ca -in client.csr -out client.crt
+$ scp client.crt root@c7302:/opt/twowayssl            (将签署后的证书复制回c7302)
 ```
-
-配置nginx，增加两条配置：
+nginx的配置需要变更为：
 ```
 server {
-    listen       443;
+    listen       443 ssl;
     server_name  c7304.ambari.apache.org;
-                ssl on;
-                ssl_certificate      /opt/ca/nginx.crt;
-                ssl_certificate_key  /opt/ca/nginx.key;
+    ssl_certificate        /opt/ca/nginx.crt;
+    ssl_certificate_key    /opt/ca/nginx.key;
 
-                ssl_client_certificate /opt/ca/client.crt;
-                ssl_verify_client on;
+    ssl_trusted_certificate /root/CA/certs/ca-cert;
+    ssl_client_certificate /opt/ca/client.crt;
+    ssl_verify_depth 1;
+    ssl_verify_client on;
 
     location / {
         root   /usr/share/nginx/html;
         index  index.html index.htm;
     }
 ```
-用`nginx -s reload`重启nginx。
+用`nginx -s reload`重启nginx。然后用curl测试一下：  
 ```
-$ curl https://c7304.ambari.apache.org  --cacert /opt/ca/nginx.crt --cert /opt/ca/client.crt
+$ curl https://c7304.ambari.apache.org  --cacert /root/CA/certs/ca-cert
+400 No required SSL certificate was sent
 ```
-重新执行之前的java程序：
+注意到返回的状态码不再是`200`。这说明nginx双向SSL的配置是起作用了。
+
+#### windows的测试
+首先，将客户端的公钥和私钥合并，不合并不能导入到IE：
 ```
-$ cd /opt/https
-$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://c7304.ambari.apache.org
-Executing request GET https://c7304.ambari.apache.org HTTP/1.1
-----------------------------------------
-HTTP/1.1 400 Bad Request
+$ cat client.crt client.key > client.pem
 ```
-注意到返回值不再是`200 OK`。这说明nginx双向SSL的配置是起作用了。
+将自建CA的公钥`ca-cert`文件和`client.pem`两个文件复制到宿主windows下。然后分别导入到IE。其中client.pem导入到了“其他人”标签页(显示颁发给webb)，`ca-cert`导入到了“受信任的发布者”标签页中(显示颁发给iMaiCA)。可能需要在“高级”按钮中选中“用于客户端认证”。  
+然后用IE访问地址`https://c7304.ambari.apache.org`，发现可以访问了。  
 
 ## 五、创建内部CA
 [参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，如果对keytool不熟悉建议先读[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E5%85%AC%E7%A7%81%E9%92%A5%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81)。  
