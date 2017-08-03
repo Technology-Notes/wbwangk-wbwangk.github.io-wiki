@@ -290,33 +290,32 @@ enabled=1
 $ yum update -y
 $ yum install nginx
 ```
-生成密钥对：
+### (一)自签名证书https服务器
+生成私钥和自签名证书：
 ```
 $ openssl req -new -newkey rsa:2048 -nodes -x509 -keyout nginx.key -out nginx.crt -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
 ```
-`-nodes`表示密钥不加密。不加这个参数会提示输入密码，而nginx不认加密后的key。如果不加`-x509`参数，产生的将是一个CSR(证书签名请求)。在正规的流程中，应产生CSR，CA签名后变成.crt。现在是测试，所以直接生成了证书（应该是自签名的）。  
+`-nodes`表示密钥不加密。不加这个参数会提示输入密码，而nginx不认加密后的key。如果不加`-x509`参数，产生的将是一个CSR(证书签名请求)。在正规的流程中，应产生CSR，CA签名后变成.crt。现在是个简单测试，所以直接生成了自签名证书。  
 编辑nginx配置文件`/etc/nginx/conf.d/default.conf`，添加以下内容：
 ```
 server {
     listen       443;
     server_name  c7304.ambari.apache.org;
-                root /opt/ca;
                 ssl on;
                 ssl_certificate      /opt/ca/nginx.crt;
                 ssl_certificate_key  /opt/ca/nginx.key;
 
     location / {
+        root   /usr/share/nginx/html;
         index  index.html index.htm;
     }
 ```
-别忘记在`/opt/ca/`目录下建一个index.html文件。  
 重启nginx，加载新的配置文件，测试https服务器：
 ```
 $ nginx           (刚装上nginx时要执行，之后就不用了)
 $ ps -ef | grep nginx           (看看nginx进程是否已经启动)
 $ nginx -t                      (测试nginx配置文件)
 $ nginx -s reload               (重新加载配置文件，修改nginx配置文件有执行这个命令)
-$ curl -k https://c7304.ambari.apache.org         (测试一下，-k参数是因为服务器证书是自签名的，不是可信网站)
 ```
 可以用前面的java程序测试一下https：
 ```
@@ -340,19 +339,76 @@ Executing request GET https://c7304.ambari.apache.org HTTP/1.1
 ----------------------------------------
 HTTP/1.1 200 OK
 ```
-可以看到，不报错了。说明nginx的公钥证书导入到JDK可信证书库的操作起作用了。如果用curl测试（不加-k参数），发现仍报错。指定公钥证书的curl用法：
+可以看到，不报错了。说明nginx的公钥证书导入到JDK可信证书库的操作起作用了。  
+
+#### 用curl进行可信https测试
 ```
 $ curl https://c7304.ambari.apache.org  --cacert /opt/ca/nginx.crt
 (不报错，返回了网页)
 ```  
+curl增加`--cacert`参数后，相当于把参数后的证书临时加入了curl的可信库。  
 注意，curl的--cacert参数接受的是PEM格式的证书。把JKS格式的密钥库当参数传给curl是不行的，如`/etc/pki/java/cacerts`当curl参数不行。  
 
+### (二)CA签名证书https服务器
+要获得一个CA签名的nginx公钥证书，除了通过免费`let's encrypt`网站或商用CA证书公司外，还可以自己搭建一个“内部CA”。搭建办法参见第五章。以下测试假定你已经搭建好了自己的CA。  
+首先，生成一个私钥和证书签名请求：
+```
+$ openssl req -new -newkey rsa:2048 -nodes -keyout nginx2.key -out nginx2.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
+```
+命令格式同前文的自签名相比，去掉了一个`-x509`。输出的文件命名也改了.csr。生成好后可以cat命令看一下.csr文件的内容，发现它的开始一行是`-----BEGIN CERTIFICATE REQUEST-----`，而证书的开始行是`-----BEGIN CERTIFICATE-----`。  
+
+然后，是自建CA处理证书签名请求(CSR)，会提示输入CA私钥密码：
+$ openssl ca -in nginx2.csr -out nginx2.crt
+```
+可以用下列命令查看一下签名后的证书，能看到Issuer和Subject不一样了：
+```
+$ openssl x509 -noout -text -in nginx2.crt
+```
+#### 配置nginx
+nginx的配置文件需要修改，改成新生成的私钥和证书：
+```
+                ssl_certificate      /opt/ca/nginx2.crt;
+                ssl_certificate_key  /opt/ca/nginx2.key;
+```
+重新加载nginx配置文件：
+```
+$ nginx -s reload
+```
+#### 测试https服务器
+首先，用curl测试。需要说明的是，对于CA签名的证书，客户端需要信任是CA的公钥证书，而不是https服务器自己的。所以，curl的命令是：
+```
+$ curl https://c7304.ambari.apache.org  --cacert /root/CA/certs/ca-cert
+```
+CA公钥的位置参见第五章。还可以把CA公钥分发到curl所在的机器。  
+
+为了测试java访问https服务器，将CA公钥导入到JDK的可信密钥库中(先删除之前条目)：
+```
+$ keytool -delete -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -storepass changeit
+$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -file /root/CA/certs/ca-cert -storepass changeit
+```
+重申，导入到可信密钥库的不是https服务器自己的公钥证书，而是CA公钥证书。这是与自签名证书搭建https服务器的显著区别。  
+java测试：
+```
+$ cd /opt/https
+$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://c7304.ambari.apache.org
+Executing request GET https://c7304.ambari.apache.org HTTP/1.1
+----------------------------------------
+HTTP/1.1 200 OK
+```
+
 ## 四、双向SSL
-为客户端c7302创建密钥对：
+双向SSL(two-way SSL)又叫Mutual Authentication。第三章主要讲单向SSL。单向SSL是客户端验证服务器是否可信。而双向SSL增加了服务器对客户端的可信验证。  
+客户端设定为c7302节点。在c7302的`/opt/twowayssl`为客户端用户webb创建签名请求：
 ```
-$ openssl req -new -newkey rsa:2048 -nodes -x509 -keyout client.key -out client.crt -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7302"
-$ scp client.crt root@c7304:/opt/ca                (将客户端公钥复制到nginx所在机器)
+$ openssl req -new -newkey rsa:2048 -nodes -keyout client.key -out client.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=webb"
+$ scp client.csr root@c7304:/opt/ca                (将客户端的证书签名请求发送到CA所在机器)
 ```
+CA建立在c7304上（参见第五章），需要在c7304上对该CSR进行签名：
+```
+$ cd /opt/ca
+$ openssl ca -in client.csr -out client.crt
+```
+
 配置nginx，增加两条配置：
 ```
 server {
