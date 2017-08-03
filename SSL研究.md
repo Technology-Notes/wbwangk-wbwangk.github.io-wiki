@@ -451,18 +451,30 @@ server {
     }
 ```
 指令`ssl_verify_depth 1`必须有。应该是证书链的验证深度，0表示客户端证书，1表示签署客户端证书的CA。虽然没有做实验，但估计如果客户端证书是自签名的，则深度0（默认值）就可以。  
-用`nginx -s reload`重启nginx。然后用curl测试一下：  
+用`nginx -s reload`重启nginx。
+#### curl测试双向SSL
+到c7402上用curl测试一下：  
 ```
-$ curl https://c7304.ambari.apache.org  --cacert /root/CA/certs/ca-cert
-400 No required SSL certificate was sent
+$ cd /opt/twowayssl
+$ curl -k https://c7304.ambari.apache.org
+<html>
+<head><title>400 No required SSL certificate was sent</title></head>
+(后略)
 ```
-注意到返回的状态码不再是`200`。这说明nginx双向SSL的配置是起作用了。
-
-#### windows的测试
-首先，将客户端的公钥和私钥合并，不合并不能导入到IE：
+注意到返回的状态码不再是`200`。这说明nginx双向SSL的配置是起作用了。`-k`参数禁用了服务器可信检测，但由于没有提供客户端凭据，仍报错。  
+为了用curl测试双向SSL，先将客户端的私钥和证书合并：
 ```
 $ cat client.crt client.key > client.pem
+$ curl -k --cert ./client.pem https://c7304.ambari.apache.org
+<h1>Welcome to nginx!</h1>
+(其它略)
+$ curl https://c7304.ambari.apache.org --cacert ca-cert --cert ./client.pem
+<h1>Welcome to nginx!</h1>
+(其它略)
 ```
+注意[--cert](https://curl.haxx.se/docs/manpage.html#-E)参数如果后面跟文件，必须加上相对或绝对路径，否则后面的参数会当成NSS数据库的nickname。  
+
+#### windows下的双向SSL测试
 将自建CA的公钥`ca-cert`文件和`client.pem`两个文件复制到宿主windows下。然后分别导入到IE。其中client.pem导入到了“其他人”标签页(显示颁发给webb)，`ca-cert`导入到了“受信任的发布者”标签页中(显示颁发给iMaiCA)。可能需要在“高级”按钮中选中“用于客户端认证”。  
 然后用IE访问地址`https://c7304.ambari.apache.org`，发现可以访问了。  
 
