@@ -411,6 +411,7 @@ java测试不再冗述。
 
 
 ## 四、双向SSL
+[参考](http://nategood.com/client-side-certificate-authentication-in-ngi)  
 双向SSL(two-way SSL)又叫Mutual Authentication，或基于证书的相互认证，是指双方通过验证提供的数字证书相互认证，以便双方确保对方的身份。在技​​术术语中，它是指客户端（Web浏览器或客户端应用程序）向服务器（网站或服务器应用程序）进行身份验证，并且服务器也向客户端进行身份验证，验证过程用到了CA颁发的公钥证书/数字证书。
 双向SSL下客户端与服务器的交互过程：
 1. 客户端请求访问受保护的资源。  
@@ -440,8 +441,7 @@ server {
     ssl_certificate        /opt/ca/nginx.crt;
     ssl_certificate_key    /opt/ca/nginx.key;
 
-    ssl_trusted_certificate /root/CA/certs/ca-cert;
-    ssl_client_certificate /opt/ca/client.crt;
+    ssl_client_certificate /root/CA/certs/ca-cert;
     ssl_verify_depth 1;
     ssl_verify_client on;
 
@@ -450,6 +450,7 @@ server {
         index  index.html index.htm;
     }
 ```
+指令`ssl_verify_depth 1`必须有。应该是证书链的验证深度，0表示客户端证书，1表示签署客户端证书的CA。虽然没有做实验，但估计如果客户端证书是自签名的，则深度0（默认值）就可以。  
 用`nginx -s reload`重启nginx。然后用curl测试一下：  
 ```
 $ curl https://c7304.ambari.apache.org  --cacert /root/CA/certs/ca-cert
