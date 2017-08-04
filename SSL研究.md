@@ -492,7 +492,29 @@ Enter keystore password:
 webb, Aug 4, 2017, PrivateKeyEntry,
 Certificate fingerprint (SHA1): 99:6D:E2:E4:ED:46:91:8C:FC:D6:73:EC:42:74:3C:BF:6E:E8:9F:87
 ```
-由于之前client.jsk并不存在，所以合并库变成了新建一个密钥库。
+由于之前client.jsk并不存在，所以合并库变成了新建一个密钥库。把这个密钥库文件(client.jsk)复制到c7304的`/opt/https`目录下。（复制到c7304只是因为c7304上的JDK可信库已经导入了自建CA的公钥证书，测试方便而已）。  
+测试类为[MutualAuthenticationHTTP.java](https://raw.githubusercontent.com/imaidata/blog/master/_posts/kerberos/MutualAuthenticationHTTP.java)。这个类比较长，不再全部贴在文章里了。关键的几行：
+```java
+        String url = "https://c7304.ambari.apache.org";
+        String keyStoreFileName = "client.jks";
+        String keyStorePassword = "vagrant";
+        String trustStoreFileName = "/usr/java/jdk1.8.0_131/jre/lib/security/cacerts";
+        String trustStorePassword = "changeit";
+        String alias = "webb";
+```
+上面6行代码定义了客户端的密钥库与可信库。编译和运行：
+```
+$ javac MutualAuthenticationHTTP.java -Xlint:deprecation
+$ java MutualAuthenticationHTTP
+```
+程序先打印出了密钥库的条目，又打印出了可信库的条目，最后显示了URL的响应。这说明java程序通过了服务器的双向认证。
+尝试将main方法中的源码这样修改：
+```
+//            TrustManager[] trustManagers = createTrustManagers(trustStoreFileName, trustStorePassword);
+            //init context with managers data
+            SSLSocketFactory factory = initItAll(keyManagers, null);
+```
+编译后执行，发现仍能成功。这是因为JDK使用了默认的可信库，而我们手工加载的本来就是OracleJDK自带的可信证书库。  
 
 ## 五、创建内部CA
 [参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，如果对keytool不熟悉建议先读[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E5%85%AC%E7%A7%81%E9%92%A5%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81)。  
