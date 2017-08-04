@@ -478,6 +478,22 @@ $ curl https://c7304.ambari.apache.org --cacert ca-cert --cert ./client.pem
 将自建CA的公钥`ca-cert`文件和`client.pem`两个文件复制到宿主windows下。然后分别导入到IE。其中client.pem导入到了“其他人”标签页(显示颁发给webb)，`ca-cert`导入到了“受信任的发布者”标签页中(显示颁发给iMaiCA)。可能需要在“高级”按钮中选中“用于客户端认证”。  
 然后用IE访问地址`https://c7304.ambari.apache.org`，发现可以访问了。  
 
+### java下的双向SSL
+[使用keytool将私钥导入到Java密钥库中](http://cunning.sharp.fm/2008/06/importing_private_keys_into_a.html)  
+前文用openssl工具生成了客户端私钥和公钥证书。要利用实现java程序的双向SSL访问服务器，首先需要把客户端私钥导入到keystore。keytool没有直接导入私钥的功能，但提供了密钥库合并功能，可以利用这个功能实现密钥导入keystore。  
+在c7302上执行：
+```
+$ /opt/twowayssl
+$ pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name webb
+Enter Export Password: vagrant
+$  keytool -importkeystore -deststorepass vagrant -destkeystore client.jks -srckeystore client.p12 -srcstoretype PKCS12 -srcstorepass vagrant -alias webb
+$ keytool -list -keystore client.jks -alias webb
+Enter keystore password:
+webb, Aug 4, 2017, PrivateKeyEntry,
+Certificate fingerprint (SHA1): 99:6D:E2:E4:ED:46:91:8C:FC:D6:73:EC:42:74:3C:BF:6E:E8:9F:87
+```
+由于之前client.jsk并不存在，所以合并库变成了新建一个密钥库。
+
 ## 五、创建内部CA
 [参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，如果对keytool不熟悉建议先读[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E5%85%AC%E7%A7%81%E9%92%A5%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81)。  
 
