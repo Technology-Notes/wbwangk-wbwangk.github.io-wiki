@@ -411,7 +411,7 @@ java测试不再冗述。
 
 
 ## 四、双向SSL
-[参考](http://nategood.com/client-side-certificate-authentication-in-ngi)  
+参考：[Nginx实现双向SSL](http://nategood.com/client-side-certificate-authentication-in-ngi)、[双向SSL15分钟教程](http://monduke.com/2006/06/04/the-fifteen-minute-guide-to-mutual-authentication/)  
 双向SSL(two-way SSL)又叫Mutual Authentication，或基于证书的相互认证，是指双方通过验证提供的数字证书相互认证，以便双方确保对方的身份。在技​​术术语中，它是指客户端（Web浏览器或客户端应用程序）向服务器（网站或服务器应用程序）进行身份验证，并且服务器也向客户端进行身份验证，验证过程用到了CA颁发的公钥证书/数字证书。
 双向SSL下客户端与服务器的交互过程：
 1. 客户端请求访问受保护的资源。  
