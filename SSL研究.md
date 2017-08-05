@@ -484,7 +484,7 @@ $ curl https://c7304.ambari.apache.org --cacert ca-cert --cert ./client.pem
 在c7302上执行：
 ```
 $ /opt/twowayssl
-$ pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name webb
+$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name webb
 Enter Export Password: vagrant
 $  keytool -importkeystore -deststorepass vagrant -destkeystore client.jks -srckeystore client.p12 -srcstoretype PKCS12 -srcstorepass vagrant -alias webb
 $ keytool -list -keystore client.jks -alias webb
@@ -738,4 +738,8 @@ $ openssl s_client -connect <host-domain-name>:<port> | tee logfile
 #### 模拟https服务器
 ```
 $ openssl s_server -accept <port> -cert <server-cert-file> -key <server-key-file> -www
+```
+#### 创建pkcs12格式密钥库
+```
+$ openssl pkcs12 –export –out <keystore-file> –inkey <private-key-file> –in <cert-file> –certfile <ca-cert-file>
 ```
