@@ -78,7 +78,7 @@ Java SE还提供了一套用于管理密钥库，证书和策略文件的工具;
 对网络传输的数据进行加密和解密的算法通常分为两类：**对称加密**和**非对称加密**。  
 **对称加密**的加密密码和解密密码相同。对称加密的算法有：DES(Data Encryption Standard)、3DES(Triple DES)、RC2(Rivest Cipher 2)、和RC4(Rivest Cipher 4)。  
 
-**非对称加密*的密钥分为私钥和公钥。公钥可以公开传播，私钥保存在安全的地方。公钥加密，只有对应的私钥能解密。私钥加密，只有对应的公钥能解密（这种特性还可以用来确认发送者身份）。  
+**非对称加密**的密钥分为私钥和公钥。公钥可以公开传播，私钥保存在安全的地方。公钥加密，只有对应的私钥能解密。私钥加密，只有对应的公钥能解密（这种特性还可以用来确认发送者身份）。  
 经常与SSL一起使用的公钥加密算法是RSA(Rivest Shamir Adleman)算法。使用专门用于密钥交换的SSL的另一种公钥算法是DH(Diffie-Hellman)算法。公钥密码学需要大量的计算，使其非常慢。因此，它通常仅用于加密小块数据，例如秘密密钥，而不是大量的加密数据通信。  
 
 互联网上启用https的网站越来越多。https除了能够加密传输数据外，另一个重要目的是解决网站的“可信”问题。这是一种单向信任的需求，不需要认证客户端。https实际上是HTTPS协议下SSL/TLS。
@@ -113,9 +113,9 @@ $  find / -name cacerts
 前两个是同一个文件，是linux系统的可信证书库。第三个OracleJDK带的。  
 可以用`keytool`命令查看该文件内容：  
 ```
-$ keytool -list -keystore <cacerts文件> -storepass changeit
+$ keytool -list -keystore <cacerts-file> -storepass changeit
 ```
-`changeit`是密钥库的默认密码。 把`<cacerts文件>`替换成`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`。  
+`changeit`是密钥库的默认密码。 把`<cacerts-file>`替换成`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`。  
 下面编写一个java类来测试。  
 #### java访问https网站的源码
 这个源码参考了[这个网页](https://zhidao.baidu.com/question/460681916465240325.html))：
@@ -188,13 +188,13 @@ public class HttpsTest {
 编译运行：
 ```
 $ javac HttpsTest.java
-$ java HttpsTest https://cn.bing.com
+$ java HttpsTest https://baidu.com
 (返回一堆html代码)
 $ java HttpsTest https://kyfw.12306.cn
 javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 (下略)
 ```
-这是因为kyfw.12306.cn网址的服务器证书不是可信CA签署的。而“必应”bing.com的服务器证书是cacerts中某个可信CA签署的。  
+可以尝试用`openssl s_client -connect <host-domain-name>:<port> | tee logfile`命名分别查询一下上面两网站的证书信息。会发现baidu.com的证书签署者`Symantec Class 3 Secure Server CA - G4`出现在了IE的“中间证书发放机构中”，而kyfw.12306.cn的签署者`SRCA`则没有。
 
 #### cacerts的修改测试
 为了测试cacerts的作用，现在把它改名，然后用一个空文件代替。实测中，下面的<cacerts file>被替换为`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`：
@@ -205,7 +205,7 @@ $ java HttpsTest https://cn.bing.com
 javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed:
 (下略)
 ```
-必应网站也不行了，是因为cacerts文件中的证书被清空了。  
+baidu.com也不行了，是因为cacerts文件中的证书被清空了。别忘记把文件cacerts还原。  
 
 ### OpenJDK访问https链接
 卸载OracleJDK，安装OpenJDK。再查找`cacerts`文件：
@@ -216,7 +216,7 @@ $ find / -name cacerts
 /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.x86_64/jre/lib/security/cacerts
 ```
 再运行`java HttpsTest <URL>`，发现`$JAVA_HOME/jre/lib/security/cacerts`这个文件不再管用，管用的是`/etc/pki/ca-trust/extracted/java/cacerts`。  
-说明OpenJDK对于可信证书库的使用与OracleJDK不同，OpenJDK优先使用linux自带的可信证书库，而OracleJDK优先使用自带的。  
+说明OpenJDK对于可信证书库的使用与OracleJDK不同，OpenJDK优先使用linux下的可信证书库，而OracleJDK优先使用JDK自带的。  
 
 ### HttpClient访问https
 利用apache [HttpClient](https://hc.apache.org/)访问https的写法略有差异，但可信证书库的位置、作用等于java完全相同。下面测试在OracleJDK下进行。  
