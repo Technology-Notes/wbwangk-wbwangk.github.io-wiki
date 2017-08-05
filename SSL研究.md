@@ -46,7 +46,7 @@ $ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <cert
 ```
 #### 查看某服务器的公钥证书
 ```
-$ openssl s_client -connect xxxxx.com:443 |tee logfile
+$ openssl s_client -connect xxxxx.com:443 | tee logfile
 ```
 可以显示某网站的公钥证书及其他内容。其中`BEGIN CERTIFICATE`与`END CERTIFICATE`之间的内容就是服务器公钥证书。经测试可以正确返回的有：
 ```
@@ -524,7 +524,7 @@ $ java MutualAuthenticationHTTP
 #### 1.生成密钥对和证书
 将创建CA的根证书。
 ```
-$ openssl req -new -x509 -keyout ca-key -out ca-cert -days 365  -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=iMaiCA"
+$ openssl req -new -x509 -keyout ca-key -out ca-cert -days 365 -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=iMaiCA"
 ..............+++
 .......................................+++
 writing new private key to 'ca-key'
@@ -584,7 +584,7 @@ CA的一个重要用途是处理“证书签名请求”，生成签名后的证
 假设一个场景：利用nginx搭建https网站。  
 首先，生成CSR:
 ```
-$  openssl req -new -newkey rsa:2048 -nodes -keyout nginx.key -out nginx.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
+$ openssl req -new -newkey rsa:2048 -nodes -keyout nginx.key -out nginx.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
 ```
 生成了私钥nginx.key和证书签名请求nginx.csr。nginx.csr的开始一行是`-----BEGIN PRIVATE KEY-----`。  
 
@@ -705,4 +705,37 @@ Getting CA Private Key
 $ keytool -keystore c7302.jks -alias localhost -import -file cert-signed
 Enter keystore password: vagrant
 Certificate reply was installed in keystore
+```
+
+## 命令备忘
+#### 生成私钥和证书
+```
+$ openssl req -new -x509 -keyout <key-file> -out <cert-file> -days 365 -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=iMaiCA"
+```
+生成的证书是自签名的(?)。CA的根证书就是这样生成的。
+#### 生成证书签名请求CSR
+```
+$ openssl req -new -newkey rsa:2048 -nodes -keyout <key-file> -out <CSR-file> -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
+```
+`-nodes`表示私钥无密码保护
+#### CA对证书签名请求CSR进行签署
+```
+$ openssl x509 -req -CA <ca-cert> -CAkey <ca-key-file> -in <csr-file> -out <cert-signed-file> -days 1800 -CAcreateserial -passin pass:<passwd>
+```
+建立CA后，签署CSR变得更简单：
+```
+$ openssl ca -in <csr-file> -out <cert-signed-file>
+```
+建立CA，本质上是在配置文件中增加了很多默认配置，从而导致命令行变短。
+#### 查看证书内容
+```
+$ openssl x509 -noout -text -in <cert-file>
+```
+#### 查看服务器的公钥证书
+```
+$ openssl s_client -connect <host-domain-name>:<port> | tee logfile
+```
+#### 模拟https服务器
+```
+$ openssl s_server -accept <port> -cert <server-cert-file> -key <server-key-file> -www
 ```
