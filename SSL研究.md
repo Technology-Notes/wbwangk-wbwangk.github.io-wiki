@@ -748,6 +748,7 @@ $ openssl s_server -accept <port> -cert <server-cert-file> -key <server-key-file
 $ openssl pkcs12 –export –out <keystore-file> –inkey <private-key-file> –in <cert-file> –certfile <ca-cert-file>
 ```
 ### keytool
+[官方文档](http://docs.oracle.com/javase/7/docs/technotes/tools/solaris/keytool.html)  
 将证书导入可信密钥库：
 ```
 $ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <certReplyFile>
