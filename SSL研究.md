@@ -6,91 +6,83 @@
 - 六、[HDP的SSL证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%85%ADhdp%E7%9A%84ssl%E8%AF%81%E4%B9%A6)  
 
 ## 一、安全知识
-### (一)Java安全教程
-[原文](http://docs.oracle.com/javase/tutorial/security/TOC.html)  
-
+### (一)术语
 #### 私钥/公钥对
 同时生成的两个字符串。私钥用于签名，公钥验证签名。公钥加密消息，私钥可以解密。  
 
 #### 证书(certificate)
-证书封装了公钥及配套信息，如公钥拥有者(subject)、签署者的签名、签署者(issuer)。自签名证书的subject与issuer相同。根证书是自签名证书。  
-
-#### 密钥库(keystore)
-将密钥和对应的证书保存在一个受密码保护的数据库中，就叫密钥库。密钥库格式有JKS、PCKS12等。java默认支持jks。  
-
-#### 可信证书库(truststore)
-SSL单向认证依赖可信证书库。如IE浏览器中内置了主要证书颁发机构(CA)的根证书和中间人证书，形成了IE的可信证书库。
-
-#### 证书签名请求(CSR)
-CSR是Certificate Signing Request的简写。某实体要获得CA认可，需要利用自己的私钥/公钥对构造一个证书签名请求文件发给CA。  
-
-#### CA签名证书与证书链
-
-#### 导入CA的响应
-要将密钥库中的自签名证书覆盖为CA签署的证书，首先需要密钥库中创建一个“可信证书”条目，可信证书可以被CA的公钥认证。通过这样一个条目，可以验证CA的签名。可信证书要么是CA的证书(CA签署)，要么是证书链中的最后一个证书。  
-
-#### 将证书从CA导入为“受信任的证书”
-在导入从CA回复的证书之前，您需要在密钥库或cacerts文件中存在一个或多个“受信任的证书” 。  
- - 如果CA返回的是证书链，只需要导入最顶层的证书。这个证书是“根”CA认证的某个下级CA的公钥证书。  
- - 如果CA返回的是单个证书，需要导入CA的证书。如果CA证书不是自签名的，需要导入其上级CA的证书，依次类推，直到自签名的根证书。  
-
-#### 导入CA回复的证书
-一旦象前文描述的那样建立了“可信证书”库，就可以导入从CA回复的证书了。  
-导入CA回复证书的命令：
-```
-$ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <certReplyFile>
-```
-#### 查看某服务器的公钥证书
-```
-$ openssl s_client -connect xxxxx.com:443 | tee logfile
-```
-可以显示某网站的公钥证书及其他内容。其中`BEGIN CERTIFICATE`与`END CERTIFICATE`之间的内容就是服务器公钥证书。经测试可以正确返回的有：
-```
-$ openssl s_client -connect mail.inspur.com:443 |tee logfile
-$ openssl s_client -connect c7301.ambari.apache.org:8443 |tee logfile
-```
-上面端口8443是hadoop集群的apache knox的服务器。
-
-### (二)Java安全套接字扩展（JSSE）
-[参考](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/JSSERefGuide.html#Introduction)  
-
-Java安全套接字扩展（JSSE）支持安全的Internet通信，它自1.4版本开始包含在JDK中。它为Java版本的SSL和TLS协议提供了框架和实现，并且包括数据加密，服务器身份验证，消息完整性和可选的客户端认证的功能。使用JSSE，开发人员可以通过TCP/IP为客户端和服务器数据安全通道，可运行任何应用程序协议（如超文本传输​​协议（HTTP），Telnet或FTP）。  
-
-#### 为什么使用SSL?
-目前广泛使用的是SSL3.0和TLS1.0，两者的差异很小。SSL解决的问题：  
- - 你不能总是确定与你进行沟通的实体真的是你认为的。  
- - 网络数据可能被拦截，因此有可能被未经授权的第三方（有时称为攻击者）读取。  
- - 拦截数据的攻击者可能会在将其发送到接收器之前进行修改。  
-
-#### SSL如何工作
-用于加密和解密通过网络传输的数据的算法通常分为两类：**密钥密码术**和**公钥密码术**。  
-**密钥密码术**的加密和解密密码相同，又叫对称加密。密钥加密的算法有：Data Encryption Standard (DES), Triple DES (3DES), Rivest Cipher 2 (RC2), and Rivest Cipher 4 (RC4).  
-
-**公钥密码术**的密钥分为私钥和公钥。公钥可以公开传播，私钥保存在安全的地方。公钥加密，只有对应的私钥能解密。私钥加密，只有对应的公钥能解密（这种特性还可以用来确认发送者身份）。  
-公钥密码术也被称为非对称密码术，因为不同的密钥用于加密和解密数据。经常与SSL一起使用的公知密钥加密算法是Rivest Shamir Adleman（RSA）算法。使用专门用于密钥交换的SSL的另一种公钥算法是Diffie-Hellman（DH）算法。公钥密码学需要大量的计算，使其非常慢。因此，它通常仅用于加密小块数据，例如秘密密钥，而不是大量的加密数据通信。  
-
-#### 公钥证书
+(公钥)证书封装了公钥及配套信息，如公钥拥有者(subject)、签署者的签名、签署者(issuer)。自签名证书的subject与issuer相同。根证书是自签名证书。  
 公钥证书可以被认为是护照的数字等价物。它由可信任的组织颁发，可为持有人提供身份证明。发布公钥证书的受信任组织称为证书颁发机构（CA）。  
 公钥证书包含以下字段：  
 
- - 发行方  
+ - 发行方(Issuer)  
   发行证书的CA。如果用户信任颁发证书的CA，并且证书有效，则用户可以信任证书。  
  - 有效期  
   证书有有效期限。在验证证书的有效性时，应检查此日期。  
- - 主体  
+ - 主体(Subject)  
   包括有关证书所代表的实体的信息。实体可以是个人或组织。  
  - 主体的公钥  
   证书提供的主要信息是主体的公钥。提供所有其他字段以确保此密钥的有效性。  
  - 签名  
   证书由颁发证书的CA进行数字签名。使用CA的私钥创建签名（签署），并确保证书的有效性。因为只有证书被签名，而不是SSL事务中发送的数据，SSL不提供不可否认性。  
 
-多个证书可以链接成**证书链**。当使用证书链时，第一个证书始终是发件人的证书。接下来是颁发发件人证书的实体的证书。如果链中有更多证书，那么每个证书都是颁发先前证书的上级CA。链中的最终证书是根CA的证书。根CA是广泛信任的公共证书颁发机构。几个根CA的信息通常存储在客户端的Internet浏览器中。该信息包括CA的公钥。着名的CA包括VeriSign，Entrust和GTE Cyber​​Trust。  
+#### 密钥库(keystore)
+将密钥和对应的证书保存在一个受密码保护的数据库中，就叫密钥库。密钥库格式有JKS、PCKS12等。java默认支持jks。  
 
+#### 可信证书库(truststore)
+SSL单向认证依赖可信证书库。如IE浏览器中内置了主要证书颁发机构(CA)的根证书和中间人证书，形成了IE的可信证书库。  
+
+#### 证书签名请求(CSR)
+CSR是Certificate Signing Request的简写。某实体要获得CA认可，需要利用自己的私钥/公钥对构造一个证书签名请求文件发给CA。  
+
+#### CA签名证书
+自己的私钥给自己的公钥签名，叫自签名证书。更普遍的是其他的私钥（可以视为CA的私钥）为自己的证书签名。  
+
+#### 证书链
+多个证书可以链接成**证书链**。当使用证书链时，第一个证书始终是主体的证书。接下来是颁发发件人证书的实体的证书。如果链中有更多证书，那么每个证书都是颁发先前证书的上级CA。链中的最终证书是根CA的证书。  
+
+在被签署的证书与根证书之间可能存在多级签名，多个证书组成一个链条。最底下的是根证书。根CA是广泛信任的公共证书颁发机构。著名的根CA包括VeriSign，Entrust和GTE Cyber​​Trust。下面是letsencrypt.org的公钥证书的证书链：
+```
+Certificate chain
+ 0 s:/CN=letsencrypt.org/O=INTERNET SECURITY RESEARCH GROUP/L=Mountain View/ST=California/C=US
+   i:/C=US/O=IdenTrust/OU=TrustID Server/CN=TrustID Server CA A52
+ 1 s:/C=US/O=IdenTrust/OU=TrustID Server/CN=TrustID Server CA A52
+   i:/C=US/O=IdenTrust/CN=IdenTrust Commercial Root CA 1
+ 2 s:/C=US/O=IdenTrust/CN=IdenTrust Commercial Root CA 1
+   i:/O=Digital Signature Trust Co./CN=DST Root CA X3
+```
 #### HMAC(散列消息认证码)
 利用散列算法（SSL中常用MD5或SHA）生成消息认证码，加密后发送给对方。对方解开HMAC后，与消息进行校验，防止消息被篡改。  
 
-## 二、java访问https链接
-现代浏览器都内嵌了一列可信CA的公钥证书。如果你访问一个不可信的https网站（一般是自建CA），浏览器会弹出警告，只有把要访问的网站加入“例外”目录，浏览器才运行继续访问。Java也实现了类似机制。但OpenJDK和OracleJDK的机制有差异。OracleJDK使用自带的可信证书库(文件名为cacerts)，而OpenJDK则使用linux系统的证书体系。  
+### (二)Java安全体系
+[参考](https://docs.oracle.com/javaee/7/tutorial/security-intro002.htm)  
+
+#### Java认证和授权服务（JAAS）
+是一组API，可使服务对用户进行身份验证和强制访问控制。JAAS为程序化用户认证和授权提供了可插拔和可扩展的框架。JAAS是一个核心Java SE API，是Java EE安全机制的基础技术。
+
+#### Java通用安全服务（Java GSS-API）
+是一种基于令牌的API，用于在通信应用程序之间安全地交换消息。GSS-API为应用程序员提供了对各种基础安全机制（包括Kerberos）上的安全性服务的统一访问。
+
+#### Java加密扩展（JCE）
+提供了加密，密钥生成和密钥协商以及消息认证码（MAC）算法的框架和实现。对加密的支持包括对称，非对称，块和流密码。块密码对字节组进行操作; 流密码一次操作一个字节。该软件还支持安全流和密封对象。
+
+#### Java安全套接字扩展（JSSE）  
+为Java版本的安全套接字层（SSL）和传输层安全（TLS）协议提供了一个框架和实现，并且包括用于数据加密，服务器认证，消息完整性和可选客户端认证的功能以实现安全的互联网通信。
+
+#### 简单认证和安全层（SASL）
+是一种互联网标准（RFC 2222），它规定了客户端和服务器应用程序之间用于认证和可选建立安全层的协议。SASL定义了如何交换认证数据，但本身并不指定该数据的内容。SASL是指定认证数据的内容和语义的特定认证机制适合的框架。
+
+Java SE还提供了一套用于管理密钥库，证书和策略文件的工具; 生成和验证JAR签名; 并获得，列出和管理Kerberos门票。
+
+### (三)SSL如何工作
+对网络传输的数据进行加密和解密的算法通常分为两类：**对称加密**和**非对称加密**。  
+**对称加密**的加密密码和解密密码相同。对称加密的算法有：DES(Data Encryption Standard)、3DES(Triple DES)、RC2(Rivest Cipher 2)、和RC4(Rivest Cipher 4)。  
+
+**非对称加密*的密钥分为私钥和公钥。公钥可以公开传播，私钥保存在安全的地方。公钥加密，只有对应的私钥能解密。私钥加密，只有对应的公钥能解密（这种特性还可以用来确认发送者身份）。  
+经常与SSL一起使用的公钥加密算法是RSA(Rivest Shamir Adleman)算法。使用专门用于密钥交换的SSL的另一种公钥算法是DH(Diffie-Hellman)算法。公钥密码学需要大量的计算，使其非常慢。因此，它通常仅用于加密小块数据，例如秘密密钥，而不是大量的加密数据通信。  
+
+## 二、java访问https服务器
+现代浏览器都内嵌了一列可信CA的公钥证书。如果你访问一个不可信的https网站（如证书是自签名的），浏览器会弹出警告，只有把要访问的网站加入“例外”目录，浏览器才运行继续访问。Java也实现了类似机制。但OpenJDK和OracleJDK的机制有差异。OracleJDK使用自带的可信证书库(文件名为cacerts)，而OpenJDK则使用linux系统的证书体系。  
 
 以下测试的java程序放在c7304的`/opt/https`目录下。而`/opt/ca`目录存放了openssl生成的证书。  
 
@@ -704,6 +696,7 @@ Certificate reply was installed in keystore
 ```
 
 ## 命令备忘
+### openssl
 #### 生成私钥和证书
 ```
 $ openssl req -new -x509 -keyout <key-file> -out <cert-file> -days 365 -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=iMaiCA"
@@ -738,4 +731,9 @@ $ openssl s_server -accept <port> -cert <server-cert-file> -key <server-key-file
 #### 创建pkcs12格式密钥库
 ```
 $ openssl pkcs12 –export –out <keystore-file> –inkey <private-key-file> –in <cert-file> –certfile <ca-cert-file>
+```
+### keytool
+将证书导入可信密钥库：
+```
+$ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <certReplyFile>
 ```
