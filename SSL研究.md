@@ -490,8 +490,7 @@ $ /opt/twowayssl
 $ openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name webb
 Enter Export Password: vagrant
 $  keytool -importkeystore -deststorepass vagrant -destkeystore client.jks -srckeystore client.p12 -srcstoretype PKCS12 -srcstorepass vagrant -alias webb
-$ keytool -list -keystore client.jks -alias webb
-Enter keystore password:
+$ keytool -list -keystore client.jks -alias webb -storepass vagrant
 webb, Aug 4, 2017, PrivateKeyEntry,
 Certificate fingerprint (SHA1): 99:6D:E2:E4:ED:46:91:8C:FC:D6:73:EC:42:74:3C:BF:6E:E8:9F:87
 ```
@@ -749,7 +748,24 @@ $ openssl pkcs12 –export –out <keystore-file> –inkey <private-key-file> �
 ```
 ### keytool
 [官方文档](http://docs.oracle.com/javase/7/docs/technotes/tools/solaris/keytool.html)  
-将证书导入可信密钥库：
+#### 显示密钥库中的条目
+```
+$ keytool -list -keystore <keystore-file> -alias <alias> -storepass <password> -v
+```
+#### 将证书导入可信密钥库
 ```
 $ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <certReplyFile>
+```
+#### 删除条目
+```
+$ keytool -delete -keystore <keystore-file> -alias <alias> -storepass <password>
+```
+#### 密钥库合并
+这个功能常用于导入私钥到密钥库。  
+```
+$  keytool -importkeystore -deststorepass <password> -destkeystore <destkeystore-file> -srckeystore <source-keystore-file> -srcstoretype PKCS12 -srcstorepass <password> -alias <alias>
+```
+源密钥库一般是pkcs12格式，而且一般由openssl命令生成：
+```
+$ openssl pkcs12 -export -in <cert-file> -inkey <key-file> -out <pkcs12-file> -name <alias>
 ```
