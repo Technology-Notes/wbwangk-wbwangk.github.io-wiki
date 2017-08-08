@@ -325,7 +325,7 @@ server {
 ```
 重启nginx，加载新的配置文件，测试https服务器：
 ```
-$ nginx           (刚装上nginx时要执行，之后就不用了)
+$ service nginx start           (刚装上nginx时要执行，之后就不用了)
 $ ps -ef | grep nginx           (看看nginx进程是否已经启动)
 $ nginx -t                      (测试nginx配置文件)
 $ nginx -s reload               (重新加载配置文件，修改nginx配置文件有执行这个命令)
