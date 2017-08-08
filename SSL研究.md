@@ -137,7 +137,7 @@ public class HttpsTest {
     try{
        //创建SSLContext
        SSLContext sslContext=SSLContext.getInstance("SSL");
-       //初始化
+       //初始化。第一个null是KeyManager，第二个null是TrustManager。
        sslContext.init(null, null, new java.security.SecureRandom());;
        //获取SSLSocketFactory对象
        SSLSocketFactory ssf=sslContext.getSocketFactory();
