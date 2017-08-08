@@ -361,6 +361,11 @@ $ curl https://c7304.ambari.apache.org  --cacert /opt/ca/nginx.crt
 ```  
 curl增加`--cacert`参数后，相当于把参数后的证书临时加入了curl的可信库。  
 注意，curl的--cacert参数接受的是PEM格式的证书。把JKS格式的密钥库当参数传给curl是不行的，如`/etc/pki/java/cacerts`当curl参数不行。  
+curl还有一个`-k`参数可以临时关闭可信检测：
+```
+$ curl -k https://c7304.ambari.apache.org
+```
+加上`-k`参数后不需要将目标网站的证书加入可信库。  
 
 ### (二)CA签名证书https服务器
 要获得一个CA签名的nginx公钥证书，除了通过免费`let's encrypt`网站或商用CA证书公司外，还可以自己搭建一个“内部CA”。搭建办法参见第五章。以下测试假定你已经搭建好了自己的CA。  
