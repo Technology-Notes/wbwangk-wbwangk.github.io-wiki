@@ -55,13 +55,13 @@ Certificate chain
 [参考](https://docs.oracle.com/javaee/7/tutorial/security-intro002.htm)  
 
 #### Java认证和授权服务（JAAS）
-是一组API，可使服务对用户进行身份验证和强制访问控制。JAAS为程序化用户认证和授权提供了可插拔和可扩展的框架。JAAS是一个核心Java SE API，是Java EE安全机制的基础技术。(一篇JAAS有关的博文:[JAAS认证](https://imaidata.github.io/blog/jaas/))  
+是一组API，可使服务对用户进行身份验证和强制访问控制。JAAS为程序化用户认证和授权提供了可插拔和可扩展的框架。JAAS是一个核心Java SE API，是Java EE安全机制的基础技术。(*博文:[JAAS认证](https://imaidata.github.io/blog/jaas/)*)  
 
 #### Java通用安全服务（Java GSS-API）
-是一种基于令牌的API，用于在通信应用程序之间安全地交换消息。GSS-API为应用程序员提供了对各种基础安全机制（包括Kerberos）上的安全性服务的统一访问。(一篇与GSS-API有关的博文:[java使用SPNEGO认证](https://imaidata.github.io/blog/java_spnego/))
+是一种基于令牌的API，用于在通信应用程序之间安全地交换消息。GSS-API为应用程序员提供了对各种基础安全机制（包括Kerberos）上的安全性服务的统一访问。(*博文:[java使用SPNEGO认证](https://imaidata.github.io/blog/java_spnego/)*)  
 
 #### Java加密扩展（JCE）
-提供了加密，密钥生成和密钥协商以及消息认证码（MAC）算法的框架和实现。对加密的支持包括对称，非对称，块和流密码。块密码对字节组进行操作; 流密码一次操作一个字节。该软件还支持安全流和密封对象。(一篇与JCE有关的博文:[java结合keytool实现非对称加密和解密](https://imaidata.github.io/blog/2017/08/08/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E5%92%8C%E8%A7%A3%E5%AF%86/))
+提供了加密，密钥生成和密钥协商以及消息认证码（MAC）算法的框架和实现。对加密的支持包括对称，非对称，块和流密码。块密码对字节组进行操作; 流密码一次操作一个字节。该软件还支持安全流和密封对象。(*博文:[java结合keytool实现非对称加密和解密](https://imaidata.github.io/blog/2017/08/08/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E5%92%8C%E8%A7%A3%E5%AF%86/)*)  
 
 #### Java安全套接字扩展（[JSSE](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/JSSERefGuide.html)）  
 为Java版本的安全套接字层（SSL）和传输层安全（TLS）协议提供了一个框架和实现，并且包括用于数据加密，服务器认证，消息完整性和可选客户端认证的功能以实现安全的互联网通信。(本文主要讲这个模块！)
