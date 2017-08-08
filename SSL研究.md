@@ -190,14 +190,28 @@ $ java HttpsTest https://kyfw.12306.cn
 javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 (下略)
 ```
-可以尝试用`openssl s_client -connect <host-domain-name>:<port> | tee logfile`命名分别查询一下上面两网站的证书信息。会发现baidu.com的证书签署者`Symantec Class 3 Secure Server CA - G4`出现在了IE的“中间证书发放机构中”，而kyfw.12306.cn的签署者`SRCA`则没有。
+可以尝试用`openssl s_client -connect <host-domain-name>:<port>`命名分别查询一下上面两网站的证书信息。会发现baidu.com的证书签署者`Symantec Class 3 Secure Server CA - G4`出现在了IE的“中间证书发放机构中”，而kyfw.12306.cn的签署者`SRCA`则没有。
+#### 导入信任库
+首先，查询kyfw.12306.cn的公钥：
+```
+$ openssl s_client -connect kyfw.12306.cn:443
+```
+将显示在屏幕上的`-----BEGIN CERTIFICATE-----`和`-----END CERTIFICATE-----`之间的内容（包括这两行）复制到一个文件(12306.crt)中。然后用keytool导入到OracleJDK的信任库：
+```
+$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias 12306 -file 12306.crt  (cacerts的默认密码是changeid)
+```
+重新发送请求：
+```
+$ java HttpsTest https://kyfw.12306.cn
+```
+不再报错。说明`kyfw.12306.cn`已经在JDK的信任库中，JDK允许客户端发送请求到这个主机。  
 
 #### cacerts的修改测试
 为了测试cacerts的作用，现在把它改名，然后用一个空文件代替。实测中，下面的<cacerts file>被替换为`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`：
 ```
 $ mv <cacerts file> <cacerts file>.old
 $ echo "" > <cacerts file>
-$ java HttpsTest https://cn.bing.com
+$ java HttpsTest https://baidu.com
 javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed:
 (下略)
 ```
