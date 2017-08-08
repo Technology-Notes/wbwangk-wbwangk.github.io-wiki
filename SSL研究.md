@@ -368,7 +368,7 @@ $ curl -k https://c7304.ambari.apache.org
 加上`-k`参数后不需要将目标网站的证书加入可信库。  
 
 ### (二)CA签名证书https服务器
-要获得一个CA签名的nginx公钥证书，除了通过免费`let's encrypt`网站或商用CA证书公司外，还可以自己搭建一个“内部CA”。搭建办法参见第五章。以下测试假定你已经搭建好了自己的CA。  
+要获得一个CA签名的nginx公钥证书，除了通过免费`let's encrypt`网站或商用CA证书公司外，还可以自己搭建一个“内部CA”。搭建办法参见第五章。以下测试假定你已经搭建好了自己的CA。内部CA的另一个用途是颁发个人证书，这在双向SSL(第四章)时会用到。  
 首先，生成一个私钥和证书签名请求：
 ```
 $ openssl req -new -newkey rsa:2048 -nodes -keyout nginx2.key -out nginx2.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
@@ -783,4 +783,17 @@ $  keytool -importkeystore -deststorepass <password> -destkeystore <destkeystore
 源密钥库一般是pkcs12格式，而且一般由openssl命令生成：
 ```
 $ openssl pkcs12 -export -in <cert-file> -inkey <key-file> -out <pkcs12-file> -name <alias>
+```
+### curl命令
+使用自定义可信证书库访问https主机：
+```
+$ curl <url>  --cacert <truststore-file>
+```
+双向SSL：
+```
+$ curl <url> --cacert <truststore-file> --cert <cert-file>
+```
+`--cert`参数接受pem格式文件，jks格式不行。生成pem格式文件的方式（就是把两个文本文件拼接在一起）：
+```
+$ cat <cert-file> <key-file> > <key-cert-file>
 ```
