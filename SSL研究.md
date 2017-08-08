@@ -63,7 +63,7 @@ Certificate chain
 #### Java加密扩展（JCE）
 提供了加密，密钥生成和密钥协商以及消息认证码（MAC）算法的框架和实现。对加密的支持包括对称，非对称，块和流密码。块密码对字节组进行操作; 流密码一次操作一个字节。该软件还支持安全流和密封对象。
 
-#### Java安全套接字扩展（JSSE）  
+#### Java安全套接字扩展（[JSSE](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/JSSERefGuide.html)）  
 为Java版本的安全套接字层（SSL）和传输层安全（TLS）协议提供了一个框架和实现，并且包括用于数据加密，服务器认证，消息完整性和可选客户端认证的功能以实现安全的互联网通信。
 
 #### 简单认证和安全层（SASL）
