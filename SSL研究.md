@@ -603,7 +603,7 @@ CA的一个重要用途是处理“证书签名请求”，生成签名后的证
 ```
 $ openssl req -new -newkey rsa:2048 -nodes -keyout nginx.key -out nginx.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
 ```
-生成了私钥nginx.key和证书签名请求nginx.csr。nginx.csr的开始一行是`-----BEGIN PRIVATE KEY-----`。  
+生成了私钥nginx.key和证书签名请求nginx.csr。nginx.csr的开始一行是`-----BEGIN CERTIFICATE REQUEST-----`。  
 
 下面利用刚创建的CA处理这个证书签名请求：
 ```
