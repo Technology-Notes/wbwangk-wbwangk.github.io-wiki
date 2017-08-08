@@ -768,6 +768,10 @@ $ openssl pkcs12 –export –out <keystore-file> –inkey <private-key-file> �
 ```
 $ keytool -list -keystore <keystore-file> -alias <alias> -storepass <password> -v
 ```
+#### 显示证书内容
+```
+$  keytool -printcert -file <cert-file>
+```
 #### 将证书导入可信密钥库
 ```
 $ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <certReplyFile>
@@ -784,6 +788,16 @@ $  keytool -importkeystore -deststorepass <password> -destkeystore <destkeystore
 源密钥库一般是pkcs12格式，而且一般由openssl命令生成：
 ```
 $ openssl pkcs12 -export -in <cert-file> -inkey <key-file> -out <pkcs12-file> -name <alias>
+```
+#### 生成私钥和证书
+本文中没用到这个命令，而是用openssl命令生成的公私钥对（公钥和证书两个术语容易混淆，证书是公钥的一种常见封装格式）。如果不明确指定RSA算法，默认生成DSA私钥公钥对。  
+```
+$ keytool -genkey -alias signLegal -keystore examplestanstore2 -validity 1800 -keyalg RSA
+```
+#### 导出证书
+本文也没用到这个命令。不加`-rfc`生成二进制CER证书，加上`-rfc`生成文本PEM格式证书。PEM格式更常用。  
+```
+$ keytool -export -keystore <keystore-file> -alias <alias> -file <cert-file> -rfc
 ```
 ### curl命令
 使用自定义可信证书库访问https主机：
