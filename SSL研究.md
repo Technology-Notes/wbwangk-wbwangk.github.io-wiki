@@ -585,7 +585,7 @@ ca-cert文件的第一行：`-----BEGIN CERTIFICATE-----`
 #### 2.创建和移动CA文件
 将CA密钥移动到`/root/CA/private`，将CA证书移动到`/root/CA/certs`。  
 ```
-$ mv cakey.pem /etc/pki/CA/private; mv cacert.pem /etc/pki/CA/certs
+$ mv cakey.pem /etc/pki/CA/private
 ```
 添加所需文件：
 ```
