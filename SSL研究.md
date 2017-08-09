@@ -5,7 +5,7 @@
 - 五、[建立内部CA](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%BA%94%E5%88%9B%E5%BB%BA%E5%86%85%E9%83%A8ca)  
 - 六、[HDP的SSL证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%85%ADhdp%E7%9A%84ssl%E8%AF%81%E4%B9%A6)  
 - 七、[申请Let's Encrypt证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%B8%83%E7%94%B3%E8%AF%B7lets-encrypt%E8%AF%81%E4%B9%A6)
-
+- 附:[命令备忘](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98)
 ## 一、安全知识
 ### (一)术语
 #### 私钥/公钥对
