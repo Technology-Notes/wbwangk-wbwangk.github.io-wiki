@@ -816,6 +816,7 @@ $ cat <cert-file> <key-file> > <key-cert-file>
 
 ## 七、申请Let's Encrypt证书
 [参考](https://imququ.com/post/letsencrypt-certificate.html)
+
 letsencrypt.org提供免费https证书。每张证书可以放100个域名，有效期3个月，支持自动续订。2018年开始支持通配符证书。一般的证书方法颁发机构通过邮件接受证书签名请求(CSR)，而Let's Encrypt则是通过互联网实时接受申请、实时发放。将来有可能互联网证书被Let's Encrypt一统江湖。  
 服务器证书通过Let's Encrypt申请的好处是，它的证书可以被常见可信证书库信任，不用额外把服务器证书导入可信证书库或添加浏览器例外。如果启用双向SSL，个人证书仍需要自建CA颁发。
 
