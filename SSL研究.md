@@ -648,107 +648,50 @@ $ openssl x509 -noout -text -in nginx.crt
 已上信息省略了一部分。可以看出Issuer就是刚建立的CA，Subjcet是nginx的信息。  
 
 ## 六、HDP的SSL证书
+[参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)  
 #### 1.各节点创建密钥库
 为hadoop集群中的个节点，用JDK的keytool创建一个密钥库，用于保存本服务器的证书私钥。以下测试默认在c7302节点上进行。  
 ```
-($ keytool -keystore <keystore-file> -alias localhost -validity <validity> -genkey)
- keytool -keystore c7302.jks -alias localhost -validity 1800 -genkey
-Enter keystore password:
-Re-enter new password:
+$ keytool -keystore c7302.jks -alias localhost -validity 1800 -genkey
 What is your first and last name?
-  [Unknown]:  c7302.ambari.apache.org
-What is the name of your organizational unit?
-  [Unknown]:  ec
-What is the name of your organization?
-  [Unknown]:  sbg
-What is the name of your City or Locality?
-  [Unknown]:  jinan
-What is the name of your State or Province?
-  [Unknown]:  shandong
-What is the two-letter country code for this unit?
-  [Unknown]:  CN
+  [Unknown]:  c7302.ambari.apache.org     (省略一些)
 Is CN=c7302.ambari.apache.org, OU=ec, O=sbg, L=jinan, ST=shandong, C=CN correct?
-  [no]:  yes
-
-Enter key password for <localhost>
-        (RETURN if same as keystore password): （回车）
 ```
-确保公用名称（CN）与服务器的完全限定域名（FQDN）匹配。客户端将CN与DNS域名进行比较，以确保它确实连接到所需的服务器，而不是恶意服务器。  
+确保公用名称（CN）与服务器的完全限定域名（FQDN）匹配。本例中，c7302节点的FQDN是`c7302.ambari.apache.org`。客户端将CN与DNS域名进行比较，以确保它确实连接到所需的服务器，而不是恶意服务器。  
 
 #### 2.创建CA
-参考第一章。
+参考第五章。
 
 #### 3.将CA添加到各服务器的信任库
+将CA(cacert.pem)的公钥证书复制到各个服务器，然后导入本地的可信证书库
 ```
-keytool -keystore c7302.jks -alias CARoot -import -file ca-cert
-Enter keystore password: vagrant
-Owner: EMAILADDRESS=wbwang@inspur.com, CN=webbca, OU=ec, O=sbg, L=jinan, ST=shandong, C=cn
-Issuer: EMAILADDRESS=wbwang@inspur.com, CN=webbca, OU=ec, O=sbg, L=jinan, ST=shandong, C=cn
-Serial number: c27c41b2be3b8701
-Valid from: Mon Jul 31 01:10:31 UTC 2017 until: Tue Jul 31 01:10:31 UTC 2018
-Certificate fingerprints:
-         MD5:  A9:72:FB:FD:AE:D7:8C:C6:DA:99:8E:20:5D:6A:6B:CF
-         SHA1: C2:FA:D3:C4:FE:98:CF:78:1B:FE:3C:01:68:99:A5:1D:42:D2:D6:E7
-         SHA256: 90:FD:EA:5E:70:A2:69:3E:AB:48:DF:4B:A3:5E:C1:19:4C:1F:3E:E7:C9:94:FA:18:4F:A5:EC:E7:48:0E:46:5C
-         Signature algorithm name: SHA256withRSA
-         Version: 3
-
-Extensions:
-
-#1: ObjectId: 2.5.29.35 Criticality=false
-AuthorityKeyIdentifier [
-KeyIdentifier [
-0000: B5 3E 7B 21 21 A5 8A 18   0C 76 DC D7 D4 65 7C 03  .>.!!....v...e..
-0010: 08 88 8D BD                                        ....
-]
-]
-
-#2: ObjectId: 2.5.29.19 Criticality=false
-BasicConstraints:[
-  CA:true
-  PathLen:2147483647
-]
-
-#3: ObjectId: 2.5.29.14 Criticality=false
-SubjectKeyIdentifier [
-KeyIdentifier [
-0000: B5 3E 7B 21 21 A5 8A 18   0C 76 DC D7 D4 65 7C 03  .>.!!....v...e..
-0010: 08 88 8D BD                                        ....
-]
-]
-
-Trust this certificate? [no]:  yes
-Certificate was added to keystore
+$ keytool -keystore /etc/pki/java/cacerts -alias CARoot -import -file cacert.pem
 ```
+根据第二章所知，OpenJDK与OracleJDK的可信证书库位置不同。上面的路径`/etc/pki/java/cacerts`是OpenJDK的可信证书库。  
+
 #### 5.签署证书
 用步骤2产生的CA签署步骤1生成的所有器证书。  
 首先，生成签名请求：
 ```
-$ keytool -keystore c7302.jks -alias localhost -certreq -file cert-file
-```
-生成了一个cert-fiel文件，其内容：
-```
------BEGIN NEW CERTIFICATE REQUEST-----
-(下略)
+$ keytool -keystore c7302.jks -alias localhost -certreq -file c7302.csr
 ```
 CA进行对签名请求进行签名：
 ```
-$ openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 1800 -CAcreateserial -passin pass:vagrant
+$ openssl x509 -req -CA ca-cert -CAkey cakey.pem -in c7302.csr -out c7302.crt -days 1800 -CAcreateserial -passin pass:vagrant
 Signature ok
 subject=/C=CN/ST=shandong/L=jinan/O=sbg/OU=ec/CN=c7302.ambari.apache.org
 Getting CA Private Key
 ```
-生成了一个文件cert-signed，其内容（第一行与签署前一样）：
-```
------BEGIN CERTIFICATE-----
-(下略)
-```
+生成了签名后的证书文件c7302.crt。
+
 #### 6.将签署后的证书导入密钥库
 ```
-$ keytool -keystore c7302.jks -alias localhost -import -file cert-signed
-Enter keystore password: vagrant
-Certificate reply was installed in keystore
+$ keytool -keystore c7302.jks -alias CARoot -import -file cacert.pem
+$ keytool -keystore c7302.jks -alias localhost -import -file c7302.crt
 ```
+导入后c7302.jks这个密钥库中多了CA公钥证书、CA签署的c7302的证书。
+
+
 ## 七、申请Let's Encrypt证书
 [参考](https://imququ.com/post/letsencrypt-certificate.html)
 
