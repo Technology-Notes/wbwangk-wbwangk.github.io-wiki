@@ -837,7 +837,33 @@ $ cat intermediate.pem root.pem > full_chained.pem
         }
     }
 ```
-
+#### Let's Encrypt证书链
+下图说明了Let's Encrypt的证书链：  
+![](https://letsencrypt.org/certs/isrg-keys.png)  
+上图有三行，分别是根证书、中间证书、按申请颁发的证书。对应上文中的`root.pem`、`intermediate.pem`、`signd.crt`。可以下openssl命令查看一下这三张证书的主体(Subject)和颁发者(Issuer)。
+```
+$ openssl x509 -noout -text -in <cert-file>
+```
+下面是上述命令的输出内容摘录：
+```
+intermediate.pem
+        Issuer: O=Digital Signature Trust Co., CN=DST Root CA X3
+        Subject: C=US, O=Let's Encrypt, CN=Let's Encrypt Authority X3
+root.pem
+        Issuer: C=US, O=Internet Security Research Group, CN=ISRG Root X1
+        Subject: C=US, O=Internet Security Research Group, CN=ISRG Root X1
+signed.crt
+        Issuer: C=US, O=Let's Encrypt, CN=Let's Encrypt Authority X3
+        Subject: CN=dp.imaicloud.com
+```
+有趣的是letsencrypt.org网站本身的证书是另外的证书链：
+```
+letsencrypt.org
+ 0 s:/CN=letsencrypt.org/O=INTERNET SECURITY RESEARCH GROUP/L=Mountain View/ST=California/C=US
+ 1 s:/C=US/O=IdenTrust/OU=TrustID Server/CN=TrustID Server CA A52
+ 2 s:/C=US/O=IdenTrust/CN=IdenTrust Commercial Root CA 1
+   i:/O=Digital Signature Trust Co./CN=DST Root CA X3
+```
 
 ## 命令备忘
 ### openssl
@@ -926,7 +952,6 @@ $ curl <url> --cacert <truststore-file> --cert <cert-file>
 ```
 $ cat <cert-file> <key-file> > <key-cert-file>
 ```
-
 
 ## 相关文档
 [java结合keytool实现非对称签名与验证](https://imaidata.github.io/blog/2017/07/29/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E9%9D%9E%E5%AF%B9%E7%A7%B0%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81/)   
