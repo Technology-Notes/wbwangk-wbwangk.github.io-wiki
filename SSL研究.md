@@ -725,95 +725,6 @@ $ keytool -keystore c7302.jks -alias localhost -import -file cert-signed
 Enter keystore password: vagrant
 Certificate reply was installed in keystore
 ```
-
-## 命令备忘
-### openssl
-#### 生成私钥和证书
-```
-$ openssl req -new -x509 -keyout <key-file> -out <cert-file> -days 365 -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=iMaiCA"
-```
-生成的证书是自签名的(?)。CA的根证书就是这样生成的。
-#### 生成证书签名请求CSR
-```
-$ openssl req -new -newkey rsa:2048 -nodes -keyout <key-file> -out <CSR-file> -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
-```
-`-nodes`表示私钥无密码保护
-#### CA对证书签名请求CSR进行签署
-```
-$ openssl x509 -req -CA <ca-cert> -CAkey <ca-key-file> -in <csr-file> -out <cert-signed-file> -days 1800 -CAcreateserial -passin pass:<passwd>
-```
-建立CA后，签署CSR变得更简单：
-```
-$ openssl ca -in <csr-file> -out <cert-signed-file>
-```
-建立CA，本质上是在配置文件中增加了很多默认配置，从而导致命令行变短。
-#### 查看证书内容
-```
-$ openssl x509 -noout -text -in <cert-file>
-```
-#### 查看服务器的公钥证书
-```
-$ openssl s_client -connect <host-domain-name>:<port> | tee logfile
-```
-#### 模拟https服务器
-```
-$ openssl s_server -accept <port> -cert <server-cert-file> -key <server-key-file> -www
-```
-#### 创建pkcs12格式密钥库
-```
-$ openssl pkcs12 –export –out <keystore-file> –inkey <private-key-file> –in <cert-file> –certfile <ca-cert-file>
-```
-### keytool
-[官方文档](http://docs.oracle.com/javase/7/docs/technotes/tools/solaris/keytool.html)  
-#### 显示密钥库中的条目
-```
-$ keytool -list -keystore <keystore-file> -alias <alias> -storepass <password> -v
-```
-#### 显示证书内容
-```
-$  keytool -printcert -file <cert-file>
-```
-#### 将证书导入可信密钥库
-```
-$ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <certReplyFile>
-```
-#### 删除条目
-```
-$ keytool -delete -keystore <keystore-file> -alias <alias> -storepass <password>
-```
-#### 密钥库合并
-这个功能常用于导入私钥到密钥库。  
-```
-$  keytool -importkeystore -deststorepass <password> -destkeystore <destkeystore-file> -srckeystore <source-keystore-file> -srcstoretype PKCS12 -srcstorepass <password> -alias <alias>
-```
-源密钥库一般是pkcs12格式，而且一般由openssl命令生成：
-```
-$ openssl pkcs12 -export -in <cert-file> -inkey <key-file> -out <pkcs12-file> -name <alias>
-```
-#### 生成私钥和证书
-本文中没用到这个命令，而是用openssl命令生成的公私钥对（公钥和证书两个术语容易混淆，证书是公钥的一种常见封装格式）。如果不明确指定RSA算法，默认生成DSA私钥公钥对。  
-```
-$ keytool -genkey -alias signLegal -keystore examplestanstore2 -validity 1800 -keyalg RSA
-```
-#### 导出证书
-本文也没用到这个命令。不加`-rfc`生成二进制CER证书，加上`-rfc`生成文本PEM格式证书。PEM格式更常用。  
-```
-$ keytool -export -keystore <keystore-file> -alias <alias> -file <cert-file> -rfc
-```
-### curl命令
-使用自定义可信证书库访问https主机：
-```
-$ curl <url>  --cacert <truststore-file>
-```
-双向SSL：
-```
-$ curl <url> --cacert <truststore-file> --cert <cert-file>
-```
-`--cert`参数接受pem格式文件，jks格式不行。生成pem格式文件的方式（就是把两个文本文件拼接在一起）：
-```
-$ cat <cert-file> <key-file> > <key-cert-file>
-```
-
 ## 七、申请Let's Encrypt证书
 [参考](https://imququ.com/post/letsencrypt-certificate.html)
 
@@ -926,6 +837,96 @@ $ cat intermediate.pem root.pem > full_chained.pem
         }
     }
 ```
+
+
+## 命令备忘
+### openssl
+#### 生成私钥和证书
+```
+$ openssl req -new -x509 -keyout <key-file> -out <cert-file> -days 365 -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=iMaiCA"
+```
+生成的证书是自签名的(?)。CA的根证书就是这样生成的。
+#### 生成证书签名请求CSR
+```
+$ openssl req -new -newkey rsa:2048 -nodes -keyout <key-file> -out <CSR-file> -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
+```
+`-nodes`表示私钥无密码保护
+#### CA对证书签名请求CSR进行签署
+```
+$ openssl x509 -req -CA <ca-cert> -CAkey <ca-key-file> -in <csr-file> -out <cert-signed-file> -days 1800 -CAcreateserial -passin pass:<passwd>
+```
+建立CA后，签署CSR变得更简单：
+```
+$ openssl ca -in <csr-file> -out <cert-signed-file>
+```
+建立CA，本质上是在配置文件中增加了很多默认配置，从而导致命令行变短。
+#### 查看证书内容
+```
+$ openssl x509 -noout -text -in <cert-file>
+```
+#### 查看服务器的公钥证书
+```
+$ openssl s_client -connect <host-domain-name>:<port> | tee logfile
+```
+#### 模拟https服务器
+```
+$ openssl s_server -accept <port> -cert <server-cert-file> -key <server-key-file> -www
+```
+#### 创建pkcs12格式密钥库
+```
+$ openssl pkcs12 –export –out <keystore-file> –inkey <private-key-file> –in <cert-file> –certfile <ca-cert-file>
+```
+### keytool
+[官方文档](http://docs.oracle.com/javase/7/docs/technotes/tools/solaris/keytool.html)  
+#### 显示密钥库中的条目
+```
+$ keytool -list -keystore <keystore-file> -alias <alias> -storepass <password> -v
+```
+#### 显示证书内容
+```
+$  keytool -printcert -file <cert-file>
+```
+#### 将证书导入可信密钥库
+```
+$ keytool -import -trustcacerts -keystore <storefile> -alias <alias> -file <certReplyFile>
+```
+#### 删除条目
+```
+$ keytool -delete -keystore <keystore-file> -alias <alias> -storepass <password>
+```
+#### 密钥库合并
+这个功能常用于导入私钥到密钥库。  
+```
+$  keytool -importkeystore -deststorepass <password> -destkeystore <destkeystore-file> -srckeystore <source-keystore-file> -srcstoretype PKCS12 -srcstorepass <password> -alias <alias>
+```
+源密钥库一般是pkcs12格式，而且一般由openssl命令生成：
+```
+$ openssl pkcs12 -export -in <cert-file> -inkey <key-file> -out <pkcs12-file> -name <alias>
+```
+#### 生成私钥和证书
+本文中没用到这个命令，而是用openssl命令生成的公私钥对（公钥和证书两个术语容易混淆，证书是公钥的一种常见封装格式）。如果不明确指定RSA算法，默认生成DSA私钥公钥对。  
+```
+$ keytool -genkey -alias signLegal -keystore examplestanstore2 -validity 1800 -keyalg RSA
+```
+#### 导出证书
+本文也没用到这个命令。不加`-rfc`生成二进制CER证书，加上`-rfc`生成文本PEM格式证书。PEM格式更常用。  
+```
+$ keytool -export -keystore <keystore-file> -alias <alias> -file <cert-file> -rfc
+```
+### curl命令
+使用自定义可信证书库访问https主机：
+```
+$ curl <url>  --cacert <truststore-file>
+```
+双向SSL：
+```
+$ curl <url> --cacert <truststore-file> --cert <cert-file>
+```
+`--cert`参数接受pem格式文件，jks格式不行。生成pem格式文件的方式（就是把两个文本文件拼接在一起）：
+```
+$ cat <cert-file> <key-file> > <key-cert-file>
+```
+
 
 ## 相关文档
 [java结合keytool实现非对称签名与验证](https://imaidata.github.io/blog/2017/07/29/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E9%9D%9E%E5%AF%B9%E7%A7%B0%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81/)   
