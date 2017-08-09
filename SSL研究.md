@@ -540,10 +540,37 @@ $ java MutualAuthenticationHTTP
 
 一般使用开源软件OpenSSL来创建CA。首先，生成CA根证书公钥和私钥。然后，将公私钥证书配置到OpenSSL的配置文件。之后，就可以使用内部CA来处理证书签名请求(CSR)，生成签名证书了。  
 
+#### 0.确定CA文件存储位置
+对ubuntu或centos，openssl一般都预装了。没有装，就用apt或yum自己装。首先需要确定CA根证书文件的默认位置。CA根证书的保存位置在配置文件openssl.cnf中有定义。查找一下openssl.cnf：
+```
+$ find /etc -name openssl.cnf
+/etc/pki/tls/openssl.cnf
+$ cat /etc/pki/tls/openssl.cnf | grep dir
+dir             = /etc/pki/CA           # Where everything is kept
+certs           = $dir/certs            # Where the issued certs are kept
+crl_dir         = $dir/crl              # Where the issued crl are kept
+database        = $dir/index.txt        # database index file.
+new_certs_dir   = $dir/newcerts         # default place for new certs.
+certificate     = $dir/cacert.pem       # The CA certificate
+serial          = $dir/serial           # The current serial number
+crlnumber       = $dir/crlnumber        # the current crl number
+crl             = $dir/crl.pem          # The current CRL
+private_key     = $dir/private/cakey.pem# The private key
+RANDFILE        = $dir/private/.rand    # private random number file
+dir             = ./demoCA              # TSA root directory
+serial          = $dir/tsaserial        # The current serial number (mandatory)
+signer_cert     = $dir/tsacert.pem      # The TSA signing certificate
+certs           = $dir/cacert.pem       # Certificate chain to include in reply
+signer_key      = $dir/private/tsakey.pem # The TSA private key (optional)
+```
+`dir`定义了CA的根目录，`certificate`是根证书，`private_key`是CA的私钥。  
+提醒注意的是，不同的linux版本上述配置文件也许有所不同。为了省事，下面的文件名尽量按上述的默认值。  
+
 #### 1.生成密钥对和证书
 将创建CA的根证书。
 ```
-$ openssl req -new -x509 -keyout ca-key -out ca-cert -days 365 -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=iMaiCA"
+$ cd /etc/pki/CA
+$ openssl req -new -x509 -keyout cakey.pem -out cacert.pem -days 365 -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=iMaiCA"
 ..............+++
 .......................................+++
 writing new private key to 'ca-key'
@@ -551,51 +578,48 @@ Enter PEM pass phrase: vagrant
 Verifying - Enter PEM pass phrase: vagrant
 -----
 ```
-生成的CA一个公钥-私钥对和证书，旨在签署其他证书。当前目录下多了两个文件ca-key和ca-cert。  
+生成的CA一个公钥-私钥对和证书，旨在签署其他证书。当前目录下多了两个文件cakey.pem和cacert.pem。  
 ca-key文件的第一行：`-----BEGIN ENCRYPTED PRIVATE KEY-----`  
 ca-cert文件的第一行：`-----BEGIN CERTIFICATE-----`  
 
-#### 2.创建CA目录和复制文件
-设置CA目录结构：
-```
-$ mkdir -m 0700 /root/CA /root/CA/certs /root/CA/crl /root/CA/newcerts /root/CA/private
-```
+#### 2.创建和移动CA文件
 将CA密钥移动到`/root/CA/private`，将CA证书移动到`/root/CA/certs`。  
 ```
-$ mv ca-key /root/CA/private; mv ca-cert /root/CA/certs
+$ mv cakey.pem /etc/pki/CA/private; mv cacert.pem /etc/pki/CA/certs
 ```
 添加所需文件：
 ```
-$ touch /root/CA/index.txt; echo 1000 >> /root/CA/serial
+$ touch  /etc/pki/CA/index.txt; echo 1000 >>  /etc/pki/CA/serial
 ```
 设置权限ca-key：
 ```
-chmod 0400 /root/CA/private/ca-key
+chmod 0400 /etc/pki/CA/private/ca-key
 ```
 #### 3.修改OpenSSL配置文件
-打开OpenSSL配置文件(`/etc/pki/tls/openssl.cnf`)，修改为以下内容：
+打开OpenSSL配置文件(`/etc/pki/tls/openssl.cnf`)，确认以下内容。由于我是按默认值生成的文件，配置文件不用改：
 ```
 [ CA_default ]
 
-dir             = /root/CA                  # Where everything is kept
-certs           = /root/CA/certs            # Where the issued certs are kept
-crl_dir         = /root/CA/crl              # Where the issued crl are kept
-database        = /root/CA/index.txt        # database index file.
-#unique_subject = no                        # Set to 'no' to allow creation of
-                                            # several certificates with same subject.
-new_certs_dir   = /root/CA/newcerts         # default place for new certs.
+[ CA_default ]
 
-certificate     = /root/CA/certs/ca-cert    # The CA certificate
-serial          = /root/CA/serial           # The current serial number
-crlnumber       = /root/CA/crlnumber        # the current crl number
-                                            # must be commented out to leave a V1 CRL
-crl             = /root/CA/crl.pem          # The current CRL
-private_key     = /root/CA/private/ca-key   # The private key
-RANDFILE        = /root/CA/private/.rand    # private random number file
+dir             = /etc/pki/CA           # Where everything is kept
+certs           = $dir/certs            # Where the issued certs are kept
+crl_dir         = $dir/crl              # Where the issued crl are kept
+database        = $dir/index.txt        # database index file.
+#unique_subject = no                    # Set to 'no' to allow creation of
+                                        # several ctificates with same subject.
+new_certs_dir   = $dir/newcerts         # default place for new certs.
 
-x509_extensions = usr_cert              # The extensions to add to the cert
+certificate     = $dir/cacert.pem       # The CA certificate
+serial          = $dir/serial           # The current serial number
+crlnumber       = $dir/crlnumber        # the current crl number
+                                        # must be commented out to leave a V1 CRL
+crl             = $dir/crl.pem          # The current CRL
+private_key     = $dir/private/cakey.pem# The private key
+RANDFILE        = $dir/private/.rand    # private random number file
+
+x509_extensions = usr_cert              # The extentions to add to the cert
 ```
-保存配置文件并重启OpenSSL。  
 
 #### 4.生成CSR并签署
 这一步是在测试、验证刚刚建立的内部CA。  
