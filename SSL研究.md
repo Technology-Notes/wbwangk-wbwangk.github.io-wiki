@@ -4,6 +4,7 @@
 - 四、[双向SSL](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%9B%9B%E5%8F%8C%E5%90%91ssl)  
 - 五、[建立内部CA](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%BA%94%E5%88%9B%E5%BB%BA%E5%86%85%E9%83%A8ca)  
 - 六、[HDP的SSL证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%85%ADhdp%E7%9A%84ssl%E8%AF%81%E4%B9%A6)  
+- 七、申请Let's Encrypt证书
 
 ## 一、安全知识
 ### (一)术语
@@ -811,6 +812,118 @@ $ curl <url> --cacert <truststore-file> --cert <cert-file>
 `--cert`参数接受pem格式文件，jks格式不行。生成pem格式文件的方式（就是把两个文本文件拼接在一起）：
 ```
 $ cat <cert-file> <key-file> > <key-cert-file>
+```
+
+## 七、申请Let's Encrypt证书
+[参考](https://imququ.com/post/letsencrypt-certificate.html)
+letsencrypt.org提供免费https证书。每张证书可以放100个域名，有效期3个月，支持自动续订。2018年开始支持通配符证书。一般的证书方法颁发机构通过邮件接受证书签名请求(CSR)，而Let's Encrypt则是通过互联网实时接受申请、实时发放。将来有可能互联网证书被Let's Encrypt一统江湖。  
+服务器证书通过Let's Encrypt申请的好处是，它的证书可以被常见可信证书库信任，不用额外把服务器证书导入可信证书库或添加浏览器例外。如果启用双向SSL，个人证书仍需要自建CA颁发。
+
+Let's Encrypt推荐使用[Certbot](https://certbot.eff.org/)软件申请证书，而本文采用的是[acme-tiny](https://github.com/diafygi/acme-tiny)(也在Let's Encrypt认可的申请方式清单中)。acme-tiny使用python+openssl+bash脚本完成证书申请和续订，对于懂得CA的人更容易控制，也更容易自动化。  
+
+ACME全称是 Automated Certificate Management Environment(自动化证书管理环境)，Let's Encrypt 的证书签发过程使用的就是ACME协议。有关ACME协议的更多资料可以在[这个仓库](https://github.com/ietf-wg-acme/acme/)找到。
+
+Let's Encrypt在证书申请过程中，有一个“挑战”过程，主要挑战你对域名的控制权。当你申请一个域名的证书，它的申请工具(如Cetbot或acme-tiny)会向CA(Let's Encrypt)发送一个用account_key签名的请求，返回值(象是个token)被写入约定的nginx的`<域名>/.well-known/acme-challenge`目录，然后申请工具会请求对应的URL(http://<域名>/.well-known/acme-challenge/<token>)。请求的返回值正确就说明向Let's Encrypt申请证书的域名处于你的控制之下。  
+
+#### 创建账号、证书签名请求CSR
+执行Let's Encrypt证书申请的机器必须有互联网IP，而且需要通过域名解析服务商(如阿里云)把要申请域名解析到这个互联网IP。例如与下面的测试相配合，在阿里域名解析中存在一个imaicloud.com域名的条目：`记录类型:A，主机记录:*，解析线路:默认，记录值：<IP地址>`。这是一个通配符解析，意味着`imaicloud.com`的所有下级域名都解析到这个IP地址。
+
+在前面讲的有互联网IP的机器上安装nginx。然后创建一个目录，用来存放密钥对和其它临时文件，如`/root/ssl`：
+```
+$ cd /root/ssl
+$ openssl genrsa 4096 > account.key
+$ openssl genrsa 4096 > domain.key
+$ openssl req -new -sha256 -key domain.key -subj "/" -reqexts SAN -config <(cat /etc/pki/tls/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:dp.imaicloud.com")) > domain.csr
+```
+Let's Encrypt可能是处于管理的要求让你生成两个密钥对：acccout和domain。证书签名申请用domain.key签名，而挑战请求用account签名。openssl的配置文件`/etc/pki/tls/openssl.cnf`在第五章提到过。上面的脚本是临时在openssl.cnf文件最后增加了下面的内容：
+```
+[SAN]
+subjectAltName=DNS:dp.imaicloud.com
+```
+如果一次申请多个域名，就用逗号隔开，如`subjectAltName=DNS:yoursite.com,DNS:www.yoursite.com`。生成证书签名请求(CSR)保存在文件domain.csr中。
+
+如果找不到openssl.cnf的位置，可以查找(不同的linux位置可能不同)：
+```
+$ find /etc -name openssl*
+```
+#### 配置nginx
+配置nginx的目的是为了迎接来自Let's Encrypt申请工具的挑战。  
+NGINX的HOME目录是`/opt/nginx`。
+```
+$ mkdir /opt/nginx/dp
+$ mkdir /opt/nginx/dp/challenge
+```
+`/opt/nginx/dp/challenge`存放证书申请工具产生的临时文件，用来响应挑战。这个目录通过nginx的别名指令映射为URL`http://dp.imaicloud.com//.well-known/acme-challenge/`，也就是Let's Encrypt约定的挑战目录。
+
+Nginx的配置文件：
+```
+    server {
+        listen 80;
+        server_name dp.imaicloud.com;
+        root dp;
+        index index.html index.htm;
+
+        location ^~ /.well-known/acme-challenge/ {
+                alias /opt/nginx/dp/challenge/;
+                try_files $uri =404;
+        }
+```
+#### 申请证书
+
+```
+$ cd /root/ssl
+$ wget https://raw.githubusercontent.com/diafygi/acme-tiny/master/acme_tiny.py
+$ python acme_tiny.py --account-key ./account.key --csr ./domain.csr --acme-dir /opt/nginx/dp/challenge/ > ./signed.crt
+Parsing account key...
+Parsing CSR...
+Registering account...
+Already registered!
+Verifying dp.imaicloud.com...
+dp.imaicloud.com verified!
+Signing certificate...
+Certificate signed!
+```
+签名后的证书是signd.crt。
+从Let's Encrypt网站下载中间证书、根证书，组合成证书链。nginx的配置需要两种证书链，一个是中间证书链，一个是全证书链。
+```
+$ wget -O - https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem > intermediate.pem
+$ cat signed.crt intermediate.pem > chained.pem
+$ wget -O - https://letsencrypt.org/certs/isrgrootx1.pem > root.pem
+$ cat intermediate.pem root.pem > full_chained.pem
+```
+配置nginx，以便处理https请求：
+```
+    server {
+        listen               443 ssl;
+        server_name dp.imaicloud.com;
+        root dp;
+        index index.html index.htm;
+
+        # 中间证书 + 站点证书
+        ssl_certificate      /root/ssl/chained.pem;
+        # 创建 CSR 文件时用的密钥
+        ssl_certificate_key  /root/ssl/domain.key;
+        # 根证书 + 中间证书
+        # https://imququ.com/post/why-can-not-turn-on-ocsp-stapling.html
+        ssl_trusted_certificate    /root/ssl/full_chained.pem;
+        location / {
+            proxy_pass               http://10.10.250.221:8080;
+        }
+    }
+    server {
+        listen 80;
+        server_name dp.imaicloud.com;
+        root dp;
+        index index.html index.htm;
+
+        location ^~ /.well-known/acme-challenge/ {
+                alias /opt/nginx/dp/challenge/;
+                try_files $uri =404;
+        }
+        location / {
+            rewrite ^/(.*)$ https://dp.imaicloud.com/$1 permanent;
+        }
+    }
 ```
 
 ## 相关文档
