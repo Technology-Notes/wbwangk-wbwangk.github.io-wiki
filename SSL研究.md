@@ -5,6 +5,7 @@
 - 五、[建立内部CA](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%BA%94%E5%88%9B%E5%BB%BA%E5%86%85%E9%83%A8ca)  
 - 六、[HDP的SSL证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%85%ADhdp%E7%9A%84ssl%E8%AF%81%E4%B9%A6)  
 - 七、[申请Let's Encrypt证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%B8%83%E7%94%B3%E8%AF%B7lets-encrypt%E8%AF%81%E4%B9%A6)
+- 八、[总结](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E6%80%BB%E7%BB%93)
 - 附: [命令备忘](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98)
 ## 一、安全知识
 ### (一)术语
@@ -140,7 +141,7 @@ public class HttpsTest {
        //创建SSLContext
        SSLContext sslContext=SSLContext.getInstance("SSL");
        //初始化。第一个null是KeyManager，第二个null是TrustManager。
-       sslContext.init(null, null, new java.security.SecureRandom());;
+       sslContext.init(null, null, null);
        //获取SSLSocketFactory对象
        SSLSocketFactory ssf=sslContext.getSocketFactory();
        URL url=new URL(requestUrl);
@@ -495,8 +496,13 @@ $ curl https://c7304.ambari.apache.org --cacert ca-cert --cert ./client.pem
 注意[--cert](https://curl.haxx.se/docs/manpage.html#-E)参数如果后面跟文件，必须加上相对或绝对路径，否则后面的参数会当成NSS数据库的nickname。  
 
 #### windows下的双向SSL测试
-将自建CA的公钥`ca-cert`文件和`client.pem`两个文件复制到宿主windows下。然后分别导入到IE。其中client.pem导入到了“其他人”标签页(显示颁发给webb)，`ca-cert`导入到了“受信任的发布者”标签页中(显示颁发给iMaiCA)。可能需要在“高级”按钮中选中“用于客户端认证”。  
-然后用IE访问地址`https://c7304.ambari.apache.org`，发现可以访问了。  
+要想把个人私钥证书导入到IE，需要用openssl把client.crt和client.key合并转化成pk12格式：
+```
+$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name webb
+Enter Export Password: vagrant
+```
+将生成的client.p12与ca-cert两个文件复制到宿主windows下。然后分别导入到IE。其中client.p12导入到了“个人”标签页(显示颁发给webb)，`ca-cert`导入到了“受信任的发布者”标签页中(显示颁发给iMaiCA)。需要在“高级”按钮中选中“用于客户端认证”。  
+然后用IE访问地址`https://c7304.ambari.apache.org`，会有确认提示，确认后就正常显示网页了。  
 
 ### java下的双向SSL
 [使用keytool将私钥导入到Java密钥库中](http://cunning.sharp.fm/2008/06/importing_private_keys_into_a.html)  
@@ -831,6 +837,9 @@ letsencrypt.org
  2 s:/C=US/O=IdenTrust/CN=IdenTrust Commercial Root CA 1
    i:/O=Digital Signature Trust Co./CN=DST Root CA X3
 ```
+## 总结
+1.
+
 
 ## 命令备忘
 ### openssl
