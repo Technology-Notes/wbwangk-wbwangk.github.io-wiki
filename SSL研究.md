@@ -31,16 +31,6 @@ CSR是Certificate Signing Request的简写。某实体要获得CA认可，需要
 #### 证书链
 多个证书可以链接成**证书链**。当使用证书链时，第一个证书始终是主体的证书。接下来是颁发发件人证书的实体的证书。如果链中有更多证书，那么每个证书都是颁发先前证书的上级CA。链中的最终证书是根CA的证书。  
 
-在被签署的证书与根证书之间可能存在多级签名，多个证书组成一个链条。最底下的是根证书。根CA是广泛信任的公共证书颁发机构。著名的根CA包括VeriSign，Entrust和GTE Cyber​​Trust。下面是letsencrypt.org的公钥证书的证书链：
-```
-Certificate chain
- 0 s:/CN=letsencrypt.org/O=INTERNET SECURITY RESEARCH GROUP/L=Mountain View/ST=California/C=US
-   i:/C=US/O=IdenTrust/OU=TrustID Server/CN=TrustID Server CA A52
- 1 s:/C=US/O=IdenTrust/OU=TrustID Server/CN=TrustID Server CA A52
-   i:/C=US/O=IdenTrust/CN=IdenTrust Commercial Root CA 1
- 2 s:/C=US/O=IdenTrust/CN=IdenTrust Commercial Root CA 1
-   i:/O=Digital Signature Trust Co./CN=DST Root CA X3
-```
 ### (二)Java安全体系
 [参考](https://docs.oracle.com/javaee/7/tutorial/security-intro002.htm)  
 
