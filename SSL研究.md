@@ -403,6 +403,8 @@ $ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://c7304.ambari.apach
 无论导入https服务器自身的证书，还是为它签名的CA的证书**都可以**。这与CURL有显著不同。  
 
 把https服务器证书导入JDK官方信任库的测试就不做了。  
+#### 导入IE测试
+将ca.crt、nginx.cr、nginx2.crt复制到windows下，然后导入IE的“受信任的发布者”证书。但访问`https://c7304.ambaria.apache.org:442`或`https://c7304.ambaria.apache.org:444`都报告“此网站的安全证书存在问题”。
 
 ### (三)OpenSSL搭建https服务器
 openssl自带了https服务器的模拟功能：
