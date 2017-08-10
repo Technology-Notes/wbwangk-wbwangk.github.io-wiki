@@ -15,20 +15,8 @@
 #### 证书(certificate)
 (公钥)证书封装了公钥及配套信息，如公钥拥有者(subject)、签署者的签名、签署者(issuer)。自签名证书的subject与issuer相同。根证书是自签名证书。  
 公钥证书可以被认为是护照的数字等价物。它由可信任的组织颁发，可为持有人提供身份证明。发布公钥证书的受信任组织称为证书颁发机构（CA）。  
-公钥证书包含以下字段：  
 
- - 发行方(Issuer)  
-  发行证书的CA。如果用户信任颁发证书的CA，并且证书有效，则用户可以信任证书。  
- - 有效期  
-  证书有有效期限。在验证证书的有效性时，应检查此日期。  
- - 主体(Subject)  
-  包括有关证书所代表的实体的信息。实体可以是个人或组织。  
- - 主体的公钥  
-  证书提供的主要信息是主体的公钥。提供所有其他字段以确保此密钥的有效性。  
- - 签名  
-  证书由颁发证书的CA进行数字签名。使用CA的私钥创建签名（签署），并确保证书的有效性。因为只有证书被签名，而不是SSL事务中发送的数据，SSL不提供不可否认性。  
-
-自己的私钥给自己的公钥签名，叫自签名证书。更普遍的是其他的私钥（可以视为CA的私钥）为自己的证书签名。  
+自己的私钥给自己的公钥签名，叫自签名证书。更普遍的CA签名的证书。  
 ([X.509证书细节](http://www.cnblogs.com/chnking/archive/2007/08/28/872104.html))  
 
 #### 密钥库(keystore)
@@ -115,7 +103,8 @@ $  find / -name cacerts
 $ keytool -list -keystore <cacerts-file> -storepass changeit
 ```
 `changeit`是密钥库的默认密码。 把`<cacerts-file>`替换成`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`。  
-下面编写一个java类来测试。  
+
+cacerts中已经内置了常见的公共CA证书。当java程序访问https网站时，jre会利用cacerts来检验https网站是否可信。下面编写一个java类来测试。  
 #### java访问https网站的源码
 这个源码参考了[这个网页](https://zhidao.baidu.com/question/460681916465240325.html))：
 ```java
@@ -184,6 +173,7 @@ public class HttpsTest {
   }
 }
 ```
+在上述代码中，需要关注是的`sslContext.init(null, null, null);`这行代码。第2个参数代表“可信证书库”，null表示使用默认的可信证书库(即cacerts)。至于第1个参数，双向SSL会用到。  
 编译运行：
 ```
 $ javac HttpsTest.java
@@ -194,6 +184,7 @@ javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: 
 (下略)
 ```
 可以尝试用`openssl s_client -connect <host-domain-name>:<port>`命名分别查询一下上面两网站的证书信息。会发现baidu.com的证书签署者`Symantec Class 3 Secure Server CA - G4`出现在了IE的“中间证书发放机构中”，而kyfw.12306.cn的签署者`SRCA`则没有。
+
 #### 导入信任库
 首先，查询kyfw.12306.cn的公钥：
 ```
@@ -201,13 +192,24 @@ $ openssl s_client -connect kyfw.12306.cn:443
 ```
 将显示在屏幕上的`-----BEGIN CERTIFICATE-----`和`-----END CERTIFICATE-----`之间的内容（包括这两行）复制到一个文件(12306.crt)中。然后用keytool导入到OracleJDK的信任库：
 ```
-$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias 12306 -file 12306.crt  (cacerts的默认密码是changeid)
+$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias 12306 -file 12306.crt -storepass changeit
 ```
 重新发送请求：
 ```
 $ java HttpsTest https://kyfw.12306.cn
 ```
 不再报错。说明`kyfw.12306.cn`已经在JDK的信任库中，JDK允许客户端发送请求到这个主机。  
+
+#### 定制信任库
+自己创建一个信任库。执行下列keytool命令后会生成文件trust.jks：
+```
+$ keytool -import -trustcacerts -keystore trust.jks -alias 12306 -file 12306.crt -storepass vagrant
+$ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://kyfw.12306.cn      (正常执行)
+```
+可以正常访问网站。自制信任库中只有`kyfw.12306.cn`网站的证书，访问其他网站会报错，如：
+```
+$ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://baidu.com         (报错)
+```
 
 #### cacerts的修改测试
 为了测试cacerts的作用，现在把它改名，然后用一个空文件代替。实测中，下面的<cacerts file>被替换为`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`：
@@ -219,6 +221,12 @@ javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: 
 (下略)
 ```
 baidu.com也不行了，是因为cacerts文件中的证书被清空了。别忘记把文件cacerts还原。  
+
+#### 小结
+java用以下优先级处理可信证书库：
+1. `sslContext.init()`的第2个参数传入优先级最高
+2. `-Djavax.net.ssl.trustStore`系统属性传入优先级次之
+3. JDK默认可信证书库(cacerts)优先级最低
 
 ### OpenJDK访问https链接
 卸载OracleJDK，安装OpenJDK。再查找`cacerts`文件：
@@ -280,16 +288,16 @@ public class HttpClientSSL {
 ```
 编译执行：
 ```
-$ javac -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL.java
-$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://cn.bing.com
-Executing request GET https://cn.bing.com HTTP/1.1
+$ javac -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL.java           (编译)
+$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://cn.bing.com      (正常执行)
 ----------------------------------------
 HTTP/1.1 200 OK
-$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://kyfw.12306.cn
-Executing request GET https://kyfw.12306.cn HTTP/1.1
-Exception in thread "main" javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
-(下略)
+$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://kyfw.12306.cn     (报错)
+$ java -Djavax.net.ssl.trustStore=trust.jks -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://kyfw.12306.cn                      (正常执行)
 ```
+#### 小结
+HttpClient的可信证书库规则与纯java编程相同。
+
 ## 三、建立https服务器
 [参考](https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04)  
 
@@ -433,26 +441,17 @@ java测试不再冗述。
 
 ## 四、双向SSL
 参考：[Nginx实现双向SSL](http://nategood.com/client-side-certificate-authentication-in-ngi)、[双向SSL15分钟教程](http://monduke.com/2006/06/04/the-fifteen-minute-guide-to-mutual-authentication/)  
-双向SSL(two-way SSL)又叫Mutual Authentication，或基于证书的相互认证，是指双方通过验证提供的数字证书相互认证，以便双方确保对方的身份。在技​​术术语中，它是指客户端（Web浏览器或客户端应用程序）向服务器（网站或服务器应用程序）进行身份验证，并且服务器也向客户端进行身份验证，验证过程用到了CA颁发的公钥证书/数字证书。
-双向SSL下客户端与服务器的交互过程：
-1. 客户端请求访问受保护的资源。  
-2. 服务器将其证书提交给客户端。  
-3. 客户端验证服务器的证书。  
-4. 如果成功，客户端将其证书发送到服务器。  
-5. 服务器验证客户端的凭据。  
-6. 如果成功，则服务器授予对客户端请求的受保护资源的访问权限。  
-对以上过程的详细描述可参考[这个](https://community.developer.visa.com/t5/Developer-Tools/What-is-Mutual-Authentication/ba-p/5757)。  
+双向SSL(two-way SSL)又叫Mutual Authentication，或基于证书的相互认证，是指双方通过验证提供的数字证书相互认证，以便双方确保对方的身份。  
+认证过程的详细描述可参考[这个](https://community.developer.visa.com/t5/Developer-Tools/What-is-Mutual-Authentication/ba-p/5757)。  
 
-为了实现双向SSL，需要为客户端生成私钥和证书。假定客户端设定为c7302节点。在c7302的`/opt/twowayssl`为客户端用户webb创建签名请求：
+验证单向SSL时已经为服务器生成了私钥(nginx2.key)和公钥证书(nginx2.crt)。为了实现双向SSL，还需要为客户端生成私钥和证书。利用目录`/opt/twowayssl`为客户端用户webb生成私钥(client.key)和公钥证书(client.crt)。首先，创建签名请求CSR，以便供CA签名：
 ```
+$ /opt/twowayssl
 $ openssl req -new -newkey rsa:2048 -nodes -keyout client.key -out client.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=webb"
-$ scp client.csr root@c7304:/opt/ca                (将客户端的证书签名请求发送到CA所在机器)
 ```
-CA建立在c7304上（参见第五章），需要在c7304上对该CSR进行签名：
+首先需要在c7304上建立CA（参见第五章），然后利用CA对该CSR进行签名：
 ```
-$ cd /opt/ca
 $ openssl ca -in client.csr -out client.crt
-$ scp client.crt root@c7302:/opt/twowayssl            (将签署后的证书复制回c7302)
 ```
 nginx的配置需要变更为：
 ```
@@ -507,9 +506,8 @@ Enter Export Password: vagrant
 ### java下的双向SSL
 [使用keytool将私钥导入到Java密钥库中](http://cunning.sharp.fm/2008/06/importing_private_keys_into_a.html)  
 前文用openssl工具生成了客户端私钥和公钥证书。要利用实现java程序的双向SSL访问服务器，首先需要把客户端私钥导入到keystore。keytool没有直接导入私钥的功能，但提供了密钥库合并功能，可以利用这个功能实现密钥导入keystore。  
-在c7302上执行：
 ```
-$ /opt/twowayssl
+$ cd /opt/twowayssl
 $ openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name webb
 Enter Export Password: vagrant
 $  keytool -importkeystore -deststorepass vagrant -destkeystore client.jks -srckeystore client.p12 -srcstoretype PKCS12 -srcstorepass vagrant -alias webb
@@ -517,7 +515,7 @@ $ keytool -list -keystore client.jks -alias webb -storepass vagrant
 webb, Aug 4, 2017, PrivateKeyEntry,
 Certificate fingerprint (SHA1): 99:6D:E2:E4:ED:46:91:8C:FC:D6:73:EC:42:74:3C:BF:6E:E8:9F:87
 ```
-由于之前client.jsk并不存在，所以合并库变成了新建一个密钥库。把这个密钥库文件(client.jsk)复制到c7304的`/opt/https`目录下。（复制到c7304只是因为c7304上的JDK可信库已经导入了自建CA的公钥证书，测试方便而已）。  
+由于之前client.jsk并不存在，openssl会先创建一个空库，然后再合并。把这个密钥库文件(client.jsk)复制到c7304的`/opt/https`目录下。（复制到c7304只是因为c7304上的JDK可信库已经导入了自建CA的公钥证书，测试方便而已）。  
 测试类为[MutualAuthenticationHTTP.java](https://raw.githubusercontent.com/imaidata/blog/master/_posts/kerberos/MutualAuthenticationHTTP.java)。这个类比较长，不再全部贴在文章里了。关键的几行：
 ```java
         String url = "https://c7304.ambari.apache.org";
@@ -838,7 +836,7 @@ letsencrypt.org
    i:/O=Digital Signature Trust Co./CN=DST Root CA X3
 ```
 ## 总结
-1.
+1. cacerts是可信证书库的文件名。不同JDK的文件位置不同。
 
 
 ## 命令备忘
