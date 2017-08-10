@@ -20,10 +20,10 @@
 ([X.509证书细节](http://www.cnblogs.com/chnking/archive/2007/08/28/872104.html))  
 
 #### 密钥库(keystore)
-将密钥和对应的证书保存在一个受密码保护的数据库中，就叫密钥库。密钥库格式有JKS、PCKS12等。java默认支持jks。  
+将密钥和对应的证书保存在一个受密码保护的数据库中，就叫密钥库。密钥库格式有JKS、PCKS12等。java默认支持jks。jks中保存两种类型条目：PrivateKeyEntry和trustedCertEntry。前者是私钥，后者是可信证书。  
 
 #### 可信证书库(truststore)
-SSL单向认证依赖可信证书库。如IE浏览器中内置了主要证书颁发机构(CA)的根证书和中间人证书，形成了IE的可信证书库。Oracle JDK、CURL等都自带可信证书库，OpenJDK使用Linux操作系统的可信证书库(windows下貌似使用IE的可信证书库)。  
+SSL单向认证依赖可信证书库。如IE浏览器中内置了主要证书颁发机构(CA)的根证书和中间人证书，形成了IE的可信证书库。JDK、CURL等都自带可信证书库。java自带可信证书库的格式是jks，里面的条目类型是trustedCertEntry。  
 
 #### 证书签名请求(CSR)
 CSR是Certificate Signing Request的简写。某实体要获得CA认可，需要利用自己的私钥/公钥对构造一个证书签名请求文件发给CA。  
@@ -74,28 +74,28 @@ Java SE还提供了一套用于管理密钥库，证书和策略文件的工具;
 
 ## 二、java访问https服务器
 
-现代浏览器都内嵌了一系列可信CA的公钥证书。如果你访问一个不可信的https网站（如证书是自签名的），浏览器会弹出警告，只有把要访问的网站加入“例外”目录，浏览器才运行继续访问。Java也实现了类似机制。但OpenJDK和OracleJDK的机制有差异。OracleJDK使用自带的可信证书库(文件名为cacerts)，而OpenJDK则使用linux系统的证书体系。  
+现代浏览器都内嵌了一系列可信CA的公钥证书。如果你访问一个不可信的https网站（如证书是自签名的），浏览器会弹出警告，只有把要访问的网站加入“例外”目录，浏览器才运行继续访问。Java也实现了类似机制。JDK自带了一个jks格式的可信证书库文件cacerts。Oracle JDK和OpenJDK的cacerts文件的路径不同。
+- OracleJDK自带可信证书库文件是`$JAVA_HOME/jre/lib/security/cacerts`  
+- OpenJDK自带可信证书库的文件是`/etc/pki/java/cacerts`  
 
-以下测试的java程序放在c7304的`/opt/https`目录下。而`/opt/ca`目录存放了openssl生成的证书。  
-
-### Oracle JDK访问https链接
-OracleJDK的[下载地址](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#X509TrustManager)，可以先在windows下下载，再scp到linux下。  
-OracleJDK自带可信证书库文件位置是`$JAVA_HOME/jre/lib/security/cacerts`，这是个JKS格式的keystore文件。可以这样查找可信证书库位置：
+可以这样查找可信证书库位置：
 ```
 $  find / -name cacerts
 /etc/pki/ca-trust/extracted/java/cacerts
 /etc/pki/java/cacerts
 /usr/java/jdk1.8.0_131/jre/lib/security/cacerts
 ```
-前两个是同一个文件，是linux系统的可信证书库。第三个OracleJDK带的。  
-可以用`keytool`命令查看该文件内容：  
+前两个是同一个文件，是OpenJDK的可信证书库(不装OpenJDK也有这个文件)。第三个OracleJDK的可信证书库。  
+可以用`keytool`命令查看该文件内容(初始口令是changeit)：  
 ```
 $ keytool -list -keystore <cacerts-file> -storepass changeit
 ```
-`changeit`是密钥库的默认密码。 把`<cacerts-file>`替换成`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`。  
+把`<cacerts-file>`替换成cacerts文件的真实路径。  
 
-cacerts中已经内置了常见的公共CA证书。当java程序访问https网站时，jre会利用cacerts来检验https网站是否可信。下面编写一个java类来测试。  
-#### java访问https网站的源码
+cacerts中已经内置了常见的公共CA证书。当java程序访问https网站时，jre会利用cacerts来检验https网站是否可信。  
+下面的测试在节点c7304上进行，操作系统centos7.3，JDK是Oracle JDK 1.8。测试目录`/opt/https`。  
+
+### java访问https网站
 这个源码参考了[这个网页](https://zhidao.baidu.com/question/460681916465240325.html))：
 ```java
 import java.io.BufferedReader;
@@ -121,6 +121,7 @@ public class HttpsTest {
        SSLContext sslContext=SSLContext.getInstance("SSL");
        //初始化。第一个null是KeyManager，第二个null是TrustManager。
        sslContext.init(null, null, null);
+
        //获取SSLSocketFactory对象
        SSLSocketFactory ssf=sslContext.getSocketFactory();
        URL url=new URL(requestUrl);
@@ -129,6 +130,7 @@ public class HttpsTest {
        conn.setDoInput(true);
        conn.setUseCaches(false);
        conn.setRequestMethod(requestMethod);
+
        //设置当前实例使用的SSLSoctetFactory
        conn.setSSLSocketFactory(ssf);
        conn.connect();
@@ -167,20 +169,29 @@ public class HttpsTest {
 编译运行：
 ```
 $ javac HttpsTest.java
-$ java HttpsTest https://baidu.com
-(返回一堆html代码)
-$ java HttpsTest https://kyfw.12306.cn
-javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
-(下略)
+$ java HttpsTest https://baidu.com                         (正常执行)
+$ java HttpsTest https://kyfw.12306.cn                     (报错)
 ```
-可以尝试用`openssl s_client -connect <host-domain-name>:<port>`命名分别查询一下上面两网站的证书信息。会发现baidu.com的证书签署者`Symantec Class 3 Secure Server CA - G4`出现在了IE的“中间证书发放机构中”，而kyfw.12306.cn的签署者`SRCA`则没有。
+`kyfw.12306.cn`报错是因为它的证书不是*公共CA*签发的。  
 
-#### 导入信任库
+#### 自建信任库
 首先，查询kyfw.12306.cn的公钥：
 ```
 $ openssl s_client -connect kyfw.12306.cn:443
 ```
-将显示在屏幕上的`-----BEGIN CERTIFICATE-----`和`-----END CERTIFICATE-----`之间的内容（包括这两行）复制到一个文件(12306.crt)中。然后用keytool导入到OracleJDK的信任库：
+将显示在屏幕上的`-----BEGIN CERTIFICATE-----`和`-----END CERTIFICATE-----`之间的内容（包括这两行）复制到一个文件(12306.crt)中。  
+执行下列keytool命令后会生成文件trust.jks，`-trustcacerts`参数保证了导入的条目类型是“可信证书”：
+```
+$ keytool -import -trustcacerts -keystore trust.jks -alias 12306 -file 12306.crt -storepass vagrant
+$ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://kyfw.12306.cn      (正常执行)
+```
+自制信任库中只有`kyfw.12306.cn`网站的证书，访问其他网站会报错，如：
+```
+$ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://baidu.com         (报错)
+```
+
+#### 导入java信任库
+用keytool将12306.crt导入到JDK的信任库：
 ```
 $ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias 12306 -file 12306.crt -storepass changeit
 ```
@@ -190,52 +201,22 @@ $ java HttpsTest https://kyfw.12306.cn
 ```
 不再报错。说明`kyfw.12306.cn`已经在JDK的信任库中，JDK允许客户端发送请求到这个主机。  
 
-#### 定制信任库
-自己创建一个信任库。执行下列keytool命令后会生成文件trust.jks：
-```
-$ keytool -import -trustcacerts -keystore trust.jks -alias 12306 -file 12306.crt -storepass vagrant
-$ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://kyfw.12306.cn      (正常执行)
-```
-可以正常访问网站。自制信任库中只有`kyfw.12306.cn`网站的证书，访问其他网站会报错，如：
-```
-$ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://baidu.com         (报错)
-```
-
-#### cacerts的修改测试
-为了测试cacerts的作用，现在把它改名，然后用一个空文件代替。实测中，下面的<cacerts file>被替换为`/usr/java/jdk1.8.0_131/jre/lib/security/cacerts`：
-```
-$ mv <cacerts file> <cacerts file>.old
-$ echo "" > <cacerts file>
-$ java HttpsTest https://baidu.com
-javax.net.ssl.SSLHandshakeException: sun.security.validator.ValidatorException: PKIX path building failed:
-(下略)
-```
-baidu.com也不行了，是因为cacerts文件中的证书被清空了。别忘记把文件cacerts还原。  
 
 #### 小结
 java用以下优先级处理可信证书库：
-1. `sslContext.init()`的第2个参数传入优先级最高
+1. `sslContext.init()`的第2个参数传入优先级最高。这个在讲“双向SSL”的章节中有说明。
 2. `-Djavax.net.ssl.trustStore`系统属性传入优先级次之
 3. JDK默认可信证书库(cacerts)优先级最低
 
-### OpenJDK访问https链接
-卸载OracleJDK，安装OpenJDK。再查找`cacerts`文件：
-```
-$ find / -name cacerts
-/etc/pki/ca-trust/extracted/java/cacerts
-/etc/pki/java/cacerts    （符号链接，指向第一个cacerts）
-/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-3.b12.el7_3.x86_64/jre/lib/security/cacerts
-```
-再运行`java HttpsTest <URL>`，发现`$JAVA_HOME/jre/lib/security/cacerts`这个文件不再管用，管用的是`/etc/pki/ca-trust/extracted/java/cacerts`。  
-说明OpenJDK对于可信证书库的使用与OracleJDK不同，OpenJDK优先使用linux下的可信证书库，而OracleJDK优先使用JDK自带的。  
-
-### HttpClient访问https
+### HttpClient访问https网站
 利用apache [HttpClient](https://hc.apache.org/)访问https的写法略有差异，但可信证书库的位置、作用等于java完全相同。下面测试在OracleJDK下进行。  
 ```
 $ wget http://mirror.bit.edu.cn/apache//httpcomponents/httpclient/binary/httpcomponents-client-4.5.3-bin.tar.gz
 $ tar xzvf httpcomponents-client-4.5.3-bin.tar.gz
-$ vi HttpClientSSL.java
+$ keytool -delete -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias 12306 -storepass changeit
 ```
+删除JDK可信证书库中的`12306`条目是为了下面的测试。  
+
 HttpClientSSL.java类的写法参考了[这个官方例子](https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/examples/org/apache/http/examples/client/ClientCustomSSL.java)。  
 ```java
 import java.io.File;
@@ -291,7 +272,7 @@ HttpClient的可信证书库规则与纯java编程相同。
 ## 三、建立https服务器
 [参考](https://www.digitalocean.com/community/tutorials/how-to-create-an-ssl-certificate-on-nginx-for-ubuntu-14-04)  
 
-编辑文件`/etc/yum.repos.d/nginx.repo`：
+增加一个文本文件`/etc/yum.repos.d/nginx.repo`，内容是：
 ```
 [nginx]
 name=nginx repo
@@ -309,37 +290,37 @@ $ yum install nginx
 ```
 $ openssl req -new -newkey rsa:2048 -nodes -x509 -keyout nginx.key -out nginx.crt -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
 ```
-`-nodes`表示密钥不加密。不加这个参数会提示输入密码，而nginx不认加密后的key。如果不加`-x509`参数，产生的将是一个CSR(证书签名请求)。在正规的流程中，应产生CSR，CA签名后变成.crt。现在是个简单测试，所以直接生成了自签名证书。  
+`-nodes`表示密钥不加密。  
 编辑nginx配置文件`/etc/nginx/conf.d/default.conf`，添加以下内容：
 ```
 server {
-    listen       443;
+    listen       442 ssl;
     server_name  c7304.ambari.apache.org;
-                ssl on;
-                ssl_certificate      /opt/ca/nginx.crt;
-                ssl_certificate_key  /opt/ca/nginx.key;
+
+                ssl_certificate      /opt/https/nginx.crt;               (证书)
+                ssl_certificate_key  /opt/https/nginx.key;               (私钥)
 
     location / {
         root   /usr/share/nginx/html;
         index  index.html index.htm;
     }
 ```
+注意使用的442端口，而不是https默认的443端口。index.html文件没有就手工需要一个。  
 重启nginx，加载新的配置文件，测试https服务器：
 ```
 $ service nginx start           (刚装上nginx时要执行，之后就不用了)
-$ ps -ef | grep nginx           (看看nginx进程是否已经启动)
 $ nginx -t                      (测试nginx配置文件)
 $ nginx -s reload               (重新加载配置文件，修改nginx配置文件有执行这个命令)
 ```
 可以用前面的java程序测试一下https：
 ```
-$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://c7304.ambari.apache.org
+$ java HttpsTest https://c7304.ambari.apache.org:442               (报错)
 ```
 必然报错，因为服务器证书没加入到可信证书库中。
 
 #### 将公钥导入JDK可信证书库
 ```
-$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -file /opt/ca/nginx.crt -storepass changeit
+$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -file nginx.crt -storepass changeit
 ```
 有时要多次导入同名条目。如果提示重名，则删除条目的命令：
 ```
@@ -347,30 +328,28 @@ $ keytool -delete -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -ali
 ```
 重新用java程序测试：
 ```
-$ cd /opt/https
-$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://c7304.ambari.apache.org
-Executing request GET https://c7304.ambari.apache.org HTTP/1.1
-----------------------------------------
-HTTP/1.1 200 OK
+$ java HttpsTest https://c7304.ambari.apache.org:442                  (正常执行)
 ```
 可以看到，不报错了。说明nginx的公钥证书导入到JDK可信证书库的操作起作用了。  
 
 #### 用curl进行可信https测试
 ```
-$ curl https://c7304.ambari.apache.org  --cacert /opt/ca/nginx.crt
-(不报错，返回了网页)
+$ curl https://c7304.ambari.apache.org:442  --cacert /opt/ca/nginx.crt              (不报错，返回了网页)
 ```  
 curl增加`--cacert`参数后，相当于把参数后的证书临时加入了curl的可信库。  
 注意，curl的--cacert参数接受的是PEM格式的证书。把JKS格式的密钥库当参数传给curl是不行的，如`/etc/pki/java/cacerts`当curl参数不行。  
-curl还有一个`-k`参数可以临时关闭可信检测：
+curl还有一个`-k`参数可以强制关闭可信检测：
 ```
-$ curl -k https://c7304.ambari.apache.org
+$ curl -k https://c7304.ambari.apache.org                           (正常显示)
 ```
-加上`-k`参数后不需要将目标网站的证书加入可信库。  
-
 ### (二)CA签名证书https服务器
-要获得一个CA签名的nginx公钥证书，除了通过免费`let's encrypt`网站或商用CA证书公司外，还可以自己搭建一个“内部CA”。搭建办法参见第五章。以下测试假定你已经搭建好了自己的CA。内部CA的另一个用途是颁发个人证书，这在双向SSL(第四章)时会用到。  
-首先，生成一个私钥和证书签名请求：
+要获得一个CA签名的nginx公钥证书，除了通过免费`let's encrypt`网站或商用CA证书公司外，还可以自己搭建一个“内部CA”。搭建办法参见第五章。 
+ 
+除了搭建正式的CA外，还可以自建一个临时CA。其实就是生成一个自签名的证书来充当CA根证书：
+```
+$ openssl req -new -newkey rsa:2048 -x509 -keyout ca.key -out ca.crt -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=TempCA"
+```
+为了CA签名，先生成一个私钥和证书签名请求：
 ```
 $ openssl req -new -newkey rsa:2048 -nodes -keyout nginx2.key -out nginx2.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
 ```
@@ -378,53 +357,62 @@ $ openssl req -new -newkey rsa:2048 -nodes -keyout nginx2.key -out nginx2.csr -s
 
 然后，是自建CA处理证书签名请求(CSR)，会提示输入CA私钥密码：
 ```
-$ openssl ca -in nginx2.csr -out nginx2.crt
+$ openssl x509 -req -CA ca.crt -CAkey ca.key -in nginx2.csr -out nginx2.crt -days 365 -CAcreateserial -passin pass:vagrant
 ```
 可以用下列命令查看一下签名后的证书，能看到Issuer和Subject不一样了：
 ```
 $ openssl x509 -noout -text -in nginx2.crt
 ```
+注：使用第五章自建CA签署的命令是：`openssl ca -in nginx2.csr -out nginx2.crt`  
+
 #### 配置nginx
-nginx的配置文件需要修改，改成新生成的私钥和证书：
+修改nginx的配置文件(`/etc/nginx/conf.d/default.conf`)，添加以下内容：
 ```
-                ssl_certificate      /opt/ca/nginx2.crt;
-                ssl_certificate_key  /opt/ca/nginx2.key;
+server {
+    listen       444 ssl;
+    server_name  c7304.ambari.apache.org;
+    ssl_certificate        /opt/https/nginx2.crt;
+    ssl_certificate_key    /opt/https/nginx2.key;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+}
 ```
-重新加载nginx配置文件：
+使用端口444来测试自建CA签名证书搭建的https服务器。重新加载nginx配置文件：
 ```
 $ nginx -s reload
 ```
 #### 测试https服务器
 首先，用curl测试。需要说明的是，对于CA签名的证书，客户端需要信任是CA的公钥证书，而不是https服务器自己的。所以，curl的命令是：
 ```
-$ curl https://c7304.ambari.apache.org  --cacert /root/CA/certs/ca-cert
+$ curl https://c7304.ambari.apache.org  --cacert ca.crt            (正常执行)
 ```
-CA公钥的位置参见第五章。还可以把CA公钥分发到curl所在的机器。  
+用之前java程序测试，先要把CA证书导入自建可信证书库：
+```
+$  keytool -import -trustcacerts -keystore trust.jks -alias TempCA -file ca.crt -storepass vagrant
+$ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://c7304.ambari.apache.org:444     (正常执行)
+```
+下面删除`TempCA`这个条目，改成导入nginx2.crt：
+```
+$ keytool -delete -keystore trust.jks -alias TempCA -storepass vagrant
+$ keytool -import -trustcacerts -keystore trust.jks -alias nginx2 -file nginx2.crt -storepass vagrant
+$ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://c7304.ambari.apache.org:444     (正常执行)
+```
+无论导入https服务器自身的证书，还是为它签名的CA的证书**都可以**。这与CURL有显著不同。  
 
-为了测试java访问https服务器，将CA公钥导入到JDK的可信密钥库中(先删除之前条目)：
-```
-$ keytool -delete -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -storepass changeit
-$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx -file /root/CA/certs/ca-cert -storepass changeit
-```
-重申，导入到可信密钥库的不是https服务器自己的公钥证书，而是CA公钥证书。这是与自签名证书搭建https服务器的显著区别。  
-java测试：
-```
-$ cd /opt/https
-$ java -cp ".:/opt/https/httpcomponents-client-4.5.3/lib/*" HttpClientSSL https://c7304.ambari.apache.org
-Executing request GET https://c7304.ambari.apache.org HTTP/1.1
-----------------------------------------
-HTTP/1.1 200 OK
-```
+把https服务器证书导入JDK官方信任库的测试就不做了。  
+
 ### (三)OpenSSL搭建https服务器
-openssl自带了https服务器的模拟功能。在c7403上执行：
+openssl自带了https服务器的模拟功能：
 ```
 $ cd /opt/ca
-$ openssl s_server -accept 444 -cert nginx2.crt -key nginx2.key -www
+$ openssl s_server -accept 445 -cert nginx2.crt -key nginx2.key -www
 ```
-为了不与nginx的https服务器冲突，用了444端口。  
 这个openssl的模拟服务器用curl测试：
 ```
-$ curl https://c7304.ambari.apache.org:444  --cacert /root/CA/certs/ca-cert
+$ curl https://c7304.ambari.apache.org:445  --cacert ca.key
 ```
 java测试不再冗述。  
 
