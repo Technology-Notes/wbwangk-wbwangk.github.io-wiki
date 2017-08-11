@@ -698,14 +698,14 @@ Let's Encrypt在证书申请过程中，有一个“挑战”过程，主要挑�
 $ cd /root/ssl
 $ openssl genrsa 4096 > account.key
 $ openssl genrsa 4096 > domain.key
-$ openssl req -new -sha256 -key domain.key -subj "/" -reqexts SAN -config <(cat /etc/pki/tls/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:dp.imaicloud.com")) > domain.csr
+$ openssl req -new -sha256 -key domain.key -subj "/" -reqexts SAN -config <(cat /etc/pki/tls/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:dp.imaicloud.com,DNS:c7304.dp.imaicloud.com")) > domain.csr
 ```
 Let's Encrypt可能是处于管理的要求让你生成两个密钥对：acccout和domain。证书签名申请用domain.key签名，而挑战请求用account签名。openssl的配置文件`/etc/pki/tls/openssl.cnf`在第五章提到过。上面的脚本是临时在openssl.cnf文件最后增加了下面的内容：
 ```
 [SAN]
-subjectAltName=DNS:dp.imaicloud.com
+subjectAltName=DNS:dp.imaicloud.com,DNS:c7304.dp.imaicloud.com
 ```
-如果一次申请多个域名，就用逗号隔开，如`subjectAltName=DNS:yoursite.com,DNS:www.yoursite.com`。生成证书签名请求(CSR)保存在文件domain.csr中。
+生成证书签名请求(CSR)保存在文件domain.csr中。
 
 如果找不到openssl.cnf的位置，可以查找(不同的linux位置可能不同)：
 ```
@@ -724,7 +724,7 @@ Nginx的配置文件：
 ```
     server {
         listen 80;
-        server_name dp.imaicloud.com;
+        server_name .dp.imaicloud.com;
         root dp;
         index index.html index.htm;
 
@@ -733,6 +733,8 @@ Nginx的配置文件：
                 try_files $uri =404;
         }
 ```
+注意`.dp.imaicloud.com`是个通配符server_name，下级域名(如c7304.dp.imaicloud.com)也可以直接用这个配置响应let's encrypt的挑战。  
+
 #### 申请证书
 
 ```
@@ -745,6 +747,8 @@ Registering account...
 Already registered!
 Verifying dp.imaicloud.com...
 dp.imaicloud.com verified!
+Verifying c7304.dp.imaicloud.com...
+c7304.dp.imaicloud.com verified!
 Signing certificate...
 Certificate signed!
 ```
