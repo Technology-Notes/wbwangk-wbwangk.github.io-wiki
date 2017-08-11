@@ -2,11 +2,10 @@
 - 二、[java访问https服务器](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%BA%8Cjava%E8%AE%BF%E9%97%AEhttps%E6%9C%8D%E5%8A%A1%E5%99%A8)  
 - 三、[建立https服务器](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%B8%89%E5%BB%BA%E7%AB%8Bhttps%E6%9C%8D%E5%8A%A1%E5%99%A8)  
 - 四、[双向SSL](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%9B%9B%E5%8F%8C%E5%90%91ssl)  
-- 五、[建立内部CA](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%BA%94%E5%88%9B%E5%BB%BA%E5%86%85%E9%83%A8ca)  
-- 六、[HDP的SSL证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%85%ADhdp%E7%9A%84ssl%E8%AF%81%E4%B9%A6)  
-- 七、[申请Let's Encrypt证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%B8%83%E7%94%B3%E8%AF%B7lets-encrypt%E8%AF%81%E4%B9%A6)
-- 八、[总结](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E6%80%BB%E7%BB%93)
-- 附: [命令备忘](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98)
+- 五、[HDP的SSL证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%85%ADhdp%E7%9A%84ssl%E8%AF%81%E4%B9%A6)  
+- 附1、[建立内部CA](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%BA%94%E5%88%9B%E5%BB%BA%E5%86%85%E9%83%A8ca)  
+- 附2、[申请Let's Encrypt证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%B8%83%E7%94%B3%E8%AF%B7lets-encrypt%E8%AF%81%E4%B9%A6)
+- 附3、 [命令备忘](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98)
 ## 一、安全知识
 ### (一)术语
 #### 私钥/公钥对
@@ -343,7 +342,7 @@ curl还有一个`-k`参数可以强制关闭可信检测：
 $ curl -k https://c7304.ambari.apache.org                           (正常显示)
 ```
 ### (二)CA签名证书https服务器
-要获得一个CA签名的nginx公钥证书，除了通过免费`let's encrypt`网站或商用CA证书公司外，还可以自己搭建一个“内部CA”。搭建办法参见第五章。 
+要获得一个CA签名的nginx公钥证书，除了通过免费`let's encrypt`网站或商用CA证书公司外，还可以自己搭建一个“内部CA”。搭建办法参见附录。 
  
 除了搭建正式的CA外，还可以自建一个临时CA。其实就是生成一个自签名的证书来充当CA根证书：
 ```
@@ -530,7 +529,54 @@ $ keytool -import -trustcacerts -keystore /opt/https/trust.jks -alias TempCA -fi
 $ java -Djavax.net.ssl.trustStore=/opt/https/trust.jks MutualAuthenticationHTTP          (执行正常)
 ```
 
-## 五、创建内部CA
+
+## 五、HDP的SSL证书
+[参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)  
+#### 1.各节点创建密钥库
+为hadoop集群中的个节点，用JDK的keytool创建一个密钥库，用于保存本服务器的证书私钥。以下测试默认在c7302节点上进行。  
+```
+$ keytool -keystore c7302.jks -alias localhost -validity 1800 -genkey
+What is your first and last name?
+  [Unknown]:  c7302.ambari.apache.org     (省略一些)
+Is CN=c7302.ambari.apache.org, OU=ec, O=sbg, L=jinan, ST=shandong, C=CN correct?
+```
+确保公用名称（CN）与服务器的完全限定域名（FQDN）匹配。本例中，c7302节点的FQDN是`c7302.ambari.apache.org`。客户端将CN与DNS域名进行比较，以确保它确实连接到所需的服务器，而不是恶意服务器。  
+
+#### 2.创建CA
+参考附录1。
+
+#### 3.将CA添加到各服务器的信任库
+将CA(cacert.pem)的公钥证书复制到各个服务器，然后导入本地的可信证书库
+```
+$ keytool -keystore /etc/pki/java/cacerts -alias CARoot -import -file cacert.pem
+```
+根据第二章所知，OpenJDK与OracleJDK的可信证书库位置不同。上面的路径`/etc/pki/java/cacerts`是OpenJDK的可信证书库。  
+
+#### 5.签署证书
+用步骤2产生的CA签署步骤1生成的所有器证书。  
+首先，生成签名请求：
+```
+$ keytool -keystore c7302.jks -alias localhost -certreq -file c7302.csr
+```
+CA进行对签名请求进行签名：
+```
+$ openssl x509 -req -CA ca-cert -CAkey cakey.pem -in c7302.csr -out c7302.crt -days 1800 -CAcreateserial -passin pass:vagrant
+Signature ok
+subject=/C=CN/ST=shandong/L=jinan/O=sbg/OU=ec/CN=c7302.ambari.apache.org
+Getting CA Private Key
+```
+生成了签名后的证书文件c7302.crt。
+
+#### 6.将签署后的证书导入密钥库
+```
+$ keytool -keystore c7302.jks -alias CARoot -import -file cacert.pem
+$ keytool -keystore c7302.jks -alias localhost -import -file c7302.crt
+```
+导入后c7302.jks这个密钥库中多了CA公钥证书、CA签署的c7302的证书。
+
+
+
+## 附1、创建内部CA
 [参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，如果对keytool不熟悉建议先读[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E5%85%AC%E7%A7%81%E9%92%A5%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81)。  
 
 一般使用开源软件OpenSSL来创建CA。首先，生成CA根证书公钥和私钥。然后，将公私钥证书配置到OpenSSL的配置文件。之后，就可以使用内部CA来处理证书签名请求(CSR)，生成签名证书了。  
@@ -631,52 +677,7 @@ $ openssl x509 -noout -text -in nginx0.crt
 ```
 已上信息省略了一部分。可以看出Issuer就是刚建立的CA，Subjcet是nginx的信息。  
 
-## 六、HDP的SSL证书
-[参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)  
-#### 1.各节点创建密钥库
-为hadoop集群中的个节点，用JDK的keytool创建一个密钥库，用于保存本服务器的证书私钥。以下测试默认在c7302节点上进行。  
-```
-$ keytool -keystore c7302.jks -alias localhost -validity 1800 -genkey
-What is your first and last name?
-  [Unknown]:  c7302.ambari.apache.org     (省略一些)
-Is CN=c7302.ambari.apache.org, OU=ec, O=sbg, L=jinan, ST=shandong, C=CN correct?
-```
-确保公用名称（CN）与服务器的完全限定域名（FQDN）匹配。本例中，c7302节点的FQDN是`c7302.ambari.apache.org`。客户端将CN与DNS域名进行比较，以确保它确实连接到所需的服务器，而不是恶意服务器。  
-
-#### 2.创建CA
-参考第五章。
-
-#### 3.将CA添加到各服务器的信任库
-将CA(cacert.pem)的公钥证书复制到各个服务器，然后导入本地的可信证书库
-```
-$ keytool -keystore /etc/pki/java/cacerts -alias CARoot -import -file cacert.pem
-```
-根据第二章所知，OpenJDK与OracleJDK的可信证书库位置不同。上面的路径`/etc/pki/java/cacerts`是OpenJDK的可信证书库。  
-
-#### 5.签署证书
-用步骤2产生的CA签署步骤1生成的所有器证书。  
-首先，生成签名请求：
-```
-$ keytool -keystore c7302.jks -alias localhost -certreq -file c7302.csr
-```
-CA进行对签名请求进行签名：
-```
-$ openssl x509 -req -CA ca-cert -CAkey cakey.pem -in c7302.csr -out c7302.crt -days 1800 -CAcreateserial -passin pass:vagrant
-Signature ok
-subject=/C=CN/ST=shandong/L=jinan/O=sbg/OU=ec/CN=c7302.ambari.apache.org
-Getting CA Private Key
-```
-生成了签名后的证书文件c7302.crt。
-
-#### 6.将签署后的证书导入密钥库
-```
-$ keytool -keystore c7302.jks -alias CARoot -import -file cacert.pem
-$ keytool -keystore c7302.jks -alias localhost -import -file c7302.crt
-```
-导入后c7302.jks这个密钥库中多了CA公钥证书、CA签署的c7302的证书。
-
-
-## 七、申请Let's Encrypt证书
+## 附2、申请Let's Encrypt证书
 [参考](https://imququ.com/post/letsencrypt-certificate.html)
 
 letsencrypt.org提供免费https证书。每张证书可以放100个域名，有效期3个月，支持自动续订。2018年开始支持通配符证书。一般的证书方法颁发机构通过邮件接受证书签名请求(CSR)，而Let's Encrypt则是通过互联网实时接受申请、实时发放。将来有可能互联网证书被Let's Encrypt一统江湖。  
@@ -815,11 +816,8 @@ letsencrypt.org
  2 s:/C=US/O=IdenTrust/CN=IdenTrust Commercial Root CA 1
    i:/O=Digital Signature Trust Co./CN=DST Root CA X3
 ```
-## 总结
-1. cacerts是可信证书库的文件名。不同JDK的文件位置不同。
 
-
-## 命令备忘
+## 附3、命令备忘
 ### openssl
 #### 生成私钥和证书
 ```
