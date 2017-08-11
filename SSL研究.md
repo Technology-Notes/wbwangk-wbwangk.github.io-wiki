@@ -363,7 +363,7 @@ $ openssl x509 -req -CA ca.crt -CAkey ca.key -in nginx2.csr -out nginx2.crt -day
 ```
 $ openssl x509 -noout -text -in nginx2.crt
 ```
-注：使用第五章自建CA签署的命令是：`openssl ca -in nginx2.csr -out nginx2.crt`  
+注意，在下一章讲双向SSL时，也用这个临时CA对客户端证书进行签名。  
 
 #### 配置nginx
 修改nginx的配置文件(`/etc/nginx/conf.d/default.conf`)，添加以下内容：
@@ -424,79 +424,71 @@ java测试不再冗述。
 双向SSL(two-way SSL)又叫Mutual Authentication，或基于证书的相互认证，是指双方通过验证提供的数字证书相互认证，以便双方确保对方的身份。  
 认证过程的详细描述可参考[这个](https://community.developer.visa.com/t5/Developer-Tools/What-is-Mutual-Authentication/ba-p/5757)。  
 
-验证单向SSL时已经为服务器生成了私钥(nginx2.key)和公钥证书(nginx2.crt)。为了实现双向SSL，还需要为客户端生成私钥和证书。利用目录`/opt/twowayssl`为客户端用户webb生成私钥(client.key)和公钥证书(client.crt)。首先，创建签名请求CSR，以便供CA签名：
+验证单向SSL时已经为服务器生成了私钥(nginx2.key)和公钥证书(nginx2.crt)。为了实现双向SSL，还需要为客户端生成私钥和证书。利用目录`/opt/twowayssl`为客户端用户webb生成私钥(client.key)和公钥证书(client.crt)。（服务器私钥和证书位于`/opt/https`）首先，创建签名请求CSR，以便供CA签名：
 ```
 $ /opt/twowayssl
 $ openssl req -new -newkey rsa:2048 -nodes -keyout client.key -out client.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=webb"
 ```
-首先需要在c7304上建立CA（参见第五章），然后利用CA对该CSR进行签名：
+利用上一章创建的临时CA对这个CSR进行签名(临时CA文件位于`/opt/https`目录下)：
 ```
-$ openssl ca -in client.csr -out client.crt
+$ openssl x509 -req -CA /opt/https/ca.crt -CAkey /opt/https/ca.key -in client.csr -out client.crt -days 365 -CAcreateserial -passin pass:vagrant
 ```
-nginx的配置需要变更为：
+修改nginx的配置文件(`/etc/nginx/conf.d/default.conf`)，添加以下内容：
 ```
 server {
     listen       443 ssl;
     server_name  c7304.ambari.apache.org;
-    ssl_certificate        /opt/ca/nginx.crt;
-    ssl_certificate_key    /opt/ca/nginx.key;
+    ssl_certificate        /opt/https/nginx2.crt;
+    ssl_certificate_key    /opt/https/nginx2.key;
 
-    ssl_client_certificate /root/CA/certs/ca-cert;
-    ssl_verify_depth 1;
+    ssl_client_certificate /opt/https/ca.crt;
+    ssl_verify_depth 1;                 
     ssl_verify_client on;
 
     location / {
         root   /usr/share/nginx/html;
         index  index.html index.htm;
     }
+}
 ```
+(总结一下SSL端口：442是自签名单向SSL、443是双向SSL、444是CA签名单向SSL)
+
 指令`ssl_verify_depth 1`必须有。应该是证书链的验证深度，0表示客户端证书，1表示签署客户端证书的CA。虽然没有做实验，但估计如果客户端证书是自签名的，则深度0（默认值）就可以。  
 用`nginx -s reload`重启nginx。
+
 #### curl测试双向SSL
-到c7402上用curl测试一下：  
 ```
-$ cd /opt/twowayssl
-$ curl -k https://c7304.ambari.apache.org
-<html>
-<head><title>400 No required SSL certificate was sent</title></head>
-(后略)
+$ curl -k https://c7304.ambari.apache.org                    (报错400 No required SSL certificate was sent)
 ```
 注意到返回的状态码不再是`200`。这说明nginx双向SSL的配置是起作用了。`-k`参数禁用了服务器可信检测，但由于没有提供客户端凭据，仍报错。  
 为了用curl测试双向SSL，先将客户端的私钥和证书合并：
 ```
 $ cat client.crt client.key > client.pem
-$ curl -k --cert ./client.pem https://c7304.ambari.apache.org
-<h1>Welcome to nginx!</h1>
-(其它略)
-$ curl https://c7304.ambari.apache.org --cacert ca-cert --cert ./client.pem
-<h1>Welcome to nginx!</h1>
-(其它略)
+$ curl -k --cert ./client.pem https://c7304.ambari.apache.org         (正常返回网页)
+$ curl https://c7304.ambari.apache.org --cacert /opt/https/ca.crt --cert ./client.pem        (正常返回网页)
 ```
 注意[--cert](https://curl.haxx.se/docs/manpage.html#-E)参数如果后面跟文件，必须加上相对或绝对路径，否则后面的参数会当成NSS数据库的nickname。  
 
 #### windows下的双向SSL测试
 要想把个人私钥证书导入到IE，需要用openssl把client.crt和client.key合并转化成pk12格式：
 ```
-$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name webb
-Enter Export Password: vagrant
+$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name webb -passout pass:vagrant
 ```
-将生成的client.p12与ca-cert两个文件复制到宿主windows下。然后分别导入到IE。其中client.p12导入到了“个人”标签页(显示颁发给webb)，`ca-cert`导入到了“受信任的发布者”标签页中(显示颁发给iMaiCA)。需要在“高级”按钮中选中“用于客户端认证”。  
+将生成的client.p12文件复制到宿主windows下。然后分别导入到IE。client.p12导入到了“个人”标签页(显示颁发给webb)，按提示输入密码vagrant。需要在IE->internet选项->内容->证书->“高级”按钮中选中“用于客户端认证”。  
 然后用IE访问地址`https://c7304.ambari.apache.org`，会有确认提示，确认后就正常显示网页了。  
 
 ### java下的双向SSL
 [使用keytool将私钥导入到Java密钥库中](http://cunning.sharp.fm/2008/06/importing_private_keys_into_a.html)  
-前文用openssl工具生成了客户端私钥和公钥证书。要利用实现java程序的双向SSL访问服务器，首先需要把客户端私钥导入到keystore。keytool没有直接导入私钥的功能，但提供了密钥库合并功能，可以利用这个功能实现密钥导入keystore。  
+前文用openssl工具生成了客户端私钥和公钥证书。要利用实现java程序的双向SSL访问服务器，首先需要把客户端私钥导入到密钥库keystore。keytool没有直接导入私钥的功能，但提供了密钥库合并功能，可以利用这个功能实现密钥导入keystore。  
 ```
 $ cd /opt/twowayssl
-$ openssl pkcs12 -export -in client.crt -inkey client.key -out client.p12 -name webb
-Enter Export Password: vagrant
-$  keytool -importkeystore -deststorepass vagrant -destkeystore client.jks -srckeystore client.p12 -srcstoretype PKCS12 -srcstorepass vagrant -alias webb
+$ keytool -importkeystore -deststorepass vagrant -destkeystore client.jks -srckeystore client.p12 -srcstoretype PKCS12 -srcstorepass vagrant -alias webb              (为客户端创建私钥库client.jks，导入了client.p12)
 $ keytool -list -keystore client.jks -alias webb -storepass vagrant
 webb, Aug 4, 2017, PrivateKeyEntry,
 Certificate fingerprint (SHA1): 99:6D:E2:E4:ED:46:91:8C:FC:D6:73:EC:42:74:3C:BF:6E:E8:9F:87
 ```
-由于之前client.jsk并不存在，openssl会先创建一个空库，然后再合并。把这个密钥库文件(client.jsk)复制到c7304的`/opt/https`目录下。（复制到c7304只是因为c7304上的JDK可信库已经导入了自建CA的公钥证书，测试方便而已）。  
-测试类为[MutualAuthenticationHTTP.java](https://raw.githubusercontent.com/imaidata/blog/master/_posts/kerberos/MutualAuthenticationHTTP.java)。这个类比较长，不再全部贴在文章里了。关键的几行：
+由于之前client.jsk并不存在，openssl会先创建一个空库，然后再合并。  
+测试类为[MutualAuthenticationHTTP.java](https://raw.githubusercontent.com/imaidata/blog/master/_posts/kerberos/MutualAuthenticationHTTP.java)。这个类比较长，不再全部贴在文章里了。下面是与证书相关的定义：
 ```java
         String url = "https://c7304.ambari.apache.org";
         String keyStoreFileName = "client.jks";
@@ -507,17 +499,36 @@ Certificate fingerprint (SHA1): 99:6D:E2:E4:ED:46:91:8C:FC:D6:73:EC:42:74:3C:BF:
 ```
 上面6行代码定义了客户端的密钥库与可信库。编译和运行：
 ```
-$ javac MutualAuthenticationHTTP.java -Xlint:deprecation
-$ java MutualAuthenticationHTTP
+$ keytool -import -trustcacerts -keystore /usr/java/jdk1.8.0_131/jre/lib/security/cacerts -alias nginx2 -file /opt/https/ca.crt -storepass chengeit           (临时CA的根证书导入到JDK可信证书库)
+$ javac MutualAuthenticationHTTP.java
+$ java MutualAuthenticationHTTP             (正常返回了nginx欢迎页)
 ```
 程序先打印出了密钥库的条目，又打印出了可信库的条目，最后显示了URL的响应。这说明java程序通过了服务器的双向认证。
-尝试将main方法中的源码这样修改：
+注意一下`SSLContext`的初始化写法：
 ```
-//            TrustManager[] trustManagers = createTrustManagers(trustStoreFileName, trustStorePassword);
-            //init context with managers data
-            SSLSocketFactory factory = initItAll(keyManagers, null);
+    context.init(keyManagers, trustManagers, null);
 ```
-编译后执行，发现仍能成功。这是因为JDK使用了默认的可信库，而我们手工加载的本来就是OracleJDK自带的可信证书库。  
+在单向SSL测试使用的`HttpsTest.java`类中，这个初始化方法使用了3个null参数。其实，在`MutualAuthenticationHTTP`类的`context.init`方法中，第2个参数也可以是null，这表示使用JDK默认可信库，而在本例中传入的可信库参数恰好就是默认可信库。  
+
+#### 更深入的测试
+重申一下java用以下优先级处理可信证书库：
+- sslContext.init()的第2个参数传入优先级最高。
+- -Djavax.net.ssl.trustStore系统属性传入优先级次之
+- JDK默认可信证书库(cacerts)优先级最低
+现在修改代码，不再方法中传入可信证书库：
+```
+    context.init(keyManagers, null, null);
+```
+重新执行，仍可以正常执行：
+```
+$ javac MutualAuthenticationHTTP.java
+$ java MutualAuthenticationHTTP             (正常返回了nginx欢迎页)
+```
+如果想测试从系统属性传入自定义的可信证书库trust.jks，则需要将`/opt/https/ca.crt`倒入到`/opt/https/trust.jks`:
+```
+$ keytool -import -trustcacerts -keystore /opt/https/trust.jks -alias TempCA -file /opt/https/ca.crt -storepass vagrant
+$ java -Djavax.net.ssl.trustStore=/opt/https/trust.jks MutualAuthenticationHTTP          (执行正常)
+```
 
 ## 五、创建内部CA
 [参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，如果对keytool不熟悉建议先读[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E5%85%AC%E7%A7%81%E9%92%A5%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81)。  
@@ -531,21 +542,12 @@ $ find /etc -name openssl.cnf
 /etc/pki/tls/openssl.cnf
 $ cat /etc/pki/tls/openssl.cnf | grep dir
 dir             = /etc/pki/CA           # Where everything is kept
-certs           = $dir/certs            # Where the issued certs are kept
-crl_dir         = $dir/crl              # Where the issued crl are kept
 database        = $dir/index.txt        # database index file.
-new_certs_dir   = $dir/newcerts         # default place for new certs.
 certificate     = $dir/cacert.pem       # The CA certificate
 serial          = $dir/serial           # The current serial number
-crlnumber       = $dir/crlnumber        # the current crl number
-crl             = $dir/crl.pem          # The current CRL
 private_key     = $dir/private/cakey.pem# The private key
-RANDFILE        = $dir/private/.rand    # private random number file
-dir             = ./demoCA              # TSA root directory
-serial          = $dir/tsaserial        # The current serial number (mandatory)
-signer_cert     = $dir/tsacert.pem      # The TSA signing certificate
 certs           = $dir/cacert.pem       # Certificate chain to include in reply
-signer_key      = $dir/private/tsakey.pem # The TSA private key (optional)
+(其它略)
 ```
 `dir`定义了CA的根目录，`certificate`是根证书，`private_key`是CA的私钥。  
 提醒注意的是，不同的linux版本上述配置文件也许有所不同。为了省事，下面的文件名尽量按上述的默认值。  
@@ -567,7 +569,7 @@ ca-key文件的第一行：`-----BEGIN ENCRYPTED PRIVATE KEY-----`
 ca-cert文件的第一行：`-----BEGIN CERTIFICATE-----`  
 
 #### 2.创建和移动CA文件
-将CA密钥移动到`/root/CA/private`，将CA证书移动到`/root/CA/certs`。  
+将CA密钥移动到`$dir/private`：  
 ```
 $ mv cakey.pem /etc/pki/CA/private
 ```
@@ -582,8 +584,6 @@ chmod 0400 /etc/pki/CA/private/ca-key
 #### 3.修改OpenSSL配置文件
 打开OpenSSL配置文件(`/etc/pki/tls/openssl.cnf`)，确认以下内容。由于我是按默认值生成的文件，配置文件不用改：
 ```
-[ CA_default ]
-
 [ CA_default ]
 
 dir             = /etc/pki/CA           # Where everything is kept
@@ -611,17 +611,17 @@ CA的一个重要用途是处理“证书签名请求”，生成签名后的证
 假设一个场景：利用nginx搭建https网站。  
 首先，生成CSR:
 ```
-$ openssl req -new -newkey rsa:2048 -nodes -keyout nginx.key -out nginx.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
+$ openssl req -new -newkey rsa:2048 -nodes -keyout nginx0.key -out nginx0.csr -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=c7304.ambari.apache.org"
 ```
-生成了私钥nginx.key和证书签名请求nginx.csr。nginx.csr的开始一行是`-----BEGIN CERTIFICATE REQUEST-----`。  
+生成了私钥nginx0.key和证书签名请求nginx0.csr。nginx0.csr的开始一行是`-----BEGIN CERTIFICATE REQUEST-----`。  
 
 下面利用刚创建的CA处理这个证书签名请求：
 ```
-$ openssl ca -in nginx.csr -out nginx.crt
+$ openssl ca -in nginx0.csr -out nginx0.crt
 ```
 会提示输入CA的私钥密码。可以查看一下签名后的证书：
 ```
-$ openssl x509 -noout -text -in nginx.crt
+$ openssl x509 -noout -text -in nginx0.crt
     Signature Algorithm: sha256WithRSAEncryption
         Issuer: C=CN, ST=Shan Dong, L=Ji Nan, O=Inspur, OU=SBG, CN=iMaiCA
         Validity
