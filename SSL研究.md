@@ -532,26 +532,121 @@ $ java -Djavax.net.ssl.trustStore=/opt/https/trust.jks MutualAuthenticationHTTP 
 
 
 ## 五、HDP的SSL证书
-[参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)  
-#### 1.各节点创建密钥库
-为hadoop集群中的个节点，用JDK的keytool创建一个密钥库，用于保存本服务器的证书私钥。以下测试默认在c7302节点上进行。  
+[官方文档](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，本文参考了[这篇社区文章](https://community.hortonworks.com/articles/22756/quickly-enable-ssl-encryption-for-hadoop-component.html)   
+本章首先尝试把HDP集群的Ambari界面升级为SSL（非双向SSL）。然后把HDP集群中几个常见服务(HDFS、HBASE等)升级为SSL。本章需要创建脚本文件。脚本文件是一种文本文件。新建的脚本文件是不可以执行的，赋予文件可执行权限，并执行脚本文件：
 ```
-$ keytool -keystore c7302.jks -alias localhost -validity 1800 -genkey
-What is your first and last name?
-  [Unknown]:  c7302.ambari.apache.org     (省略一些)
-Is CN=c7302.ambari.apache.org, OU=ec, O=sbg, L=jinan, ST=shandong, C=CN correct?
+$ chmod +x ssl1.sh
+$ ./ss1.sh
+```
+
+#### 0.创建临时CA
+在c7301节点创建临时CA。假定c7301可以免密码ssh到c7301、c7302、c7303。工作目录是`/opt/ca`:
+```
+$ openssl genrsa -out ca.key 2048
+$ openssl req -new -x509 -days 1826 -key ca.key -out ca.crt -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=AmbariCA"
+```
+生成临时CA的私钥`ca.key`和公钥证书`ca.crt`。主体是`AmbariCA`。
+
+#### 1.各节点创建密钥库
+生成各个节点的私钥和证书签名请求CSR。用临时CA回应CSR，生成各个节点的证书。创建`ssl1.sh`：
+```
+#!/usr/bin/env bash
+server1="c7301.ambari.apache.org"
+server2="c7302.ambari.apache.org"
+server3="c7303.ambari.apache.org"
+
+for host in ${ALL_REAL_SERVERS}; do
+    if [  -e "${host}.crt" ]; then break; fi
+    openssl req -new -newkey rsa:2048 -nodes -keyout ${host}.key -out ${host}.csr  -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=$host"
+    openssl x509 -req -CA ca.crt -CAkey ca.key -out ${host}.crt -in ${host}.csr -days 365 -CAcreateserial
+done
 ```
 确保公用名称（CN）与服务器的完全限定域名（FQDN）匹配。本例中，c7302节点的FQDN是`c7302.ambari.apache.org`。客户端将CN与DNS域名进行比较，以确保它确实连接到所需的服务器，而不是恶意服务器。  
 
-#### 2.创建CA
-参考附录1。
+#### 2.创建各节点keystore
+将CA公钥复制到各个节点，导入各节点可信证书库。各个节点的可信证书库往往有两个：OracleJDK的和OpenJDK的。拿不准就都导进去。创建ssl2.sh:
+```
+#!/usr/bin/env bash
+server1="c7301.ambari.apache.org"
+server2="c7302.ambari.apache.org"
+server3="c7303.ambari.apache.org"
+#TRUST_STORE=/etc/pki/java/cacerts                                          (OpenJDK)
+TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts                (OracleJDK)
 
-#### 3.将CA添加到各服务器的信任库
-将CA(cacert.pem)的公钥证书复制到各个服务器，然后导入本地的可信证书库
+#copy public ssl certs to all hosts
+for host in ${ALL_REAL_SERVERS}; do
+    scp ca.crt ${host}:/tmp/ca.crt
+    ssh $host "keytool -import -noprompt -alias myOwnCA -file /tmp/ca.crt -storepass changeit -keystore $TRUST_STORE; rm -f /tmp/ca.crt"
+
+    for cert in ${ALL_REAL_SERVERS}; do
+        scp $cert.crt ${host}:/tmp/$cert.crt
+        ssh $host "keytool -import -noprompt -alias ${cert} -file /tmp/${cert}.crt -storepass changeit -keystore $TRUST_STORE; rm -f \"/tmp/${cert}.crt\""
+    done
+done
 ```
-$ keytool -keystore /etc/pki/java/cacerts -alias CARoot -import -file cacert.pem
+可信证书库是JSSE客户端使用的，用于访问SSL服务器，而不是创建SSL服务器。  
+
+#### 3.Ambari服务器启用SSL
+Ambari启用https使用的交互界面，如果变成脚本需要安装额外工具(expect)。也可以不使用脚本，而直接运行ambari-server命令来启用https。创建脚本文件为ssl2.sh:
+```bash
+#!/usr/bin/env bash
+server1="c7301.ambari.apache.org"
+export AMBARI_SERVER=$server1                  （expect与本脚本并不在同一个进程中，所以要导出为环境变量）
+
+#TRUST_STORE=/etc/pki/java/cacerts                                          (OpenJDK)
+TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts                (OracleJDK)
+    rpm -q expect || yum install -y expect
+    cat <<EOF > ambari-ssl-expect.exp
+#!/usr/bin/expect
+spawn "/usr/sbin/ambari-server" "setup-security"
+expect "Enter choice"
+send "1\r"
+expect "Do you want to configure HTTPS"
+send "y\r"
+expect "SSL port"
+send "\r"
+expect "Enter path to Certificate"
+send "/opt/ca/\$env(AMBARI_SERVER).crt\r"
+expect "Enter path to Private Key"
+send "/opt/ca/\$env(AMBARI_SERVER).key\r"
+expect "Please enter password for Private Key"
+send "\r"
+send "\r"
+interact
+EOF
+
+    cat <<EOF > ambari-truststore-expect.exp
+#!/usr/bin/expect
+spawn "/usr/sbin/ambari-server" "setup-security"
+expect "Enter choice"
+send "4\r"
+expect "Do you want to configure a truststore"
+send "y\r"
+expect "TrustStore type"
+send "jks\r"
+expect "Path to TrustStore file"
+send "/etc/pki/java/cacerts\r"
+expect "Password for TrustStore"
+send "changeit\r"
+expect "Re-enter password"
+send "changeit\r"
+interact
+EOF
+    if ! grep -q 'api.ssl=true' /etc/ambari-server/conf/ambari.properties; then
+        /usr/bin/expect ambari-ssl-expect.exp
+            /usr/bin/expect ambari-truststore-expect.exp
+
+        service ambari-server restart
+
+        while true; do if tail -100 /var/log/ambari-server/ambari-server.log | grep -q 'Started Services'; then break; else echo -n .; sleep 3; fi; done; echo
+    fi
+
+    rm -f ambari-ssl-expect.exp  ambari-truststore-expect.exp
+    #validate wget -O-  --no-check-certificate "https://${AMBARI_SERVER}:8443/#/main/dashboard/metrics"
 ```
-根据第二章所知，OpenJDK与OracleJDK的可信证书库位置不同。上面的路径`/etc/pki/java/cacerts`是OpenJDK的可信证书库。  
+配置ambari的TrustStore的目的需要解释一下，这是为了ambari作为SSL客户端访问其他启用SSL后的hadoop服务。如果仅仅是ambari自己启用SSL，可以不为ambari配置TrustStore。  
+
+这一步执行后，已经可以用https访问ambari了。访问地址是：`https://c7301.ambari.apache.org:8080`。
 
 #### 5.签署证书
 用步骤2产生的CA签署步骤1生成的所有器证书。  
