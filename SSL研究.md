@@ -1,4 +1,4 @@
-- 一、[安全知识](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%B8%80%E5%AE%89%E5%85%A8%E7%9F%A5%E8%AF%86)  
+- 一、[基础知识](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%B8%80%E5%AE%89%E5%85%A8%E7%9F%A5%E8%AF%86)  
 - 二、[java访问https服务器](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%BA%8Cjava%E8%AE%BF%E9%97%AEhttps%E6%9C%8D%E5%8A%A1%E5%99%A8)  
 - 三、[建立https服务器](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%B8%89%E5%BB%BA%E7%AB%8Bhttps%E6%9C%8D%E5%8A%A1%E5%99%A8)  
 - 四、[双向SSL](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%9B%9B%E5%8F%8C%E5%90%91ssl)  
@@ -7,7 +7,7 @@
 附1、[建立内部CA](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E9%99%841%E5%88%9B%E5%BB%BA%E5%86%85%E9%83%A8ca)    
 附2、[申请Let's Encrypt证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E9%99%842%E7%94%B3%E8%AF%B7lets-encrypt%E8%AF%81%E4%B9%A6)  
 附3、 [命令备忘](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E9%99%843%E5%91%BD%E4%BB%A4%E5%A4%87%E5%BF%98)  
-## 一、安全知识
+## 一、基础知识
 ### (一)术语
 #### 私钥/公钥对
 同时生成的两个字符串。私钥用于签名，公钥验证签名。公钥加密消息，私钥可以解密。  
