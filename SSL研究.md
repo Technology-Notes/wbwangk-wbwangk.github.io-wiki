@@ -570,8 +570,8 @@ done
 server1="c7301.ambari.apache.org"
 server2="c7302.ambari.apache.org"
 server3="c7303.ambari.apache.org"
-#TRUST_STORE=/etc/pki/java/cacerts                                          (OpenJDK)
-TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts                (OracleJDK)
+#TRUST_STORE=/etc/pki/java/cacerts
+TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts
 
 #copy public ssl certs to all hosts
 for host in ${ALL_REAL_SERVERS}; do
@@ -585,16 +585,17 @@ for host in ${ALL_REAL_SERVERS}; do
 done
 ```
 可信证书库是JSSE客户端使用的，用于访问SSL服务器，而不是创建SSL服务器。  
+TRUST_STORE是OracleJDK的可信证书库。如果你HDP部署使用OpenJDK，需要更换成注释掉的TRUST_STORE。
 
 #### 3.Ambari服务器启用SSL
 Ambari启用https使用的交互界面，如果变成脚本需要安装额外工具(expect)。也可以不使用脚本，而直接运行ambari-server命令来启用https。创建脚本文件为ssl2.sh:
 ```bash
 #!/usr/bin/env bash
 server1="c7301.ambari.apache.org"
-export AMBARI_SERVER=$server1                  （expect与本脚本并不在同一个进程中，所以要导出为环境变量）
+export AMBARI_SERVER=$server1
 
-#TRUST_STORE=/etc/pki/java/cacerts                                          (OpenJDK)
-TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts                (OracleJDK)
+#TRUST_STORE=/etc/pki/java/cacerts
+TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts
     rpm -q expect || yum install -y expect
     cat <<EOF > ambari-ssl-expect.exp
 #!/usr/bin/expect
@@ -648,29 +649,98 @@ EOF
 
 这一步执行后，已经可以用https访问ambari了。访问地址是：`https://c7301.ambari.apache.org:8080`。
 
-#### 5.签署证书
-用步骤2产生的CA签署步骤1生成的所有器证书。  
-首先，生成签名请求：
+#### 4.对hadoop启用SSL
+创建了一个`hadoopSSL.sh`脚本：
 ```
-$ keytool -keystore c7302.jks -alias localhost -certreq -file c7302.csr
-```
-CA进行对签名请求进行签名：
-```
-$ openssl x509 -req -CA ca-cert -CAkey cakey.pem -in c7302.csr -out c7302.crt -days 1800 -CAcreateserial -passin pass:vagrant
-Signature ok
-subject=/C=CN/ST=shandong/L=jinan/O=sbg/OU=ec/CN=c7302.ambari.apache.org
-Getting CA Private Key
-```
-生成了签名后的证书文件c7302.crt。
+#!/usr/bin/env bash
 
-#### 6.将签署后的证书导入密钥库
-```
-$ keytool -keystore c7302.jks -alias CARoot -import -file cacert.pem
-$ keytool -keystore c7302.jks -alias localhost -import -file c7302.crt
-```
-导入后c7302.jks这个密钥库中多了CA公钥证书、CA签署的c7302的证书。
+server1="c7301.ambari.apache.org"
+server2="c7302.ambari.apache.org"
+server3="c7303.ambari.apache.org"
 
+NAMENODE_SERVER_ONE=$server1
+RESOURCE_MANAGER_SERVER_ONE=$server2
+HISTORY_SERVER=$server2
+ALL_NAMENODE_SERVERS="${NAMENODE_SERVER_ONE} $server2"
+ALL_HADOOP_SERVERS="$server1 $server2 $server3"
 
+export AMBARI_SERVER=$server1
+AMBARI_PASS=admin
+CLUSTER_NAME=HDP2610
+
+#TRUST_STORE=/etc/pki/java/cacerts
+TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts
+#
+# Enable Hadoop UIs SSL encryption. Stop all Hadoop components first
+#
+function hadoopSSLEnable() {
+
+    for host in ${ALL_HADOOP_SERVERS}; do
+        if [ -e "${host}.p12" ]; then continue; fi
+        openssl pkcs12 -export -in ${host}.crt -inkey ${host}.key -out ${host}.p12 -name ${host} -CAfile ca.crt -chain -passout pass:vagrant
+    done
+
+    for host in ${ALL_HADOOP_SERVERS}; do
+        scp ${host}.p12 ${host}:/tmp/${host}.p12
+        scp ca.crt ${host}:/tmp/ca.crt
+        ssh $host "
+            keytool -import -noprompt -alias myOwnCA -file /tmp/ca.crt -storepass vagrant -keypass vagrant -keystore /etc/hadoop/conf/hadoop-private-keystore.jks
+            keytool --importkeystore -noprompt -deststorepass vagrant -destkeypass vagrant -destkeystore /etc/hadoop/conf/hadoop-private-keystore.jks -srckeystore /tmp/${host}.p12 -srcstoretype PKCS12 -srcstorepass vagrant -alias ${host}
+            chmod 440 /etc/hadoop/conf/hadoop-private-keystore.jks
+            chown yarn:hadoop /etc/hadoop/conf/hadoop-private-keystore.jks
+            rm -f /tmp/ca.crt \"/tmp/${host}.p12\";
+            "
+    done
+
+    cat <<EOF | while read p; do p=${p/,}; p=${p//\"}; if [ -z "$p" ]; then continue; fi; /var/lib/ambari-server/resources/scripts/configs.sh -u admin -p $AMBARI_PASS -port 8443 -s set $AMBARI_SERVER $CLUSTER_NAME $p &> /dev/null || echo "Failed to change $p in Ambari"; done
+        hdfs-site "dfs.https.enable"   "true",
+        hdfs-site "dfs.http.policy"   "HTTPS_ONLY",
+        hdfs-site "dfs.datanode.https.address"   "0.0.0.0:50475",
+        hdfs-site "dfs.namenode.https-address"   "0.0.0.0:50470",
+
+        core-site "hadoop.ssl.require.client.cert"   "false",
+        core-site "hadoop.ssl.hostname.verifier"   "DEFAULT",
+        core-site "hadoop.ssl.keystores.factory.class"   "org.apache.hadoop.security.ssl.FileBasedKeyStoresFactory",
+        core-site "hadoop.ssl.server.conf"   "ssl-server.xml",
+        core-site "hadoop.ssl.client.conf"   "ssl-client.xml",
+
+        mapred-site "mapreduce.jobhistory.http.policy"   "HTTPS_ONLY",
+        mapred-site "mapreduce.jobhistory.webapp.https.address"   "${HISTORY_SERVER}:19443",
+        mapred-site mapreduce.jobhistory.webapp.address "${HISTORY_SERVER}:19443",
+
+        yarn-site "yarn.http.policy"   "HTTPS_ONLY"
+        yarn-site "yarn.log.server.url"   "https://${HISTORY_SERVER}:19443/jobhistory/logs",
+        yarn-site "yarn.resourcemanager.webapp.https.address"   "${RESOURCE_MANAGER_SERVER_ONE}:8090",
+        yarn-site "yarn.nodemanager.webapp.https.address"   "0.0.0.0:45443",
+
+        ssl-server "ssl.server.keystore.password"   "vagrant",
+        ssl-server "ssl.server.keystore.keypassword"   "vagrant",
+        ssl-server "ssl.server.keystore.location"   "/etc/hadoop/conf/hadoop-private-keystore.jks",
+        ssl-server "ssl.server.truststore.location"   "${TRUST_STORE}",
+        ssl-server "ssl.server.truststore.password"   "changeit",
+
+        ssl-client "ssl.client.keystore.location"   "${TRUST_STORE}",
+        ssl-client "ssl.client.keystore.password"   "changeit",
+        ssl-client "ssl.client.truststore.password"   "changeit",
+        ssl-client "ssl.client.truststore.location"   "${TRUST_STORE}"
+EOF
+    rm -f doSet_version*
+    # In Ambari, perform Start ALL
+
+    #validate through:
+}
+hadoopSSLEnable
+```
+定义了一个函数hadoopSSLEnable，并调用它。  
+首先，导出了所有节点的私钥(p12格式)，然后复制到了各个节点，同时复制的还有CA的根证书。  
+然后，为HDP集群的各个节点创建密钥库(hadoop-private-keystore.jks)。密钥库中导入CA根证书，导入p12格式的私钥。  
+最后调用ambari的配置脚本将https相关的参数配置到HDP集群中。当脚本执行成功后，可以ambari界面查看。  
+可以用curl访问启用SSL的hdfs来测试：
+```
+$ kinit root/admin
+$ curl -k --negotiate -u :  https://c7301.ambari.apache.org:50470/webhdfs/v1/user?op=LISTSTATUS
+```
+我的测试集群启用了kerberos，所以需要先登录KDC。注意URL是https的。
 
 ## 附1、创建内部CA
 [参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，如果对keytool不熟悉建议先读[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E5%85%AC%E7%A7%81%E9%92%A5%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81)。  
