@@ -735,7 +735,11 @@ hadoopSSLEnable
 首先，导出了所有节点的私钥(p12格式)，然后复制到了各个节点，同时复制的还有CA的根证书。  
 然后，为HDP集群的各个节点创建密钥库(hadoop-private-keystore.jks)。密钥库中导入CA根证书，导入p12格式的私钥。  
 最后调用ambari的配置脚本将https相关的参数配置到HDP集群中。当脚本执行成功后，可以ambari界面查看。  
-可以用curl访问启用SSL的hdfs来测试：
+用openssl测试一下SSL服务器：
+```
+$ openssl s_client -connect c7301.ambari.apache.org:50470 -showcerts
+```
+还可以用curl访问启用SSL的hdfs来测试：
 ```
 $ kinit root/admin
 $ curl -k --negotiate -u :  https://c7301.ambari.apache.org:50470/webhdfs/v1/user?op=LISTSTATUS
