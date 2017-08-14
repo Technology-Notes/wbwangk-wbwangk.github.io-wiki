@@ -764,11 +764,13 @@ openssl req -new -sha256 -key domain.key -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=In
 
 ### 搭建新的hadoop集群
 原集群的域名和kerberos领域与从letsencrypt申请的证书不符。担心现有集群修改域名和领域带来未知问题，决定重新搭建一个hadoop集群。  
-新集群有三个节点：
+新集群有三个节点：  
+```
 192.168.73.101 c7301.dp.imaicloud.com  
 192.168.73.102 c7302.dp.imaicloud.com  
 192.168.73.103 c7303.dp.imaicloud.com  
-保证上述内容定义在三个节点的`/etc/hosts`文件中。为了在windows下测试，上述内容也要定义到windows的`c:/windows/system32/drivers/etc/hosts`文件中。  
+```
+保证上述内容定义在三个节点的`/etc/hosts`文件中。为了在windows下测试，上述内容也要添加到windows的`c:/windows/system32/drivers/etc/hosts`文件中。  
 新集群上部署ambari([参考](https://imaidata.github.io/blog/ambari_centos/))，利用ambari部署的hadoop服务有：  
 HDFS、YARN、MR2、Hive、HBase、Oozie、Zookeeper等。新集群启用kerberos。  
 
