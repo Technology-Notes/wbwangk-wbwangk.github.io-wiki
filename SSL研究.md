@@ -3,6 +3,7 @@
 - 三、[建立https服务器](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%B8%89%E5%BB%BA%E7%AB%8Bhttps%E6%9C%8D%E5%8A%A1%E5%99%A8)  
 - 四、[双向SSL](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%9B%9B%E5%8F%8C%E5%90%91ssl)  
 - 五、[hadoop集群启用SSL](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E4%BA%94hadoop%E9%9B%86%E7%BE%A4%E5%90%AF%E7%94%A8ssl)  
+- 六、[[hadoop集群启用SSL(letsencrypt证书)]((https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E5%85%ADhadoop%E9%9B%86%E7%BE%A4%E5%90%AF%E7%94%A8sslletsencrypt%E8%AF%81%E4%B9%A6))
 
 附1、[建立内部CA](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E9%99%841%E5%88%9B%E5%BB%BA%E5%86%85%E9%83%A8ca)    
 附2、[申请Let's Encrypt证书](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E9%99%842%E7%94%B3%E8%AF%B7lets-encrypt%E8%AF%81%E4%B9%A6)  
