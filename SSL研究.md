@@ -530,7 +530,6 @@ $ keytool -import -trustcacerts -keystore /opt/https/trust.jks -alias TempCA -fi
 $ java -Djavax.net.ssl.trustStore=/opt/https/trust.jks MutualAuthenticationHTTP          (执行正常)
 ```
 
-
 ## 五、hadoop集群启用SSL
 [官方文档](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，本文参考了[这篇社区文章](https://community.hortonworks.com/articles/22756/quickly-enable-ssl-encryption-for-hadoop-component.html)   
 本章首先尝试把HDP集群的Ambari界面升级为SSL（非双向SSL）。然后把HDP集群中几个常见服务(HDFS、HBASE等)升级为SSL。为了便于调试，本章把[原文](https://github.com/vzlatkin/EnableSSLinHDP)的脚本(enable-ssl.sh)分拆为几个小脚本文件。赋予脚本文件可执行权限：
@@ -647,7 +646,7 @@ EOF
 ```
 配置ambari的TrustStore的目的需要解释一下，这是为了ambari作为SSL客户端访问其他启用SSL后的hadoop服务。如果仅仅是ambari自己启用SSL，可以不为ambari配置TrustStore。  
 
-这一步执行后，已经可以用https访问ambari了。访问地址是：`https://c7301.ambari.apache.org:8080`。
+这一步执行后，已经可以用https访问ambari了。访问地址是：`https://c7301.ambari.apache.org:8443`。
 
 #### 4.对hadoop启用SSL
 创建了一个`hadoopSSL.sh`脚本：
@@ -746,6 +745,224 @@ $ curl -k --negotiate -u :  https://c7301.ambari.apache.org:50470/webhdfs/v1/use
 ```
 我的测试集群启用了kerberos，所以需要先登录KDC。注意URL是https的。  
 完整的脚本[在这](https://github.com/wbwangk/EnableSSLinHDP/blob/master/enable-ssl.sh)。
+
+
+## 六、hadoop集群启用SSL(letsencrypt证书)
+在上一章中，通过自建CA发放证书，将hadoop集群启用了SSL。自建CA发放的证书，会被浏览器报告为“非安全网站”。如果把hadoop集群中每个节点的证书更换为letsencrypt.org方法的证书，则浏览器就不会报错了。  
+
+### 向letsencrypt.org申请证书
+申请过程与[附录2](https://github.com/wbwangk/wbwangk.github.io/wiki/SSL%E7%A0%94%E7%A9%B6#%E9%99%842%E7%94%B3%E8%AF%B7lets-encrypt%E8%AF%81%E4%B9%A6)描述的基本一致。只是把生成CSR的命令修改为：
+```
+openssl req -new -sha256 -key domain.key -subj "/C=CN/ST=Shan Dong/L=Ji Nan/O=Inspur/OU=SBG/CN=dp.imaicloud.com" -reqexts SAN -config <(cat /etc/pki/tls/openssl.cnf <(printf "[SAN]\nsubjectAltName=DNS:dp.imaicloud.com,DNS:c7301.dp.imaicloud.com,DNS:c7302.dp.imaicloud.com,DNS:c7303.dp.imaicloud.com,DNS:c7304.dp.imaicloud.com,DNS:c7305.dp.imaicloud.com,DNS:c7306.dp.imaicloud.com,DNS:c7307.dp.imaicloud.com,DNS:c7308.dp.imaicloud.com,DNS:c7309.dp.imaicloud.com,DNS:c7310.dp.imaicloud.com,DNS:c7311.dp.imaicloud.com,DNS:c7312.dp.imaicloud.com,DNS:c7313.dp.imaicloud.com,DNS:c7314.dp.imaicloud.com,DNS:c7315.dp.imaicloud.com")) > domain.csr
+```
+上述证书签名请求包含了15个节点的FQDN。当证书申请成功后，获得的文件有：  
+- domain.key，私钥  
+- signed.crt，签名后的证书  
+- chained.pem，含签名后的证书和中间人证书  
+- full_chained.pem，含中间人证书和根证书  
+
+### 搭建新的hadoop集群
+原集群的域名和kerberos领域与从letsencrypt申请的证书不符。担心现有集群修改域名和领域带来未知问题，决定重新搭建一个hadoop集群。  
+新集群有三个节点：
+192.168.73.101 c7301.dp.imaicloud.com  
+192.168.73.102 c7302.dp.imaicloud.com  
+192.168.73.103 c7303.dp.imaicloud.com  
+保证上述内容定义在三个节点的`/etc/hosts`文件中。为了在windows下测试，上述内容也要定义到windows的`c:/windows/system32/drivers/etc/hosts`文件中。  
+新集群上部署ambari([参考](https://imaidata.github.io/blog/ambari_centos/))，利用ambari部署的hadoop服务有：  
+HDFS、YARN、MR2、Hive、HBase、Oozie、Zookeeper等。新集群启用kerberos。  
+
+### hadoop集群启用SSL
+将上述letsencrypt证书相关的4个文件(domain.key、signed.crt、chained.pem、full_chained.pem)复制到ambari server所在节点(c7301)的`/tmp/security`目录下。 
+
+#### 1.创建各节点keystore
+将CA公钥复制到各个节点，导入各节点可信证书库。创建`/tmp/seurity/ssl2.sh`:
+```
+#!/usr/bin/env bash
+
+server1="c7301.dp.imaicloud.com"
+server2="c7302.dp.imaicloud.com"
+server3="c7303.dp.imaicloud.com"
+ALL_REAL_SERVERS="$server1 $server2 $server3"
+
+#TRUST_STORE=/etc/pki/java/cacerts
+TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts
+
+#copy public ssl certs to all hosts
+for host in ${ALL_REAL_SERVERS}; do
+        scp full_chained.pem ${host}:/tmp/full_chained.pem
+        ssh $host "keytool -import -noprompt -alias full_chained -file /tmp/full_chained.pem -storepass changeit -keystore $TRUST_STORE; rm -f /tmp/full_chained.pem"
+
+        scp chained.pem ${host}:/tmp/chained.pem
+        ssh $host "keytool -import -noprompt -alias chained -file /tmp/chained.pem -storepass changeit -keystore $TRUST_STORE; rm -f \"/tmp/chained.pem\""
+
+done
+```
+full_chained.pem中包含了中间人证书和CA根证书。chained.pem中包含了从letsencypt申请的证书和中间人证书。  
+
+#### 2.Ambari服务器启用SSL
+Ambari启用https使用的交互界面，如果变成脚本需要安装额外工具(expect)。也可以不使用脚本，而直接运行ambari-server命令来启用https。创建脚本文件ssl3.sh:
+```bash
+#!/usr/bin/env bash
+server1="c7301.dp.imaicloud.com"
+export AMBARI_SERVER=$server1
+
+#TRUST_STORE=/etc/pki/java/cacerts
+TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts
+export TRUST_STORE=$TRUST_STORE
+
+    rpm -q expect || yum install -y expect
+    cat <<EOF > ambari-ssl-expect.exp
+#!/usr/bin/expect
+spawn "/usr/sbin/ambari-server" "setup-security"
+expect "Enter choice"
+send "1\r"
+expect "Do you want to configure HTTPS"
+send "y\r"
+expect "SSL port"
+send "\r"
+expect "Enter path to Certificate"
+send "/tmp/security/chained.pem\r"
+expect "Enter path to Private Key"
+send "/tmp/security/domain.key\r"
+expect "Please enter password for Private Key"
+send "\r"
+send "\r"
+interact
+EOF
+
+    cat <<EOF > ambari-truststore-expect.exp
+#!/usr/bin/expect
+spawn "/usr/sbin/ambari-server" "setup-security"
+expect "Enter choice"
+send "4\r"
+expect "Do you want to configure a truststore"
+send "y\r"
+expect "TrustStore type"
+send "jks\r"
+expect "Path to TrustStore file"
+send "\$env(TRUST_STORE)\r"
+expect "Password for TrustStore"
+send "changeit\r"
+expect "Re-enter password"
+send "changeit\r"
+interact
+EOF
+    if ! grep -q 'api.ssl=true' /etc/ambari-server/conf/ambari.properties; then
+        /usr/bin/expect ambari-ssl-expect.exp
+            /usr/bin/expect ambari-truststore-expect.exp
+
+        service ambari-server restart
+
+        while true; do if tail -100 /var/log/ambari-server/ambari-server.log | grep -q 'Started Services'; then break; else echo -n .; sleep 3; fi; done; echo
+    fi
+
+    rm -f ambari-ssl-expect.exp  ambari-truststore-expect.exp
+    #validate wget -O- --no-check-certificate "https://${AMBARI_SERVER}:8443/#/main/dashboard/metrics"
+```
+配置ambari的TrustStore的目的：当hadoop的各服务启用https后，ambari作为客户端连接各服务时，需要一个可信证书库（想象一下IE浏览器中可信CA证书和中间人证书）。如果仅仅是ambari自己启用SSL(其它hadoop服务不启用SSL)，ambari可以不配置TrustStore。  
+
+这一步执行后，已经可以用https访问ambari了。可以在windows下用浏览器访问地址是：`https://c7301.ambari.apache.org:8443`。会发现浏览器的地址栏显示这是一个安全网站。  
+也可用这样测试：  
+```
+$ wget -O- --no-check-certificate "https://c7301.ambari.apache.org:8443/#/main/dashboard/metrics"
+```
+
+#### 3.对hadoop启用SSL
+创建了一个`hadoopSSL.sh`脚本：
+```
+#!/usr/bin/env bash
+
+server1="c7301.dp.imaicloud.com"
+server2="c7302.dp.imaicloud.com"
+server3="c7303.dp.imaicloud.com"
+
+NAMENODE_SERVER_ONE=$server1
+RESOURCE_MANAGER_SERVER_ONE=$server2
+HISTORY_SERVER=$server2
+ALL_NAMENODE_SERVERS="${NAMENODE_SERVER_ONE} $server2"
+ALL_HADOOP_SERVERS="$server1 $server2 $server3"
+
+export AMBARI_SERVER=$server1
+AMBARI_PASS=admin
+CLUSTER_NAME=HDP2610
+
+#TRUST_STORE=/etc/pki/java/cacerts
+TRUST_STORE=/usr/jdk64/jdk1.8.0_112/jre/lib/security/cacerts
+#
+# Enable Hadoop UIs SSL encryption. Stop all Hadoop components first
+#
+function hadoopSSLEnable() {
+
+    for host in ${ALL_HADOOP_SERVERS}; do
+        if [ -e "domain.p12" ]; then continue; fi
+        openssl pkcs12 -export -in signed.crt -inkey domain.key -out domain.p12 -name mydomain -passout pass:vagrant
+    done
+
+        ssh $host "keytool -import -noprompt -alias full_chained -file /tmp/full_chained.pem -storepass changeit -keystore $TRUST_STORE; rm -f /tmp/full_chained.pem"
+
+    for host in ${ALL_HADOOP_SERVERS}; do
+        scp domain.p12 ${host}:/tmp/domain.p12
+        scp full_chained.pem ${host}:/tmp/full_chained.pem
+        ssh $host "
+            keytool -import -noprompt -alias letsCA -file /tmp/full_chained.pem -storepass vagrant -keypass vagrant -keystore /etc/hadoop/conf/hadoop-private-keystore.jks
+            keytool --importkeystore -noprompt -deststorepass vagrant -destkeypass vagrant -destkeystore /etc/hadoop/conf/hadoop-private-keystore.jks -srckeystore /tmp/domain.p12 -srcstoretype PKCS12 -srcstorepass vagrant -alias mydomain
+            chmod 440 /etc/hadoop/conf/hadoop-private-keystore.jks
+            chown yarn:hadoop /etc/hadoop/conf/hadoop-private-keystore.jks
+            rm -f /tmp/full_chained.pem /tmp/domain.p12;
+            "
+    done
+
+    cat <<EOF | while read p; do p=${p/,}; p=${p//\"}; if [ -z "$p" ]; then continue; fi; /var/lib/ambari-server/resources/scripts/configs.sh -u admin -p $AMBARI_PASS -port 8443 -s set $AMBARI_SERVER $CLUSTER_NAME $p &> /dev/null || echo "Failed to change $p in Ambari"; done
+        hdfs-site "dfs.https.enable"   "true",
+        hdfs-site "dfs.http.policy"   "HTTPS_ONLY",
+        hdfs-site "dfs.datanode.https.address"   "0.0.0.0:50475",
+        hdfs-site "dfs.namenode.https-address"   "0.0.0.0:50470",
+
+        core-site "hadoop.ssl.require.client.cert"   "false",
+        core-site "hadoop.ssl.hostname.verifier"   "DEFAULT",
+        core-site "hadoop.ssl.keystores.factory.class"   "org.apache.hadoop.security.ssl.FileBasedKeyStoresFactory",
+        core-site "hadoop.ssl.server.conf"   "ssl-server.xml",
+        core-site "hadoop.ssl.client.conf"   "ssl-client.xml",
+
+        mapred-site "mapreduce.jobhistory.http.policy"   "HTTPS_ONLY",
+        mapred-site "mapreduce.jobhistory.webapp.https.address"   "${HISTORY_SERVER}:19443",
+        mapred-site mapreduce.jobhistory.webapp.address "${HISTORY_SERVER}:19443",
+
+        yarn-site "yarn.http.policy"   "HTTPS_ONLY"
+        yarn-site "yarn.log.server.url"   "https://${HISTORY_SERVER}:19443/jobhistory/logs",
+        yarn-site "yarn.resourcemanager.webapp.https.address"   "${RESOURCE_MANAGER_SERVER_ONE}:8090",
+        yarn-site "yarn.nodemanager.webapp.https.address"   "0.0.0.0:45443",
+
+        ssl-server "ssl.server.keystore.password"   "vagrant",
+        ssl-server "ssl.server.keystore.keypassword"   "vagrant",
+        ssl-server "ssl.server.keystore.location"   "/etc/hadoop/conf/hadoop-private-keystore.jks",
+        ssl-server "ssl.server.truststore.location"   "${TRUST_STORE}",
+        ssl-server "ssl.server.truststore.password"   "changeit",
+
+        ssl-client "ssl.client.keystore.location"   "${TRUST_STORE}",
+        ssl-client "ssl.client.keystore.password"   "changeit",
+        ssl-client "ssl.client.truststore.password"   "changeit",
+        ssl-client "ssl.client.truststore.location"   "${TRUST_STORE}"
+EOF
+    rm -f doSet_version*
+    # In Ambari, perform Start ALL
+}
+hadoopSSLEnable
+```
+首先，导出了所有节点的私钥(p12格式)，然后复制到了各个节点，同时复制的还有CA的根证书。  
+然后，为HDP集群的各个节点创建密钥库(hadoop-private-keystore.jks)。密钥库中导入CA根证书，导入p12格式的私钥。  
+最后调用ambari的配置脚本将https相关的参数配置到HDP集群中。当脚本执行成功后，可以ambari界面查看。  
+用openssl测试一下SSL服务器：
+```
+$ openssl s_client -connect c7301.dp.imaicloud.com:50470 -showcerts
+```
+还可以用curl访问启用SSL的hdfs来测试：
+```
+$ kinit root/admin
+$ curl -k --negotiate -u :  https://c7301.dp.imaicloud.com:50470/webhdfs/v1/user?op=LISTSTATUS
+```
+我的测试集群启用了kerberos，所以需要先登录KDC。注意URL是https的。  
+完整的脚本[在这](https://github.com/wbwangk/EnableSSLinHDP/blob/master/dp_ssl.sh)。
 
 ## 附1、创建内部CA
 [参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，如果对keytool不熟悉建议先读[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E5%85%AC%E7%A7%81%E9%92%A5%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81)。  
