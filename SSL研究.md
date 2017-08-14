@@ -585,8 +585,10 @@ for host in ${ALL_REAL_SERVERS}; do
 done
 ```
 可信证书库是JSSE客户端使用的，用于访问SSL服务器，而不是创建SSL服务器。  
-TRUST_STORE是OracleJDK的可信证书库。如果你HDP部署使用OpenJDK，需要更换成注释掉的TRUST_STORE。
+TRUST_STORE是OracleJDK的可信证书库。如果你HDP部署使用OpenJDK，需要更换成注释掉的TRUST_STORE。  
+导入的命令中没有`-trustcacerts`参数，但用`keytool -list`查看了一下，发现条目类型是`trustedCertEntry`。估计只要不带私钥，默认导入的都是`trustedCertEntry`。
 
+```
 #### 3.Ambari服务器启用SSL
 Ambari启用https使用的交互界面，如果变成脚本需要安装额外工具(expect)。也可以不使用脚本，而直接运行ambari-server命令来启用https。创建脚本文件为ssl3.sh:
 ```bash
@@ -801,6 +803,7 @@ for host in ${ALL_REAL_SERVERS}; do
 done
 ```
 full_chained.pem中包含了中间人证书和CA根证书。chained.pem中包含了从letsencypt申请的证书和中间人证书。  
+导入的命令中没有`-trustcacerts`参数，但用`keytool -list`查看了一下，发现条目类型是`trustedCertEntry`。估计只要不带私钥，默认导入的都是`trustedCertEntry`。  
 
 #### 2.Ambari服务器启用SSL
 Ambari启用https使用的交互界面，如果变成脚本需要安装额外工具(expect)。也可以不使用脚本，而直接运行ambari-server命令来启用https。创建脚本文件ssl3.sh:
@@ -965,7 +968,20 @@ $ kinit root/admin
 $ curl -k --negotiate -u :  https://c7301.dp.imaicloud.com:50470/webhdfs/v1/user?op=LISTSTATUS
 ```
 我的测试集群启用了kerberos，所以需要先登录KDC。注意URL是https的。  
-完整的脚本[在这](https://github.com/wbwangk/EnableSSLinHDP/blob/master/dp_ssl.sh)。
+完整的脚本[在这](https://github.com/wbwangk/EnableSSLinHDP/blob/master/dp_ssl.sh)。该脚本的使用办法：
+```
+$ cd /tmp/security
+$ wget https://raw.githubusercontent.com/wbwangk/EnableSSLinHDP/master/dp_ssl.sh
+$ chmode +x dp_ssl.sh
+```
+修改脚本，以便匹配自己的hadoop集群的部署。确保`/tmp/security`目录下有前文讲的4个证书文件。以对HBase启用SSL为例：
+```
+$ ./dp_ssl.sh --hbaseSSL
+```
+然后通过ambari界面重启habse服务。然后验证启用SSL后的hbase：
+```
+$ openssl s_client -connect c7301.dp.imaicloud.com:16010 -showcerts
+```
 
 ## 附1、创建内部CA
 [参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，如果对keytool不熟悉建议先读[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E5%85%AC%E7%A7%81%E9%92%A5%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81)。  
