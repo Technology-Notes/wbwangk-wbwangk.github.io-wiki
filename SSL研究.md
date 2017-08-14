@@ -547,7 +547,7 @@ $ openssl req -new -x509 -days 1826 -key ca.key -out ca.crt -subj "/C=CN/ST=Shan
 ```
 生成临时CA的私钥`ca.key`和公钥证书`ca.crt`。主体是`AmbariCA`。
 
-#### 1.各节点创建密钥库
+#### 1.为各节点创建证书
 生成各个节点的私钥和证书签名请求CSR。用临时CA回应CSR，生成各个节点的证书。创建`ssl1.sh`：
 ```
 #!/usr/bin/env bash
