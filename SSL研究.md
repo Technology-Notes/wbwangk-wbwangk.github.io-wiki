@@ -588,7 +588,7 @@ done
 TRUST_STORE是OracleJDK的可信证书库。如果你HDP部署使用OpenJDK，需要更换成注释掉的TRUST_STORE。
 
 #### 3.Ambari服务器启用SSL
-Ambari启用https使用的交互界面，如果变成脚本需要安装额外工具(expect)。也可以不使用脚本，而直接运行ambari-server命令来启用https。创建脚本文件为ssl2.sh:
+Ambari启用https使用的交互界面，如果变成脚本需要安装额外工具(expect)。也可以不使用脚本，而直接运行ambari-server命令来启用https。创建脚本文件为ssl3.sh:
 ```bash
 #!/usr/bin/env bash
 server1="c7301.ambari.apache.org"
