@@ -533,10 +533,10 @@ $ java -Djavax.net.ssl.trustStore=/opt/https/trust.jks MutualAuthenticationHTTP 
 
 ## 五、hadoop集群启用SSL
 [官方文档](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，本文参考了[这篇社区文章](https://community.hortonworks.com/articles/22756/quickly-enable-ssl-encryption-for-hadoop-component.html)   
-本章首先尝试把HDP集群的Ambari界面升级为SSL（非双向SSL）。然后把HDP集群中几个常见服务(HDFS、HBASE等)升级为SSL。本章需要创建脚本文件。脚本文件是一种文本文件。新建的脚本文件是不可以执行的，赋予文件可执行权限，并执行脚本文件：
+本章首先尝试把HDP集群的Ambari界面升级为SSL（非双向SSL）。然后把HDP集群中几个常见服务(HDFS、HBASE等)升级为SSL。为了便于调试，本章把[原文](https://github.com/vzlatkin/EnableSSLinHDP)的脚本(enable-ssl.sh)分拆为几个小脚本文件。赋予脚本文件可执行权限：
 ```
 $ chmod +x ssl1.sh
-$ ./ss1.sh
+$ ./ssl1.sh
 ```
 
 #### 0.创建临时CA
