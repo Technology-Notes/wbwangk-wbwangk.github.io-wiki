@@ -754,6 +754,7 @@ $ wget https://github.com/wbwangk/EnableSSLinHDP/blob/master/enable-ssl.sh
 $ chmode +x enable-ssl.sh
 $ ./enable-ssl.sh --hbaseSSL                 (以hbase启用SSL为例)
 ```
+这个脚本中，仅ambariSSL、hadoopSSL、hbaseSSL三个函数经过测试。
 
 ## 六、hadoop集群启用SSL(letsencrypt证书)
 在上一章中，通过自建CA发放证书，将hadoop集群启用了SSL。自建CA发放的证书，会被浏览器报告为“非安全网站”。如果把hadoop集群中每个节点的证书更换为letsencrypt.org方法的证书，则浏览器就不会报错了。  
@@ -973,7 +974,7 @@ $ kinit root/admin
 $ curl -k --negotiate -u :  https://c7301.dp.imaicloud.com:50470/webhdfs/v1/user?op=LISTSTATUS
 ```
 我的测试集群启用了kerberos，所以需要先登录KDC。注意URL是https的。  
-完整的脚本[在这](https://github.com/wbwangk/EnableSSLinHDP/blob/master/dp_ssl.sh)。该脚本的使用办法：
+完整的脚本[在这](https://github.com/wbwangk/EnableSSLinHDP/blob/master/dp_ssl.sh)。这个脚本中，仅ambariSSL、hadoopSSL、hbaseSSL三个函数经过测试。该脚本的使用办法：
 ```
 $ cd /tmp/security
 $ wget https://raw.githubusercontent.com/wbwangk/EnableSSLinHDP/master/dp_ssl.sh
