@@ -747,8 +747,13 @@ $ kinit root/admin
 $ curl -k --negotiate -u :  https://c7301.ambari.apache.org:50470/webhdfs/v1/user?op=LISTSTATUS
 ```
 我的测试集群启用了kerberos，所以需要先登录KDC。注意URL是https的。  
-完整的脚本[在这](https://github.com/wbwangk/EnableSSLinHDP/blob/master/enable-ssl.sh)。
-
+完整的脚本[在这](https://github.com/wbwangk/EnableSSLinHDP/blob/master/enable-ssl.sh)。完整的脚本的使用方式：
+```
+$ cd /etc/security
+$ wget https://github.com/wbwangk/EnableSSLinHDP/blob/master/enable-ssl.sh
+$ chmode +x enable-ssl.sh
+$ ./enable-ssl.sh --hbaseSSL                 (以hbase启用SSL为例)
+```
 
 ## 六、hadoop集群启用SSL(letsencrypt证书)
 在上一章中，通过自建CA发放证书，将hadoop集群启用了SSL。自建CA发放的证书，会被浏览器报告为“非安全网站”。如果把hadoop集群中每个节点的证书更换为letsencrypt.org方法的证书，则浏览器就不会报错了。  
@@ -982,7 +987,16 @@ $ ./dp_ssl.sh --hbaseSSL
 ```
 $ openssl s_client -connect c7301.dp.imaicloud.com:16010 -showcerts
 ```
-
+#### 碰到的问题
+ambari和hadoop启用SSL后，进入ambari视图(如Files View)报错：
+```
+0.0.0.0:50470: HTTPS hostname wrong: should be <0.0.0.0>
+```
+经查是反向DNS有问题，推测是根据0.0.0.0这个IP查询主机的hostname有问题。在所有主机上的`/etc/hosts`文件中增加记录(以c7302为例)：
+```
+0.0.0.0 c7302.dp.imaicloud.com
+```
+三个节点都要增加上述记录。之后问题解决。
 ## 附1、创建内部CA
 [参考](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/create-internal-ca.html)，如果对keytool不熟悉建议先读[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E7%BB%93%E5%90%88keytool%E5%AE%9E%E7%8E%B0%E5%85%AC%E7%A7%81%E9%92%A5%E7%AD%BE%E5%90%8D%E4%B8%8E%E9%AA%8C%E8%AF%81)。  
 
