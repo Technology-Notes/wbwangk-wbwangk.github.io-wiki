@@ -335,7 +335,8 @@ $ java HttpsTest https://c7304.ambari.apache.org:442                  (正常执
 
 #### 用curl进行可信https测试
 ```
-$ curl https://c7304.ambari.apache.org:442  --cacert /opt/ca/nginx.crt              (不报错，返回了网页)
+$ curl https://c7304.ambari.apache.org:442               (报错)
+$ curl https://c7304.ambari.apache.org:442  --cacert /opt/https/nginx.crt              (不报错，返回了网页)
 ```  
 curl增加`--cacert`参数后，相当于把参数后的证书临时加入了curl的可信库。  
 注意，curl的--cacert参数接受的是PEM格式的证书。把JKS格式的密钥库当参数传给curl是不行的，如`/etc/pki/java/cacerts`当curl参数不行。  
@@ -410,7 +411,7 @@ $ java -Djavax.net.ssl.trustStore=trust.jks HttpsTest https://c7304.ambari.apach
 ### (三)OpenSSL搭建https服务器
 openssl自带了https服务器的模拟功能：
 ```
-$ cd /opt/ca
+$ cd /opt/https
 $ openssl s_server -accept 445 -cert nginx2.crt -key nginx2.key -www
 ```
 这个openssl的模拟服务器用curl测试：
