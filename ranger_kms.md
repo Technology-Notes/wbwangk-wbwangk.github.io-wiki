@@ -14,6 +14,7 @@ KMS Master Secret Password: 1
 - 卷加密。加密整个卷。
 - 应用加密。应用程序完成加密。
 - Rest加密。加密文件或目录。这是一种端到端加密，传输的是密文数据。HDFS系统不能访问加密后的明文数据。
+详细内容参考[​HDFS Encryption Overview](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.1/bk_security/content/hdfs-encryption-overview.html)
 
 ### 操作过程
 #### 1.创建加密区密钥
