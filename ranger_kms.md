@@ -35,6 +35,7 @@ $ hdfs crypto -createZone -keyName zonekey1 -path /tmp/webb     (创建加密区
 ```
 #### 4.上传加密文件
 不能直接用hdfs用户(HDFS的管理用户)访问加密目录（hadoop基于安全的考虑），所以要使用jj用户来测试。  
+```
 $ kadmin.local -q "addprinc jj”
 $ kinit jj@AMBARI.APACHE.ORG                              (换用户jj登录)
 $ sudo -u jj hdfs dfs -put ca.key /tmp/webb
@@ -48,5 +49,5 @@ $ hdfs crypto -listZones
 ```
 删除加密区：
 ```
-$ hdfs dfs -rm -R /zone_encr
+$ hdfs dfs -rm -R /tmp/webb
 ```
