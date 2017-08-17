@@ -9,3 +9,44 @@ Database Administrator (DBA) password: vagrant
 KMS Master Secret Password: 1
 ````
 其它参数使用默认值。由于启用了kerberos，会提示输入管理员主体（root/admin@AMBARI.APACHE.ORG，密码是vagrant）。  
+
+### HDFS加密类型
+- 卷加密。加密整个卷。
+- 应用加密。应用程序完成加密。
+- Rest加密。加密文件或目录。这是一种端到端加密，传输的是密文数据。HDFS系统不能访问加密后的明文数据。
+
+### 操作过程
+#### 1.创建加密区密钥
+在ranger界面中以用户keyadmin:keyadmin登录。密钥管理的管理员与一般的管理员分离。  
+通过菜单路径Encrypting -> Add New Key 来添加*加密区密钥*。密钥名称是`zonekey1`。  
+#### 2.设置密钥策略
+通过菜单路径Access Manager -> Resource Based Policies进入策略定义界面，点击`HDP2610_kms`，这是安装kms后默认创建的策略。显示了一条初始的策略`all - keyname`。编辑这个策略，将用户`jj`添加到这个策略中。如下图：  
+![(No Title)](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/kms1.png)
+如果不添加这个策略，将来向加密目录上传文件时会报错：
+```
+put: User:jj not allowed to do 'DECRYPT_EEK' on 'zonekey1'
+```
+#### 3.创建加密区
+```
+$ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp2610
+$ hdfs dfs -mkdir /tmp/webb                               (创建目录)
+$ hdfs dfs -chmod 777 /tmp/webb                           (设置权限，其它用户有写权限)
+$ hdfs crypto -createZone -keyName zonekey1 -path /tmp/webb     (创建加密区)
+```
+#### 4.上传加密文件
+不能直接用hdfs用户(HDFS的管理用户)访问加密目录（hadoop基于安全的考虑），所以要使用jj用户来测试。  
+$ kadmin.local -q "addprinc jj”
+$ kinit jj@AMBARI.APACHE.ORG                              (换用户jj登录)
+$ sudo -u jj hdfs dfs -put ca.key /tmp/webb
+```
+#### 其它
+查看加密区列表：
+```
+$  kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp2610
+$ hdfs crypto -listZones
+/tmp/webb                           zonekey1
+```
+删除加密区：
+```
+$ hdfs dfs -rm -R /zone_encr
+```
