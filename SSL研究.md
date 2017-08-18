@@ -755,6 +755,16 @@ $ chmode +x enable-ssl.sh
 $ ./enable-ssl.sh --hbaseSSL                 (以hbase启用SSL为例)
 ```
 这个脚本中，仅ambariSSL、hadoopSSL、hbaseSSL三个函数经过测试。
+#### 碰到的问题
+ambari和hadoop启用SSL后，进入ambari视图(如Files View)报错：
+```
+0.0.0.0:50470: HTTPS hostname wrong: should be <0.0.0.0>
+```
+经查是反向DNS有问题，推测是根据0.0.0.0这个IP查询主机的hostname有问题。在所有主机上的`/etc/hosts`文件中增加记录(以c7302为例)：
+```
+0.0.0.0 c7302.ambari.apache.org
+```
+三个节点都要增加上述记录(如c7301节点要把上面的c7302改成c7301，c7303类推)。之后问题解决。
 
 ## 六、hadoop集群启用SSL(letsencrypt证书)
 在上一章中，通过自建CA发放证书，将hadoop集群启用了SSL。自建CA发放的证书，会被浏览器报告为“非安全网站”。如果把hadoop集群中每个节点的证书更换为letsencrypt.org方法的证书，则浏览器就不会报错了。  
