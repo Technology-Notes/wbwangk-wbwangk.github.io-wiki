@@ -44,11 +44,40 @@ $ sudo -u jj hdfs dfs -put ca.key /tmp/webb
 #### 其它
 查看加密区列表：
 ```
-$  kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp2610
+$ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp2610
 $ hdfs crypto -listZones
 /tmp/webb                           zonekey1
 ```
 删除加密区：
 ```
 $ hdfs dfs -rm -R /tmp/webb
+```
+## hbase存储启用加密
+#### 1.集群已经安装hbase
+通过ambari界面停止hbase服务。  
+将hbase的home目录改名：
+```
+$ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp2610
+$ hdfs dfs -mv /apps/hbase /apps/hbase-tmp
+```
+将/apps/hbase转化为加密区：
+```
+$ hdfs crypto -createZone -keyName zonekey1 -path /apps/hbase
+```
+将/apps/hbase-tmp目录下内容复制回hbase的根目录中：
+```
+$ hadoop distcp -skipcrccheck -update /apps/hbase-tmp /apps/hbase
+```
+这将花费一定时间。
+#### 2.集群尚未安装hbase
+创建`/apps/hbase`目录，将该目录设置为加密区：
+```
+$ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp2610
+$ hdfs dfs -mkdir /apps/hbase
+$ hdfs crypto -createZone -keyName zonekey1 -path /apps/hbase
+```
+通过ambari界面设置hbase参数：
+```
+$ hbase.rootdir=/apps/hbase/data
+$ hbase.bulkload.staging.dir=/apps/hbase/staging
 ```
