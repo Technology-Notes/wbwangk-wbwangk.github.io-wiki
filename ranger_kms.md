@@ -41,6 +41,14 @@ $ kadmin.local -q "addprinc jj”
 $ kinit jj@AMBARI.APACHE.ORG                              (换用户jj登录)
 $ sudo -u jj hdfs dfs -put ca.key /tmp/webb
 ```
+#### 权限控制相关
+在KMS的配置`Advanced dbks-site`(文件路径是`/etc/ranger-kms/2.6.1.0-129/0/dbks-site.xml`)中有个属性`hadoop.kms.blacklist.DECRYPT_EEK`，是个用户黑名单，名单上的用户不能访问Ranger的解密功能。黑名单的默认值是`hdfs`。所以在默认情况下：
+```
+$ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp2610
+$  hdfs dfs -copyFromLocal ca.crt /tmp/webb
+copyFromLocal: User:hdfs not allowed to do 'DECRYPT_EEK' on 'zonekey1'
+```
+如果把这个默认值改掉，如随便输入个不存在的用户，保存并服务重启后就可以执行上面的向加密区上传文件的命令了。
 #### 其它
 查看加密区列表：
 ```
