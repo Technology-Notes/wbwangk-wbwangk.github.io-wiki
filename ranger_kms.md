@@ -76,7 +76,9 @@ $ hdfs crypto -createZone -keyName zonekey1 -path /apps/hbase
 ```
 $ hadoop distcp -skipcrccheck -update /apps/hbase-tmp /apps/hbase
 ```
-这将花费一定时间。
+实测报错，提示`user:hbase not allowed to do 'DECRYPT_EEK' on 'zonekey1'`。  
+以`keyadmin:keyadmin`登录ranger，编辑策略`all-keyname`，在`Decrypt EEK`条目中增加用户`hbase`，问题解决。  
+
 #### 2.集群尚未安装hbase
 创建`/apps/hbase`目录，将该目录设置为加密区：
 ```
