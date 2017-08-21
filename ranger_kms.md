@@ -39,7 +39,7 @@ $ hdfs crypto -createZone -keyName zonekey1 -path /tmp/webb     (创建加密区
 ```
 $ kadmin.local -q "addprinc jj”
 $ kinit jj@AMBARI.APACHE.ORG                              (换用户jj登录)
-$ sudo -u jj hdfs dfs -put ca.key /tmp/webb
+$ hdfs dfs -put ca.key /tmp/webb
 ```
 #### 权限控制相关
 在KMS的配置`Advanced dbks-site`(文件路径是`/etc/ranger-kms/2.6.1.0-129/0/dbks-site.xml`)中有个属性`hadoop.kms.blacklist.DECRYPT_EEK`，是个用户黑名单，名单上的用户不能访问Ranger的解密功能。黑名单的默认值是`hdfs`。所以在默认情况下：
@@ -91,3 +91,15 @@ $ hdfs crypto -createZone -keyName zonekey1 -path /apps/hbase
 $ hbase.rootdir=/apps/hbase/data
 $ hbase.bulkload.staging.dir=/apps/hbase/staging
 ```
+## WebHDFS启用加密
+## 为数据加密创建独立的HDFS管理员
+[HDP相关文档](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/hdfs-encr-appendix.html)   
+[社区文章](https://community.hortonworks.com/content/supportkb/49506/how-to-add-an-hdfs-admin-user-for-ranger-kms.html)
+
+## 其它
+报错：  
+```
+$ hdfs dfs -put /opt/ca/ca.key /tmp/webb
+put: User:hbase not allowed to do 'DECRYPT_EEK' on 'zonekey1'
+```
+在社区的[相关讨论](https://community.hortonworks.com/questions/118544/user-not-allowed-to-do-decrypt-eek-despite-the-gro.html)。  
