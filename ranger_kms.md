@@ -27,6 +27,7 @@ KMS Master Secret Password: 1
 ```
 put: User:jj not allowed to do 'DECRYPT_EEK' on 'zonekey1'
 ```
+经测试，在KMS中，向策略中添加用户管用，但添加用户组不管用。在本文的最后，有社区的解决方案，向kms-acls.xml中添加property，，但测试也不管用。  
 #### 3.创建加密区
 ```
 $ kinit -kt /etc/security/keytabs/hdfs.headless.keytab hdfs-hdp2610
