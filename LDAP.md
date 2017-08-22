@@ -267,7 +267,10 @@ $ sudo ldapaddgroup qa
 ```
 $ ldapaddusertogroup george miners
 ```
-
+添加用户到用户组后，用户组miners条目会增加一个memberUid属性(组中每增加一个用户就多一个属性)：
+```
+memberUid: george
+```
 ## Kerberos与LDAP
 要将Kerberos与LDAP进行集成，首先需要在LDAP服务器上安装```krb5-kdc-ldap```包：
 ```
