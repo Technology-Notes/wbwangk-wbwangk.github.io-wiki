@@ -1,5 +1,5 @@
-[ibm developerworks的puppet入门](https://www.ibm.com/developerworks/cn/opensource/os-cn-puppet/index.html)  
-[Puppet官方手册](https://docs.puppet.com/puppetserver/5.0/install_from_packages.html#red-hat-enterprise-linux)  
+原文：[ibm developerworks的puppet入门](https://www.ibm.com/developerworks/cn/opensource/os-cn-puppet/index.html)  
+
 本文环境是ubuntu14.4(/e/vagrant11/ambari-vagrant/ubuntu14.4)。环境有两个虚拟机：
 ```
 u1401.ambari.apache.org                   (充当puppet server)
@@ -129,3 +129,5 @@ helloworld
 
 ## 结束语
 Puppet 是基于 Ruby 的开源系统配置和管理工具，它提供的独特的系统配置语言极大程度地简化了系统管理员管理和配置系统的过程。本文首先介绍了 Puppet 的系统架构和工作流程，并且介绍了 Puppet 独特的系统配置语言，之后我们简单介绍了安装和配置 Puppet 的具体步骤。最后，本文以两个实例介绍了如何在 Puppet 中为节点编写配置文件，来达到创建文件和执行命令的效果。希望本文能对系统管理员，Puppet 初学者有所帮助。
+
+[Puppet官方手册](https://docs.puppet.com/puppetserver/5.0/install_from_packages.html#red-hat-enterprise-linux)  
