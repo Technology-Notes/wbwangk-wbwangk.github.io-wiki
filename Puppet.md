@@ -42,7 +42,7 @@ Signing Certificate Request for:
 Notice: Signed certificate request for u1402.ambari.apache.org
 Notice: Removing file Puppet::SSL::CertificateRequest u1402.ambari.apache.org at '/etc/puppetlabs/puppet/ssl/ca/requests/u1402.ambari.apache.org.pem'
 ```
-完成上面的步骤后，服务器对u1402的CSR进行了签署。再回到u1402上执行：
+完成上面的步骤后，服务器对u1402的CSR进行了签署。(原文中server和agent是同一台机器，所以不需要签署证书)。再回到u1402上执行：
 ```
 $ /opt/puppetlabs/bin/puppet agent --test
 Info: Creating a new SSL key for u1402.ambari.apache.org
