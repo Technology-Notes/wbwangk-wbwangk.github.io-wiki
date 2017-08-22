@@ -246,6 +246,7 @@ GIDSTART=5000
 UIDSTART=10000
 MIDSTART=20000
 ```
+(测试中发现配置项`ICONVCHAR`的注释需要去掉！)  
 创建密码文件，并确保这个文件只能被rootDN读取：
 ```
 sudo sh -c "echo -n '1' > /etc/ldapscripts/ldapscripts.passwd"
