@@ -228,18 +228,23 @@ john这个用户是之前的测试添加到LDAP数据库中的。由于在当前
 ```
 $ sudo apt install ldapscripts
 ```
+centos7.3下安装*ldapscritps*([1](http://rpmfind.net/linux/rpm2html/search.php?query=ldapscripts))：
+```
+$ wget ftp://rpmfind.net/linux/Mandriva/devel/cooker/x86_64/media/contrib/release/ldapscripts-1.10.0-1-mdv2011.0.noarch.rpm
+$ yum install ldapscripts-1.10.0-1-mdv2011.0.noarch.rpm 
+```
 编辑配置文件/etc/ldapscripts/ldapscripts.conf，修改配置为以下的样子：
 ```
 SERVER="ldap://localhost"
 BINDDN='cn=admin,dc=ambari,dc=apache,dc=org'
 BINDPWDFILE="/etc/ldapscripts/ldapscripts.passwd"
 SUFFIX='dc=ambari,dc=apache,dc=org'
-GSUFFIX='ou=Groups'
+GSUFFIX='ou=Group'
 USUFFIX='ou=People'
-MSUFFIX='ou=Computers'
-GIDSTART=10000
+MSUFFIX='ou=Computer'
+GIDSTART=5000
 UIDSTART=10000
-MIDSTART=10000
+MIDSTART=20000
 ```
 创建密码文件，并确保这个文件只能被rootDN读取：
 ```
@@ -257,7 +262,11 @@ $ ldapsearch -x -LLL -b dc=ambari,dc=apache,dc=org george  (在ldap数据库中�
 ```
 $ sudo ldapaddgroup qa
 ```
-用ldapsearch也可以搜索到ldap数据库中的qa用户组条目。  
+用ldapsearch也可以搜索到ldap数据库中的qa用户组条目。   
+将用户添加到用户组：
+```
+$ ldapaddusertogroup george miners
+```
 
 ## Kerberos与LDAP
 要将Kerberos与LDAP进行集成，首先需要在LDAP服务器上安装```krb5-kdc-ldap```包：
