@@ -5,7 +5,8 @@
 u1401.ambari.apache.org                   (充当puppet server)
 u1402.ambari.apache.org                   (充当puppet agent)
 ```
-#### server安装
+## Puppet安装
+### server安装
 在节点u1401上添加源、安装server、启动服务：
 ```
 $ wget https://apt.puppetlabs.com/puppetlabs-release-pc1-trusty.deb
@@ -14,7 +15,7 @@ $ sudo apt-get update
 $ sudo apt-get install puppetserver
 $ sudo service puppetserver start                            (原文有误)
 ```
-#### agent安装
+### agent安装
 在节点u1402上添加源、安装agent：
 ```
 $ wget https://apt.puppetlabs.com/puppetlabs-release-pc1-trusty.deb
@@ -27,7 +28,7 @@ $ sudo apt-get install puppet-agent
 [main]
 server = u1401.ambari.apache.org
 ```
-#### agent启动
+### agent启动
 在u1402上执行测试：
 ```
 $  /opt/puppetlabs/bin/puppet agent --test
@@ -53,8 +54,8 @@ Info: Caching certificate for ca
 Exiting; no certificate found and waitforcert is disabled
 ```
 
-### 编写第一个配置文件
-#### 第一个HelloWorld配置文件
+## 编写第一个配置文件
+### 第一个HelloWorld配置文件
 在u1401(puppet server)的`/etc/`文件夹下面创建一个文件`helloworld.txt`，文件的内容是`”hello world from puppet!\n”`。
 然后再u1401上进入`/etc/puppetlabs/code/environments/production/manifests`文件夹，创建`site.pp`文件：
 ```
@@ -84,7 +85,7 @@ hello world from puppet!
 ```
 我们看到节点成功从Puppet Server获取配置文件，并且在本地应用，对应的文件成功创建。
 
-#### 进阶：执行脚本任务
+### 进阶：执行脚本任务
 作为进阶的任务，我们希望节点可以执行一些更加复杂一点的任务。我们希望节点可以从 PuppetServer 获取一个命令脚本，并且执行该脚本。
 我们首先在u1401的`/etc/puppetlabs/code/environments/production/modules`中创建一个名叫”test”的模块，在`test`模块下面创建一个”files”文件夹。在这个文件夹里的文件是可以被节点获取的。然后我们在这个”files”文件夹里创建一个shell脚本`test.sh`(/etc/puppetlabs/code/environments/production/modules/test/files/test.sh):
 ```
@@ -126,5 +127,5 @@ helloworld
 ```
 我们可以看到，helloworld.log 文件被正确的创建，说明脚本文件被正确地执行。
 
-### 结束语
+## 结束语
 Puppet 是基于 Ruby 的开源系统配置和管理工具，它提供的独特的系统配置语言极大程度地简化了系统管理员管理和配置系统的过程。本文首先介绍了 Puppet 的系统架构和工作流程，并且介绍了 Puppet 独特的系统配置语言，之后我们简单介绍了安装和配置 Puppet 的具体步骤。最后，本文以两个实例介绍了如何在 Puppet 中为节点编写配置文件，来达到创建文件和执行命令的效果。希望本文能对系统管理员，Puppet 初学者有所帮助。
