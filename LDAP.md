@@ -224,7 +224,7 @@ john@u1410:/$
 john这个用户是之前的测试添加到LDAP数据库中的。由于在当前操作系统下没有/home/john目录，所以提示john用户的HOME目录变成了根目录。
 
 ### 用户和用户组管理
-先在u1401上安装一个需要用到的软件包*ldapscritps*：
+先在u1401上安装一个需要用到的软件包*ldapscritps*([1](https://github.com/martymac/ldapscripts))：
 ```
 $ sudo apt install ldapscripts
 ```
