@@ -383,5 +383,16 @@ modifying entry "olcDatabase={1}hdb,cn=config"              （ctrl+D返回到�
 注意，第一个OlcAccess后面的内容很长，中间不要有换行，否则两次回车后会报错。进入命令行状态后（没有任何提示，只是光标进入下一行），直接把“两次回车”之前的内容粘贴即可。可以用ldapsearch命令检查修改的结果。  
 完成上述7个步骤后，LDAP将可以作为kerberos的主体数据库了。  
 
+## OpenLDAP日志
+OpenLDAP logs via syslogd (using LOCAL4)。参考[loglevel](http://www.zytrax.com/books/ldap/ch6/#loglevel)  
+centos7内置的日志系统是rsyslog，它的主配置文件是` /etc/rsyslog.conf`。在该配置文件上增加：
+```
+local4.* /var/log/ldap.log
+```
+手工创建该日志：  
+```
+$ touch /var/log/ldap.log
+```
+
 ## LDAP浏览器
 JXplorer是一个开源的LDAP浏览器，支持多种操作系统。官网：[jxplorer.org](http://www.jxplorer.org/)  
