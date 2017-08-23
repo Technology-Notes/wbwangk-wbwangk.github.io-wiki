@@ -393,6 +393,52 @@ $ curl  -k -u john:johnldap -X GET 'https://u1401.ambari.apache.org:8443/gateway
 这个新建目录的拥有者是john。看上去简单。实际上这里面包含了“用户模拟”。knox服务使用自己的kerberos凭据访问HDFS，但成功模拟了最终用户john在HDFS上创建目录。  
 关于用户模拟的原理可看考[hadoop安全](https://github.com/wbwangk/wbwangk.github.io/wiki/hadoop%E5%AE%89%E5%85%A8)。  
 
+## 用户组映射
+为了更好地研究**用户组映射**功能，在新环境(centos7.3)中用ambari重新安装knox和openldap([1](https://imaidata.github.io/blog/ldap/))，然后用ShiroProvider将openldap配置为knox的用户存储(参照章节" ShiroProvider(LDAP认证)")。  
+#### LDAP中增加用户、用户组
+部署了LDAP工具ldapscripts，利用ldapscripts添加用户`webb`和用户组`wang`：
+```
+$ sudo ldapaddgroup wang                 (新增用户组wang)
+$ sudo ldapadduser webb wang             (添加用户webb，隶属于用户组wang。webb条目多了gidNumber=5002属性)
+$ sudo ldapsetpasswd webb                (为webb用户设置密码为"1")
+$ sudo ldapaddusertogroup webb wang      (在用户组wang中添加用户webb。wang条目多了memberUid=webb属性)
+```
+#### 配置knox的用户模拟
+在Ambair面板中通过HDFS-config的`Custom core-site`小节配置：
+```
+hadoop.proxyuser.knox.groups = wang
+```
+重启相关服务后测试knox对webhdfs的反向代理功能：
+```
+$ curl -k -u webb:1 'https://c7301.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS'
+message":"Failed to obtain user group information: org.apache.hadoop.security.authorize.AuthorizationException: User: knox is not allowed to impersonate webb"
+```
+提示不能获取用户webb的**用户组**信息。说明knox的默认LDAP设置不能正确找到用户组。
+
+#### 不控制的用户模拟
+将knox的用户模拟用户组设置为"*":
+```
+hadoop.proxyuser.knox.groups = *
+```
+这表示所有用户组的用户都可以被**模拟**。  
+再执行上面curl，发现可以正常执行。说明当不控权限时，不需要根据用户查找用户组，所以knox对webhdfs的反向代理可以正常执行。
+
+#### 在本地创建用户和用户组
+在knox安装的节点手工创建用户和用户组：
+```
+$ sudo groupadd wang                     (增加用户组)
+$ useradd webb -g wang                   (增加用户并指定用户组)
+```
+将knox的用户模拟用户组设置恢复为:
+```
+hadoop.proxyuser.knox.groups = wang
+```
+重新测试knox对webhdfs的反向代理功能，执行成功：
+```
+$ curl -k -u webb:1 'https://c7301.ambari.apache.org:8443/gateway/default/webhdfs/v1/tmp?op=LISTSTATUS'
+```
+说明knox利用了linux本地的“根据用户id查找用户组”功能。
+
 ## 备忘
 
 knox安装目录: ```/usr/hdp/current/knox-server```。  
