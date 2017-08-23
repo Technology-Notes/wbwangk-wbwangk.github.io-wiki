@@ -440,31 +440,77 @@ $ curl -k -u webb:1 'https://c7301.ambari.apache.org:8443/gateway/default/webhdf
 ```
 说明knox利用了linux本地的“根据用户id查找用户组”功能。
 
-### 利用LDAP的用户组查找
-删除linux本地的用户组和用户：
+## LDAP与knox用户组权限
+首先，将[users2.ldif](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP#knox%E8%87%AA%E5%B8%A6sample)导入到LDAP中。  
+找到knox的`GATEWAY_HOME`(如`/usr/hdp/2.6.1.0-129/knox`)，新建一个文件`<GATEWAY_HOME>/conf/topologies/sample5.xml`：
 ```
-$ userdel webb                       (删除用户)
-$ groupdel wang                      (删除组)
+<topology>
+    <gateway>
+        <provider>
+            <role>authentication</role>
+            <name>ShiroProvider</name>
+            <enabled>true</enabled>
+            <param name="main.ldapRealm" value="org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm"/>
+            <param name="main.ldapContextFactory" value="org.apache.hadoop.gateway.shirorealm.KnoxLdapContextFactory"/>
+            <param name="main.ldapRealm.contextFactory" value="$ldapContextFactory"/>
+
+            <param name="main.ldapRealm.contextFactory.url" value="ldap://c7301.ambari.apache.org:389"/>
+            <param name="main.ldapRealm.contextFactory.systemUsername" value="cn=admin,dc=ambari,dc=apache,dc=org"/>
+            <param name="main.ldapRealm.contextFactory.systemPassword" value="1"/>
+
+            <param name="main.ldapRealm.userSearchBase" value="ou=People,dc=ambari,dc=apache,dc=org"/>
+            <param name="main.ldapRealm.userSearchAttributeName" value="uid"/>
+            <param name="main.ldapRealm.userObjectClass" value="person"/>
+
+            <param name="main.ldapRealm.authorizationEnabled" value="true"/>
+            <param name="main.ldapRealm.groupSearchBase" value="ou=Group,dc=ambari,dc=apache,dc=org"/>
+            <param name="main.ldapRealm.groupObjectClass" value="groupofnames"/>
+            <param name="main.ldapRealm.groupIdAttribute" value="cn"/>
+            <param name="main.ldapRealm.memberAttribute" value="member"/>
+
+            <param name="urls./**" value="authcBasic"/>
+        </provider>
+               <provider>
+                    <role>identity-assertion</role>
+                    <name>Default</name>
+                    <enabled>true</enabled>
+                </provider>
+
+                <provider>
+                    <role>authorization</role>
+                    <name>AclsAuthz</name>
+                    <enabled>true</enabled>
+                    <param name="knox.acl" value="*;scientist;*"/>
+                </provider>
+
+    </gateway>
+
+    <service>
+        <role>KNOX</role>
+    </service>
+</topology>
 ```
-确保在Ambair面板中通过HDFS-config的`Custom core-site`小节配置：
+用knox自带的测试工具进行测试：
 ```
-hadoop.proxyuser.knox.groups = wang
+$ /usr/hdp/2.6.1.0-129/knox/bin/knoxcli.sh user-auth-test --cluster default --u sam --p '1' --g
+LDAP authentication successful!
+sam is a member of: scientist
+sam is a member of: analyst
+$ /usr/hdp/2.6.1.0-129/knox/bin/knoxcli.sh user-auth-test --cluster default --u tom --p '1' --g
+LDAP authentication successful!
+tom is a member of: analyst
 ```
-在Ambari面板Knox-Configs的Advanced topology小节，向ShiroProvider中添加下列条目：
+上面的测试说明sam隶属于scientist组，而tom不是。  
+`<param name="knox.acl" value="*;scientist;*"/>`的含义是只有`scientist`用户组的用户可以通过sample5拓扑文件访问Knox管理API。  
+用curl测试：
 ```
-    <param>
-        <name>main.ldapGroupContextFactory</name>
-        <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapContextFactory</value>
-    </param>
-    <param>
-        <name>main.ldapRealm.contextFactory</name>
-        <value>$ldapGroupContextFactory</value>
-    </param>
-    <param>
-        <name>main.ldapRealm.searchBase</name>
-        <value>ou=Group,dc=ambari,dc=apache,dc=org</value>
-    </param>
+$ curl -ik -u sam:1 'https://c7301.ambari.apache.org:8443/gateway/sample5/api/v1/version'
+HTTP/1.1 200 OK
+$ curl -ik -u tom:1 'https://c7301.ambari.apache.org:8443/gateway/sample5/api/v1/version'
+HTTP/1.1 403 Forbidden
 ```
+说明knox的用户组权限起作用了。
+
 ## 备忘
 
 knox安装目录: ```/usr/hdp/current/knox-server```。  
