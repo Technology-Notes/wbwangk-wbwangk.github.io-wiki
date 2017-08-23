@@ -15,7 +15,7 @@ core-site.xml在文件系统中的位置是`/etc/hadoop/conf`，通过Ambari修�
 
 ## 两种认证方式的测试
  - ShiroProvider  
-对于LDAP/AD身份验证，使用用户名和密码。没有SPNEGO/Kerberos支持。  
+对于LDAP/AD身份验证，使用用户名和密码。没有SPNEGO/Kerberos支持。([这篇](https://cwiki.apache.org/confluence/display/KNOX/Using+Apache+Knox+with+ActiveDirectory)apache官方文档对于knox与LDAP的集成讲得很到位)  
  - HadoopAuth  
 对于SPNEGO/Kerberos身份验证，使用委派令牌。没有LDAP/AD支持。  
 
