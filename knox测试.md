@@ -394,7 +394,8 @@ $ curl  -k -u john:johnldap -X GET 'https://u1401.ambari.apache.org:8443/gateway
 关于用户模拟的原理可看考[hadoop安全](https://github.com/wbwangk/wbwangk.github.io/wiki/hadoop%E5%AE%89%E5%85%A8)。  
 
 ## 用户组映射
-为了更好地研究**用户组映射**功能，在新环境(centos7.3)中用ambari重新安装knox和openldap([1](https://imaidata.github.io/blog/ldap/))，然后用ShiroProvider将openldap配置为knox的用户存储(参照章节" ShiroProvider(LDAP认证)")。  
+[关于用户组查找的apache官方文档](http://knox.apache.org/books/knox-0-13-0/user-guide.html#LDAP+Group+Lookup)  
+为了更好地研究**用户组映射**功能，在新环境(centos7.3)中用ambari重新安装knox和openldap([1](https://imaidata.github.io/blog/ldap/))，然后用ShiroProvider将openldap配置为knox的用户存储(参照章节"[ShiroProvider(LDAP认证)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#shiroproviderldap%E8%AE%A4%E8%AF%81)")。  
 #### LDAP中增加用户、用户组
 部署了LDAP工具ldapscripts，利用ldapscripts添加用户`webb`和用户组`wang`：
 ```
@@ -439,6 +440,31 @@ $ curl -k -u webb:1 'https://c7301.ambari.apache.org:8443/gateway/default/webhdf
 ```
 说明knox利用了linux本地的“根据用户id查找用户组”功能。
 
+### 利用LDAP的用户组查找
+删除linux本地的用户组和用户：
+```
+$ userdel webb                       (删除用户)
+$ groupdel wang                      (删除组)
+```
+确保在Ambair面板中通过HDFS-config的`Custom core-site`小节配置：
+```
+hadoop.proxyuser.knox.groups = wang
+```
+在Ambari面板Knox-Configs的Advanced topology小节，向ShiroProvider中添加下列条目：
+```
+    <param>
+        <name>main.ldapGroupContextFactory</name>
+        <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapContextFactory</value>
+    </param>
+    <param>
+        <name>main.ldapRealm.contextFactory</name>
+        <value>$ldapGroupContextFactory</value>
+    </param>
+    <param>
+        <name>main.ldapRealm.searchBase</name>
+        <value>ou=Group,dc=ambari,dc=apache,dc=org</value>
+    </param>
+```
 ## 备忘
 
 knox安装目录: ```/usr/hdp/current/knox-server```。  
