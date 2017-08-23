@@ -223,7 +223,7 @@ john@u1410:/$
 ```
 john这个用户是之前的测试添加到LDAP数据库中的。由于在当前操作系统下没有/home/john目录，所以提示john用户的HOME目录变成了根目录。
 
-### 用户和用户组管理
+### ldap工具ldapscritps
 先在u1401上安装一个需要用到的软件包*ldapscritps*([1](https://github.com/martymac/ldapscripts))：
 ```
 $ sudo apt install ldapscripts
@@ -392,6 +392,53 @@ local4.* /var/log/ldap.log
 手工创建该日志：  
 ```
 $ touch /var/log/ldap.log
+```
+## knox自带sample
+knox在目录`/usr/hdp/2.6.1.0-129/knox/conf`下有个users.ldif文件，里面的数据带有用户和用户组，可以用来测试knox与LDAP的集成。现将这个文件进行修改，只留下用户、用户组的定义(users2.ldif)：
+```ldif
+version: 1
+# entry for sample user sam
+dn: uid=sam,ou=People,dc=ambari,dc=apache,dc=org
+objectclass:top
+objectclass:person
+objectclass:organizationalPerson
+objectclass:inetOrgPerson
+cn: sam
+sn: sam
+uid: sam
+userPassword:1
+
+# entry for sample user tom
+dn: uid=tom,ou=People,dc=ambari,dc=apache,dc=org
+objectclass:top
+objectclass:person
+objectclass:organizationalPerson
+objectclass:inetOrgPerson
+cn: tom
+sn: tom
+uid: tom
+userPassword:1
+
+# create the analyst group under groups
+dn: cn=analyst,ou=Group,dc=ambari,dc=apache,dc=org
+objectclass:top
+objectclass: groupofnames
+cn: analyst
+description:analyst  group
+member: uid=sam,ou=People,dc=ambari,dc=apache,dc=org
+member: uid=tom,ou=People,dc=ambari,dc=apache,dc=org
+
+# create the scientist group under groups
+dn: cn=scientist,ou=Group,dc=ambari,dc=apache,dc=org
+objectclass:top
+objectclass: groupofnames
+cn: scientist
+description: scientist group
+member: uid=sam,ou=People,dc=ambari,dc=apache,dc=org
+```
+将上述文件导入到LDAP中：
+```
+$ sudo ldapadd -x -D cn=admin,dc=ambari,dc=apache,dc=org -W -f users2.ldif 
 ```
 
 ## LDAP浏览器
