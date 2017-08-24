@@ -421,9 +421,12 @@ keytab文件的建议存放目录是$HADOOP_CONF_DIR目录(一般是/etc/hadoop/
 不管操作模式如何，用户身份机制对于HDFS本身是外在的。HDFS中没有规定创建用户身份，建立组或处理用户凭据。  
 
 #### 组映射
+参考了《Hadoop Security Protecting Your Big Data Platform.pdf》。  
 虽然HDFS上的文件与所有者和组相关联，但Hadoop本身并不具有组的定义。从用户到组的映射是由操作系统或LDAP完成的。
 一旦用户名被确定如上所述，组列表由组映射服务确定，由hadoop.security.group.mapping属性配置。  
 可以通过org.apache.hadoop.security.LdapGroupsMapping将替代实现直接连接到LDAP服务器来解析组列表。但是，只有在必需的组仅存在于LDAP中且不在Unix服务器上实现时，才应使用此提供程序。  
+hadoop在进行用户到用户组映射时，默认使用`ShellBasedUnixGroupsMapping`的机制。这是一个基于shell的实现，类似于`id -Gn`命令。  
+hadoop支持`LdapGroupsMapping`的实现。但选择这种实现会覆盖本地系统中用户和用户组，你将失去原来定义的hadoop服务账号如`hdfs`。所以建议将LDAP配置在操作系统级，使用类似SSSD的网络认证方案。
 
 ### 服务级别授权
 Hadoop支持服务级别授权。授权策略保存在hadoop-policy.xml中。在该xml中可以定义“权力清单（如提交作业到集群的权力）”与用户（用户组）的对应。用户之间用逗号隔开，用户与用户组之间用空格隔开。以空格开始表示只定义了用户组，以空格结尾表示只定义了用户。  
