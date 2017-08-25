@@ -12,8 +12,13 @@ authconfig: Authentication module /lib64/security/pam_ldap.so is missing. Authen
 上面的提示说明c7303节点缺少pam_ldap的认证模块。安装sssd:
 ```
 $ sudo yum install -y sssd
-$ authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver=ldap://c7301.ambari.apache.org:389 --ldapbasedn="dc=ambari,dc=apache,dc=org" --update
+$ authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver=ldap://c7301.ambari.apache.org:389/ --ldapbasedn="dc=ambari,dc=apache,dc=org" --update
 $ getent passwd webb                               
 webb:*:10002:5002:webb:/home/webb:/bin/sh
 ```
-安装sssd后，重新用`authconfig`配置ladp认证成功了。`webb`是LDAP中定义一个用户，本地没有这个用户。
+安装sssd后，默认是不自动运行的。要让sssd自动运行，需要使用`authconfig`来配置，例如：
+```
+$ authconfig --enablesssd --enablesssdauth --update
+```
+`webb`是LDAP中定义一个用户，本地没有这个用户。  
+sssd的默认配置文件是`vi /etc/sssd/sssd.conf`。打开这个配置文件可以看到之前`authconfig`命令行中的`ldapserver`、`ldapbasedn`等配置项。  
