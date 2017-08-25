@@ -90,6 +90,21 @@ dn: cn=admin,dc=ambari,dc=apache,dc=org
 ```dc=ambari,dc=apache,dc=org```是DIT的基础目录。OpenLDAP貌似会为本机根据/etc/hosts的内容自动创建条目。  
 ```cn=admin,dc=ambari,dc=apache,dc=org```是这个DIT的管理员(rootDN)。这个管理员是安装过程中创建的。  
 
+带过滤器的ldapsearch命令：
+```
+$ ldapsearch -x -LLL -b dc=ambari,dc=apache,dc=org -s sub '(&(uid=webb2)(objectclass=posixAccount)(uid=*)(&(uidNumber=*)(!(uidNumber=0))))'
+dn: uid=webb2,ou=People,dc=ambari,dc=apache,dc=org
+objectClass: account
+objectClass: posixAccount
+cn: webb2
+uid: webb2
+uidNumber: 10003
+gidNumber: 5002
+homeDirectory: /home/webb2
+loginShell: /bin/sh
+gecos: webb2
+description: User account
+```
 ### 向LDAP数据库中添加记录
 OpenLDAP的默认后端会把数据存放在LDIF格式的文本文件中。下面测试通过创建LDIF格式的文件来向数据库中添加条目。  
 将添加的内容有：
