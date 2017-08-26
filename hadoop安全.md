@@ -562,3 +562,10 @@ Kerberos一般部署在C/S环境，很少用于web应用和瘦客户端环境。
 [认证模式之Spnego模式](http://blog.csdn.net/wangyangzhizhou/article/details/51163782)
 
 [Hadoop Security Concepts](https://community.hortonworks.com/articles/102957/hadoop-security-concepts.html)  
+
+# 《Hadoop security Protecting Your Big Data Platform.pdf》
+#### hadoop用户提供(P93)
+为了保证安全，hadoop集群用户应使用默认shell为`/sbin/nologin`，并且利用`/etc/ssh/sshd`中的AllowUsers、DenyUsers、AllowGroups和DenyGroups来禁用SSH。
+(P95)  
+对于基于RPC的协议，SASL(Simple Authentication and Security Layer)框架用于对底层协议添加认证。理论上任何SASL机制都支持，但实际上，仅支持GSSAPI (仅Kerberos V5) 和 DIGESTMD5 (see “Tokens” on page 78 for details on DIGEST-MD5)。 Oozie使用SPNEGO(Simple
+and Protected GSSAPI Negotiation)机制，一个首先被微软在IE5.0.1和IIS5.0中实现的，通过HTTP协议实现kerberos认证的协议。  
