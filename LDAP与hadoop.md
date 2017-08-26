@@ -22,5 +22,3 @@ $ authconfig --enablesssd --enablesssdauth --update
 ```
 `webb`是LDAP中定义一个用户，本地没有这个用户。  
 sssd的默认配置文件是`vi /etc/sssd/sssd.conf`。打开这个配置文件可以看到之前`authconfig`命令行中的`ldapserver`、`ldapbasedn`等配置项。  
-#### hadoop用户提供
-为了保证安全，hadoop集群用户应使用默认shell为`/sbin/nologin`，并且利用`/etc/ssh/sshd`中的AllowUsers、DenyUsers、AllowGroups和DenyGroups来禁用SSH。
