@@ -1,5 +1,4 @@
-[一篇深入浅出的PAM文章](https://wenku.baidu.com/view/40c039fe04a1b0717fd5dd28.html)  
-[1](http://wpollock.com/AUnix2/PAM-Help.htm)  
+[一篇深入浅出的PAM文章](https://wenku.baidu.com/view/40c039fe04a1b0717fd5dd28.html)  [1](http://wpollock.com/AUnix2/PAM-Help.htm)  
 老版本PAM的配置文件是`/etc/pam.conf`的格式：
 ```
 service module_type control_flag module_path
