@@ -1,5 +1,5 @@
 [一篇深入浅出的PAM文章](https://wenku.baidu.com/view/40c039fe04a1b0717fd5dd28.html)  
-
+[1](http://wpollock.com/AUnix2/PAM-Help.htm)  
 老版本PAM的配置文件是`/etc/pam.conf`的格式：
 ```
 service module_type control_flag module_path
@@ -21,6 +21,7 @@ auth            sufficient      pam_rootok.so
 - 使用标准系统调用（绕过PAM），并将NSS配置为使用LDAP（或使用SSSD，SSSD又使用LDAP）。  
 
 #### PAM的例子
+[2](https://www.linux.com/news/understanding-pam)  
 ```
 auth       required     /lib/security/pam_securetty.so
 auth       required     /lib/security/pam_env.so
