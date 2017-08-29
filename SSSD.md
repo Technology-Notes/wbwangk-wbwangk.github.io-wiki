@@ -34,21 +34,23 @@ SSSD作为NSS的一个提供者服务，提供了几种NSS映射：
 - Netgroups (netgroups)
 - Services (services)
 
-1.使用身份验证配置工具启用SSSD。这将自动配置`/etc/nsswitch.conf`文件以使用SSSD作为提供者。
+1.使用身份验证配置工具启用SSSD。这将自动配置`/etc/nsswitch.conf`文件以使用SSSD作为提供者。  
+
 ⁠```
 ~]# authconfig --enablesssd --update
 ```
-然后nsswithch.conf变成下面这样：
+然后nsswithch.conf变成下面这样：  
 ```
 passwd:     files sss
 shadow:     files sss
 group:      files sss
 netgroup:   files sss
 ``` 
-2.也可以手工修改`/etc/nsswitch.conf`配置文件，增加sss模块到服务映射：
+2. 也可以手工修改`/etc/nsswitch.conf`配置文件，增加sss模块到服务映射：  
 ```
 services: file sss
 ```
+
 #### 配置服务:PAM
 使用`authconfig`启用SSSD作为系统认证：
 ```
