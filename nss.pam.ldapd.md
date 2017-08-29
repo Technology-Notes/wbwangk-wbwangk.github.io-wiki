@@ -1,10 +1,10 @@
-[1](https://arthurdejong.org/nss-pam-ldapd/setup)  
+[1](https://arthurdejong.org/nss-pam-ldapd/setup)   
 
 本文档描述了LDAP服务器中定义的用户和组如何登录到系统。系统通过NSS模块知道用户的存在，并通过PAM模块进行认证。
 
-如果您正在使用Debian，您应该可以跳过这些步骤，安装libnss-ldapd和libpam-ldapd软件包，回答配置问题并使其正常工作。有关详细信息，请参阅】[Debian wiki](http://wiki.debian.org/LDAP/NSS)。其他分销商也可能提供配置nss-pam-ldapd的帮助工具。
+如果您正在使用Debian，您应该可以跳过这些步骤，安装libnss-ldapd和libpam-ldapd软件包([2](https://wiki.debian.org/LDAP/NSS))，回答配置问题并使其正常工作。有关详细信息，请参阅】[Debian wiki](http://wiki.debian.org/LDAP/NSS)。其他分销商也可能提供配置nss-pam-ldapd的帮助工具。
 
-本指南涵盖最常见的配置，但nss-pam-ldapd 还支持TLS加密，使用Kerberos对LDAP服务器进行身份验证，使用Active Directory等等。有关详细信息，请参阅示例配置，[手册页](https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5)和[README](https://arthurdejong.org/nss-pam-ldapd/README)。
+本指南涵盖最常见的配置，但[nss-pam-ldapd](https://arthurdejong.org/nss-pam-ldapd/)还支持TLS加密，使用Kerberos对LDAP服务器进行身份验证，使用Active Directory等等。有关详细信息，请参阅示例配置，[手册页](https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5)和[README](https://arthurdejong.org/nss-pam-ldapd/README)。
 
 #### 开始前
 假定你已经不是了一个LDAP服务器：
@@ -31,6 +31,17 @@ $ authconfig --enableldap --ldapserver="ldap://c7301.ambari.apache.org/" --ldapb
 ```
 $ service nslcd status                (服务状态Active: active (running) )
 ```
+查看一下`/etc/nslcd.conf`中的重要配置：
+```
+uid nslcd
+gid ldap
+uri ldap://c7301.ambari.apache.org/
+base dc=ambari,dc=apache,dc=org
+ssl no
+tls_cacertdir /etc/openldap/cacerts
+```
+估计不使用`authconfig`，手工修改上述配置文件，手工启用`nslcd`服务也是可以的。  
+
 #### 测试LDAP
 ```
 $ cat /etc/passwd | grep webb                  (本地不存在用户webb)
@@ -50,4 +61,24 @@ group:      files sss ldap
 ```
 $ service nslcd stop
 $ getent passwd webb                            (显示不出webb用户的信息)
+```
+#### 离线缓存NSCD
+手工将c7301停机，然后再执行:
+```
+$ getent passwd webb                       (LDAP服务器当机后，不再显示webb用户信息)
+```
+NSCD提供NSS的缓存功能。NSCD的配置文件是`/etc/nscd.conf`，配置文件中与离线缓存有关的是：
+```
+reload-count            unlimited
+positive-time-to-live   <service>          #number of second
+```
+将passwd和group服务缓存设置为30天的配置：
+```
+positive-time-to-live   passwd          2592000
+positive-time-to-live   group           2592000
+```
+手工刷新缓存：
+```
+# nscd -i passwd
+# nscd -i group
 ```
