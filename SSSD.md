@@ -47,11 +47,7 @@ netgroup:   files sss
 ``` 
 2.也可以手工修改`/etc/nsswitch.conf`配置文件，增加sss模块到服务映射：
 ```
-~]# vim /etc/nsswitch.conf
-
-...
 services: file sss
-...
 ```
 #### 配置服务:PAM
 使用`authconfig`启用SSSD作为系统认证：
