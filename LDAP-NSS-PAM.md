@@ -1,3 +1,4 @@
+## 第一章：LDAP NSS
 [参考](https://wiki.debian.org/LDAP/NSS )[1](https://arthurdejong.org/nss-pam-ldapd/setup)   
 
 本文档描述了LDAP服务器中定义的用户和组如何登录到系统。系统通过NSS模块知道用户的存在，并通过PAM模块进行认证。
@@ -83,3 +84,69 @@ positive-time-to-live   group           2592000
 # nscd -i passwd
 # nscd -i group
 ```
+
+## 第二章：LDAP PAM
+[原文](https://wiki.debian.org/LDAP/PAM)  
+基本上有两种方法配置PAM以使linux用LDAP服务器认证。第一个方法利用[libpam-ldap](https://packages.debian.org/libpam-ldap)包中的pam_ldap模块检查LDAP服务器的凭据。第二种方法是使用NSS从LDAP服务器发送到客户端的密码哈希值。然后传统的pam_unix模块进行认证。在后面方法中，pam_ldap仍然可以用于更改密码。这两种解决方案都各有利弊。
+
+在这两种情况下，用户都通过NSS暴露。值得注意的是，如果在以root用户身份运行时使用getent shadow返回密码散列，则需要pam_unix方法。
+
+纯pam_ldap解决方案允许通过将用户存储在不同的目录来限制登录（例如，仅允许登录目录中的某个目录中的用户，需要某些属性等）。它还需要较少的LDAP目录访问权限，并且不会公开密码散列。
+
+pam_unix的解决方案可能是系统管理员比较熟悉。
+
+### 方法一：使用libpam-ldap
+通过第一章安装`nss-pam-ladpd`软件包后，会安装一个叫`pam_ldap.so`PAM模块：
+```
+$ yum -y install nss-pam-ladpd
+$ ls /lib64/security/pam_ldap.so
+```
+现在利用这个pam模块来配置linux使用LDAP登录。编辑配置文件`/etc/pam.d/system-auth`，增加4个pam_ldap.so的行：
+```
+#%PAM-1.0
+# This file is auto-generated.
+# User changes will be destroyed the next time authconfig is run.
+auth        required      pam_env.so
+auth        sufficient    pam_unix.so nullok try_first_pass
+auth        requisite     pam_succeed_if.so uid >= 1000 quiet_success
+auth        sufficient    pam_ldap.so use_first_pass
+auth        required      pam_deny.so
+
+account     required      pam_unix.so broken_shadow
+account     sufficient    pam_localuser.so
+account     sufficient    pam_succeed_if.so uid < 1000 quiet
+account     [default=bad success=ok user_unknown=ignore] pam_ldap.so
+account     required      pam_permit.so
+
+password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type=
+password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok
+password    sufficient    pam_ldap.so
+password    required      pam_deny.so
+
+session     optional      pam_keyinit.so revoke
+session     required      pam_limits.so
+-session     optional      pam_systemd.so
+session     optional      pam_mkhomedir.so umask=0077
+session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
+session     required      pam_unix.so
+session     optional      pam_ldap.so
+```
+测试一下使用webb用户登录：
+```
+$ getent passwd webb
+webb:*:10002:5002:webb:/home/webb:/bin/sh
+$ su - webb
+Password:
+Last login: Fri Aug 25 02:47:32 UTC 2017 on pts/0
+$ whoami                                  (显示当前用户)
+webb
+$ id -Gn                                  (显示当前用户所属的组)
+wang
+```
+### 方法二：使用pam_unix
+也可以使用普通旧的pam_unix，确保/etc/nsswitch.conf包含像shadow：files ldap和getent shadow显示密码哈希。  
+实测发现getent shadow无法显示密码哈希值：
+```
+$ getent shadow webb                    (没有返回密码哈希值)
+```
+导致这种方法不能用，原因不明！
