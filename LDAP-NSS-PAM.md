@@ -1,5 +1,5 @@
 ## 第一章：LDAP NSS
-[参考](https://wiki.debian.org/LDAP/NSS )[1](https://arthurdejong.org/nss-pam-ldapd/setup)   
+[原文](https://wiki.debian.org/LDAP/NSS )[1](https://arthurdejong.org/nss-pam-ldapd/setup)   
 
 本文档描述了LDAP服务器中定义的用户和组如何登录到系统。系统通过NSS模块知道用户的存在，并通过PAM模块进行认证。
 
