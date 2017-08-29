@@ -11,6 +11,7 @@
 - LDAP服务器URI(如ldap://c7301.ambari.apache.org)
 - LDAP服务器搜索基础(如dc=ambari,dc=apache,dc=org)
 本测试在centos7.3下进行，而且是刚刚部署的干净的centos7.3。  
+本测试中使用webb用户可以通过[ldapscripts](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP#ldap%E5%B7%A5%E5%85%B7ldapscritps)添加到LDAP中。  
 
 #### 安装
 ```
