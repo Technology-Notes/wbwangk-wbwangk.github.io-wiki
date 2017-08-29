@@ -149,9 +149,9 @@ wang
 ```
 $ getent shadow webb                    (没有返回密码哈希值)
 ```
-webb用户按说已经用下列命令在LDAP中生成了密码：
+webb用户按说已经用下列命令[ldapscritps](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP#ldap%E5%B7%A5%E5%85%B7ldapscritps)在LDAP中生成了密码：
 ```
-
+$ sudo ldapsetpasswd webb
 ```
 导致这种方法不能用，原因不明！
 
