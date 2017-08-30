@@ -98,7 +98,7 @@ pam_unix的解决方案可能是系统管理员比较熟悉。
 ### 方法一：使用libpam-ldap
 通过第一章安装`nss-pam-ladpd`软件包后，会安装一个叫`pam_ldap.so`PAM模块：
 ```
-$ yum -y install nss-pam-ladpd
+$ yum -y install nss-pam-ldapd
 $ ls /lib64/security/pam_ldap.so
 ```
 现在利用这个pam模块来配置linux使用LDAP登录。编辑配置文件`/etc/pam.d/system-auth`，增加4个pam_ldap.so的行：
