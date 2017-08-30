@@ -18,4 +18,10 @@ $ yum -y install httpd
 $ service httpd start
 $ curl localhost
 ```
-虚机IP是192.168.73.101，在windows下
+虚机IP是192.168.73.101，在windows下用浏览器访问地址：`http://192.168.73.101/man/scp.1.html`即可。
+
+### 更简单的办法
+```
+$ man scp > /var/www/html/man/scp.txt
+```
+然后再浏览器下用浏览器访问地址：`http://192.168.73.101/man/scp.txt`即可。只是纯文本，格式差一些。  
