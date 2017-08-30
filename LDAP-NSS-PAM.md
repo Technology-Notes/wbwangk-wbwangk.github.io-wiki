@@ -48,7 +48,7 @@ tls_cacertdir /etc/openldap/cacerts
 ```
 $ cat /etc/passwd | grep webb                  (本地不存在用户webb)
 $ getent passwd webb
-webb:*:10002:5002:webb:/home/webb:/bin/sh
+webb:*:40091:5002:webb:/home/webb:/bin/bash
 ```
 上面的星号表示这个用户可以找到，但不能用来登录。  
 
