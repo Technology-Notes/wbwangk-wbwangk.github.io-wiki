@@ -101,7 +101,11 @@ pam_unix的解决方案可能是系统管理员比较熟悉。
 $ yum -y install nss-pam-ldapd
 $ ls /lib64/security/pam_ldap.so
 ```
-现在利用这个pam模块来配置linux使用LDAP登录。编辑配置文件`/etc/pam.d/system-auth`，增加4个pam_ldap.so的行：
+利用centos的auth配置工具来修改pam配置文件：
+```
+$ authconfig --enableldapauth --update
+```
+执行后，`/etc/pam.d`目录下的几个配置文件，如password-auth、system-auth都增加了`pam_ldap.so`的参数。下面是`/etc/pam.d/system-auth`的样子（增加4个pam_ldap.so的行）：
 ```
 #%PAM-1.0
 # This file is auto-generated.
@@ -131,6 +135,12 @@ session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet 
 session     required      pam_unix.so
 session     optional      pam_ldap.so
 ```
+上述PAM配置依赖`nslcd`服务。所以更完整的authconfig命令是：
+```
+$ authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver="c7301.ambari.apache.org" --ldapbasedn="dc=ambari,dc=apache,dc=org" --update
+```
+总结一下：` --enableldap`参数修改了配置文件`/etc/nslcd.conf`；`----enableldapauth`参数修改了`/etc/pam.d/`下PAM配置文件。
+
 测试一下使用webb用户登录：
 ```
 $ getent passwd webb
