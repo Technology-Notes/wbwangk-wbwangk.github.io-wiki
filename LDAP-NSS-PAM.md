@@ -105,7 +105,7 @@ $ ls /lib64/security/pam_ldap.so
 ```
 $ authconfig --enableldapauth --update
 ```
-执行后，`/etc/pam.d`目录下的几个配置文件，如password-auth、system-auth都增加了`pam_ldap.so`的参数。下面是`/etc/pam.d/system-auth`的样子（增加4个pam_ldap.so的行）：
+执行后，`/etc/pam.d`目录下的几个与auth配置文件，如fingerprint-auth、password-auth、smartcard-auth、system-auth都增加了`pam_ldap.so`的参数。下面是`/etc/pam.d/system-auth`的样子（增加4个pam_ldap.so的行）：
 ```
 #%PAM-1.0
 # This file is auto-generated.
@@ -139,7 +139,7 @@ session     optional      pam_ldap.so
 ```
 $ authconfig --enableldap --enableldapauth --enablemkhomedir --ldapserver="c7301.ambari.apache.org" --ldapbasedn="dc=ambari,dc=apache,dc=org" --update
 ```
-总结一下：` --enableldap`参数修改了配置文件`/etc/nslcd.conf`；`----enableldapauth`参数修改了`/etc/pam.d/`下PAM配置文件。
+总结一下：` --enableldap`参数修改了配置文件`/etc/nslcd.conf`；`----enableldapauth`参数修改了`/etc/pam.d/`下的认证相关PAM配置文件。
 
 测试一下使用webb用户登录：
 ```
