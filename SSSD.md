@@ -1,5 +1,11 @@
 [参考1](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/SSSD-Introduction.html)  
+本文与另一篇文章《[LDAP NSS PAM](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP-NSS-PAM)》相关。这两篇文章都是关于使用LDAP实现linux的远程命名服务和远程认证功能。一个使用nslcd进程，一个使用sssd进程。  
+
 SSSD服务是一种远程身份提供程序的本地缓存。即使本机或远程身份提供程序脱机，仍可以利用SSSD缓存进行用户身份的验证。  
+### 安装
+```
+$ sudo yum -y install sssd
+```
 ### 配置文件
 SSSD服务的默认配置文件是`/etc/sssd/sssd.conf`。  
 SSSD服务的配置文件分成三部分：  
@@ -35,52 +41,38 @@ filter_users = root
 entry_cache_timeout = 300
 entry_cache_nowait_percentage = 75
 ```
-c7301节点的OpenLDAP服务器已经被配置为启用TLS/SSL。OpenLDAP启用TLS/SSL的方法参考博文《[LDAP进阶](https://imaidata.github.io/blog/ldap2/)》。
-
+c7301节点的OpenLDAP服务器已经被配置为启用TLS/SSL。OpenLDAP启用TLS/SSL的方法参考博文《[LDAP进阶](https://imaidata.github.io/blog/ldap2/)》。  
+如果ca.crt还没有从LDAP服务器上复制过来就执行：
+```
+$ scp root@c7301:/opt/ca/ca.crt /etc/ssl
+```
 ### 服务启动
 ```
+$ chmod 600 /etc/sssd/sssd.conf
 $ service sssd start
 ```
-默认SSSD不是配置为自动运行的。有两种方式可以将SSSD设置为自动运行:
-1.用`authconfig`命令启用SSSD：
+### 测试一下NSS功能
 ```
-~]# authconfig --enablesssd --enablesssdauth --update
+$ id sam
+uid=10004(sam) gid=5004(scientist) groups=5004(scientist),5003(analyst)
 ```
-2.用chkconfig命令将SSSD进入加入到启动列表中：
-```
-~]# chkconfig sssd on
-```
-#### 配置服务:NSS
-Name Service Switch (NSS)  
-SSSD作为NSS的一个提供者服务，提供了几种NSS映射：
-- Passwords (passwd)
-- User groups (shadow)
-- Groups (groups)
-- Netgroups (netgroups)
-- Services (services)
-
-1. 使用身份验证配置工具启用SSSD。这将自动配置`/etc/nsswitch.conf`文件以使用SSSD作为提供者。  
-```
-~]# authconfig --enablesssd --update
-```
-然后nsswithch.conf变成下面这样：  
+#### 解释一下NSS+SSSD的原理
+看一下NSS(Name Service Switch)的配置文件`/etc/nsswitch.conf`，可以看到以下的内容：
 ```
 passwd:     files sss
 shadow:     files sss
 group:      files sss
-netgroup:   files sss
-``` 
-2. 也可以手工修改`/etc/nsswitch.conf`配置文件，增加sss模块到服务映射：  
-```
-services: file sss
-```
+```   
+当执行`id sam`命令时，linux会根据`nsswitch.conf`配置文件中的`passwd`参数查看用户。根据`files`设置，系统会去`/etc/passwd`文件中去找。发现sam里面没有sam用户。然后NSS根据配置文件中`sss`设置，向SSSD服务请求，SSSD服务根据sssd.conf中的配置到LDAP服务器中去找，终于找到了sam用户。  
 
-#### 配置服务:PAM
+### 配置服务:PAM
+pam的配置文件位于`/etc/pam.d/`目录下。这个目录下有多个文件，貌似带auth的文件是与认证有关的。可以打开`/etc/pam.d/password-auth`看看。可以看到利用的用户认证模块是`pam_unix.so`。
+
 使用`authconfig`启用SSSD作为系统认证：
 ```
-# authconfig --update --enablesssd --enablesssdauth
+# authconfig --enablesssdauth --update
 ```
-导致PAM配置文件增加了`pam_sss.so`配置项，以`/etc/pam.d/password-auth`为例：
+上述命令导致PAM配置文件增加了`pam_sss.so`配置项，以`/etc/pam.d/password-auth`为例：
 ```
 #%PAM-1.0
 # This file is auto-generated.
@@ -111,12 +103,8 @@ session     required      pam_unix.so
 session     optional      pam_sss.so
 ```
 测试SSSD的LDAP中的数据参考文章《[LDAP进阶](https://imaidata.github.io/blog/ldap2/)》。  
-首先测试NSS功能：
-```
-$ id sam
-uid=10004(sam) gid=5004(scientist) groups=5004(scientist),5003(analyst)
-```
-再测试PAM功能：
+
+测试PAM的认证功能：
 ```
 $ id                         (显示当前用户为vagrant)
 uid=1000(vagrant) gid=1000(vagrant) groups=1000(vagrant)
