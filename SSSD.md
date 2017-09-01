@@ -134,3 +134,6 @@ Password for sam@AMBARI.APACHE.ORG: 1
 sam@AMBARI.APACHE.ORG : scientist analyst
 ```
 通过上述测试可以看到hdfs找到了LDAP中定义的sam用户和sam用户所属的组(scientist和analyst)。  
+
+来自社区sssd标签的参考资料：  
+https://github.com/HortonworksUniversity/Security_Labs#lab-1
