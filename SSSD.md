@@ -136,5 +136,48 @@ sam@AMBARI.APACHE.ORG : scientist analyst
 ```
 通过上述测试可以看到hdfs找到了LDAP中定义的sam用户和sam用户所属的组(scientist和analyst)。  
 
+### SSSD与kerberos集成
+[参考](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/5/html/Deployment_Guide/Configuring_Domains-Setting_up_Kerberos_Authentication.html)  
+下面的测试在c7303上进行。  
+id提供商仍是ldap，auth提供商换成kerberos。则`/etc/sssd/sss.conf`设置为：
+```
+[sssd]
+domains = ambari.apache.org
+services = nss,pam
+
+[domain/ambari.apache.org]
+enumerate = false
+id_provider = ldap
+chpass_provider = krb5
+ldap_uri = ldaps://c7301.ambari.apache.org
+ldap_search_base = dc=ambari,dc=apache,dc=org
+ldap_tls_reqcert = demand
+ldap_tls_cacert = /etc/ssl/ca.crt
+
+auth_provider = krb5
+krb5_server = c7301.ambari.apache.org
+krb5_realm = AMBARI.APACHE.ORG
+krb5_kpasswd = c7301.ambari.apache.org
+krb5_auth_timeout = 15
+
+[nss]
+filter_groups = root
+filter_users = root
+entry_cache_timeout = 300
+entry_cache_nowait_percentage = 75
+```
+在KDC(c7301)上创建主体sam@AMBARI.APACHE.ORG，密码是2：
+```
+# kadmin.local -q "addprinc -pw 2 sam"
+```
+下面仍在c7303上进行测试。在sssd服务器重启前，确保nscd服务没启动、ca.crt已经复制好、sssd.conf的权限是600，然后：
+```
+$ su - sam
+Password: 2
+Last login: Fri Sep  1 08:07:15 UTC 2017 on pts/0
+$ groups sam
+sam : scientist analyst
+```
+
 来自社区sssd标签的参考资料：  
 https://github.com/HortonworksUniversity/Security_Labs#lab-1
