@@ -59,6 +59,8 @@ $ service sssd start
 ```
 $ id sam
 uid=10004(sam) gid=5004(scientist) groups=5004(scientist),5003(analyst)
+$ groups sam
+sam : scientist analyst
 ```
 #### 解释一下NSS+SSSD的原理
 看一下NSS(Name Service Switch)的配置文件`/etc/nsswitch.conf`，可以看到以下的内容：
@@ -68,6 +70,10 @@ shadow:     files sss
 group:      files sss
 ```   
 当执行`id sam`命令时，linux会根据`nsswitch.conf`配置文件中的`passwd`参数查看用户。根据`files`设置，系统会去`/etc/passwd`文件中去找。发现sam里面没有sam用户。然后NSS根据配置文件中`sss`设置，向SSSD服务请求，SSSD服务根据sssd.conf中的配置到LDAP服务器中去找，终于找到了sam用户。  
+
+#### 碰到的问题
+1. sssd.conf的posix权限不是600导致sssd服务启动失败  
+2. nscd服务与sssd服务冲突。停止nscd服务，并禁用：`systemctl disable nscd`  
 
 ### 配置服务:PAM
 pam的配置文件位于`/etc/pam.d/`目录下。这个目录下有多个文件，貌似带auth的文件是与认证有关的。可以打开`/etc/pam.d/password-auth`看看。可以看到利用的用户认证模块是`pam_unix.so`。
@@ -110,9 +116,21 @@ session     optional      pam_sss.so
 
 测试PAM的认证功能：
 ```
-$ id                         (显示当前用户为vagrant)
+$ id sam                        (显示当前用户为vagrant)
 uid=1000(vagrant) gid=1000(vagrant) groups=1000(vagrant)
 $ su - sam                   (切换为定义在LDAP中的sam用户，提示输入密码，密码也在LDAP中定义)
 $ id                         (显示当前用户为sam，表示通过PAM的SSSD认证成功)
 uid=10004(sam) gid=5004(scientist) groups=5004(scientist),5003(analyst) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 ```
+### SSSD与hadoop用户组映射
+当hadoop集群的各个节点都配置好SSSD后，hadoop自动通过当前节点的NSS获取用户和用户组信息。  
+首先，检查一下hadoop的配置，注意将《[hadoop组映射-LDAP集成](https://imaidata.github.io/blog/2017/09/01/hadoop%E7%BB%84%E6%98%A0%E5%B0%84-LDAP%E9%9B%86%E6%88%90/)》中配置的参数都删除，恢复到默认配置，重启hdfs服务。  
+```
+# groups sam
+sam : scientist analyst
+# kinit sam
+Password for sam@AMBARI.APACHE.ORG: 1
+# hdfs groups
+sam@AMBARI.APACHE.ORG : scientist analyst
+```
+通过上述测试可以看到hdfs找到了LDAP中定义的sam用户和sam用户所属的组(scientist和analyst)。  
