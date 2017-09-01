@@ -74,6 +74,7 @@ group:      files sss
 #### 碰到的问题
 1. sssd.conf的posix权限不是600导致sssd服务启动失败  
 2. nscd服务与sssd服务冲突。停止nscd服务，并禁用：`systemctl disable nscd`  
+3. 忘记复制ca.crt，sssd服务启动正常，就是`id sam`执行不行
 
 ### 配置服务:PAM
 pam的配置文件位于`/etc/pam.d/`目录下。这个目录下有多个文件，貌似带auth的文件是与认证有关的。可以打开`/etc/pam.d/password-auth`看看。可以看到利用的用户认证模块是`pam_unix.so`。
