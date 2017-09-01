@@ -1,5 +1,5 @@
 [参考1](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Deployment_Guide/SSSD-Introduction.html)  
-本文与另一篇文章《[LDAP NSS PAM](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP-NSS-PAM)》相关。这两篇文章都是关于使用LDAP实现linux的远程命名服务和远程认证功能。一个使用nslcd进程，一个使用sssd进程。  
+本文与另一篇文章《[NSLCD](https://github.com/wbwangk/wbwangk.github.io/wiki/NSLCD)》相关。这两篇文章都是关于使用LDAP实现linux的远程命名服务和远程认证功能。一个使用nslcd进程，一个使用sssd进程。  
 
 SSSD服务是一种远程身份提供程序的本地缓存。即使本机或远程身份提供程序脱机，仍可以利用SSSD缓存进行用户身份的验证。  
 ### 安装
