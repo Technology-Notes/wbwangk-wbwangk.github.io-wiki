@@ -53,7 +53,6 @@ $ scp root@c7301:/opt/ca/ca.crt /etc/ssl
 ```
 ### 服务启动
 ```
-$ chmod 600 /etc/sssd/sssd.conf
 $ service sssd start
 ```
 ### 测试一下NSS功能
