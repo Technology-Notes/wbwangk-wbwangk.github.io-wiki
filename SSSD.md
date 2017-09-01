@@ -41,6 +41,11 @@ filter_users = root
 entry_cache_timeout = 300
 entry_cache_nowait_percentage = 75
 ```
+创建完sssd.conf文件后一定要确保它的访问权限是600，否则sssd服务会启动失败：  
+```
+# chmod 600 /etc/sssd/sssd.conf
+```
+
 c7301节点的OpenLDAP服务器已经被配置为启用TLS/SSL。OpenLDAP启用TLS/SSL的方法参考博文《[LDAP进阶](https://imaidata.github.io/blog/ldap2/)》。  
 如果ca.crt还没有从LDAP服务器上复制过来就执行：
 ```
