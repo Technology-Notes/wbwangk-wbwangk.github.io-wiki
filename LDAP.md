@@ -254,7 +254,7 @@ SERVER="ldap://localhost"
 BINDDN='cn=admin,dc=ambari,dc=apache,dc=org'
 BINDPWDFILE="/etc/ldapscripts/ldapscripts.passwd"
 SUFFIX='dc=ambari,dc=apache,dc=org'
-GSUFFIX='ou=Group'
+GSUFFIX='ou=Groups'
 USUFFIX='ou=People'
 MSUFFIX='ou=Computer'
 GIDSTART=5000
@@ -435,7 +435,7 @@ uid: tom
 userPassword:1
 
 # create the analyst group under groups
-dn: cn=analyst,ou=Group,dc=ambari,dc=apache,dc=org
+dn: cn=analyst,ou=Groups,dc=ambari,dc=apache,dc=org
 objectclass:top
 objectclass: groupofnames
 cn: analyst
@@ -444,7 +444,7 @@ member: uid=sam,ou=People,dc=ambari,dc=apache,dc=org
 member: uid=tom,ou=People,dc=ambari,dc=apache,dc=org
 
 # create the scientist group under groups
-dn: cn=scientist,ou=Group,dc=ambari,dc=apache,dc=org
+dn: cn=scientist,ou=Groups,dc=ambari,dc=apache,dc=org
 objectclass:top
 objectclass: groupofnames
 cn: scientist
