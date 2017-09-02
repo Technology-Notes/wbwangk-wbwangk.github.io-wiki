@@ -398,6 +398,165 @@ modifying entry "olcDatabase={1}hdb,cn=config"              （ctrl+D返回到�
 注意，第一个OlcAccess后面的内容很长，中间不要有换行，否则两次回车后会报错。进入命令行状态后（没有任何提示，只是光标进入下一行），直接把“两次回车”之前的内容粘贴即可。可以用ldapsearch命令检查修改的结果。  
 完成上述7个步骤后，LDAP将可以作为kerberos的主体数据库了。  
 
+## centos7下KDC集成LDAP
+centos7.3，安装kerberos KDC和OpenLDAP。  
+安装两者集成软件包：
+```
+# yum -y install krb5-server-ldap
+```
+
+随`krb5-server-ldap`安装包带了kerberos的LDAP schema，将它复制到openldap：
+```
+# cp /usr/share/doc/krb5-server-ldap-1.14.1/kerberos.schema /etc/openldap/schema
+```
+openldap的schema目录(/etc/openldap/schema)下有很多.schema文件，但不见得都已经导入了数据库，可以这样看一下哪些schema已经导入到了数据库中：
+```
+# ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=schema,cn=config dn: cn=
+dn: cn=schema,cn=config
+dn: cn={0}core,cn=schema,cn=config
+dn: cn={1}cosine,cn=schema,cn=config
+dn: cn={2}nis,cn=schema,cn=config
+dn: cn={3}inetorgperson,cn=schema,cn=config
+```
+已经有4个schema已经导入到了数据库中，现在要导入的是第5个。  
+创建一个 schema_convert.conf，包括下列内容：
+```
+include /etc/openldap/schema/core.schema
+include /etc/openldap/schema/cosine.schema
+include /etc/openldap/schema/nis.schema
+include /etc/openldap/schema/inetorgperson.schema
+include /etc/openldap/schema/kerberos.schema
+```
+然后执行：
+```
+# mkdir /tmp/ldif_output
+# slapcat -f schema_convert.conf -F /tmp/ldif_output -n0 -s "cn={4}kerberos,cn=schema,cn=config" > /tmp/cn=kerberos.ldif
+```
+编辑`/tmp/cn\=kerberos.ldif`文件，将内容修改成类似下列的样子(就是把`{4}`删除):
+```
+dn: cn=kerberos,cn=schema,cn=config
+...
+cn: kerberos
+```
+并且删除文件最后几行，删除的几行大约的样子：
+```
+structuralObjectClass: olcSchemaConfig
+entryUUID: 18ccd010-746b-102d-9fbe-3760cca765dc
+creatorsName: cn=config
+createTimestamp: 20090111203515Z
+entryCSN: 20090111203515.326445Z#000000#000#000000
+modifiersName: cn=config
+modifyTimestamp: 20090111203515Z
+```
+将这个ldif文件导入到LDAP数据库中：
+```
+# ldapadd -Q -Y EXTERNAL -H ldapi:/// -f /tmp/cn\=kerberos.ldif
+```
+为`krb5principalname`属性增加索引(交互式命令行，也可以把输入的内容放入文件，然后用`-f`参数从文件读入)：
+```
+# ldapmodify -Q -Y EXTERNAL -H ldapi:///
+
+dn: olcDatabase={2}hdb,cn=config
+add: olcDbIndex
+olcDbIndex: krbPrincipalName eq,pres,sub
+
+modifying entry "olcDatabase={2}hdb,cn=config"
+```
+创建一个krb5.acl：
+```
+dn: olcDatabase={2}hdb,cn=config
+replace: olcAccess
+olcAccess: to attrs=userPassword,shadowLastChange,krbPrincipalKey by dn="cn=admin,dc=ambari,dc=apache,dc=org" write by anonymous auth by self write by * none
+
+dn: olcDatabase={2}hdb,cn=config
+add: olcAccess
+olcAccess: to dn.base="" by * read
+
+dn: olcDatabase={2}hdb,cn=config
+add: olcAccess
+olcAccess: to * by dn="cn=admin,dc=ambari,dc=apache,dc=org" write by * read
+```
+将上述acl导入到数据库中：
+```
+# ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f krb5.acl
+modifying entry "olcDatabase={2}hdb,cn=config"
+```
+#### 在LDAP中创建kdc和kadmin的dn
+创建`add_kdc_kadmin.ldif`文件, 内容为:
+```
+dn: uid=kadmind,ou=People,dc=ambari,dc=apache,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+userPassword: 1
+cn: LDAP admin account
+uid: kadmind
+sn: kadmind
+uidNumber: 1002
+gidNumber: 100
+homeDirectory: /home/ldap
+loginShell: /bin/bash
+
+dn: uid=krb5kdc,ou=People,dc=ambari,dc=apache,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+userPassword: 1
+cn: LDAP admin account
+uid: krb5kdc
+sn: krb5kdc
+uidNumber: 1003
+gidNumber: 100
+homeDirectory: /home/ldap
+loginShell: /bin/bash
+```
+将`add_kdc_kadmin.ldif`导入到LDAP数据库中：
+```
+# ldapadd -x -D "cn=admin,dc=ambari,dc=apache,dc=org" -w 1 -f add_kdc_kadmin.ldif -H ldapi:///
+```
+#### 为kdc和kadmin的dn生成密码文件
+在上执行下面的语句并分别输入在`add_kdc_kadmin.ldif`中配置的对应的密码(即属性userPassword)：
+```
+# kdb5_ldap_util stashsrvpw -f /var/kerberos/krb5kdc/ldap.stash "uid=kadmind,ou=People,dc=ambari,dc=apache,dc=org"
+# kdb5_ldap_util stashsrvpw -f /var/kerberos/krb5kdc/ldap.stash "uid=krb5kdc,ou=People,dc=ambari,dc=apache,dc=org"
+```
+#### 配置kdc
+编辑KDC配置文件`/var/kerberos/krb5kdc/kdc.conf`为下面的样子：
+```
+[kdcdefaults]
+ kdc_ports = 88
+ kdc_tcp_ports = 88
+
+[realms]
+ AMBARI.APACHE.ORG = {
+  #master_key_type = aes256-cts
+  acl_file = /var/kerberos/krb5kdc/kadm5.acl
+  dict_file = /usr/share/dict/words
+  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
+  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal camellia256-cts:normal camellia128-cts:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
+  database_module = openldap_ldapconf
+ }
+
+[dbdefaults]
+    ldap_kerberos_container_dn = cn=krbcontainer,dc=ambari,dc=apache,dc=org
+
+[dbmodules]
+  openldap_ldapconf = {
+    db_library = kldap
+    ldap_kdc_dn = uid=krb5kdc,ou=People,dc=ambari,dc=apache,dc=org
+    ldap_kadmind_dn = uid=kadmind,ou=People,dc=ambari,dc=apache,dc=org
+    ldap_service_password_file = /var/kerberos/krb5kdc/ldap.stash
+    ldap_servers = ldap://c7301.ambari.apache.org/
+    ldap_conns_per_server = 5
+  }
+```
+#### 在LDAP中创建realm
+```
+# kdb5_ldap_util -D cn=admin,dc=ambari,dc=apache,dc=org create -r AMBARI.APACHE.ORG -s
+```
+
+
+
 ## OpenLDAP日志
 OpenLDAP logs via syslogd (using LOCAL4)。参考[loglevel](http://www.zytrax.com/books/ldap/ch6/#loglevel)  
 centos7内置的日志系统是rsyslog，它的主配置文件是` /etc/rsyslog.conf`。在该配置文件上增加：
