@@ -573,6 +573,7 @@ local4.* /var/log/ldap.log
 手工创建该日志：  
 ```
 $ touch /var/log/ldap.log
+$ service rsyslog restart
 ```
 ## knox自带sample
 knox在目录`/usr/hdp/2.6.1.0-129/knox/conf`下有个users.ldif文件，里面的数据带有用户和用户组，可以用来测试knox与LDAP的集成。现将这个文件进行修改，只留下用户、用户组的定义(users2.ldif)：
