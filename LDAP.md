@@ -404,18 +404,14 @@ modifying entry "olcDatabase={1}hdb,cn=config"              （ctrl+D返回到�
 2. 更改LDAP访问控制列表(ACL)，以便kerberos可以读写LDAP中的数据  
 3. 用 kdb5_ldap_util在LDAP创建kerberos领域  
 
-centos7.3，已安装kerberos KDC和OpenLDAP。  
-安装两者集成软件包：
-```
-# yum -y install krb5-server-ldap
-```
-
-### 导入kerberos Schema到LDAP
+测试环境：centos7.3(使用了节点c7306)，已安装kerberos KDC和OpenLDAP。kerberos KDC安装好后，默认使用文件系统作为数据存储。前面的章节“kerberos与LDAP”讲的是ubuntu下将KDC存储更换为LDAP。本章讲的是如何在centos下将KDC后台存储更换为LDAP。centos下的操作与ubuntu基本一样，只在细节上略有差异。  
+  
+### 1.导入kerberos Schema到LDAP
 随`krb5-server-ldap`安装包带了kerberos的LDAP schema，将它复制到openldap相应目录下：
 ```
 # cp /usr/share/doc/krb5-server-ldap-1.14.1/kerberos.schema /etc/openldap/schema
 ```
-openldap的schema目录(/etc/openldap/schema)下有很多.schema文件，但不见得都已经导入了数据库，可以这样看一下哪些schema已经导入到了数据库中：
+openldap的schema目录(/etc/openldap/schema)下有很多.schema文件，但不见得都已经导入了数据库。可以参考博文《[LDAP入门](https://imaidata.github.io/blog/ldap/)》，在博文中导入了3个schema。也可以这样看一下哪些schema已经导入到了数据库中：
 ```
 # ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=schema,cn=config dn: cn=
 dn: cn=schema,cn=config
@@ -424,7 +420,8 @@ dn: cn={1}cosine,cn=schema,cn=config
 dn: cn={2}nis,cn=schema,cn=config
 dn: cn={3}inetorgperson,cn=schema,cn=config
 ```
-已经有4个schema已经导入到了数据库中，现在要导入的是第5个。  
+core是LDAP默认带的，另3个schema是《LDAP入门》中导入到数据库中的，现在要导入的是第5个shema。  
+
 创建一个 schema_convert.conf，包括下列内容：
 ```
 include /etc/openldap/schema/core.schema
@@ -468,8 +465,8 @@ olcDbIndex: krbPrincipalName eq,pres,sub
 
 modifying entry "olcDatabase={2}hdb,cn=config"
 ```
-### 修改LDAP ACL
-创建一个krb5.acl：
+### 2.修改LDAP ACL
+创建一个临时文件krb5.acl：
 ```
 dn: olcDatabase={2}hdb,cn=config
 replace: olcAccess
@@ -488,81 +485,121 @@ olcAccess: to * by dn="cn=admin,dc=ambari,dc=apache,dc=org" write by * read
 # ldapmodify -Q -Y EXTERNAL -H ldapi:/// -f krb5.acl
 modifying entry "olcDatabase={2}hdb,cn=config"
 ```
-#### 在LDAP中创建kdc和kadmin的dn
-创建`add_kdc_kadmin.ldif`文件, 内容为:
-```
-dn: uid=kadmind,ou=People,dc=ambari,dc=apache,dc=org
-objectClass: inetOrgPerson
-objectClass: posixAccount
-objectClass: shadowAccount
-userPassword: 1
-cn: LDAP admin account
-uid: kadmind
-sn: kadmind
-uidNumber: 1002
-gidNumber: 100
-homeDirectory: /home/ldap
-loginShell: /bin/bash
+### 3.为kerberos生成领域
 
-dn: uid=krb5kdc,ou=People,dc=ambari,dc=apache,dc=org
-objectClass: inetOrgPerson
-objectClass: posixAccount
-objectClass: shadowAccount
-userPassword: 1
-cn: LDAP admin account
-uid: krb5kdc
-sn: krb5kdc
-uidNumber: 1003
-gidNumber: 100
-homeDirectory: /home/ldap
-loginShell: /bin/bash
+安装kerberos与LDAP集成的软件包：
 ```
-将`add_kdc_kadmin.ldif`导入到LDAP数据库中(使用的是LDAP管理员DN)：
+# yum -y install krb5-server-ldap
 ```
-# ldapadd -x -D "cn=admin,dc=ambari,dc=apache,dc=org" -w 1 -f add_kdc_kadmin.ldif -H ldapi:///
+kerberos有两个配置文件：`/etc/krb5.conf`和`/var/kerberos/krb5kdc/kdc.conf`。这两个配置文件最终会合并在一起。MIT kerberos官方文档《[Configuring Kerberos with OpenLDAP back-end](https://web.mit.edu/kerberos/krb5-latest/doc/admin/conf_ldap.html)》中使用的`kdc.conf`，而ubuntu的[官方文档](https://help.ubuntu.com/lts/serverguide/kerberos-ldap.html)中使用的`/etc/krb5.conf`。本章采用的方案是`krb5.conf`。  
+
+编辑KDC配置文件`/etc/krb5.conf`为下面的样子：
 ```
-#### 为kdc和kadmin的dn生成密码文件
-在上执行下面的语句并分别输入在`add_kdc_kadmin.ldif`中配置的对应的密码(即属性userPassword)：
-```
-# kdb5_ldap_util stashsrvpw -f /var/kerberos/krb5kdc/ldap.stash "uid=kadmind,ou=People,dc=ambari,dc=apache,dc=org"
-# kdb5_ldap_util stashsrvpw -f /var/kerberos/krb5kdc/ldap.stash "uid=krb5kdc,ou=People,dc=ambari,dc=apache,dc=org"
-```
-#### 配置kdc
-编辑KDC配置文件`/var/kerberos/krb5kdc/kdc.conf`为下面的样子：
-```
-[kdcdefaults]
- kdc_ports = 88
- kdc_tcp_ports = 88
+# Configuration snippets may be placed in this directory as well
+includedir /etc/krb5.conf.d/
+
+[logging]
+ default = FILE:/var/log/krb5libs.log
+ kdc = FILE:/var/log/krb5kdc.log
+ admin_server = FILE:/var/log/kadmind.log
+
+[libdefaults]
+ dns_lookup_realm = false
+ ticket_lifetime = 24h
+ renew_lifetime = 7d
+ forwardable = true
+ rdns = false
+ default_realm = AMBARI.APACHE.ORG
+ default_ccache_name = KEYRING:persistent:%{uid}
 
 [realms]
  AMBARI.APACHE.ORG = {
-  #master_key_type = aes256-cts
-  acl_file = /var/kerberos/krb5kdc/kadm5.acl
-  dict_file = /usr/share/dict/words
-  admin_keytab = /var/kerberos/krb5kdc/kadm5.keytab
-  supported_enctypes = aes256-cts:normal aes128-cts:normal des3-hmac-sha1:normal arcfour-hmac:normal camellia256-cts:normal camellia128-cts:normal des-hmac-sha1:normal des-cbc-md5:normal des-cbc-crc:normal
+  kdc = c7306.ambari.apache.org
+  admin_server = c7306.ambari.apache.org
+  default_domain = ambari.apache.org
   database_module = openldap_ldapconf
  }
 
+[domain_realm]
+ .ambari.apache.org = AMBARI.APACHE.ORG
+ ambari.apache.org = AMBARI.APACHE.ORG
+
 [dbdefaults]
-    ldap_kerberos_container_dn = cn=krbcontainer,dc=ambari,dc=apache,dc=org
+        ldap_kerberos_container_dn = cn=krbContainer,dc=ambari,dc=apache,dc=org
 
 [dbmodules]
-  openldap_ldapconf = {
-    db_library = kldap
-    ldap_kdc_dn = uid=krb5kdc,ou=People,dc=ambari,dc=apache,dc=org
-    ldap_kadmind_dn = uid=kadmind,ou=People,dc=ambari,dc=apache,dc=org
-    ldap_service_password_file = /var/kerberos/krb5kdc/ldap.stash
-    ldap_servers = ldap://c7301.ambari.apache.org/
-    ldap_conns_per_server = 5
-  }
-```
-#### 在LDAP中创建realm
-```
-# kdb5_ldap_util -D cn=admin,dc=ambari,dc=apache,dc=org create -r AMBARI.APACHE.ORG -s
+        openldap_ldapconf = {
+                db_library = kldap
+                ldap_kdc_dn = "cn=admin,dc=ambari,dc=apache,dc=org"
+
+                # this object needs to have read rights on
+                # the realm container, principal container and realm sub-trees
+                ldap_kadmind_dn = "cn=admin,dc=ambari,dc=apache,dc=org"
+
+                # this object needs to have read and write rights on
+                # the realm container, principal container and realm sub-trees
+                ldap_service_password_file = /var/kerberos/krb5kdc/service.keyfile
+                ldap_servers = ldap://c7306.ambari.apache.org/
+                ldap_conns_per_server = 5
+        }
 ```
 
+用`kdb5_ldap_util`工具创建领域(realm):
+```
+# kdb5_ldap_util -D cn=admin,dc=ambari,dc=apache,dc=org create -subtrees dc=ambari,dc=apache,dc=org -r AMBARI.APACHE.ORG -s -H ldap://c7306.ambari.apache.org/
+```
+先输入的是DN(cn=admin,dc=ambari,dc=apache,dc=org)的密码，然后输入领域的主密码。  
 
+生成管理员DN(cn=admin,dc=ambari,dc=apache,dc=org)的密码文件。因为kerberos需要用管理员权限来访问LDAP。
+```
+# kdb5_ldap_util -D cn=admin,dc=ambari,dc=apache,dc=org -w 1 stashsrvpw -f /var/kerberos/krb5kdc/service.keyfile cn=admin,dc=ambari,dc=apache,dc=org
+```
+在`krb5.conf`配置文件引用了这个密码文件。在[另一篇](http://secfree.github.io/blog/2015/06/29/kerberos-ldap-deploy.html)参考的文章中创建了独立的DN和独立的密码文件，不和管理员用同一个DN，这样无疑更安全。  
+
+别忘记检查`/var/kerberos/krb5kdc/kdc.conf`中的配置，需要把`EXAMPLE.COM`替换成`AMBARI.APACHE.ORG`。  
+启用kerberos服务：
+```
+# service krb5kdc start
+# service kadmin start
+```
+### 测试一下
+创建一个主体(principal)：
+```
+# kadmin.local
+Authenticating as principal root/admin@AMBARI.APACHE.ORG with password.
+kadmin.local:  addprinc steve
+WARNING: no policy specified for steve@AMBARI.APACHE.ORG; defaulting to no policy
+Enter password for principal "steve@AMBARI.APACHE.ORG":
+Re-enter password for principal "steve@AMBARI.APACHE.ORG":
+Principal "steve@AMBARI.APACHE.ORG" created.
+```
+用LDAP客户端查询一下刚刚创建的主体：
+```
+# ldapsearch -x -b cn=krbContainer,dc=ambari,dc=apache,dc=org
+# steve@AMBARI.APACHE.ORG, AMBARI.APACHE.ORG, krbContainer, ambari.apache.org
+dn: krbPrincipalName=steve@AMBARI.APACHE.ORG,cn=AMBARI.APACHE.ORG,cn=krbContai
+ ner,dc=ambari,dc=apache,dc=org
+krbLoginFailedCount: 0
+krbPrincipalName: steve@AMBARI.APACHE.ORG
+krbLastPwdChange: 20170904074817Z
+krbExtraData:: AAJBBa1Za2FkbWluL2FkbWluQEFNQkFSSS5BUEFDSEUuT1JHAA==
+krbExtraData:: AAgBAA==
+objectClass: krbPrincipal
+objectClass: krbPrincipalAux
+objectClass: krbTicketPolicyAux
+```
+`cn=krbContainer,dc=ambari,dc=apache,dc=org`目录下的条目很多，上面仅显示出来刚刚创建的`steve`条目。  
+用steve登录：
+```
+$ kinit steve
+Password for steve@AMBARI.APACHE.ORG:
+$ klist
+Ticket cache: KEYRING:persistent:0:0
+Default principal: steve@AMBARI.APACHE.ORG
+
+Valid starting       Expires              Service principal
+09/04/2017 09:05:28  09/05/2017 09:05:28  krbtgt/AMBARI.APACHE.ORG@AMBARI.APACHE.ORG
+```
 
 ## OpenLDAP日志
 OpenLDAP logs via syslogd (using LOCAL4)。参考[loglevel](http://www.zytrax.com/books/ldap/ch6/#loglevel)  
