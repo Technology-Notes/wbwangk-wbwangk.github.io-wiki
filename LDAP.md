@@ -398,14 +398,20 @@ modifying entry "olcDatabase={1}hdb,cn=config"              （ctrl+D返回到�
 注意，第一个OlcAccess后面的内容很长，中间不要有换行，否则两次回车后会报错。进入命令行状态后（没有任何提示，只是光标进入下一行），直接把“两次回车”之前的内容粘贴即可。可以用ldapsearch命令检查修改的结果。  
 完成上述7个步骤后，LDAP将可以作为kerberos的主体数据库了。  
 
-## centos7下KDC集成LDAP
-centos7.3，安装kerberos KDC和OpenLDAP。  
+## kerberos与LDAP(centos)
+本章的主要目的是将kerberos的数据库由默认的本地文件系统更换为LDAP服务器(LDAP可能部署在其他节点)。主要工作分成n个部分：
+1. 将kerberos Schema导入到LDAP服务器，以便按规定格式存放KDC数据  
+2. 更改LDAP访问控制列表(ACL)，以便kerberos可以读写LDAP中的数据  
+3. 用 kdb5_ldap_util在LDAP创建kerberos领域  
+
+centos7.3，已安装kerberos KDC和OpenLDAP。  
 安装两者集成软件包：
 ```
 # yum -y install krb5-server-ldap
 ```
 
-随`krb5-server-ldap`安装包带了kerberos的LDAP schema，将它复制到openldap：
+### 导入kerberos Schema到LDAP
+随`krb5-server-ldap`安装包带了kerberos的LDAP schema，将它复制到openldap相应目录下：
 ```
 # cp /usr/share/doc/krb5-server-ldap-1.14.1/kerberos.schema /etc/openldap/schema
 ```
@@ -462,6 +468,7 @@ olcDbIndex: krbPrincipalName eq,pres,sub
 
 modifying entry "olcDatabase={2}hdb,cn=config"
 ```
+### 修改LDAP ACL
 创建一个krb5.acl：
 ```
 dn: olcDatabase={2}hdb,cn=config
@@ -510,7 +517,7 @@ gidNumber: 100
 homeDirectory: /home/ldap
 loginShell: /bin/bash
 ```
-将`add_kdc_kadmin.ldif`导入到LDAP数据库中：
+将`add_kdc_kadmin.ldif`导入到LDAP数据库中(使用的是LDAP管理员DN)：
 ```
 # ldapadd -x -D "cn=admin,dc=ambari,dc=apache,dc=org" -w 1 -f add_kdc_kadmin.ldif -H ldapi:///
 ```
