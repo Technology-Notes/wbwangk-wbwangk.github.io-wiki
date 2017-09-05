@@ -600,6 +600,7 @@ Default principal: steve@AMBARI.APACHE.ORG
 Valid starting       Expires              Service principal
 09/04/2017 09:05:28  09/05/2017 09:05:28  krbtgt/AMBARI.APACHE.ORG@AMBARI.APACHE.ORG
 ```
+在[这篇文章](http://blog.clanzx.net/2013/09/27/ldap-kerberos.html)中讲解了如何将LDAP的用户条目密码设置为：`{SASL}test@DEMO.LOCAL`，然后通过SASL让kerberos去验证用户密码。  
 
 ## OpenLDAP日志
 OpenLDAP logs via syslogd (using LOCAL4)。参考[loglevel](http://www.zytrax.com/books/ldap/ch6/#loglevel)  
