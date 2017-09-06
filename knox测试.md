@@ -511,6 +511,130 @@ HTTP/1.1 403 Forbidden
 ```
 说明knox的用户组权限起作用了。
 
+## Knox做tomcat反向代理
+[原文](http://blog.csdn.net/tonyhuang_google_com/article/details/50038165)  
+同nginx、httpd相比knox自带了基础认证，当用户通过了knox的认证，则对于tomcat的反向代理就可以启用了。这里的tomcat代替了java web应用的位置。  
+knox默认拓扑文件是default.xml，本文会自建一个tomcat.xml的拓扑文件。通过ambari面板可以修改default.xml，但自定义的拓扑文件只能通过文件系统来修改了。knox拓扑文件的位置是`/usr/hdp/current/knox-server/conf/topologies`。  
+在上述目录下创建tomcat.xml，内容如下：
+```
+<?xml version="1.0" ?>
+<topology>
+<gateway>
+   <provider>
+      <role>authentication</role>
+      <name>ShiroProvider</name>
+      <enabled>true</enabled>
+      <param>
+         <name>sessionTimeout</name>
+         <value>30</value>
+      </param>
+     <param>
+        <name>main.ldapRealm</name>
+        <value>org.apache.hadoop.gateway.shirorealm.KnoxLdapRealm</value>
+     </param>
+      <param>
+        <name>main.ldapRealm.userDnTemplate</name>
+        <value>uid={0},ou=People,dc=ambari,dc=apache,dc=org</value>
+      </param>
+      <param>
+          <name>main.ldapRealm.contextFactory.url</name>
+          <value>ldap://c7301.ambari.apache.org</value>
+     </param>
+     <param>
+       <name>main.ldapRealm.contextFactory.authenticationMechanism</name>
+       <value>simple</value>
+    </param>
+    <param>
+       <name>urls./**</name>
+       <value>authcBasic</value>
+    </param>
+</provider>
+<provider>
+   <role>identity-assertion</role>
+   <name>Default</name>
+   <enabled>true</enabled>
+</provider>
+</gateway>
+
+  <service>
+     <role>TOMCAT</role>
+     <url>http://c7302.ambari.apache.org:8080</url>
+ </service>
+</topology>
+```
+从上述配置文件可以看出，tomcat的部署位置是节点c7302，端口是8080。knox的用户存储在c7301节点的OpenLDAP中。看一下ldap中的用户信息：
+```
+$ ldapsearch -x -b uid=sam,ou=People,dc=ambari,dc=apache,dc=org
+dn: uid=sam,ou=People,dc=ambari,dc=apache,dc=org
+objectClass: account
+objectClass: posixAccount
+cn: sam
+uid: sam
+uidNumber: 10004
+gidNumber: 5004
+homeDirectory: /home/sam
+loginShell: /bin/sh
+gecos: sam
+description: User account
+```
+sam用户的密码是1。其实已经通过sssd配置了pam认证，所以可以用`su - sam`来验证用户和密码([1](https://github.com/wbwangk/wbwangk.github.io/wiki/SSSD))。  
+
+下面创建TOMCAT这个服务，主要是service.xml和rewrite.xml：
+```
+$ cd /usr/hdp/current/knox-server/data/services
+$ mkdir -p tomcat/9.0
+$ cd tomcat/9.0
+```
+在上面的目录下创建service.xml:
+```
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<service role="TOMCAT" name="tomcat" version="9.0">
+   <routes>
+     <route path="/tomcatui/">
+     </route>
+
+     <route path="/tomcatui/**">
+     </route>
+
+     <route path="/tomcatui/**?**">
+     </route>
+
+   </routes>
+</service>
+```
+创建rewrite.xml:
+```
+<rules>
+<rule dir="IN" name="TOMCAT/root/inbound" pattern="*://*:*/**/tomcatui/">
+   <rewrite template="{$serviceUrl[TOMCAT]}/"/>
+</rule>
+
+<rule dir="IN" name="TOMCAT/path/inbound" pattern="*://*:*/**/tomcatui/{**}">
+    <rewrite template="{$serviceUrl[TOMCAT]}/{**}"/>
+</rule>
+
+<rule dir="IN" name="TOMCAT/full/inbound" pattern="*://*:*/**/tomcatui/{**}?{**}">
+        <rewrite template="{$serviceUrl[TOMCAT]}/{**}?{**}"/>
+</rule>
+</rules>
+```
+通过ambari面板重启knox服务。  
+先用curl测试一下：
+```
+$ curl -i -k -u sam:1 'https://c7301.ambari.apache.org:8443/gateway/tomcat/tomcatui'
+```
+会显示很多html代码，证明knox反向代理起作用了。在html的代码的前面，还可以看到响应头的中写入的cookie：
+```
+Set-Cookie: JSESSIONID=mnjvpmnb72l91bton0ku2e6x5;Path=/gateway/tomcat;Secure;HttpOnly
+```  
+这是tomcat写的java会话id。  
+可以去掉基础认证看看：
+```
+$ curl -i -k 'https://c7301.ambari.apache.org:8443/gateway/tomcat/tomcatui'
+HTTP/1.1 401 Unauthorized
+```
+说明knox的基础认证是起作用的。
+
 ## 备忘
 
 knox安装目录: ```/usr/hdp/current/knox-server```。  
