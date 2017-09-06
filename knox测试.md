@@ -633,7 +633,8 @@ Set-Cookie: JSESSIONID=mnjvpmnb72l91bton0ku2e6x5;Path=/gateway/tomcat;Secure;Htt
 $ curl -i -k 'https://c7301.ambari.apache.org:8443/gateway/tomcat/tomcatui'
 HTTP/1.1 401 Unauthorized
 ```
-说明knox的基础认证是起作用的。
+说明knox的基础认证是起作用的。  
+在浏览器(如chrome)中输入地址`https://c7301.ambari.apache.org:8443/gateway/tomcat/tomcatui`，根据提示添加例外（表示这是个受信任的网站）。在浏览器弹出的基础认证输入框中输入用户名`sam`和密码`1`，点确定就显示了tomcat的首页。  
 
 ## 备忘
 
