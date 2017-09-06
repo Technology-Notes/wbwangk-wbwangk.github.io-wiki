@@ -66,7 +66,7 @@ core-site.xml在文件系统中的位置是`/etc/hadoop/conf`，通过Ambari修�
 (省略一些内容)
         </topology>
 ```
-相对于默认配置，只修改了两个参数，一个是将```main.ldapRealm.userDnTemplate```的值定义为```uid={0},ou=people,dc=ambari,dc=apache,dc=org```；另一个是将```main.ldapRealm.contextFactory.url```定义为```ldap://{{knox_host_name}}```。这因为没有启用TLS，所以没有定义为```ldapi://{{knox_host_name}}:33389```。
+相对于默认配置，只修改了两个参数，一个是将```main.ldapRealm.userDnTemplate```的值定义为```uid={0},ou=people,dc=ambari,dc=apache,dc=org```；另一个是将```main.ldapRealm.contextFactory.url```定义为```ldap://{{knox_host_name}}```。LDAP没有启用TLS，使用默认端口389。
 
 在ambari界面中点击Save按钮保存，并通过橙黄色按钮重启相关服务。之后会发现```/usr/hdp/current/knox-server/conf/topologies/```目录下的default.xml修改更新了。  
 
