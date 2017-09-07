@@ -657,7 +657,9 @@ HTTP/1.1 401 Unauthorized
 ## knox做tomcat反向代理(knoxsso认证)
 knoxsso内置了基于表单的认证，可以充当认证中心(IdP)。  
 上一章中利用了knox网关的基础认证功能实现了tomcat应用的认证功能，但基础认证功能弱，浏览器弹出的凭据输入窗口也丑。  
-要利用knox实现tomcat应用的认证功能，还有一个选择是利用knoxsso提供的单点登录功能。根据HDP的文档，knoxsso支持ambari、ranger、atlas的单点登录。实际上，经过测试发现，knox的网关可以经过配置可以充当SSO代理，实现与knoxsso的单点登录。  
+java web应用与knoxsso集成，常见的做法是java web应用配置过滤器，当检测到knox令牌(hadoop-jwt)不存在或过期时重定向到knoxsso(IdP)端点。还有一种更简单的非侵入式做法，就是直接利用knox网关充当sso agent，让knox网关检测hadoop-jwt令牌并重定向到knoxsso端点。本章主要验证这种认证方式。  
+
+根据HDP的文档，knoxsso支持ambari、ranger、atlas的单点登录。实际上，经过测试发现，knox的网关可以经过配置可以充当SSO代理，代替应用实现与knoxsso的单点登录。  
 
 #### 准备工作
 1. 按章节[knox作为认证中心(IdP)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#knox%E4%BD%9C%E4%B8%BA%E8%AE%A4%E8%AF%81%E4%B8%AD%E5%BF%83idp)配置好knoxsso。  
