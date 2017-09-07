@@ -641,3 +641,4 @@ HTTP/1.1 401 Unauthorized
 knox安装目录: ```/usr/hdp/current/knox-server```。  
 ambari的knox目录：```/var/lib/ambari-server/resources/stacks/HDP/2.5/services/KNOX```。  
 [Support HUE interacting with a Hadoop cluster via the Gateway](https://issues.apache.org/jira/browse/KNOX-44)  
+[How to configure and troubleshoot a Knox topology](https://community.hortonworks.com/articles/114601/how-to-configure-and-troubleshoot-a-knox-topology.html)  
