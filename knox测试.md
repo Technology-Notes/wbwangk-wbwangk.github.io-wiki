@@ -662,11 +662,11 @@ java web应用与knoxsso集成，常见的做法是java web应用配置过滤器
 根据HDP的文档，knoxsso支持ambari、ranger、atlas的单点登录。实际上，经过测试发现，knox的网关可以经过配置可以充当SSO代理，代替应用实现与knoxsso的单点登录。  
 
 #### 准备工作
-1. 按章节[knox作为认证中心(IdP)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#knox%E4%BD%9C%E4%B8%BA%E8%AE%A4%E8%AF%81%E4%B8%AD%E5%BF%83idp)配置好knoxsso。  
-2. 按章节[Knox做tomcat反向代理(表单认证)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#knox%E5%81%9Atomcat%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E8%A1%A8%E5%8D%95%E8%AE%A4%E8%AF%81)准备好tomcat运行环境。  
+1. 按章节[knox作为认证中心(IdP)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#knox%E4%BD%9C%E4%B8%BA%E8%AE%A4%E8%AF%81%E4%B8%AD%E5%BF%83idp)配置好knoxsso.xml。  
+2. 按章节[Knox做tomcat反向代理(表单认证)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#knox%E5%81%9Atomcat%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E8%A1%A8%E5%8D%95%E8%AE%A4%E8%AF%81)准备好tomcat运行环境(c7302节点的8080端口)。  
 
 #### 配置拓扑文件
-由于LDAP的配置是knoxsso.xml中配置的，新的tomcat.xml变得更简单了。新的tomcat.xml：
+由于LDAP的配置是knoxsso.xml中配置的，新的tomcat.xml变得更简单了：
 ```
 <?xml version="1.0" ?>
 <topology>
