@@ -270,6 +270,24 @@ SPNEGO是基于GSSAPI的，SPENGO认证的发起方是浏览器(或类似客户�
 ```WWW-Authenticate:Negotiate```，浏览器收到这个响应后，会试图通过GSSAPI调用本地的kerberos客户端。如果本地存在kerberos票据缓存，kerberos客户端会将kerberos票据返回给GSSAPI调用者（猜的，反正是类似的东西）。浏览器收到票据，就构造出下一个http请求发往服务器，http请求头的格式是:``` Authorization: Negotiate YIIC4QYJKoZIhvcSAQ(后略)```。Authorization中应包含了kerberos票据。  
 如果本地没有kerberos票据缓存或服务器不认可票据，windows的IE/Chrome会弹出内置窗口让用户输入用户名口令（与基础认证类似）。
 
+## knox作为认证中心(IdP)
+可参考[HDP文档](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/ch02s09s01.html#d6e6948)和[apache knox官方文档](http://knox.apache.org/books/knox-0-13-0/user-guide.html)。  
+
+knox自带knoxsso.xml这个拓扑文件。该文件利用ShiroProvider这个认证插件连接到LDAP，提供了基于表单的认证和SSO功能。  
+knoxsso通过一个URL:`/gateway/knoxsso/api/v1/websso`接受“重定向”请求。用户需要在一个表单中输入用户名和口令，通过验证后会在cookie中写入一个hadoop-jwt令牌，并重定向会原始URL。  
+[这个knoxssol.xml]是我修改后的拓扑文件。修改的条目是：
+```
+main.ldapRealm.userDnTemplate="uid={0},ou=People,dc=ambari,dc=apache,dc=org"
+main.ldapRealm.contextFactory.url=ldap://c7301.ambari.apache.org
+knoxsso.cookie.secure.only=false
+knoxsso.redirect.whitelist.regex="^https?:\/\/(c73\d\d\.ambari\.apache\.org|localhost|127\.0\.0\.1|0:0:0:0:0:0:0:1|::1):[0-9].*$"
+```
+这个knoxsso的测试比较麻烦，因为它只接受“重定向”请求。重定向响应头中的location类似：
+```
+https://c7301.ambari.apache.org:8443/gateway/knoxsso/api/v1/websso?originalUrl=https://c7301.ambari.apache.org:8443/gateway/tomcat/tomcatui
+```
+URL中originaluRL参数的值是原始URL。不知道怎么用简单的办法模拟这个重定向。下面的章节会涉及到ambari与knoxsso的单点登录、tomcat应用与knoxsso的单点登录。  
+
 ## Ambari单点登录到Knox
 [原文](https://cwiki.apache.org/confluence/display/KNOX/Ambari+via+KnoxSSO+and+Default+IDP)，也可参考[HDP的有关文档](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.0/bk_security/content/setting_up_knox_sso_for_ambari.html)   
 Knox提供了基于表单的认证(默认IDP)。利用它，可以实现Ambari与Knox的单点登录。  
@@ -511,7 +529,7 @@ HTTP/1.1 403 Forbidden
 ```
 说明knox的用户组权限起作用了。
 
-## Knox做tomcat反向代理
+## Knox做tomcat反向代理(表单认证)
 [原文](http://blog.csdn.net/tonyhuang_google_com/article/details/50038165)  
 同nginx、httpd相比knox自带了基础认证，当用户通过了knox的认证，则对于tomcat的反向代理就可以启用了。这里的tomcat代替了java web应用的位置。  
 knox默认拓扑文件是default.xml，本文会自建一个tomcat.xml的拓扑文件。通过ambari面板可以修改default.xml，但自定义的拓扑文件只能通过文件系统来修改了。knox拓扑文件的位置是`/usr/hdp/current/knox-server/conf/topologies`。  
@@ -635,6 +653,11 @@ HTTP/1.1 401 Unauthorized
 ```
 说明knox的基础认证是起作用的。  
 在浏览器(如chrome)中输入地址`https://c7301.ambari.apache.org:8443/gateway/tomcat/tomcatui`，根据提示添加例外（表示这是个受信任的网站）。在浏览器弹出的基础认证输入框中输入用户名`sam`和密码`1`，点确定就显示了tomcat的首页。  
+
+## knox做tomcat反向代理(knoxsso认证)
+knoxsso内置了基于表单的认证，可以充当认证中心(IdP)。  
+上一章中利用了knox网关的基础认证功能实现了tomcat应用的认证功能，但基础认证功能弱，浏览器弹出的凭据输入窗口也丑。  
+要利用knox实现tomcat应用的认证功能，还有一个选择是利用knoxsso提供的单点登录功能。
 
 ## 备忘
 
