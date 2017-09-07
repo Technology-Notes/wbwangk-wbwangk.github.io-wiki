@@ -657,7 +657,58 @@ HTTP/1.1 401 Unauthorized
 ## knox做tomcat反向代理(knoxsso认证)
 knoxsso内置了基于表单的认证，可以充当认证中心(IdP)。  
 上一章中利用了knox网关的基础认证功能实现了tomcat应用的认证功能，但基础认证功能弱，浏览器弹出的凭据输入窗口也丑。  
-要利用knox实现tomcat应用的认证功能，还有一个选择是利用knoxsso提供的单点登录功能。
+要利用knox实现tomcat应用的认证功能，还有一个选择是利用knoxsso提供的单点登录功能。根据HDP的文档，knoxsso支持ambari、ranger、atlas的单点登录。实际上，经过测试发现，knox的网关可以经过配置可以充当SSO代理，实现与knoxsso的单点登录。  
+
+#### 准备工作
+1. 按章节[knox作为认证中心(IdP)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#knox%E4%BD%9C%E4%B8%BA%E8%AE%A4%E8%AF%81%E4%B8%AD%E5%BF%83idp)配置好knoxsso。  
+2. 按章节[Knox做tomcat反向代理(表单认证)](https://github.com/wbwangk/wbwangk.github.io/wiki/knox%E6%B5%8B%E8%AF%95#knox%E5%81%9Atomcat%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E8%A1%A8%E5%8D%95%E8%AE%A4%E8%AF%81)准备好tomcat运行环境。  
+
+#### 配置拓扑文件
+由于LDAP的配置是knoxsso.xml中配置的，新的tomcat.xml变得更简单了。新的tomcat.xml：
+```
+<?xml version="1.0" ?>
+<topology>
+<gateway>
+
+    <provider>
+        <role>federation</role>
+        <name>SSOCookieProvider</name>
+        <enabled>true</enabled>
+        <param>
+            <name>sso.authentication.provider.url</name>
+            <value>https://c7301.ambari.apache.org:8443/gateway/knoxsso/api/v1/websso</value>
+        </param>
+    </provider>
+
+<provider>
+   <role>identity-assertion</role>
+   <name>Default</name>
+   <enabled>true</enabled>
+</provider>
+</gateway>
+
+  <service>
+     <role>TOMCAT</role>
+     <url>http://c7302.ambari.apache.org:8080</url>
+ </service>
+</topology>
+```
+新的拓扑文件，把provider由authentication改成了federation。其它的不变。上述配置的原理可参考apache的[这个knox官方文档](http://knox.apache.org/books/knox-0-13-0/user-guide.html#SSO+Cookie+Provider)。文档中的解释摘录如下：  
+- SSOCookieProvider检查hadoop-jwt cookie，并在其缺少时重定向到配置的SSO提供程序URL（knoxsso端点）  
+- 配置的KnoxSSO端点提供者程序以特定的方式（呈现表单，重定向到SAML IdP等）挑战用户  
+- KnoxSSO上的认证提供商通过凭证/令牌验证用户的身份  
+- WebSSO服务将规范化的Java Subject转换为JWT令牌，并将其作为响应设置为名为hadoop-jwt的cookie  
+- WebSSO服务然后将用户代理重定向到原始请求的URL - 所请求的Knox服务后续调用将在传入请求中找到cookie，而不需要再次使用WebSSO服务，直到它过期。  
+
+修改好tomcat.xml后通过ambari面板重启knox服务。  
+
+#### 测试
+在浏览器中输入：`https://c7301.ambari.apache.org:8443/gateway/tomcat/tomcatui`。发现被重定向到地址：`https://c7301.ambari.apache.org:8443/gateway/knoxsso/knoxauth/login.html?originalUrl=https://c7301.ambari.apache.org:8443/gateway/tomcat/tomcatui`。  
+这是一个输入用户名口令的表单，输入sam:1，点“Sign In”按钮。sam用户定义在LDAP中。用户被重定向回原始URL：`https://c7301.ambari.apache.org:8443/gateway/tomcat/tomcatui`，并且cookie中写入了：
+```
+hadoop-jwt=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJzYW0iLCJpc3MiOiJLTk9YU1NPIiwiZXhwIjoxNTA0NzUwMzgyfQ.pWLkoNrtx5-93yRT7Lt3XCHSZJ5rqIDpSI4hD0BHtL6HeWPv_GanoC2ZSeD0vTMkX9fv3tG7zz_2WsAWwgijix9wegAZl-58dMdD-6sZI0VIyCsyYZxFhk-9PY7foi9jtE7GpUy5WbFnF9px1eYOnX_lfawo_ZKvUoL0xJbukUA
+```
+由于cookie hadoop-jwt的存在，knox网关不再拦截请求，请求被反向代理到tomcat，tomcat的首页显示出来了。  
 
 ## 备忘
 
