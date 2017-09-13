@@ -1,7 +1,9 @@
 安装三个软件：
- - virtualbox：虚拟机  
- - vagrant：虚拟机管理（[vagrantup.com]）  
- - git：终端（[git-scm.com]）  
+ - virtualbox：虚拟机  [下载地址](https://www.virtualbox.org/wiki/Downloads)  
+ - vagrant：虚拟机管理  [下载地址](https://www.vagrantup.com/downloads.html)  
+ - git：终端  [下载地址](https://git-scm.com/download/win)  
+
+virtualbox的下载页面上，需要额外下载Extension Pack。然后通过virtualbox的菜单`全局设定->扩展`来安装扩展包。  
 
 ### vagrant入门　
 1.建个目录(如C:/U)，在鼠标右键菜单中选择“Git Bash”。然后执行vagrant init，发现目录下新建了一个Vagrantfile文件。  
