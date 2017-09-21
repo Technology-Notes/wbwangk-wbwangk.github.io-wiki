@@ -381,6 +381,7 @@ $ curl -XPOST http://localhost:9200/index2/fulltext/_search  -d'
 {"content":"中韩渔警冲突调查：韩警平均每天扣1艘中国渔船"}
 ,"highlight":{"content":["中韩渔警冲突调查：韩警平均每天扣1艘<tag1>中国</tag1>渔船"]}}]}}
 ```
+注意上面查询结果中的高亮标签`<tag1>中国</tag1>`。前台js可以针对`<tag1>`标签中内容加上类似黄色背景的高亮效果。  
 
 ## 其它
 [拼音分词器](http://blog.csdn.net/napoay/article/details/53907921)、[自定义词典](https://www.2cto.com/database/201611/560699.html)、[Elasticsearch服务器开发（第2版）.pdf](http://wtdown.2cto.com/ware/E-book/2016512/Elasticsearch_14.5MB.rar)    
