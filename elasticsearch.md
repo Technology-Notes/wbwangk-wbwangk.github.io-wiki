@@ -383,5 +383,71 @@ $ curl -XPOST http://localhost:9200/index2/fulltext/_search  -d'
 ```
 注意上面查询结果中的高亮标签`<tag1>中国</tag1>`。前台js可以针对`<tag1>`标签中内容加上类似黄色背景的高亮效果。  
 
+#### IK的自定义词典
+[原文](https://www.2cto.com/database/201611/560699.html)
+来到IK插件的配置文件目录，该目录下有很多.dic文件，是IK的字典文件。在这个目录下创建`ik`目录，然后把当前目录下的`IKAnalyzer.cfg.xml`复制到新建的ik目录下，编辑`IKAnalyzer.cfg.xml`，添加远程字典：
+```
+$ cd /usr/share/elasticsearch/plugins/ik/config
+$ mkdir ik
+$ cp IKAnalyzer.cfg.xml ik
+$ cat ik/IKAnalyzer.cfg.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+        <comment>IK Analyzer 扩展配置</comment>
+        <!--用户可以在这里配置自己的扩展字典 -->
+        <entry key="ext_dict"></entry>
+         <!--用户可以在这里配置自己的扩展停止词字典-->
+        <entry key="ext_stopwords"></entry>
+        <!--用户可以在这里配置远程扩展字典 -->
+        <entry key="remote_ext_dict">https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/test2.php</entry>
+        <!--用户可以在这里配置远程扩展停止词字典-->
+        <!-- <entry key="remote_ext_stopwords"></entry> -->
+</properties>
+```
+test2.php是放在github上的一个文件，内容是：
+```
+$s = <<<'EOF'
+陈港生
+元楼
+蓝瘦
+EOF;
+header('Last-Modified: '.gmdate('D, d M Y H:i:s', time()).' GMT', true, 200);
+header('ETag: "5816f349-19"');
+echo $s;
+```
+重启elasticsearch，然后测试一下：
+```
+$ service elasticsearch restart
+$ curl -XGET 'http://localhost:9200/_analyze?pretty&analyzer=ik_max_word' -d '
+成龙原名陈港生'
+{
+  "tokens" : [
+    {
+      "token" : "成龙",
+      "start_offset" : 1,
+      "end_offset" : 3,
+      "type" : "CN_WORD",
+      "position" : 0
+    },
+    {
+      "token" : "原名",
+      "start_offset" : 3,
+      "end_offset" : 5,
+      "type" : "CN_WORD",
+      "position" : 1
+    },
+    {
+      "token" : "陈港生",
+      "start_offset" : 5,
+      "end_offset" : 8,
+      "type" : "CN_WORD",
+      "position" : 2
+    }
+  ]
+}
+```
+`陈港生`本来不是一个词，增加了自定义远程字典后背elasticsearch当成一个词了。自定义的远程词典每分钟被IK加载一次，即支持动态更新词典而不用重启elasticsearch服务。  
+
 ## 其它
-[拼音分词器](http://blog.csdn.net/napoay/article/details/53907921)、[自定义词典](https://www.2cto.com/database/201611/560699.html)、[Elasticsearch服务器开发（第2版）.pdf](http://wtdown.2cto.com/ware/E-book/2016512/Elasticsearch_14.5MB.rar)    
+[拼音分词器](http://blog.csdn.net/napoay/article/details/53907921)、[Elasticsearch服务器开发（第2版）.pdf](http://wtdown.2cto.com/ware/E-book/2016512/Elasticsearch_14.5MB.rar)    
