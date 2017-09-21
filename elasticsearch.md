@@ -381,3 +381,6 @@ $ curl -XPOST http://localhost:9200/index2/fulltext/_search  -d'
 {"content":"中韩渔警冲突调查：韩警平均每天扣1艘中国渔船"}
 ,"highlight":{"content":["中韩渔警冲突调查：韩警平均每天扣1艘<tag1>中国</tag1>渔船"]}}]}}
 ```
+
+## 其它
+[拼音分词器](http://blog.csdn.net/napoay/article/details/53907921)  
