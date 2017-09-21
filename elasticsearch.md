@@ -383,4 +383,4 @@ $ curl -XPOST http://localhost:9200/index2/fulltext/_search  -d'
 ```
 
 ## 其它
-[拼音分词器](http://blog.csdn.net/napoay/article/details/53907921)  
+[拼音分词器](http://blog.csdn.net/napoay/article/details/53907921)、[自定义词典](https://www.2cto.com/database/201611/560699.html)    
