@@ -451,7 +451,7 @@ $ curl -XGET 'http://localhost:9200/_analyze?pretty&analyzer=ik_max_word' -d '
 
 ## 安全
 下面的内容整理自[Authentication in Elasticsearch](https://stackoverflow.com/questions/9956062/authentication-in-elasticsearch)。  
-[Playing HTTP Tricks with Nginx](https://www.elastic.co/blog/playing-http-tricks-nginx)是一篇elasticsearch官方博客文章，介绍了利用Nginx加强elasticsearch的功能，包括：http连接池(减少反复创建http连接的开销)、负载均衡、基础认证和授权、使用nginx的lua插件实现ACL  
+[Playing HTTP Tricks with Nginx](https://www.elastic.co/blog/playing-http-tricks-nginx)是一篇elasticsearch官方博客文章，介绍了利用Nginx为elasticsearch增强安全性和性能，包括：http连接池(减少反复创建http连接的开销)、负载均衡、基础认证和授权、使用nginx的lua插件实现ACL  
 [elasticsearch-http-basic](https://github.com/Asquera/elasticsearch-http-basic)是个开源elasticsearch插件，提供基本的用户认证和IP地址限定。  
 [search-guard](https://github.com/floragunncom/search-guard)是个开源的、强大的elasticsearch插件，提供加密、认证、授权。支持kerberos、LDAP、json令牌、Kibana多租户、用户模拟等。  
 [Shield](https://www.elastic.co/products/shield)是elasticsearch官方的商用安全插件。  
