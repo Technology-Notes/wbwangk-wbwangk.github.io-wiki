@@ -1,5 +1,5 @@
-## elasticsearch基本功能
-### 安装
+## 一、elasticsearch基本功能
+### 安装：手工下载
 [官方参考](https://www.elastic.co/guide/en/elasticsearch/reference/current/_installation.html)  
 安装环境是centos7.3(c7303,/e/vagrant10):  
 ```
@@ -14,7 +14,48 @@ $ cd elasticsearch-5.6.1/bin
 $ ./elasticsearch
 ```
 elasticsearch不能用root运行，所以先创建用户elastic。  
-elasticsearch的REST API规则是：`<host>:<port>/<index>/<type>/<id>?<参数>`。  
+
+### RPM安装
+### elasticsearch安装
+本节介绍用yum安装elasticsearch，并注册为服务。([[Install Elasticsearch with RPM](https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html)])   
+```
+$ rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+```
+为elasticsearch创建repo文件(/etc/yum.repos.d/elasticsearch.repo)，内容如下：
+```
+[elasticsearch-5.x]
+name=Elasticsearch repository for 5.x packages
+baseurl=https://artifacts.elastic.co/packages/5.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+```
+然后用yum安装elasticsearch，并注册为服务和启动服务：
+```
+$ yum -y install elasticsearch
+$ chkconfig --add elasticsearch
+$ service elasticsearch start
+```
+elasticsearch默认监听9200端口，可以用curl测试一下：
+```
+$ curl localhost:9200
+{
+  "name" : "c261V4t",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "_yEGBQj3TEK6gure_Qsb3Q",
+  "version" : {
+    "number" : "5.6.1",
+    "build_hash" : "667b497",
+    "build_date" : "2017-09-14T19:22:05.189Z",
+    "build_snapshot" : false,
+    "lucene_version" : "6.6.1"
+  },
+  "tagline" : "You Know, for Search"
+}
+```
+可以看到刚刚安装elasticsearch的版本号是5.6.1。
 
 ### 索引创建
 #### 新增或更新索引(指定索引id)
@@ -126,49 +167,13 @@ score  |  文档
 
 从上面的结果看，Elasticsearch的默认分词器(tokenizer)将每个汉字视为一个单词。即使在汉字之间加上空格，不影响搜索结果。
 
-## elasticsearch的中文分词插件IK
+## 二、elasticsearch的中文分词插件IK
 github上有个很火的中文分词插件IK([地址](https://github.com/medcl/elasticsearch-analysis-ik))，支持中文分词。所谓中文分词，指可以把`软件集团`分词为`软件`和`集团`，而不是按字分为`软`、`件`、`集`、`团`四个。  
 下面的测试参考了[这个](http://www.cnblogs.com/phpshen/p/6085274.html)网上的文章。  
-### elasticsearch安装
-本节介绍用yum安装elasticsearch，并注册为服务。([[Install Elasticsearch with RPM](https://www.elastic.co/guide/en/elasticsearch/reference/current/rpm.html)])   
-```
-$ rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
-```
-为elasticsearch创建repo文件(/etc/yum.repos.d/elasticsearch.repo)，内容如下：
-```
-[elasticsearch-5.x]
-name=Elasticsearch repository for 5.x packages
-baseurl=https://artifacts.elastic.co/packages/5.x/yum
-gpgcheck=1
-gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
-enabled=1
-autorefresh=1
-type=rpm-md
-```
-然后用yum安装elasticsearch，并注册为服务和启动服务：
-```
-$ yum -y install elasticsearch
-$ chkconfig --add elasticsearch
-$ service elasticsearch start
-```
-elasticsearch默认监听9200端口，可以用curl测试一下：
-```
-$ curl localhost:9200
-{
-  "name" : "c261V4t",
-  "cluster_name" : "elasticsearch",
-  "cluster_uuid" : "_yEGBQj3TEK6gure_Qsb3Q",
-  "version" : {
-    "number" : "5.6.1",
-    "build_hash" : "667b497",
-    "build_date" : "2017-09-14T19:22:05.189Z",
-    "build_snapshot" : false,
-    "lucene_version" : "6.6.1"
-  },
-  "tagline" : "You Know, for Search"
-}
-```
-可以看到刚刚安装elasticsearch的版本号是5.6.1。IK插件的版本必须和elasticsearch的版本号一样，这是个很容易被忽略的问题。如果两者版本号不一样，elasticsearch的启动会失败。  
+
+IK插件的版本必须和elasticsearch的版本号一样，这是个很容易被忽略的问题。如果两者版本号不一样，elasticsearch的启动会失败。  
+
+为了让elasticsearch与插件版本一致，有时不得不安装低版本elasticsearch。这时，需要手工下载zip包来安装(见第一章)。
 ### IK插件的安装
 有两种方式获得IK插件：下载java源码自己构建，或直接下载构建好的插件。  
 自己构建插件需要的软件有git、jdk、maven：
@@ -456,6 +461,41 @@ $ curl -XGET 'http://localhost:9200/_analyze?pretty&analyzer=ik_max_word' -d '
  - [search-guard](https://github.com/floragunncom/search-guard)是个开源的、强大的elasticsearch插件，提供加密、认证、授权。支持kerberos、LDAP、json令牌、Kibana多租户、用户模拟等。  
  - [Shield](https://www.elastic.co/products/shield)是elasticsearch官方的商用安全插件。  
  - [elasticsearch-security-plugin](https://github.com/salyh/elasticsearch-security-plugin)功能也很强大，只是不再升级维护了。  
+
+### search-guard插件
+目前search-guard插件最新版是5.6.0，所以先手工下载5.6.0的elasticsearch：
+```
+$ cd /opt
+$ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.6.0.zip
+$ unzip elasticsearch-5.6.0.zip
+$ cd elasticsearch-5.6.0
+$ bin/elasticsearch-plugin install -b com.floragunn:search-guard-5:5.6.0-16
+$ cd plugins/search-guard-5/tools
+$ chmod +x install_demo_configuration.sh
+$ ./install_demo_configuration.sh
+## Search Guard Demo Installer ##
+Warning: Do not use on production or public reachable systems
+Continue? [y/N] y
+Elasticsearch install type: .tar.gz
+Elasticsearch config dir: /opt/elasticsearch-5.6.0/config
+Detected Elasticsearch Version: 5.6.0
+Detected Search Guard Version: 5.6.0-16
+
+### Success
+### Execute this script now on all your nodes and then start all nodes
+### After the whole cluster is up execute:
+/opt/elasticsearch-5.6.0/plugins/search-guard-5/tools/sgadmin.sh -cd /opt/elasticsearch-5.6.0/plugins/search-guard-5/sgconfig -cn searchguard_demo -ks /opt/elasticsearch-5.6.0/config/kirk.jks -ts /opt/elasticsearch-5.6.0/config/truststore.jks -nhnv
+### or run ./sgadmin_demo.sh
+### Then open https://localhost:9200 an login with admin/admin
+### (Just ignore the ssl certificate warning because we installed a self signed demo certificate)
+```
+启动Elasticsearch：
+```
+$ sudo chown -R elastic:elastic /opt/elasticsearch-5.6.0
+$ sudo su - elastic
+$ cd /opt/elasticsearch-5.6.0
+$ bin/elasticsearch
+```
 
 ## 其它
 [拼音分词器](http://blog.csdn.net/napoay/article/details/53907921)、[Elasticsearch服务器开发（第2版）.pdf](http://wtdown.2cto.com/ware/E-book/2016512/Elasticsearch_14.5MB.rar)    
