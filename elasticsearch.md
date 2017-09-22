@@ -450,12 +450,12 @@ $ curl -XGET 'http://localhost:9200/_analyze?pretty&analyzer=ik_max_word' -d '
 `陈港生`本来不是一个词，增加了自定义远程字典后背elasticsearch当成一个词了。自定义的远程词典每分钟被IK加载一次，即支持动态更新词典而不用重启elasticsearch服务。  
 
 ## 安全
-下面的内容整理自[Authentication in Elasticsearch](https://stackoverflow.com/questions/9956062/authentication-in-elasticsearch)。  
-[Playing HTTP Tricks with Nginx](https://www.elastic.co/blog/playing-http-tricks-nginx)是一篇elasticsearch官方博客文章，介绍了利用Nginx为elasticsearch增强安全性和性能，包括：http连接池(减少反复创建http连接的开销)、负载均衡、基础认证和授权、使用nginx的lua插件实现ACL  
-[elasticsearch-http-basic](https://github.com/Asquera/elasticsearch-http-basic)是个开源elasticsearch插件，提供基本的用户认证和IP地址限定。  
-[search-guard](https://github.com/floragunncom/search-guard)是个开源的、强大的elasticsearch插件，提供加密、认证、授权。支持kerberos、LDAP、json令牌、Kibana多租户、用户模拟等。  
-[Shield](https://www.elastic.co/products/shield)是elasticsearch官方的商用安全插件。  
-[elasticsearch-security-plugin](https://github.com/salyh/elasticsearch-security-plugin)功能也很强大，只是不再升级维护了。  
+下面的内容整理自[Authentication in Elasticsearch](https://stackoverflow.com/questions/9956062/authentication-in-elasticsearch)：  
+ - [Playing HTTP Tricks with Nginx](https://www.elastic.co/blog/playing-http-tricks-nginx)是一篇elasticsearch官方博客文章，介绍了利用Nginx为elasticsearch增强安全性和性能，包括：http连接池(减少反复创建http连接的开销)、负载均衡、基础认证和授权、使用nginx的lua插件实现ACL  
+ - [elasticsearch-http-basic](https://github.com/Asquera/elasticsearch-http-basic)是个开源elasticsearch插件，提供基本的用户认证和IP地址限定。  
+ - [search-guard](https://github.com/floragunncom/search-guard)是个开源的、强大的elasticsearch插件，提供加密、认证、授权。支持kerberos、LDAP、json令牌、Kibana多租户、用户模拟等。  
+ - [Shield](https://www.elastic.co/products/shield)是elasticsearch官方的商用安全插件。  
+ - [elasticsearch-security-plugin](https://github.com/salyh/elasticsearch-security-plugin)功能也很强大，只是不再升级维护了。  
 
 ## 其它
 [拼音分词器](http://blog.csdn.net/napoay/article/details/53907921)、[Elasticsearch服务器开发（第2版）.pdf](http://wtdown.2cto.com/ware/E-book/2016512/Elasticsearch_14.5MB.rar)    
