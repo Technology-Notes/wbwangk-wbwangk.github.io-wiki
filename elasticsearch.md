@@ -496,7 +496,42 @@ $ sudo su - elastic
 $ cd /opt/elasticsearch-5.6.0
 $ bin/elasticsearch
 ```
+#### search-guard插件碰到的问题
+1. 提示`max file descriptors`太小了，让改成至少65536
+```
+$ su - elastic
+$ ulimit -Hn
+4096
+$ ulimit -Sn
+1024
+# su - root
+#  vi /etc/security/limits.conf
+```
+在文件最后加上：
+```
+elastic soft nofile 65356
+elastic hard nofile 65536
+```
+然后切换到elastic用户：
+```
+# su - elastic
+$ ulimit -Hn
+65536
+```
+再运行elasticsearch，不再报告最大文件描述符太小的错误。
 
+2. 提示`vm.max_map_count [65530]`太小，让设成262144
+首先编辑`/etc/sysctl.conf`，在文件的最后加上：
+```
+vm.max_map_count=262144
+```
+发现不管用。然后设置了MAX_MAP_COUNT环境变量，管用了：
+```
+$ su - elastic
+$ export MAX_MAP_COUNT=262144
+$ cd /opt/elasticsearch-5.6.0
+$ bin/elasticsearch
+```
 ## 其它
 [拼音分词器](http://blog.csdn.net/napoay/article/details/53907921)、[Elasticsearch服务器开发（第2版）.pdf](http://wtdown.2cto.com/ware/E-book/2016512/Elasticsearch_14.5MB.rar)    
 [HOW TO CONFIGURE ELASTICSEARCH ON HADOOP WITH HDP](https://hortonworks.com/blog/configure-elastic-search-hadoop-hdp-2-0/)  
