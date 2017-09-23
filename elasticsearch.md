@@ -216,8 +216,8 @@ drwxr-xr-x. 2 root root   4096 Sep 20 07:09 config
 -rw-r--r--. 1 root root 326724 Sep 20 06:15 httpcore-4.4.4.jar
 -rw-r--r--. 1 root root   2666 Sep 20 07:21 plugin-descriptor.properties
 ```
-除了自己用maven构建插件，还可以到这个地址去下载：https://github.com/medcl/elasticsearch-analysis-ik/releases。  
-需要注意的是下载的包的版本号必须与elasticsearch的版本一致。在https://github.com/medcl/elasticsearch-analysis-ik首页上提到的`elasticsearch-plugin install`安装插件的办法经测试不行。    
+除了自己用maven构建插件，还可以到[这个地址](https://github.com/medcl/elasticsearch-analysis-ik/releases)去下载。  
+需要注意的是下载的包的版本号必须与elasticsearch的版本一致。在github[IK项目首页](https://github.com/medcl/elasticsearch-analysis-ik)上提到的`elasticsearch-plugin install`安装插件的办法经测试不行。    
 
 ### IK插件的测试
 重启elasticsearch服务：
