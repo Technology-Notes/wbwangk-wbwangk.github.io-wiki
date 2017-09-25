@@ -16,3 +16,18 @@ $ cd  http_load-09Mar2016
 $ make
 $ make install
 ```
+编辑一个文本文件，如t.tt，内容：
+```
+http://localhost:8080/
+```
+然后运行
+```
+$ http_load -p 10 -s 5 t.tt
+94720 fetches, 10 max parallel, 1.8944e+06 bytes, in 5 seconds
+20 mean bytes/connection
+18944 fetches/sec, 378880 bytes/sec
+msecs/connect: 0.0958101 mean, 0.772 max, 0.014 min
+msecs/first-response: 0.293987 mean, 0.988 max, 0.232 min
+HTTP response codes:
+  code 200 -- 94720
+```
