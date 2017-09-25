@@ -31,3 +31,4 @@ msecs/first-response: 0.293987 mean, 0.988 max, 0.232 min
 HTTP response codes:
   code 200 -- 94720
 ```
+`-p`是并发用户数，'-s'是执行时长。  
