@@ -73,4 +73,18 @@ kong的底层是nginx，所以可以通过命令查看kong监听的端口：
 ```
 $ netstat -anp | grep nginx
 ```
-
+### 测试kong
+用[Mockbin API](https://mockbin.com/)充当后台API服务器，添加配置：
+```
+$ curl -i -X POST --url http://localhost:8001/apis/ \
+  --data 'name=example-api' \
+  --data 'hosts=c7302.ambari.apache.org' \
+  --data 'upstream_url=http://httpbin.org'
+```
+kong将nginx改造成了通过REST API来配置，更容易扩展。  
+测试以上配置：
+```
+$ curl -i -X GET --url http://localhost:8000/ \
+  --header 'Host: c7302.ambari.apache.org'
+```
+通过header中`Host`来表达要访问的主机。注意这个Host与请求URL中的host不同。
