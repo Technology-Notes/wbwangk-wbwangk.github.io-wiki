@@ -65,7 +65,12 @@ root soft nofile 4096
 root hard nofile 4096
 ```
 需要重新用root登录。然后停止kong后再启动就不出现ulimit的提示了。  
-测试kong：
+测试kong。8001是管理端口，8000是反向代理端口。在没有后台应用可以反向代理的情况下，8000端口不能用。可以访问8001管理端口来测试：
 ```
 $ curl -i http://localhost:8001/
 ```
+kong的底层是nginx，所以可以通过命令查看kong监听的端口：
+```
+$ netstat -anp | grep nginx
+```
+
