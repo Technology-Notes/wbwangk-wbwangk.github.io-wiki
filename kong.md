@@ -65,3 +65,7 @@ root soft nofile 4096
 root hard nofile 4096
 ```
 需要重新用root登录。然后停止kong后再启动就不出现ulimit的提示了。  
+测试kong：
+```
+$ curl -i http://localhost:8001/
+```
