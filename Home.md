@@ -32,3 +32,6 @@ HTTP response codes:
   code 200 -- 94720
 ```
 `-p`是并发用户数，'-s'是执行时长。  
+
+### What is HMAC Authentication and why is it useful?
+[here](https://www.wolfe.id.au/2012/10/20/what-is-hmac-authentication-and-why-is-it-useful/)  
