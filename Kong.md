@@ -81,10 +81,82 @@ $ curl -i -X POST --url http://localhost:8001/apis/ \
   --data 'hosts=c7302.ambari.apache.org' \
   --data 'upstream_url=http://httpbin.org'
 ```
-kong将nginx改造成了通过REST API来配置，更容易扩展。  
+kong将nginx改造成了通过REST API来配置，更容易扩展。但其管理API的与nginx的配置文件从思想上很一致。  
 测试以上配置：
 ```
 $ curl -i -X GET --url http://localhost:8000/ \
   --header 'Host: c7302.ambari.apache.org'
 ```
-通过header中`Host`来表达要访问的主机。注意这个Host与请求URL中的host不同。
+按HTTP协议，标头中的`Host`代表了虚拟主机的域名。一个IP上可能有多个虚拟主机域名。一般来说，如果不指定Host，它会被自动设置为URL中的主机域名。  
+Kong会将上述请求转发到`http://httpbin.org`，然后将响应发回给curl，并现在屏幕上。  
+
+#### 启用key-auth插件
+key-auth可以给API添加认证，可以理解为颁发给开发者的API key。下面给`example-api`这个API启用认证：
+```
+$ curl -i -X POST \
+  --url http://localhost:8001/apis/example-api/plugins/ \
+  --data 'name=key-auth'
+```
+当`example-api`这个API启用了key-auth之后，再象之前那么访问它就会报401错误。
+
+#### 创建消费者
+利用管理API创建消费者`webb`:
+```
+$ curl -i -X POST --url http://localhost:8001/consumers/ \
+  --data "username=webb"
+{"created_at":1506494530000,"username":"webb","id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c"}
+```
+为消费者创建凭据(key)：
+```
+$ curl -i -X POST --url http://localhost:8001/consumers/webb/key-auth/ \
+  --data 'key=1'
+{"id":"c0ca1b8c-0d38-4b18-a77e-f69c35974c03","created_at":1506494666000,"key":"1","consumer_id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c"}
+```
+验证一下新建的key：
+```
+$ curl -i -X GET --url http://localhost:8000 \
+  --header "Host: c7302.ambari.apache.org" \
+  --header "apikey: 1"
+```
+屏幕上显示了来自`httpbin.org`的html格式内容。如果故意输错apikey，会返回`403 Forbidden`。
+
+先删除key-auth插件，先找到key-auth插件的id，然后删除：
+```
+$ curl -X GET http://localhost:8001/apis/example-api/plugins/
+{"total":1,"data":[{"created_at":1506468313000,"config":{"key_names":["apikey"],"anonymous":"","hide_credentials":false,"key_in_body":false},"id":"30f745fd-67c3-4fbb-bf09-e031d2a087f1","enabled":true,"api_id":"a52568c1-50fc-4b63-a49e-aa77b2080be6","name":"key-auth"}]}
+$ curl -X DELETE http://localhost:8001/apis/example-api/plugins/30f745fd-67c3-4fbb-bf09-e031d2a087f1
+```
+### JWT插件       
+[原文](https://getkong.org/plugins/jwt/)  
+为`example-api`启用jwt插件：
+```
+$ curl -X POST http://localhost:8001/apis/example-api/plugins \
+    --data "name=jwt"
+{"created_at":1506495552000,"config":{"key_claim_name":"iss","anonymous":"","secret_is_base64":false,"uri_param_names":["jwt"]},"id":"3931733a-149c-4577-aa16-426cf5f92b48","name":"jwt","api_id":"a52568c1-50fc-4b63-a49e-aa77b2080be6","enabled":true}
+```
+为之前创建的消费者webb创建JWT凭据(使用默认的HS256算法)：
+```
+$ curl -X POST http://localhost:8001/consumers/webb/jwt -H "Content-Type: application/x-www-form-urlencoded"
+{"created_at":1506495780000,"id":"f07eecbb-0b9e-48e4-aeff-d19a81bd5a07","algorithm":"HS256","key":"g5L1BaElWfpxKjS8IJlucEs99TFtoh8Z","secret":"NCKDUmPQtBDocbqu6ZFo0juJlfGNJXvf","consumer_id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c"}
+```
+可以不停调用上述方法创建多个JWT凭据。下面用`g5L1BaElWfpxKjS8IJlucEs99TFtoh8Z`这个key和`NCKDUmPQtBDocbqu6ZFo0juJlfGNJXvf`这个secret来讲解和测试JWT。  
+JWT被两个点(`.`)分隔成三段：第一段(HEADER)是下列json串的BASE64编码：
+```
+{
+    "typ": "JWT",
+    "alg": "HS256"
+}
+```
+第二段(PAYLOAD)是下列json串的BASE64编码：
+```
+{
+    "iss": "g5L1BaElWfpxKjS8IJlucEs99TFtoh8Z"
+}
+```
+上面的`iss`值是之前JWT凭据的key。  
+第三段是签名，签名段算法伪代码：
+```
+HMACSHA256(base64UrlEncode($header) + "." +
+  base64UrlEncode($payload),$secret)
+```
+HS256是对称加密算法，所以签名和验证都需要secret。
