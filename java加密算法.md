@@ -24,5 +24,15 @@ public class ApiSecurityExample {
     }
    }
 }
-
 ```
+源码中的message是一个JWT的头和载荷。  
+需要下载apache的包：
+```
+$ wget http://www-us.apache.org/dist//commons/codec/binaries/commons-codec-1.10-bin.zip
+$ unzip commons-codec-1.10-bin.zip
+$ javac -cp ".:./commons-codec-1.10/commons-codec-1.10.jar" ApiSecurityExample.java
+$ java -cp ".:./commons-codec-1.10/commons-codec-1.10.jar" ApiSecurityExample
+wc0tE4XSb+iYxBs9a/XWgT0btABQM6JyWCHpSlleUlg=
+```
+unzip自动创建了目录`commons-codec-1.10`目录，解压出jar包。`-cp`参数指明了类路径。而输出的`wc0tE4XSb+iYxBs9a/XWgT0btABQM6JyWCHpSlleUlg=`是JWT的签名。
+这个签名同`https://jwt.io/`计算出的一样。
