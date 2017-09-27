@@ -120,7 +120,7 @@ $ curl -i -X GET --url http://localhost:8000 \
 ```
 屏幕上显示了来自`httpbin.org`的html格式内容。如果故意输错apikey，会返回`403 Forbidden`。
 
-先删除key-auth插件，先找到key-auth插件的id，然后删除：
+先列出example-api的所有插件，找到key-auth插件的id，然后删除：
 ```
 $ curl -X GET http://localhost:8001/apis/example-api/plugins/
 {"total":1,"data":[{"created_at":1506468313000,"config":{"key_names":["apikey"],"anonymous":"","hide_credentials":false,"key_in_body":false},"id":"30f745fd-67c3-4fbb-bf09-e031d2a087f1","enabled":true,"api_id":"a52568c1-50fc-4b63-a49e-aa77b2080be6","name":"key-auth"}]}
@@ -169,7 +169,12 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk
 
 验证JWT:
 ```
-$ curl http://localhost:8000   --header "Host: c7302.ambari.apache.or" -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg'
-$ curl http://localhost:8000?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg
+$ curl http://localhost:8000   --header "Host: c7302.ambari.apache.org" -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg'
+$ curl --header "Host: c7302.ambari.apache.org" http://localhost:8000?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg
 ```
-上述两种使用JWT的方法都可以
+上述两种使用JWT的方法都可以通过验证。可以故意把签名输入错，如删除最后的`g`，再测试：
+```
+$ curl --header "Host: c7302.ambari.apache.org" http://localhost:8000?0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUl
+{"message":"Invalid signature"}
+```
+kong API的创建需要`hosts`、`uris`或`methods`三个参数的组合。在`example-api`这个例子API中的使用`host`定义的，所以在验证JWT时必须在请求的标头中指定`Host: c7302.ambari.apache.org`。  
