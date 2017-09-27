@@ -166,3 +166,10 @@ HS256是对称加密算法，所以签名和验证都需要secret。[这篇文�
 eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg
 ```
 上面第二个点后面的就是签名，与java程序生成的签名(其实是个散列结果)只差了一个`=`，而`=`是个填充字符，不影响校验。  
+
+验证JWT:
+```
+$ curl http://localhost:8000   --header "Host: c7302.ambari.apache.or" -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg'
+$ curl http://localhost:8000?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg
+```
+上述两种使用JWT的方法都可以
