@@ -159,4 +159,10 @@ JWT被两个点(`.`)分隔成三段：第一段(HEADER)是下列json串的BASE64
 HMACSHA256(base64UrlEncode($header) + "." +
   base64UrlEncode($payload),$secret)
 ```
-HS256是对称加密算法，所以签名和验证都需要secret。
+HS256是对称加密算法，所以签名和验证都需要secret。[这篇文章](https://github.com/wbwangk/wbwangk.github.io/wiki/java%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95)是上述伪代码的java实现，而且使用了本文的JWT头和载荷为算法的输入。  
+可以使用[https://jwt.io](https://jwt.io/)的JWT调试器来生成或验证这个JWT，生成的签名与java生成的一样。  
+在上述网页中，注意把`VERIFY SIGNATURE`域的secret替换成`NCKDUmPQtBDocbqu6ZFo0juJlfGNJXvf`，即替换成自己的密钥。HEADER和PAYLOAD也替换成前文。然后网页会自动计算出下面的JWT：
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg
+```
+上面第二个点后面的就是签名，与java程序生成的签名(其实是个散列结果)只差了一个`=`，而`=`是个填充字符，不影响校验。  
