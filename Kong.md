@@ -263,7 +263,34 @@ $ curl -X POST http://localhost:8001/consumers/webb/jwt \
   "consumer_id": "9c270f20-f3e0-4af1-a3a1-91b58f11072c"
 }
 ```
-创建JWT时，要保证header是：
+当上述命令成功后，webb用户已经有两个JWT凭据：`HS256`和`RS256`各一个，可以用下列命令查看：
+```
+$ curl -X GET http://localhost:8001/consumers/webb/jwt
+{
+  "total": 2,
+  "data": [
+    {
+      "created_at": 1506495780000,
+      "id": "f07eecbb-0b9e-48e4-aeff-d19a81bd5a07",
+      "algorithm": "HS256",
+      "key": "g5L1BaElWfpxKjS8IJlucEs99TFtoh8Z",
+      "secret": "NCKDUmPQtBDocbqu6ZFo0juJlfGNJXvf",
+      "consumer_id": "9c270f20-f3e0-4af1-a3a1-91b58f11072c"
+    },
+    {
+      "rsa_public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt8inE3+rJMtppDKfY42r\ncc/bVJveGkgYfI9C/+oQjonwMAUYnRvs78znCnCHHjdTo8orso2NvqSAm1WPC6h6\nXR3X9R2WNGtmIuGdIKhBifgq3QKLjBS0H0wRbx2ME4zXG/Zk/umBhbBMOoSeHhnn\nOM0L4xa9twCmdknn48JwBqasLxQv9jvoA1yfy8QDGRkWaciaskUCWqLYPMCNI0Sw\nmQXbBcCuDx4WLIaqLm+Eli4mm+kpZPZ2Vz0hcpbx9ykuGQl277WjfQ59P0RA7/ms\n+T47VGi2DX+tfwWdj3P5lCTHr3ABppUEoHKr3LjZUZNbcP52ZmRlt/RWMGMBYC+b\n2wIDAQAB\n-----END PUBLIC KEY-----",
+      "created_at": 1506564261000,
+      "id": "82360c6b-f4a3-420d-97d9-52a8ff43deee",
+      "algorithm": "RS256",
+      "key": "JL8mNC7PZjrQiJpmBqy3xwP4SIvYm43v",
+      "secret": "Jy0WTzITJieAvvh1RZ6l8QRZvKnIqPHZ",
+      "consumer_id": "9c270f20-f3e0-4af1-a3a1-91b58f11072c"
+    }
+  ]
+}
+```
+需要强调的是：Kong的jwt插件负责检验JWT，但不负责生成JWT。为了测试jwt插件检验RS256算法JWT的能力，需要手工生成JWT。仍可以使用在线工具[https://jwt.io](https://jwt.io/)。    
+通过[https://jwt.io](https://jwt.io/)创建JWT时，要保证header是：
 ```
 {
     "typ": "JWT",
@@ -276,7 +303,7 @@ $ curl -X POST http://localhost:8001/consumers/webb/jwt \
     "iss": "JL8mNC7PZjrQiJpmBqy3xwP4SIvYm43v"
 }
 ```
-需要用[https://jwt.io](https://jwt.io/)重新生成JWT。在下拉框中选择RS256，然后把私钥(private.pem)的全部文本复制到私钥输入框，把上面的header和payload(载荷)分别复制到相应输入框。这时JWT已经生成，如何要验证，就再把公钥(public.pem)的全部文本复制到公钥输入框。如果一切正常，签名应该可以验证通过。
+在[https://jwt.io](https://jwt.io/)的下拉框中选择RS256，然后把私钥(private.pem)的全部文本复制到私钥输入框，把上面的header和payload(载荷)分别复制到相应输入框。这时JWT已经生成，如何要验证，就再把公钥(public.pem)的全部文本复制到公钥输入框。如果一切正常，签名应该可以验证通过。
 生成了JWT后，用下列方式测试：
 ```
 $ curl http://localhost:8000 -H "Host: c7302.ambari.apache.org" -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJKTDhtTkM3UFpqclFpSnBtQnF5M3h3UDRTSXZZbTQzdiJ9.SfVOXuk-0-VELm4QV1nPteJC9toXtH2xqqhClBueO-zrGn5K2lCsPjku2TwGMiLYFVLqfzFSjNlLuCNZIjpzSW3Hq7fjeEcVRyVhrdwAMOJm0SWRL9x5BOQIK_anLvoQA2ONTKFzD61wLlnEpnGK3vSh6sFquqd8rTOxii7DK9nHGP1svpymetB0AO5ma-wQuK_6fVOzuxdqK3bwigyRjByHrsZaQIS6U8Rx_KTtAE-5T-siBkGRdlSq7wxNvaYvsnMykfJs6b-hXkEb4ErOT-qfX4KVjG9JvgjD3dGYcuDYxMgbIfPat9b1913_exgt9UtjklRpJaWy5iVa0UtSGQ'
