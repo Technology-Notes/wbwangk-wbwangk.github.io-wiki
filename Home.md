@@ -35,3 +35,14 @@ HTTP response codes:
 
 ### What is HMAC Authentication and why is it useful?
 [here](https://www.wolfe.id.au/2012/10/20/what-is-hmac-authentication-and-why-is-it-useful/)  
+
+### java base64
+[原文](http://www.importnew.com/14961.html)  
+```
+// 编码
+String asB64 = java.util.Base64.getEncoder().encodeToString("some string".getBytes("utf-8"));
+// 解码
+byte[] asBytes = java.util.Base64.getDecoder().decode("c29tZSBzdHJpbmc=");
+// URL编码
+String urlEncoded = java.util.Base64.getUrlEncoder().encodeToString("subjects?abcd".getBytes("utf-8"));
+```
