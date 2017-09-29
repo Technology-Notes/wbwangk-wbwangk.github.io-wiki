@@ -27,13 +27,24 @@ $ export PATH=$PATH:/opt/phantomjs-2.1.1-linux-x86_64/bin
 从github上下载HDP的ambari源码包：
 https://github.com/hortonworks/ambari-release/archive/AMBARI-2.5.1.7-tag.zip
 
-按[Ambari Web Frontend Development Environment](https://cwiki.apache.org/confluence/display/AMBARI/Coding+Guidelines+for+Ambari)的办法进行构建，发现少了`info.json`文件：
-```
-$ ambari/ambari-web/app/assets/data/clusters/info.json
-$ ambari/ambari-web/public/data/clusters/info.json
-```
-导致登录ambari UI后报错，把上述两个文件从apache ambari项目复制到HDP ambari项目后重新启动：
+按[Ambari Web Frontend Development Environment](https://cwiki.apache.org/confluence/display/AMBARI/Coding+Guidelines+for+Ambari)的办法进行构建，并启动：
 ```
 $ brunch watch --server
 ```
-问题解决！
+登录ambari UI后报错，发现少了`info.json`文件。自己造一个：
+```
+$ cd app/assets/data/clusters
+$ vi info.json
+{
+  "items" : [
+    {
+      "Clusters" : {
+        "cluster_name" : "cc",
+        "provisioning_state" : "INSTALLED",
+        "version" : "HDP-2.4.3"
+      }
+    }
+  ]
+}
+```
+重新启动`brunch watch --server`后问题解决！
