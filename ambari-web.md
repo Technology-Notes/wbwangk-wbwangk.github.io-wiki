@@ -48,3 +48,28 @@ $ vi info.json
 }
 ```
 重新启动`brunch watch --server`后问题解决！
+
+## Ember.js
+[原文](https://guides.emberjs.com/v2.15.0/getting-started/quick-start/)  
+安装Ember.js。用npm很慢，cnpm快很多。
+```
+$ cnpm install -g ember-cli@2.15
+```
+创建一个新应用，按原文的办法使用npm安装依赖包很慢。改进后的办法是：
+```
+$ ember new --skip-npm ember-quickstart
+$ cd ember-quickstart
+$ cnpm install
+```
+这样就是使用cnpm安装依赖包，怀疑能快10倍。  
+启用开发服务器：
+```
+$ ember serve
+```
+用浏览器访问`http://c7302.ambari.apache.org:4200`就可以看到刚创建的Ember应用的欢迎页。  
+编辑`app/templates/application.hbs`为下列内容：
+```
+<h1>PeopleTracker</h1>
+{{outlet}}
+```
+重新执行`ember serve`，然后可以看到欢迎页变了。  
