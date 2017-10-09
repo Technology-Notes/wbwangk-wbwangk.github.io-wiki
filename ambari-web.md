@@ -73,3 +73,18 @@ $ ember serve
 {{outlet}}
 ```
 重新执行`ember serve`，然后可以看到欢迎页变了。  
+
+## Test
+#### Ember's test helpers
+- **visit** - loads a given URL
+- **click** - pretends to be a user clicking on a specific part of the screen
+- **andThen** - waits for our previous commands to run before executing our function. In our test below, we want to wait for our page to load after click is called so that we can double-check that the new page has loaded
+ - **currentURL** - returns the URL of the page we're currently on
+
+### Ember Addon
+https://emberobserver.com/
+
+## Mustache
+Mustache是一个无逻辑模板语言。称无逻辑，因为它的定义中没有循环、判断等语法，只有标签。  
+官网：http://mustache.github.io。官方只提供了RUBY实现，但大量爱好者提供了各种语言的实现。其[javascript的实现](https://github.com/janl/mustache.js)在github上有一万多颗星。  
+Mushtache的语法在官网的[这个链接](http://mustache.github.io/mustache.5.html)。  
