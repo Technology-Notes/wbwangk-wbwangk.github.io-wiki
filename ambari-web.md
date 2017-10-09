@@ -86,5 +86,6 @@ https://emberobserver.com/
 
 ## Mustache
 Mustache是一个无逻辑模板语言。称无逻辑，因为它的定义中没有循环、判断等语法，只有标签。  
-官网：http://mustache.github.io。官方只提供了RUBY实现，但大量爱好者提供了各种语言的实现。其[javascript的实现](https://github.com/janl/mustache.js)在github上有一万多颗星。  
+官网：http://mustache.github.io。  
+官方只提供了RUBY实现，但大量爱好者提供了各种语言的实现。其[javascript的实现](https://github.com/janl/mustache.js)在github上有一万多颗星。  
 Mushtache的语法在官网的[这个链接](http://mustache.github.io/mustache.5.html)。  
