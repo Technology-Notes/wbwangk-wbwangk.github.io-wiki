@@ -89,3 +89,11 @@ Mustache是一个无逻辑模板语言。称无逻辑，因为它的定义中没
 官网：http://mustache.github.io。  
 官方只提供了RUBY实现，但大量爱好者提供了各种语言的实现。其[javascript的实现](https://github.com/janl/mustache.js)在github上有一万多颗星。  
 Mushtache的语法在官网的[这个链接](http://mustache.github.io/mustache.5.html)。  
+
+## handlebars.js
+[github home](https://github.com/wycats/handlebars.js)  
+handlebars.js是Mustache的超集，和javascript实现。  
+handlebars.js的增强部分：  
+- 内部路径，可以访问json串内部属性，如`{{author.name}}`
+- helpers。在mustache的体系下，可以在json串中嵌入代码，把数据和代码放在一起有些怪。handerbars.js对代码的调用显式定义在模板中，格式是`{fullName author}}`。`fullName`就是一个helper。通过helper体系，代码放在了js文件中(而不是json中)，更和谐。  
+- 块表达式(mustache称为`Section`)。相比mustache，也支持helper。
