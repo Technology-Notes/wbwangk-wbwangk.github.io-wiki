@@ -46,3 +46,5 @@ byte[] asBytes = java.util.Base64.getDecoder().decode("c29tZSBzdHJpbmc=");
 // URL编码
 String urlEncoded = java.util.Base64.getUrlEncoder().encodeToString("subjects?abcd".getBytes("utf-8"));
 ```
+### Confluent REST Proxy for Kafka
+https://github.com/confluentinc/kafka-rest
