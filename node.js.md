@@ -24,3 +24,10 @@ $ npm install
 模块可以发布到npm网上的存储空间，以便与其他人分享模块。  
 通过exports命令定义模块中对外暴露的函数或变量，没有exports的函数或变量都只能用于模块的私有命令空间中。  
 使用require命令引入模块。require是同步命令，应在程序初始化时用，否则可能会引起阻塞。   
+
+## angularjs2
+`ng serve`启动的后台服务器默认使用`localhost:4200`。当angularjs运行在windows的linux虚拟机中，想用windows下的浏览器访问angularjs服务器时，必须指定windows能解析的域名，办法是：  
+```
+# ng serve --open --host c7302.ambari.apache.org
+```
+这样启动的angular服务就绑定`c7302.ambari.apache.org`主机的4200端口了。  
