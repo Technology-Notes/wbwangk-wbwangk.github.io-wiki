@@ -71,7 +71,7 @@ export default Ember.Route.extend({
   }
 });
 ```
-`model()`方法名是一个约定，会被ebmer框架调用。如果需要异步获取数据，`model()`支持[JavaScript Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)。  
+`model()`方法是一个约定的钩子函数(hook)，会被ebmer框架调用。如果需要异步获取数据，`model()`支持[JavaScript Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)。  
 现在数据有了，修改`scientists.hbs`模板文件，以便在模板中展示模型中的数据：
 ```
 <h2>List of Scientists</h2>
@@ -85,12 +85,18 @@ export default Ember.Route.extend({
 同原文相比保留了`{{outlet}}`，这为渲染更下级嵌入式路由内容指定了位置。  
 vue.js和angular2的模板语言使用了html的自定义元素(即自定义tag)风格，而handlebars则采用了[Mustache](http://mustache.github.io)模板语法风格。前者兼容html，后者个人感觉更容易阅读。  
 
-## Test
-#### Ember's test helpers
-- **visit** - loads a given URL
-- **click** - pretends to be a user clicking on a specific part of the screen
-- **andThen** - waits for our previous commands to run before executing our function. In our test below, we want to wait for our page to load after click is called so that we can double-check that the new page has loaded
- - **currentURL** - returns the URL of the page we're currently on
+模板文件`scientists.hbs`保存后，浏览器自动刷新为显示了科学家列表：
+```
+PeopleTracker
 
-### Ember Addon
-https://emberobserver.com/
+List of Scientists
+
+ . Marie Curie
+ . Mae Jemison
+ . Albert Hofmann
+
+List of Scientists
+
+end...
+```
+## 创建一个UI组件
