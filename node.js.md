@@ -31,3 +31,5 @@ $ npm install
 # ng serve --open --host c7302.ambari.apache.org
 ```
 这样启动的angular服务就绑定`c7302.ambari.apache.org`主机的4200端口了。  
+
+[Promises](https://www.promisejs.org/)  
