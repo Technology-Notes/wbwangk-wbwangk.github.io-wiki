@@ -97,7 +97,7 @@ List of Scientists
 
 end...
 ```
-## 创建一个UI组件
+#### 创建一个UI组件
 UI组件可以在多个页面之中复用，或在同一个页面中复用多次。  
 创建组件的命令行(组件id是people-list)：
 ```
@@ -134,3 +134,26 @@ installing component-test
 可以看到浏览器中的科学家列表显示了两次。为了体现复用，还可以自己定义一个新的程序员(`programmers`)路由，然后显示与科学家列表类似的界面，会发现重用UI组件使编码量大大减少，切提高了一致性。    
 
 #### 点击事件
+在`people-list`组件模板文件(`app/templates/components/people-list.hbs`)的`li`标签中添加一个`action`的帮助器。(帮助器是handlebar的概念，有点像函数)：
+```
+<h2>{{title}}</h2>
+<ul>
+  {{#each people as |person|}}
+    <li {{action "showPerson" person}}>{{person}}</li>
+  {{/each}}
+</ul>
+```
+`action`帮助器允许你向元素中添加事件监听器，并调用指定的函数。默认`action`帮助器会添加鼠标的`click`事件监听器，但也可以监听其它元素事件。通过上面的定义，`li`元素的点击事件会调用函数`showPerson`，类似于调用`this.actions.showPerson(person)`。  
+`actions`事件的showPerson函数需要定义在`people-list`组件的js文件(app/components/people-list.js)中：
+```
+import Ember from 'ember';
+
+export default Ember.Component.extend({
+  actions: {
+    showPerson(person) {
+      alert(person);
+    }
+  }
+});
+```
+浏览器的`http://c7302.ambari.apache.org:4200/scientists`网页会自动加载修改的网页。尝试点击一下科学家的名字，浏览器会弹出了一个alert模式小窗口，小窗口中显示了点击科学家的名字。
