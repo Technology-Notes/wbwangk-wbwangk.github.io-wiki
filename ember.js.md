@@ -75,14 +75,12 @@ export default Ember.Route.extend({
 现在数据有了，修改`scientists.hbs`模板文件，以便在模板中展示模型中的数据：
 ```
 <h2>List of Scientists</h2>
-{{outlet}}
 <ul>
   {{#each model as |scientist|}}
     <li>{{scientist}}</li>
   {{/each}}
 </ul><h2>List of Scientists</h2>
 ```
-同原文相比保留了`{{outlet}}`，这为渲染更下级嵌入式路由内容指定了位置。  
 vue.js和angular2的模板语言使用了html的自定义元素(即自定义tag)风格，而handlebars则采用了[Mustache](http://mustache.github.io)模板语法风格。前者兼容html，后者个人感觉更容易阅读。  
 
 模板文件`scientists.hbs`保存后，浏览器自动刷新为显示了科学家列表：
@@ -100,3 +98,39 @@ List of Scientists
 end...
 ```
 ## 创建一个UI组件
+UI组件可以在多个页面之中复用，或在同一个页面中复用多次。  
+创建组件的命令行(组件id是people-list)：
+```
+$ ember generate component people-list
+installing component
+  create app/components/people-list.js
+  create app/templates/components/people-list.hbs
+installing component-test
+  create tests/integration/components/people-list-test.js
+```
+从上述提示上可以看出，UI组件由对象和模板构成。现在编辑模板文件`app/templates/components/people-list.hbs`为以下内容：
+```
+<h2>{{title}}</h2>
+
+<ul>
+  {{#each people as |person|}}
+    <li>{{person}}</li>
+  {{/each}}
+</ul>
+```
+从名称上看scientist是person的一种，这暗示了这个组件的通用性。从文件内容上看，与`scientists.hbs`很像。下面会用这个组件来完成模板`scientists.hbs`类似的功能，从而体现出复用。  
+下面改写`scientists.hbs`为以下内容：
+```
+{{people-list title="List of Scientists(use component)" people=model}}
+```
+上面就是在模板中引用UI组件的语法，与html的标签有点像，只是把尖括号换成了两个花括号。  
+通过上述定义，指定了引用组件的id(`people-list`)，定义了变量title的值，为people这个变量赋值了路由`model()`方法的返回值。   
+回到浏览器，可以看到显示的文字中多了`(use component)`这些字符。  
+为了体现组件的复用，可以把`scientists.hbs`改成：
+```
+{{people-list title="List of Scientists(use component)" people=model}}
+{{people-list title="List of Scientists(use component2)" people=model}}
+```
+可以看到浏览器中的科学家列表显示了两次。为了体现复用，还可以自己定义一个新的程序员(`programmers`)路由，然后显示与科学家列表类似的界面，会发现重用UI组件使编码量大大减少，切提高了一致性。    
+
+#### 点击事件
