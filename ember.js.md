@@ -1,4 +1,4 @@
-## quick-start
+## 快速开始
 [原文](https://guides.emberjs.com/v2.15.0/getting-started/quick-start/)  
 安装Ember.js:  
 ```
@@ -157,3 +157,5 @@ export default Ember.Component.extend({
 });
 ```
 浏览器的`http://c7302.ambari.apache.org:4200/scientists`网页会自动加载修改的网页。尝试点击一下科学家的名字，浏览器会弹出了一个alert模式小窗口，小窗口中显示了点击科学家的名字。
+
+#### 生产构建
