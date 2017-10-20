@@ -23,7 +23,7 @@ $ ember serve --host c7302.ambari.apache.org
 `ember serve`默认会监听localhost主机，用`--host`参数可以让它监听其它ip。这对于ember运行在linux虚拟机，而用windows浏览器去访问ember服务时很有用。  
 用浏览器访问`http://c7302.ambari.apache.org:4200`就可以看到刚创建的Ember应用的欢迎页。  
 打开另外的终端窗口(如git bash)，编辑`app/templates/application.hbs`为下列内容：
-```ember
+```handlebars
 <h1>PeopleTracker</h1>
 {{outlet}}
 <p>end...</p>
@@ -52,7 +52,7 @@ Router.map(function() {
 创建了一个模板文件(`scientists.hbs`)和一个对应的Route对象(`scientists.js`)，还创建了一个单元测试程序文件(`scientists-test.js`)。`.hbs`是[handlebars](https://github.com/wycats/handlebars.js)(一种模板语言)的简写。
 
 向新建的模板文件`app/templates/scientists.hbs`中加点页面元素：
-```html
+```handlebars
 <h2>List of Scientists</h2>
 ```
 ember会自动加载这个模板文件。现在用浏览器访问地址`http://c7302.ambari.apache.org:4200/scientists`，可以看到两个模板文件`app/templates/application.hbs`和`app/templates/scientists.hbs`的内容合并后现在了屏幕上。而`scientists.hbs`的内容被渲染到了`application.hbs`模板中`{{outlet}}`的位置，这正是前面说的嵌入式路由。即：
@@ -73,7 +73,7 @@ export default Ember.Route.extend({
 ```
 `model()`方法是一个约定的钩子函数(hook)，会被ebmer框架调用。如果需要异步获取数据，`model()`支持[JavaScript Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)。  
 现在数据有了，修改`scientists.hbs`模板文件，以便在模板中展示模型中的数据：
-```ember
+```handlebars
 <h2>List of Scientists</h2>
 <ul>
   {{#each model as |scientist|}}
@@ -120,14 +120,14 @@ installing component-test
 ```
 从名称上看scientist是person的一种，这暗示了这个组件的通用性。从文件内容上看，与`scientists.hbs`很像。下面会用这个组件来完成模板`scientists.hbs`类似的功能，从而体现出复用。  
 下面改写`scientists.hbs`为以下内容：
-```
+```handlebars
 {{people-list title="List of Scientists(use component)" people=model}}
 ```
 上面就是在模板中引用UI组件的语法，与html的标签有点像，只是把尖括号换成了两个花括号。  
 通过上述定义，指定了引用组件的id(`people-list`)，定义了变量title的值，为people这个变量赋值了路由`model()`方法的返回值。   
 回到浏览器，可以看到显示的文字中多了`(use component)`这些字符。  
 为了体现组件的复用，可以把`scientists.hbs`改成：
-```
+```handlebars
 {{people-list title="List of Scientists(use component)" people=model}}
 {{people-list title="List of Scientists(use component2)" people=model}}
 ```
@@ -135,7 +135,7 @@ installing component-test
 
 #### 点击事件
 在`people-list`组件模板文件(`app/templates/components/people-list.hbs`)的`li`标签中添加一个`action`的帮助器。(帮助器是handlebar的概念，有点像函数)：
-```
+```handlebars
 <h2>{{title}}</h2>
 <ul>
   {{#each people as |person|}}
@@ -145,7 +145,7 @@ installing component-test
 ```
 `action`帮助器允许你向元素中添加事件监听器，并调用指定的函数。默认`action`帮助器会添加鼠标的`click`事件监听器，但也可以监听其它元素事件。通过上面的定义，`li`元素的点击事件会调用函数`showPerson`，类似于调用`this.actions.showPerson(person)`。  
 `actions`事件的showPerson函数需要定义在`people-list`组件的js文件(app/components/people-list.js)中：
-```
+```javascript
 import Ember from 'ember';
 
 export default Ember.Component.extend({
@@ -159,7 +159,7 @@ export default Ember.Component.extend({
 浏览器的`http://c7302.ambari.apache.org:4200/scientists`网页会自动加载修改的网页。尝试点击一下科学家的名字，浏览器会弹出了一个alert模式小窗口，小窗口中显示了点击科学家的名字。
 
 #### 生产构建
-```
+```shell
 $ ember build --env production
 ```
 构建命令会创建`dist`目录，把需要像web服务器发布的内容打包进去。如果有兴趣以快速可靠的方式将应用程序部署到生产环境中，请查看[Ember CLI Deploy](http://ember-cli-deploy.com/)插件。    
@@ -223,3 +223,71 @@ Router.map(function() {
 
 export default Router;
 ```
+Ember CLI使用ECMAScript 2015（简称ES2015或以前称为ES6）模块来组织应用程序代码。例如，该行`import Ember from 'ember';`允许我们访问实际的Ember.js库作为变量`Ember`。该`import config from './config/environment';`行可让我们访问我们的应用程序的配置数据作为变量`config`。`const`是一种声明只读变量的方式，以确保它不会在其他地方重新分配。在文件的最后，`export default Router;`使`Router`此文件中定义的变量可用于应用程序的其他部分。
+
+#### 开发服务器
+当我们生成一个新项目，可以通过启动开发服务器来检验一切是否正常：
+```
+$ ember server --host c7302.ambari.apache.org
+```
+如果不加`--host`参数则使用`localhost`主机名。  
+现在用浏览器打开地址`http://c7302.ambari.apache.org:4200`，可以看到默认欢迎页面。我们可以编辑`app/templates/application.hbs`文件来将欢迎页面修改成自己的内容。  
+打开另外的终端窗口，编辑文件`app/templates/application.hbs`。删除组件`{{welcome-page}}`，修改为：
+```
+<h1> This my webcome page .... </h1>
+{{outlet}}
+```
+浏览器自动加载了新的模板，欢迎页变了。  
+
+### 规划你的应用
+为了展示如何搭建Ember应用程序，我们将搭建一个资产租赁的应用，叫`Super Rentals`。我们将开始于一个home页面，一个about页面和一个联系我们页面。
+完成后的应用大约是下面的样子：  
+![](https://guides.emberjs.com/v2.15.0/images/service/style-super-rentals-maps.png)  
+应用程序的构成是：
+- 在home页面上显示租赁清单
+- 链接到关于公司的页面
+- 链接到“联系我们”的页面
+- 列出有效的租赁清单
+- 按城市过滤租赁清单
+- 显示一个选中租赁的详细信息
+
+####用We Go测试应用程序
+验收测试与我们的应用程序进行交互，就像实际的人一样，但是是自动化的，有助于确保我们的应用程序在将来不会中断。  
+当我们使用Ember CLI创建一个新的Ember项目时，它使用[QUnit](https://qunitjs.com/)JavaScript测试框架来定义和运行测试。  
+我们将首先使用Ember CLI生成新的验收测试：
+```
+$ ember g acceptance-test list-rentals
+installing acceptance-test
+  create tests/acceptance/list-rentals-test.js
+```
+可以打开生成的`tests/acceptance/list-rentals-test.js`的文件看看其内容。发现生成的测试代码的第一个测试是请求`/list-rentals`路由。这时我们的应用还没有定义任何路由，所以可以把文件中的三个`/list-rentals`都改成`/`来测试应用的基础URL`http://c7302.ambari.apache.org:4200/`。修改后的`tests/acceptance/list-rentals-test.js`如下：
+```javascript
+import { test } from 'qunit';
+import moduleForAcceptance from 'super-rentals/tests/helpers/module-for-acceptance';
+
+moduleForAcceptance('Acceptance | list rentals');
+
+test('visiting /', function(assert) {
+  visit('/');
+
+  andThen(function() {
+    assert.equal(currentURL(), '/');
+  });
+});
+```
+对于这个简单测试，需要注意的几点是：  
+- 验收测试通过调用函数`moduleForAcceptance`来建立，此函数确保您的Ember应用程序在每次测试之间启动和关闭。  
+- QUnit传到一个叫assert的对象到每个测试函数。assert含有函数，如equal()，允许检查测试环境中的条件。一个测试必须有一个通过断言才能成功。  
+- Ember验收试验使用一组测试帮助函数，如visit，andThen和上面使用的currentURL函数。我们将在本教程的后面更详细地讨论这些功能。  
+
+现在启动测试：
+```
+$ ember test --server --host c7302.ambari.apache.org
+```
+默认情况下，当执行上述命令时，Ember CLI 会运行 [Testem test runner](https://github.com/testem/testem), 它会在Chrome和[PhantomJS](http://phantomjs.org/)中运行Qunit。  
+
+按屏幕的提示，让用浏览器访问地址`http://c7302.ambari.apache.org:7357/`。   
+![](https://guides.emberjs.com/v2.15.0/images/acceptance-test/initial-tests.png)   
+浏览器上现在显示10次成功测试。如果取消选中`Hide passed tests`，应该看到我们的验收测试成功，以及9次通过的[ESLint](http://eslint.org/)测试。  
+
+#### 将应用程序目标添加为验收测试
