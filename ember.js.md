@@ -9,7 +9,7 @@ $ npm install -g ember-cli@2.15
 $ ember new ember-quickstart
 ```
 new命令会以创建一系列的目录和文件，包括npm的包依赖配置文件package.json。然后执行`npm install`。也可以先安装安装依赖包，然后手工执行：
-```
+```bash
 $ cd /opt
 $ ember new --skip-npm ember-quickstart
 $ cd ember-quickstart
@@ -23,7 +23,7 @@ $ ember serve --host c7302.ambari.apache.org
 `ember serve`默认会监听localhost主机，用`--host`参数可以让它监听其它ip。这对于ember运行在linux虚拟机，而用windows浏览器去访问ember服务时很有用。  
 用浏览器访问`http://c7302.ambari.apache.org:4200`就可以看到刚创建的Ember应用的欢迎页。  
 打开另外的终端窗口(如git bash)，编辑`app/templates/application.hbs`为下列内容：
-```
+```ember
 <h1>PeopleTracker</h1>
 {{outlet}}
 <p>end...</p>
@@ -33,7 +33,7 @@ ember会自动检测到模板文件变化，并自动加载。可以看到浏览
 
 #### 定义一个路由
 在`/opt/ember-quickstart`目录下执行下列命令来创建一个路由：
-```
+```shell
 $ ember generate route scientists
 installing route
   create app/routes/scientists.js
@@ -44,7 +44,7 @@ installing route-test
   create tests/unit/routes/scientists-test.js
 ```
 根据上述提示也可以看出，命令在`app/router.js`中添加了一个条目：
-```
+```javascript
 Router.map(function() {
   this.route('scientists');
 });
@@ -52,7 +52,7 @@ Router.map(function() {
 创建了一个模板文件(`scientists.hbs`)和一个对应的Route对象(`scientists.js`)，还创建了一个单元测试程序文件(`scientists-test.js`)。`.hbs`是[handlebars](https://github.com/wycats/handlebars.js)(一种模板语言)的简写。
 
 向新建的模板文件`app/templates/scientists.hbs`中加点页面元素：
-```
+```html
 <h2>List of Scientists</h2>
 ```
 ember会自动加载这个模板文件。现在用浏览器访问地址`http://c7302.ambari.apache.org:4200/scientists`，可以看到两个模板文件`app/templates/application.hbs`和`app/templates/scientists.hbs`的内容合并后现在了屏幕上。而`scientists.hbs`的内容被渲染到了`application.hbs`模板中`{{outlet}}`的位置，这正是前面说的嵌入式路由。即：
@@ -62,7 +62,7 @@ List of Scientists
 end...
 ```  
 在实际使用中，模板要显示动态数据。数据通过`app/routes/scientists.js`提供，这就是所谓的模型。向`scientists.js`中增加`model()`方法：
-```
+```javascript
 import Ember from 'ember';
 
 export default Ember.Route.extend({
@@ -73,7 +73,7 @@ export default Ember.Route.extend({
 ```
 `model()`方法是一个约定的钩子函数(hook)，会被ebmer框架调用。如果需要异步获取数据，`model()`支持[JavaScript Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)。  
 现在数据有了，修改`scientists.hbs`模板文件，以便在模板中展示模型中的数据：
-```
+```ember
 <h2>List of Scientists</h2>
 <ul>
   {{#each model as |scientist|}}
@@ -109,7 +109,7 @@ installing component-test
   create tests/integration/components/people-list-test.js
 ```
 从上述提示上可以看出，UI组件由对象和模板构成。现在编辑模板文件`app/templates/components/people-list.hbs`为以下内容：
-```
+```handlebars
 <h2>{{title}}</h2>
 
 <ul>
