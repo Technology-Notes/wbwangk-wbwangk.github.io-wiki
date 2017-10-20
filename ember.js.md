@@ -159,3 +159,67 @@ export default Ember.Component.extend({
 浏览器的`http://c7302.ambari.apache.org:4200/scientists`网页会自动加载修改的网页。尝试点击一下科学家的名字，浏览器会弹出了一个alert模式小窗口，小窗口中显示了点击科学家的名字。
 
 #### 生产构建
+```
+$ ember build --env production
+```
+构建命令会创建`dist`目录，把需要像web服务器发布的内容打包进去。如果有兴趣以快速可靠的方式将应用程序部署到生产环境中，请查看[Ember CLI Deploy](http://ember-cli-deploy.com/)插件。    
+
+## 教程
+本教程试图用Emberjs创建一个“网上房屋租赁”的web应用程序。完成教程代码位于`https://github.com/ember-learn/super-rentals`。  
+### 创建应用程序
+Ember CLI，Ember的命令行界面提供了一个标准的项目结构，一组开发工具和一个插件系统。这允许Ember开发人员专注于构建应用程序，而不是构建使它们运行的​​支持结构。可通过`ember --help`显示Ember CLI提供的命令，或通过`ember help <command-name>`查看特定命令的信息。  
+
+#### 创建应用程序
+```
+$ ember new super-rentals
+```
+上述`ember new`命令会创建一个叫`super-rentals`的目录，还有一些骨架程序，然后调用`npm install`安装必要的依赖包。进入应用目录并开始工作：  
+```
+$ cd super-rentals
+```
+`new`命令生成的项目目录和文件如下：
+```
+|--app
+|--config
+|--node_modules
+|--public
+|--tests
+|--vendor
+
+<other files>
+
+ember-cli-build.js
+package.json
+README.md
+testem.js
+```
+**app**：这是存储模型，组件，路由，模板和样式的文件夹和文件的地方。您在Ember项目中的大部分编码都发生在此文件夹中。
+
+**config**：`config`目录包含environment.js，在这里可以配置应用程序设置。
+
+**node_modules/package.json**：此目录和文件来自npm。npm是Node.js的包管理器。Ember使用Node构建，并使用各种Node.js模块进行操作。该`package.json`文件维护该应用程序的当前npm依赖关系的列表。您安装的任何Ember CLI插件也将显示在此处。列出的软件包`package.json`安装在node_modules目录中。
+
+**public**：此目录包含图像和字体等资源。
+
+**vendor**：此目录是由Bower不管理的前端依赖关系（如JavaScript或CSS）。
+
+**tests/testem.js**：我们的应用程序的自动化测试会进入tests文件夹，并配置了Ember CLI的测试运行器testemtestem.js。
+
+**ember-cli-build.js**：该文件描述了Ember CLI如何构建我们的应用程序。
+
+#### ES6模块
+看一下`app/router.js`文件的内容；
+```javascript
+import Ember from 'ember';
+import config from './config/environment';
+
+const Router = Ember.Router.extend({
+  location: config.locationType,
+  rootURL: config.rootURL
+});
+
+Router.map(function() {
+});
+
+export default Router;
+```
