@@ -448,6 +448,24 @@ export default Ember.Route.extend({
   </div>
 </div>
 ```
+现在通过浏览器访问地址`http://c7302.ambari.apache.org:4200/contact`可以看到在页面的顶部显示了标题`SuperRentals`以及`about`和`contact`两个链接。  
+
+#### 实现验收测试
+首先，我们要测试访问`/`是否正确重定向到`/rentals`。我们将使用Ember visit帮助器，然后确保我们当前的URL是`/rentals`重定向发生的。  
+打开之前创建的验收创建文件`/tests/acceptance/list-rentals-test.js`，修改为：
+```handlebars
+test('should show rentals as the home page', function (assert) {
+  visit('/');
+  andThen(function() {
+    assert.equal(currentURL(), '/rentals', 'should redirect automatically');
+  });
+});
+```
+运行测试程序：
+```
+$ ember test --server --host c7302.ambari.apache.org
+```
+
 
 ## 参考
 [ECMAScript 6 入门](http://es6.ruanyifeng.com/)
