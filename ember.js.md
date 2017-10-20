@@ -391,7 +391,63 @@ $ ember g route rentals
 </div>
 ```
 #### index路由
+index路由用于处理对于网站根URI(`/`)请求。我们想用租借列表页面(URI是`/rentals`)充当应用的主页面。因此，我们希望我们的index路由简单地转发到已经创建的rentals路由。  
+创建index路由：
+```
+$ ember g route index
+installing route
+  create app/routes/index.js
+  create app/templates/index.hbs
+installing route-test
+  create tests/unit/routes/index-test.js
+```
+从上面的提示中可以看出，index路由比较特殊，不需要向路由映射(`app/router.js`)中添加条目。  
+我们的需求是当用户访问根URI(`/`)转向到`/rentals`。为了实现这个需要需要在index路由的处理程序(`index.js`)中实现一个叫`beforeModel`路由生命周期钩子函数。  
+每个路由处理程序都有一组“生命周期钩子”，它们是在加载页面时在特定时间被调用的函数。在[beforeModel](http://emberjs.com/api/classes/Ember.Route.html#method_beforeModel)钩子在数据从模型钩子取出之前执行，也在页面被渲染之前。  
+在index处理程序中，我们调用[replaceWith](http://emberjs.com/api/classes/Ember.Route.html#method_replaceWith)函数。该`replaceWith`函数类似于路由的`transitionTo`函数，区别在于`replaceWith`将替换浏览器历史中的当前URL，而`transitionTo`将添加到历史记录中。由于我们希望我们的`rentals`路由作为我们的主页，我们将使用该`replaceWith`函数。  
+将index处理程序(`app/routes/index.js`)修改成如下的样子：
+```javascript
+import Ember from 'ember';
 
+export default Ember.Route.extend({
+  beforeModel() {
+    this.replaceWith('rentals');
+  }
+});
+```
+现在访问根路由`/`将导致`/rentals`URL的加载。  
+
+#### 添加顶部导航
+我们希望在所有页面的顶部添加一个通用区域显示应用标题和导航条。  
+为了完成这个需求，需要修改应用模板(`/app/templates/application.hbs`)。先看原来的内容：
+```
+<h1> This my webcome page .... </h1>
+{{outlet}}
+```
+在上面的模板下，应用所有页面的顶部都会显示`<h1>This my webcome page .... </h1>`，而`{{outlet}}`的位置会显示当前路由的网页内容。  
+为了完成本节需求，需要将应用模板修改成下列的样子：
+```handlebars
+<div class="container">
+  <div class="menu">
+    {{#link-to 'index'}}
+      <h1>
+        <em>SuperRentals</em>
+      </h1>
+    {{/link-to}}
+    <div class="links">
+      {{#link-to 'about'}}
+        About
+      {{/link-to}}
+      {{#link-to 'contact'}}
+        Contact
+      {{/link-to}}
+    </div>
+  </div>
+  <div class="body">
+    {{outlet}}
+  </div>
+</div>
+```
 
 ## 参考
 [ECMAScript 6 入门](http://es6.ruanyifeng.com/)
