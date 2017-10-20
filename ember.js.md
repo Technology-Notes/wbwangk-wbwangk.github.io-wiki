@@ -290,4 +290,108 @@ $ ember test --server --host c7302.ambari.apache.org
 ![](https://guides.emberjs.com/v2.15.0/images/acceptance-test/initial-tests.png)   
 浏览器上现在显示10次成功测试。如果取消选中`Hide passed tests`，应该看到我们的验收测试成功，以及9次通过的[ESLint](http://eslint.org/)测试。  
 
-#### 将应用程序目标添加为验收测试
+### 路由和模板
+对于Super Rentals，我们希望首先到达home页面，在上面显示租赁列表，然后可以跳转到`about`页面和`contact`页面。(下列测试在`/opt/super-rentals`目录下进行)  
+#### about路由
+生成about路由：
+```
+$ ember generate route about
+installing route
+  create app/routes/about.js
+  create app/templates/about.hbs
+updating router
+  add route about
+installing route-test
+  create tests/unit/routes/about-test.js
+```
+一个Ember路由由三部分组成：
+- 一个在Ember路由(`app/router.js`)中的条目，它会将路由名称映射到一个特定URI(或者反过来映射)  
+- 一个路由处理文件(如`app/routes/about.js`)，定义路由被加载时发生什么  
+- 一个路由模板(如`app/templates/about.hbs`)，定义显示的内容
+打开`app/router.js`看看，发现多了下面的代码：
+```
+Router.map(function() {
+  this.route('about');
+});
+```
+上述代码告诉Ember路由，当访问URI`/about`时运行`app/routes/about.js`文件。  
+然后打开模板文件`app/templates/about.hbs`，修改为下列内容：
+```handlebars
+<div class="jumbo">
+  <div class="right tomster"></div>
+  <h2>About Super Rentals</h2>
+  <p>
+    The Super Rentals website is a delightful project created to explore Ember.
+    By building a property rental site, we can simultaneously imagine traveling
+    AND building Ember applications.
+  </p>
+</div>
+```
+用浏览器访问地址`http://c7302.ambari.apache.org:4200/about`测试一下`about`页面。  
+
+#### 联系我们路由
+生成联系我们路由：
+```
+$ ember g route contact
+```
+Ember CLI再一次向`app/router.js`中添加了contact条目，生成了一个路由处理器`app/routes/contact.js`，以及模板文件`app/templates/contact.hbs`。  
+向模板文件中添加下列内容：
+```handlebars
+<div class="jumbo">
+  <div class="right tomster"></div>
+  <h2>Contact Us</h2>
+  <p>Super Rentals Representatives would love to help you<br>choose a destination or answer
+    any questions you may have.</p>
+  <p>
+    Super Rentals HQ
+    <address>
+      1212 Test Address Avenue<br>
+      Testington, OR 97233
+    </address>
+    <a href="tel:503.555.1212">+1 (503) 555-1212</a><br>
+    <a href="mailto:superrentalsrep@emberjs.com">superrentalsrep@emberjs.com</a>
+  </p>
+</div>
+```
+用浏览器访问地址`http://c7302.ambari.apache.org:4200/contact`可以看到新增加的“联系我们”页面。  
+
+#### 链接导航和{{link-to}}帮助器
+为了方便在页面间跳转，需要在“关于”页面增加一个链接到“联系我们”页面，同样需要在“联系我们”页面增加一个链接到“关于”页面。  
+为了做到这一点，我们将使用`{{link-to}}`这个Ember提供的帮助器，这样可以轻松地在我们的路由之间进行链接。我们来调整我们的`about.hbs`文件：
+```
+(略)
+  {{#link-to 'contact' class="button"}}
+    Contact Us
+  {{/link-to}}
+</div>
+```
+在这种情况下，我们告诉`{{link-to}}`帮助器我们要链接到的路由的名称：`contact`。用浏览器访问地址`http://c7302.ambari.apache.org:4200/about`，看到页面多了一个链接到“联系我们”页面。  
+同样，修改`app/templates/contact.hbs`文件添加到`about`路由的链接：
+```
+(略)
+  {{#link-to 'about' class="button"}}
+    About
+  {{/link-to}}
+</div>
+```
+#### 租赁清单路由
+下面添加一个显示租赁清单的路由(`rentals`):
+```
+$ ember g route rentals
+```
+先往租赁清单模板文件(`app/templates/rentals.hbs`)添加点初始内容，之后再进一步补充：
+```
+<div class="jumbo">
+  <div class="right tomster"></div>
+  <h2>Welcome!</h2>
+  <p>We hope you find exactly what you're looking for in a place to stay.</p>
+  {{#link-to 'about' class="button"}}
+    About Us
+  {{/link-to}}
+</div>
+```
+#### index路由
+
+
+## 参考
+[ECMAScript 6 入门](http://es6.ruanyifeng.com/)
