@@ -243,13 +243,15 @@ $ ember server --host c7302.ambari.apache.org
 为了展示如何搭建Ember应用程序，我们将搭建一个资产租赁的应用，叫`Super Rentals`。我们将开始于一个home页面，一个about页面和一个联系我们页面。
 完成后的应用大约是下面的样子：  
 ![](https://guides.emberjs.com/v2.15.0/images/service/style-super-rentals-maps.png)  
-应用程序的构成是：
-- 在home页面上显示租赁清单
-- 链接到关于公司的页面
-- 链接到“联系我们”的页面
-- 列出有效的租赁清单
-- 按城市过滤租赁清单
-- 显示一个选中租赁的详细信息
+应用程序的构成是：  
+- 在home页面上显示租赁清单  
+- 链接到关于公司的页面  
+- 链接到“联系我们”的页面  
+- 列出有效的租赁清单  
+- 按城市过滤租赁清单  
+- 显示一个选中租赁的详细信息  
+
+上面列出了6个路由，在下文的验收测试中提到“应用目标”，就是指将这6个路由分别测试一遍。如果再加上根路由`/`，则共有7个路由。  
 
 ####用We Go测试应用程序
 验收测试与我们的应用程序进行交互，就像实际的人一样，但是是自动化的，有助于确保我们的应用程序在将来不会中断。  
@@ -289,6 +291,53 @@ $ ember test --server --host c7302.ambari.apache.org
 按屏幕的提示，让用浏览器访问地址`http://c7302.ambari.apache.org:7357/`。   
 ![](https://guides.emberjs.com/v2.15.0/images/acceptance-test/initial-tests.png)   
 浏览器上现在显示10次成功测试。如果取消选中`Hide passed tests`，应该看到我们的验收测试成功，以及9次通过的[ESLint](http://eslint.org/)测试。  
+
+#### 添加应用的完整目标到验收测试
+
+虽然现在只有一个根路由`/`可以测试，但可以先创建完整的测试文件。编辑`tests/acceptance/list-rentals-test.js`，如下列内容：
+```javascript
+import { test } from 'qunit';
+import moduleForAcceptance from 'super-rentals/tests/helpers/module-for-acceptance';
+
+moduleForAcceptance('Acceptance | list-rentals');
+
+test('should show rentals as the home page', function (assert) {
+});
+
+test('should link to information about the company.', function (assert) {
+});
+
+test('should link to contact information.', function (assert) {
+});
+
+test('should list available rentals.', function (assert) {
+});
+
+test('should filter the list of rentals by city.', function (assert) {
+});
+
+test('should show details for a selected rental', function (assert) {
+});
+
+test('visiting /', function(assert) {
+  visit('/');
+
+  andThen(function() {
+    assert.equal(currentURL(), '/');
+  });
+});
+```
+然后运行`ember test --server`。则在linux屏幕上显示：
+```
+Chrome 61.0 
+    1/7 ✘ 
+```
+而浏览器上显示：
+```
+7 tests completed in 18000 milliseconds, with 6 failed, 0 skipped, and 0 todo.
+1 assertions of 7 passed, 6 failed.
+```
+这是因为除了根路由`/`，其它路由还没有创建，所以测试出错。共7个测试，通过1个，失败了6个。
 
 ### 路由和模板
 对于Super Rentals，我们希望首先到达home页面，在上面显示租赁列表，然后可以跳转到`about`页面和`contact`页面。(下列测试在`/opt/super-rentals`目录下进行)  
@@ -454,6 +503,7 @@ export default Ember.Route.extend({
 首先，我们要测试访问`/`是否正确重定向到`/rentals`。我们将使用Ember visit帮助器，然后确保我们当前的URL是`/rentals`重定向发生的。  
 打开之前创建的验收创建文件`/tests/acceptance/list-rentals-test.js`，修改为：
 ```handlebars
+（前面的6个test省略）
 test('should show rentals as the home page', function (assert) {
   visit('/');
   andThen(function() {
@@ -461,11 +511,12 @@ test('should show rentals as the home page', function (assert) {
   });
 });
 ```
+原来的`currentURL()`会等于`/`，而现在被`replaceWith`为`/rentals`，所以测试代码要改成上面
 运行测试程序：
 ```
-$ ember test --server --host c7302.ambari.apache.org
+$ ember test --server
 ```
-
+用浏览器访问`http://c7302.ambari.apache.org:7357`，然后发现7个测试成功了1个，6个失败。如果把`/`修改成`/rentals`，则7个都失败。  
 
 ## 参考
 [ECMAScript 6 入门](http://es6.ruanyifeng.com/)
@@ -570,4 +621,24 @@ ok 1 hello test
 qunit默认加载`test`目录下的测试。也可以用下面的方式指定测试的文件：
 ```
 $ qunit 'test/*.js'
+```
+#### 断言(assert)
+[cookbook原文](https://qunitjs.com/cookbook/)  
+任何单元测试的基本要素都是断言。测试的作者需要表达预期的结果，并将单元测试框架与实现产生的实际值进行比较。  
+QUnit内置了三种断言：ok、equal、deepEqual。  
+- ok( truthy [, message ] )， 判断`truthy`的值是否为`true`
+- equal( actual, expected [, message ] ) ，判断`actual == expected`是否为`true`
+- deepEqual( actual, expected [, message ] )，判断`actual === expected`是否为`true`
+
+`equal`断言的例子：
+```javascript
+QUnit.test( "equal test", function( assert ) {
+  assert.equal( 0, 0, "Zero, Zero; equal succeeds" );
+  assert.equal( "", 0, "Empty, Zero; equal succeeds" );
+  assert.equal( "", "", "Empty, Empty; equal succeeds" );
+  assert.equal( 0, false, "Zero, false; equal succeeds" );
+ 
+  assert.equal( "three", 3, "Three, 3; equal fails" );
+  assert.equal( null, false, "null, false; equal fails" );
+});
 ```
