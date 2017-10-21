@@ -469,3 +469,50 @@ $ ember test --server --host c7302.ambari.apache.org
 
 ## 参考
 [ECMAScript 6 入门](http://es6.ruanyifeng.com/)
+### Testem
+A test runner that makes Javascript unit testing fun.  
+创建一个testem的测试目录，然后安装testem：
+```
+$ cd /opt && mkdir testem && cd /opt/testem
+$ npm install testem -g
+$ testem
+```
+屏幕会提示testem已经运行，监听端口是7357。这时，testem已经准备好，等待接受浏览器的访问。屏幕显示：
+```
+waiting for browsers...
+```
+用浏览器访问地址`http://c7302.ambari.apache.org:7357`。这时屏幕提示：
+```
+chrome 61.0
+0/0 √
+```
+这表明测试已经完成，只是工作目录下没有任何`.js`文件，所以测试数量是0。
+现在打开另外的终端窗口，进入`/opt/testem`目录，在目录下编辑一个`hello_spec.js`的文件，内容是：
+```javascript
+describe('hello', function(){
+  it('should say hello', function(){
+    expect(hello()).toBe('hello world');
+  });
+});
+```
+这是一个[Jasmine](https://jasmine.github.io/edge/introduction.html)格式的测试脚本。Testem会自动加载工作目录下的js文件。所以屏幕显示：
+```
+chrome 61.0
+0/1 ×
+
+hello returns "hello world"
+  × ReferenceError: hello is not defined
+```
+这说明已经运行了测试，但被测试的对象`hello`没有定义。现在编辑一个`hello.js`文件，内容是：
+```javascript
+function hello(){
+  return "hello world";
+}
+```
+Testem又一次自动检测到了目录下的文件变化，并运行了测试。这次显示：
+```
+chrome 61.0
+1/1 √
+
+√ 1 tests complete.
+```
