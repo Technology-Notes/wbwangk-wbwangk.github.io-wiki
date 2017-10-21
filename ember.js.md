@@ -516,3 +516,58 @@ chrome 61.0
 
 √ 1 tests complete.
 ```
+### QUnit
+[QUnit](https://qunitjs.com/): A JavaScript Unit Testing framework. 下面是快速入门。  
+
+#### 在浏览器中
+windows下编辑一个`qunit.html`：
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>QUnit Example</title>
+  <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-2.4.0.css">
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="https://code.jquery.com/qunit/qunit-2.4.0.js"></script>
+  <script src="tests.js"></script>
+</body>
+</html>
+```
+同一目录下编辑一个js文件`tests.js`，内容是：
+```
+QUnit.test( "hello test", function( assert ) {
+  assert.ok( 1 == "1", "Passed!" );
+});
+```
+然后用浏览器打开`qunit.html`，可以看到浏览器中显示：
+```
+1 tests completed in 5 milliseconds, with 0 failed, 0 skipped, and 0 todo.
+1 assertions of 1 passed, 0 failed.
+```
+#### 在Node中
+linux下安装：
+```
+$ npm install -g qunitjs
+$ mkdir -p /opt/qunit/test 
+```
+在`/opt/qunit/test`目录下创建`qunit.html`和`tests.js`，内容如上一节。然后运行：
+```
+$ cd /opt/quinit
+$ qunit
+TAP version 13
+ok 1 hello test
+1..1
+# pass 1
+# skip 0
+# todo 0
+# fail 0
+```
+qunit默认加载`test`目录下的测试。也可以用下面的方式指定测试的文件：
+```
+$ qunit 'test/*.js'
+```
