@@ -134,7 +134,7 @@ installing component-test
 可以看到浏览器中的科学家列表显示了两次。为了体现复用，还可以自己定义一个新的程序员(`programmers`)路由，然后显示与科学家列表类似的界面，会发现重用UI组件使编码量大大减少，切提高了一致性。    
 
 #### 点击事件
-在`people-list`组件模板文件(`app/templates/components/people-list.hbs`)的`li`标签中添加一个`action`的帮助器。(帮助器是handlebar的概念，有点像函数)：
+在`people-list`组件模板文件(`app/templates/components/people-list.hbs`)的`li`标签中添加一个`action`的助手。(助手是handlebar的概念，有点像函数)：
 ```handlebars
 <h2>{{title}}</h2>
 <ul>
@@ -143,7 +143,7 @@ installing component-test
   {{/each}}
 </ul>
 ```
-`action`帮助器允许你向元素中添加事件监听器，并调用指定的函数。默认`action`帮助器会添加鼠标的`click`事件监听器，但也可以监听其它元素事件。通过上面的定义，`li`元素的点击事件会调用函数`showPerson`，类似于调用`this.actions.showPerson(person)`。  
+`action`助手允许你向元素中添加事件监听器，并调用指定的函数。默认`action`助手会添加鼠标的`click`事件监听器，但也可以监听其它元素事件。通过上面的定义，`li`元素的点击事件会调用函数`showPerson`，类似于调用`this.actions.showPerson(person)`。  
 `actions`事件的showPerson函数需要定义在`people-list`组件的js文件(app/components/people-list.js)中：
 ```javascript
 import Ember from 'ember';
@@ -280,7 +280,7 @@ test('visiting /', function(assert) {
 对于这个简单测试，需要注意的几点是：  
 - 验收测试通过调用函数`moduleForAcceptance`来建立，此函数确保您的Ember应用程序在每次测试之间启动和关闭。  
 - QUnit传到一个叫assert的对象到每个测试函数。assert含有函数，如equal()，允许检查测试环境中的条件。一个测试必须有一个通过断言才能成功。  
-- Ember验收试验使用一组测试帮助函数，如visit，andThen和上面使用的currentURL函数。我们将在本教程的后面更详细地讨论这些功能。  
+- Ember验收试验使用一组测试助手函数，如visit，andThen和上面使用的currentURL函数。我们将在本教程的后面更详细地讨论这些功能。  
 
 现在启动测试：
 ```
@@ -404,9 +404,9 @@ Ember CLI再一次向`app/router.js`中添加了contact条目，生成了一个�
 ```
 用浏览器访问地址`http://c7302.ambari.apache.org:4200/contact`可以看到新增加的“联系我们”页面。  
 
-#### 链接导航和{{link-to}}帮助器
+#### 链接导航和{{link-to}}助手
 为了方便在页面间跳转，需要在“关于”页面增加一个链接到“联系我们”页面，同样需要在“联系我们”页面增加一个链接到“关于”页面。  
-为了做到这一点，我们将使用`{{link-to}}`这个Ember提供的帮助器，这样可以轻松地在我们的路由之间进行链接。我们来调整我们的`about.hbs`文件：
+为了做到这一点，我们将使用`{{link-to}}`这个Ember提供的助手，这样可以轻松地在我们的路由之间进行链接。我们来调整我们的`about.hbs`文件：
 ```handlebars
 (略)
   {{#link-to 'contact' class="button"}}
@@ -414,7 +414,7 @@ Ember CLI再一次向`app/router.js`中添加了contact条目，生成了一个�
   {{/link-to}}
 </div>
 ```
-在这种情况下，我们告诉`{{link-to}}`帮助器我们要链接到的路由的名称：`contact`。用浏览器访问地址`http://c7302.ambari.apache.org:4200/about`，看到页面多了一个链接到“联系我们”页面。  
+在这种情况下，我们告诉`{{link-to}}`助手我们要链接到的路由的名称：`contact`。用浏览器访问地址`http://c7302.ambari.apache.org:4200/about`，看到页面多了一个链接到“联系我们”页面。  
 同样，修改`app/templates/contact.hbs`文件添加到`about`路由的链接：
 ```handlebars
 (略)
@@ -500,7 +500,7 @@ export default Ember.Route.extend({
 现在通过浏览器访问地址`http://c7302.ambari.apache.org:4200/contact`可以看到在页面的顶部显示了标题`SuperRentals`以及`about`和`contact`两个链接。  
 
 #### 实现验收测试
-首先，我们要测试访问`/`是否正确重定向到`/rentals`。我们将使用Ember visit帮助器，然后确保我们当前的URL是`/rentals`重定向发生的。  
+首先，我们要测试访问`/`是否正确重定向到`/rentals`。我们将使用Ember visit助手，然后确保我们当前的URL是`/rentals`重定向发生的。  
 打开之前创建的验收创建文件`/tests/acceptance/list-rentals-test.js`，修改为：
 ```handlebars
 （前面的6个test省略）
@@ -518,10 +518,10 @@ $ ember test --server
 ```
 用浏览器访问`http://c7302.ambari.apache.org:7357`，然后发现7个测试成功了1个，6个失败。如果没有把`/`修改成`/rentals`，则7个都失败。  
 
-#### Ember测试帮助器
-Ember提供各种验收测试帮助器，使常见任务更容易，如访问路由，填写字段，点击链接/按钮，等待页面显示。
+#### Ember测试助手
+Ember提供各种验收测试助手，使常见任务更容易，如访问路由，填写字段，点击链接/按钮，等待页面显示。
 
-我们常用的一些帮助器是：
+我们常用的一些助手是：
 - visit - 加载给定的URL
 - click - 假装是用户点击屏幕的特定部分
 - andThen - 等待之前的命令执行结束，然后执行指定函数。在下面的测试中，我们等待click后页面的加载，然后检查页面是否加载正确
@@ -547,6 +547,114 @@ test('should link to contact information', function (assert) {
 });
 ```
 `Ember test`检测到了测试文件的变化，并自动加载。现在7个测试成功了3个，分别是`/`、`/about`和`/contact`。  
+
+### 模型钩子
+Ember将一个页面的数据保存在一个名为`model`的对象中。为了简单起见，我们将使用硬编码的JavaScript对象数组填写我们的租赁列表页面的模型。之后，我们将切换到使用[Ember Data](https://github.com/emberjs/data)，这是一个在应用程序中管理数据的库。  
+在Ember中，路由处理器(handler)负责为页面加载模型。`model`是一个钩子函数，这意味着Ember会在应用中约定的时间调用它。  
+现在，让我们打开`rentals`路由处理器文件`app/routes/rentals.js`，在`model`函数中返回租赁对象数组:
+```javascript
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+  model() {
+    return [{
+      id: 'grand-old-mansion',
+      title: 'Grand Old Mansion',
+      owner: 'Veruca Salt',
+      city: 'San Francisco',
+      propertyType: 'Estate',
+      bedrooms: 15,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Crane_estate_(5).jpg',
+      description: 'This grand old mansion sits on over 100 acres of rolling hills and dense redwood forests.'
+    }, {
+      id: 'urban-living',
+      title: 'Urban Living',
+      owner: 'Mike TV',
+      city: 'Seattle',
+      propertyType: 'Condo',
+      bedrooms: 1,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Alfonso_13_Highrise_Tegucigalpa.jpg',
+      description: 'A commuters dream. This rental is within walking distance of 2 bus stops and the Metro.'
+
+    }, {
+      id: 'downtown-charm',
+      title: 'Downtown Charm',
+      owner: 'Violet Beauregarde',
+      city: 'Portland',
+      propertyType: 'Apartment',
+      bedrooms: 3,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg',
+      description: 'Convenience is at your doorstep with this charming downtown rental. Great restaurants and active night life are within a few feet.'
+
+    }];
+  }
+});
+```
+请注意，这里使用了ES6速记法定义语法：`model()`相当于`model: function()`。  
+然后，就是在模板文件中显示模型中的数据。编辑模板文件`app/templates/rentals.hbs`:
+```handlebars
+<div class="jumbo">
+  <div class="right tomster"></div>
+  <h2>Welcome!</h2>
+  <p>
+    We hope you find exactly what you're looking for in a place to stay.
+  </p>
+  {{#link-to 'about' class="button"}}
+    About Us
+  {{/link-to}}
+</div>
+
+{{#each model as |rental|}}
+  <article class="listing">
+    <h3>{{rental.title}}</h3>
+    <div class="detail owner">
+      <span>Owner:</span> {{rental.owner}}
+    </div>
+    <div class="detail type">
+      <span>Type:</span> {{rental.propertyType}}
+    </div>
+    <div class="detail location">
+      <span>Location:</span> {{rental.city}}
+    </div>
+    <div class="detail bedrooms">
+      <span>Number of bedrooms:</span> {{rental.bedrooms}}
+    </div>
+  </article>
+{{/each}}
+```
+在这里，我们使用了另一个常用的Handlebars助手`{{each}}`。这个助手将让我们循环遍历我们的模型中的每个租赁对象。  
+
+#### 租赁列表的验收测试
+要自动测试检查租赁列表是否正常，我们将创建一个测试来访问索引路线，并检查是否显示3个列表。  
+在`app/templates/rentals.hbs`中，每个租赁展示包装在一个`article`元素中，并赋予它一个类型`listing`。我们将使用`listing`类型来查看页面上显示的租赁数量。  
+要找到有一个类型是`listing`的元素，我们使用一个名为`find`的测试助手。该`find`函数返回与给定[CSS选择器](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors)的元素。在这种情况下，它将返回一个类型是`listing`的所有元素的数组。  
+编辑测试代码`tests/acceptance/list-rentals-test.js`，将测试'should list available rentals.'的测试内容修改下面的样子：
+```javascript
+test('should list available rentals.', function (assert) {
+  visit('/');
+  andThen(function() {
+    assert.equal(find('.listing').length, 3, 'should see 3 listings');
+  });
+});
+```
+再次运行`ember t -s`命令来启动验收测试。  
+
+### 安装插件
+Ember拥有丰富的插件生态系统，可轻松添加到项目中。插件可以为项目提供广泛的功能，通常可以节省时间并让您专注于项目。  
+浏览插件，请访问[Ember Observer](https://emberobserver.com/)网站。它列出并分类了已经发布到NPM的Ember插件，并根据各种标准为他们分配了一个分数。  
+对于超级租赁，我们将利用两个插件:[ember-cli-tutorial-style](https://github.com/toddjordan/ember-cli-tutorial-style)和[ember-cli-mirage](http://www.ember-cli-mirage.com/)。  
+#### ember-cli-tutorial-style
+代替复制粘贴CSS样式到超级租赁应用，安装ember-cli-tutorial-style插件可以立即为应用添加CSS样式。ember-cli-tutorial-style会生成一个叫`ember-tutorial.css`的文件并放置在应用的`vendor`目录中。  
+`vendor`目录是Ember的一个特殊目录，其中可以包括被编译到应用程序中的内容。当Ember CLI执行构建时，会把`ember-tutorialCSS`文件的内容复制`vendor.css`文件中。该`vendor.css`文件被`app/index.html`引用，使得样式在运行时可用。可以自己打开`app/index.html`看看其中对于`vendor.css`的引用。    
+安装`ember-cli-tutorial-style`插件：
+```
+$ ember install ember-cli-tutorial-style 
+```
+由于Ember插件是npm软件包，`ember install`请将它们安装在`node_modules`目录中，并在`package.json`中添加了条目。插件安装成功后，需要重新启动服务器。重新启动服务器(执行`ember s`)，并用浏览器访问`http://c7302.ambari.apache.org:4200`将显示下面的样子：  
+![](https://guides.emberjs.com/v2.15.0/images/installing-addons/styled-super-rentals-basic.png)  
+
+#### ember-cli-mirage
+
 
 ## 参考
 [ECMAScript 6 入门](http://es6.ruanyifeng.com/)。  
