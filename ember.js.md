@@ -516,10 +516,42 @@ test('should show rentals as the home page', function (assert) {
 ```
 $ ember test --server
 ```
-用浏览器访问`http://c7302.ambari.apache.org:7357`，然后发现7个测试成功了1个，6个失败。如果把`/`修改成`/rentals`，则7个都失败。  
+用浏览器访问`http://c7302.ambari.apache.org:7357`，然后发现7个测试成功了1个，6个失败。如果没有把`/`修改成`/rentals`，则7个都失败。  
+
+#### Ember测试帮助器
+Ember提供各种验收测试帮助器，使常见任务更容易，如访问路由，填写字段，点击链接/按钮，等待页面显示。
+
+我们常用的一些帮助器是：
+- visit - 加载给定的URL
+- click - 假装是用户点击屏幕的特定部分
+- andThen - 等待之前的命令执行结束，然后执行指定函数。在下面的测试中，我们等待click后页面的加载，然后检查页面是否加载正确
+- currentURL - 返回我们当前所在页面的URL
+
+#### 测试about和contact页面
+如果`ember test`已经在执行，可以打开另外的终端窗口来编辑`tests/acceptance/list-rentals-test.js`文件，将之前的about和contact两个测试替换成下列代码：
+```
+test('should link to information about the company.', function (assert) {
+  visit('/');
+  click('a:contains("About")');
+  andThen(function() {
+    assert.equal(currentURL(), '/about', 'should navigate to about');
+  });
+});
+
+test('should link to contact information', function (assert) {
+  visit('/');
+  click('a:contains("Contact")');
+  andThen(function() {
+    assert.equal(currentURL(), '/contact', 'should navigate to contact');
+  });
+});
+```
+`Ember test`检测到了测试文件的变化，并自动加载。现在7个测试成功了3个，分别是`/`、`/about`和`/contact`。  
 
 ## 参考
-[ECMAScript 6 入门](http://es6.ruanyifeng.com/)
+[ECMAScript 6 入门](http://es6.ruanyifeng.com/)。  
+[ESlint](https://eslint.org/)是一个javascript代码审查框架。  
+
 ### Testem
 A test runner that makes Javascript unit testing fun.  
 创建一个testem的测试目录，然后安装testem：
