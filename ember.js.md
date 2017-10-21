@@ -529,7 +529,7 @@ Ember提供各种验收测试帮助器，使常见任务更容易，如访问路
 
 #### 测试about和contact页面
 如果`ember test`已经在执行，可以打开另外的终端窗口来编辑`tests/acceptance/list-rentals-test.js`文件，将之前的about和contact两个测试替换成下列代码：
-```
+```handlebars
 test('should link to information about the company.', function (assert) {
   visit('/');
   click('a:contains("About")');
