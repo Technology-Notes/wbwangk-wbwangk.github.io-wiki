@@ -869,6 +869,117 @@ test('should toggle wide class on click', function(assert) {
 ```
 运行集成测试`ember t -s`，浏览器访问7357端口，显示为7个测试3个失败。  
 
+### 创建handlebars助手
+到目前为止，我们的应用程序直接显示了我们的Ember Data模型中的用户数据。随着我们的应用程序的发展，我们将会在将数据提供给用户之前进一步操纵数据。为此，Ember提供Handlebars模板助手来装饰模板中的数据。让我们使用一个Handlebars助手来让用户快速看到一个属性是“独立”还是“社区”的一部分。
+
+生成一个rental-property-type助手：  
+```
+$ ember g helper rental-property-type
+installing helper
+  create app/helpers/rental-property-type.js
+installing helper-test
+  create tests/integration/helpers/rental-property-type-test.js
+```
+更新我们的`rental-listing`组件模板以使用新助手并传入rental.propertyType。新的模板文件(`app/templates/components/rental-listing.hbs`)：  
+```handlebars
+<article class="listing">
+  <a {{action 'toggleImageSize'}} class="image {{if isWide "wide"}}">
+    <img src="{{rental.image}}" alt="">
+    <small>View Larger</small>
+  </a>
+  <h3>{{rental.title}}</h3>
+  <div class="detail owner">
+    <span>Owner:</span> {{rental.owner}}
+  </div>
+  <div class="detail type">
+    <span>Type:</span> {{rental-property-type rental.propertyType}}
+      - {{rental.propertyType}}
+  </div>
+  <div class="detail location">
+    <span>Location:</span> {{rental.city}}
+  </div>
+  <div class="detail bedrooms">
+    <span>Number of bedrooms:</span> {{rental.bedrooms}}
+  </div>
+</article>
+```
+下面实现`rental-property-type`助手。首先定义了一个房产社区类型数组常量(`communityPropertyTypes`)，然后定义了一个函数`rentalPropertyType`。在函数中检查传入的参数，然后参数与数组中的值匹配，说明是个社区房产(`Community`)，不匹配说明是个独立庄园(`Standalone`)。  
+`app/helpers/rental-property-type.js`:
+```javascript
+import Ember from 'ember';
+
+const communityPropertyTypes = [
+  'Condo',
+  'Townhouse',
+  'Apartment'
+];
+
+export function rentalPropertyType([propertyType]) {
+  if (communityPropertyTypes.includes(propertyType)) {
+    return 'Community';
+  }
+
+  return 'Standalone';
+}
+
+export default Ember.Helper.helper(rentalPropertyType);
+```
+助手中的每个参数将被添加到一个数组中，并传递给我们的助手。例如，`{{my-helper "foo" "bar"}}`会导致`myHelper(["foo", "bar"])`。使用数组ES2015解析赋值，我们可以在数组中命名预期的参数。在上面的示例中，模板中的第一个参数将被分配给`propertyType`。这为您的助手提供了灵活的表达式界面，包括可选参数和默认值。  
+通过`ember s`启动Ember服务器，然后用浏览器访问4200端口。应该看到第一个出租物业被列为“独立”，而另外两个被列为“社区”。  
+
+#### 集成测试
+修改测试代码以包含本节的内容。
+`tests/integration/helpers/rental-property-type-test.js`:  
+```javascript
+import { moduleForComponent, test } from 'ember-qunit';
+import hbs from 'htmlbars-inline-precompile';
+
+moduleForComponent('rental-property-type', 'helper:rental-property-type', {
+  integration: true
+});
+
+// Replace this with your real tests.
+test('it renders', function(assert) {
+  this.set('inputValue', '1234');
+
+  this.render(hbs`{{rental-property-type inputValue}}`);
+
+  assert.equal(this.$().text().trim(), 'Standalone');
+});
+```
+### 使用Ember Data
+目前，我们的应用程序使用硬编码的数据作为租赁列表中定义的rentals路由处理程序。随着应用程序的发展，我们希望在服务器上保留我们的租用数据，并且更容易地对数据进行高级操作，如查询。  
+Ember提供了一个名为[Ember Data](https://github.com/emberjs/data)的数据管理的库来帮助处理持久的应用程序数据。  
+Ember Data要求你通过扩展[DS.Model](http://emberjs.com/api/data/classes/DS.Model.html)来定义要提供给应用程序的数据的结构。  
+可以使用Ember CLI生成Ember数据模型。下面生成叫`rental`的模型：
+```
+$ ember g model rental
+installing model
+  create app/models/rental.js
+installing model-test
+  create tests/unit/models/rental-test.js
+```
+我们修改`rental.js`代码来定义租赁对象的结构，与之前的硬编码的JavaScript对象数组（ 标题，所有者，城市，属性类型，图像，卧室和描述）相同的属性。通过函数[DS.attr()](http://emberjs.com/api/data/classes/DS.html#method_attr)的返回值定义属性。有关Ember数据属性的更多信息，请参阅指南中的[Defining Attributes](https://guides.emberjs.com/v2.15.0/models/defining-models/#toc_defining-attributes)一节。  
+`app/models/rental.js`:  
+```javascript
+import DS from 'ember-data';
+
+export default DS.Model.extend({
+  title: DS.attr(),
+  owner: DS.attr(),
+  city: DS.attr(),
+  propertyType: DS.attr(),
+  image: DS.attr(),
+  bedrooms: DS.attr(),
+  description: DS.attr()
+});
+```
+我们现在有一个可以用于我们的Ember Data实现的模型对象。
+
+#### 更新模型钩子
+要使用新的Ember Data Model对象，我们需要更新model我们之前在路由处理程序中定义的函数。删除硬编码的JavaScript Array，并将其替换为Ember Data Store服务的以下调用。该存储服务注入到灰烬所有路线和组件。它是用于与Ember Data进行交互的主界面。在这种情况下，请调用findAll商店的功能，并向其提供新创建的租赁模型类的名称。
+
+
 
 ## 参考
 [ECMAScript 6 入门](http://es6.ruanyifeng.com/)。  
