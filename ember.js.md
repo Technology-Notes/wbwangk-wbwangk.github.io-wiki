@@ -977,7 +977,198 @@ export default DS.Model.extend({
 我们现在有一个可以用于我们的Ember Data实现的模型对象。
 
 #### 更新模型钩子
-要使用新的Ember Data Model对象，我们需要更新model我们之前在路由处理程序中定义的函数。删除硬编码的JavaScript Array，并将其替换为Ember Data Store服务的以下调用。该存储服务注入到灰烬所有路线和组件。它是用于与Ember Data进行交互的主界面。在这种情况下，请调用findAll商店的功能，并向其提供新创建的租赁模型类的名称。
+要使用新的Ember Data Model对象，我们需要更新之前在“[模型钩子](https://github.com/wbwangk/wbwangk.github.io/wiki/ember.js#%E6%A8%A1%E5%9E%8B%E9%92%A9%E5%AD%90)”一节中定义的`model`函数。删除硬编码的JavaScript数组，并将其替换为调用[Ember Data Store服务](https://guides.emberjs.com/v2.15.0/models/#toc_the-store-and-a-single-source-of-truth)。该[存储服务](http://emberjs.com/api/data/classes/DS.Store.html)被注入到Ember的所有路线和组件。它是用于与Ember Data进行交互的主要接口。在这种情况下，需要调用存储的[findAll](http://emberjs.com/api/data/classes/DS.Store.html#method_findAll)函数，并向其提供新创建租赁模型类的名称作为参数。
+`app/routes/rentals.js`:  
+```javascript
+import Ember from 'ember';
+
+export default Ember.Route.extend({
+  model() {
+    return this.get('store').findAll('rental');
+ }
+});
+```
+当我们调用`findAll`函数时，Ember Data将尝试从`/api/rentals`获取租赁数据。回想一下，在“ [安装插件](https://github.com/wbwangk/wbwangk.github.io/wiki/ember.js#%E5%AE%89%E8%A3%85%E6%8F%92%E4%BB%B6) ”一节中，我们设置了一个适配器通过`/api`来路由数据请求。
+
+由于我们已经在我们的开发环境中设置了Ember Mirage，所以Mirage将返回我们所要求的数据，而不会实际发出网络请求。
+
+当我们将应用程序部署到生产服务器时，我们可能希望用Ember Data的远程服务器替换Mirage，以便与存储和检索持久化数据进行通信。远程服务器将允许在用户之间共享和更新数据。
+
+### 构建复杂组件
+当用户搜索租赁时，他可能还想将搜索范围缩小到特定城市。虽然我们的初始租赁列表组件仅显示租赁信息，但此新的过滤器组件还将允许用户以过滤条件的形式提供输入。  
+首先，让我们生成新的组件`list-filter`。我们的需求是希望组件根据用户输入过滤租赁列表。  
+```
+$ ember g component list-filter
+installing component
+  create app/components/list-filter.js
+  create app/templates/components/list-filter.hbs
+installing component-test
+  create tests/integration/components/list-filter-test.js
+```
+生成了一个组件模板、一个JavaScript文件和一个组件集成测试文件。
+
+#### 为组件提供标记
+在`app/templates/rentals.hbs`模板文件中，我们将添加对新`list-filter`组件的引用。  
+请注意，在下面的模板中，我们用`list-filter`的开始和结束标记“包裹”了之前的租赁列表标记(`each`)。这是一个组件的[块形式](https://guides.emberjs.com/v2.15.0/components/wrapping-content-in-a-component)示例，这允许在组件内部渲染handlebars模板。  
+
+在下面的代码中，我们将过滤器数据作为变量`rentals`传入到内部模板中。
+`app/templates/rentals.hbs`:  
+```handlebars
+<div class="jumbo">
+  <div class="right tomster"></div>
+  <h2>Welcome!</h2>
+  <p>
+    We hope you find exactly what you're looking for in a place to stay.
+  </p>
+  {{#link-to 'about' class="button"}}
+    About Us
+  {{/link-to}}
+</div>
+
+{{#list-filter
+   filter=(action 'filterByCity')
+   as |rentals|}}
+  <ul class="results">
+    {{#each rentals as |rentalUnit|}}
+      <li>{{rental-listing rental=rentalUnit}}</li>
+    {{/each}}
+  </ul>
+{{/list-filter}}
+```
+#### 接受组件的输入
+
+我们希望组件简单地提供一个输入域，和显示过滤结果的区域(`yield results`)，因此我们的模板很简单：  
+`app/templates/components/list-filter.hbs`:  
+```handlebars
+{{input value=value
+        key-up=(action 'handleFilterEntry')
+        class="light"
+        placeholder="Filter By City"}}
+{{yield results}}
+```
+该模板包含一个`{{input}}`助手用于渲染输入框，用户可以在其中输入过滤使用的城市。输入框的`value`属性将与组件的`value`属性保持同步。  
+以另一种说法是，输入框的`value`属性[绑定](https://guides.emberjs.com/v2.15.0/object-model/bindings/)到组件的`value`属性。如果属性更改，无论是用户输入，还是通过程序为其分配一个新值，该属性的新值将渲染到网页和体现在代码中。  
+`key-up`属性将绑定到`handleFilterEntry`动作。  
+这是组件的JavaScript的代码(`app/components/list-filter.js`)：  
+```javascript
+import Ember from 'ember';
+
+export default Ember.Component.extend({
+  classNames: ['list-filter'],
+  value: '',
+
+  init() {
+    this._super(...arguments);
+    this.get('filter')('').then((results) => this.set('results', results));
+  },
+
+  actions: {
+    handleFilterEntry() {
+      let filterInputValue = this.get('value');
+      let filterAction = this.get('filter');
+      filterAction(filterInputValue).then((filterResults) => this.set('results', filterResults));
+    }
+  }
+
+});
+```
+#### 基于输入过滤数据
+
+在上面的例子中，我们使用`init`钩子来初始化租赁列表，具体做法是以空值为过滤条件调用`filter`动作。在`handleFilterEntry`动作中，调用`filter`函数，函数参数是输入助手的value值。
+
+该`filter`函数由调用对象传入。这是一种被称为[关闭动作](https://guides.emberjs.com/v2.15.0/components/triggering-changes-with-actions/#toc_passing-the-action-to-the-component)的模式。
+
+注意对`then`函数的调用使用了`filter`函数的调用结果。该代码期望`filter`函数返回一个promise。[promise](http://emberjs.com/api/classes/RSVP.Promise.html)是JavaScript对象，它表示一个异步函数的结果。promise在收到时可能已经执行，也可能没有执行。为了解决这个问题，它提供了一些函数，如`then`函数可以你在promise返回结果时运行一些代码。  
+
+要实现这个`filter`函数来实现城市租赁的实际过滤器，我们将创建一个`rentals`控制器。 控制器包含可用于其对应路由的模板的操作和属性。在我们的例子中，我们要生成一个名为`rentals`的控制器。Ember知道名称为`rentals`的控制器将应用于相同名称的路由。  
+
+下列命令为`rentals`路由生成控制器：  
+```
+$ ember g controller rentals
+installing controller
+  create app/controllers/rentals.js
+installing controller-test
+  create tests/unit/controllers/rentals-test.js
+```
+现在定义新的控制器(`app/controllers/rentals.js`)：  
+```javascript
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  actions: {
+    filterByCity(param) {
+      if (param !== '') {
+        return this.get('store').query('rental', { city: param });
+      } else {
+        return this.get('store').findAll('rental');
+      }
+    }
+  }
+});
+```
+当用户在组件中的文本框输入时，控制器中的`filterByCity`动作会被调用。此动作取得`value`属性(来自用户的输入)，并过滤`rental`数据存储中与`value`匹配的数据。查询的结果返回给调用者。  
+
+#### 伪造查询结果
+为了使此动作正常工作，我们需要用下来代码覆盖Mirage`config.js`文件，以便它可以响应我们的查询。`rentals`的Mirage HTTP GET处理程序不再简单地返回租借列表，而是根据URL中的`city`参数中返回匹配的租赁清单。  
+`mirage/config.js`:
+```javascript
+export default function() {
+  this.namespace = '/api';
+
+  let rentals = [{
+      type: 'rentals',
+      id: 'grand-old-mansion',
+      attributes: {
+        title: 'Grand Old Mansion',
+        owner: 'Veruca Salt',
+        city: 'San Francisco',
+        "property-type": 'Estate',
+        bedrooms: 15,
+        image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Crane_estate_(5).jpg',
+        description: "This grand old mansion sits on over 100 acres of rolling hills and dense redwood forests."
+      }
+    }, {
+      type: 'rentals',
+      id: 'urban-living',
+      attributes: {
+        title: 'Urban Living',
+        owner: 'Mike Teavee',
+        city: 'Seattle',
+        "property-type": 'Condo',
+        bedrooms: 1,
+        image: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Alfonso_13_Highrise_Tegucigalpa.jpg',
+        description: "A commuters dream. This rental is within walking distance of 2 bus stops and the Metro."
+      }
+    }, {
+      type: 'rentals',
+      id: 'downtown-charm',
+      attributes: {
+        title: 'Downtown Charm',
+        owner: 'Violet Beauregarde',
+        city: 'Portland',
+        "property-type": 'Apartment',
+        bedrooms: 3,
+        image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg',
+        description: "Convenience is at your doorstep with this charming downtown rental. Great restaurants and active night life are within a few feet."
+      }
+    }];
+
+  this.get('/rentals', function(db, request) {
+    if(request.queryParams.city !== undefined) {
+      let filteredRentals = rentals.filter(function(i) {
+        return i.attributes.city.toLowerCase().indexOf(request.queryParams.city.toLowerCase()) !== -1;
+      });
+      return { data: filteredRentals };
+    } else {
+      return { data: rentals };
+    }
+  });
+}
+```
+修改了mirage配置后，在应用的首页上显示了输入框，可以按输入过滤城市。  
+![](https://guides.emberjs.com/v2.15.0/images/autocomplete-component/styled-super-rentals-filter.png)  
+
+
 
 
 
