@@ -654,6 +654,220 @@ $ ember install ember-cli-tutorial-style
 ![](https://guides.emberjs.com/v2.15.0/images/installing-addons/styled-super-rentals-basic.png)  
 
 #### ember-cli-mirage
+[Mirage](http://www.ember-cli-mirage.com/)是一个客户端HTTP骨架库，经常用于Ember验收测试。对于本教程，我们将使用mirage作为我们的数据源而不是传统的后端服务器。mirage将允许我们在开发应用程序时创建假数据和模拟API。  
+安装mirage插件：  
+```
+$ ember install ember-cli-mirage
+```
+需要注意mirage的`config.js`文件，这是定义API端点和数据的地方。我们将遵循[JSON-API](http://jsonapi.org/)规范，这要求我们以某种方式格式化数据。我们修改`mirage/config.js`文件，以便mirage发回之前定义的租赁清单：
+```javascript
+export default function() {
+  this.namespace = '/api';
+
+  this.get('/rentals', function() {
+    return {
+      data: [{
+        type: 'rentals',
+        id: 'grand-old-mansion',
+        attributes: {
+          title: 'Grand Old Mansion',
+          owner: 'Veruca Salt',
+          city: 'San Francisco',
+          "property-type": 'Estate',
+          bedrooms: 15,
+          image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Crane_estate_(5).jpg'
+        }
+      }, {
+        type: 'rentals',
+        id: 'urban-living',
+        attributes: {
+          title: 'Urban Living',
+          owner: 'Mike Teavee',
+          city: 'Seattle',
+          "property-type": 'Condo',
+          bedrooms: 1,
+          image: 'https://upload.wikimedia.org/wikipedia/commons/0/0e/Alfonso_13_Highrise_Tegucigalpa.jpg'
+        }
+      }, {
+        type: 'rentals',
+        id: 'downtown-charm',
+        attributes: {
+          title: 'Downtown Charm',
+          owner: 'Violet Beauregarde',
+          city: 'Portland',
+          "property-type": 'Apartment',
+          bedrooms: 3,
+          image: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Wheeldon_Apartment_Building_-_Portland_Oregon.jpg'
+        }
+      }]
+    };
+  });
+}
+```
+mirage会覆盖发送网络清单的javascript代码，并代替它们返回你指定的JSON串。这意味着你的开发工具中不会看到任何网络请求，而是会看到控制台中记录的JSON。我们修改`mirage/config.js`来配置Mirage，以便每当Ember Data发出GET请求`/api/rentals`时，Mirage将返回此JavaScript对象作为JSON，并且实际上没有网络请求。在mirage配置中，我们还定义了`/api`的命令空间。如果没有这个修改，应用程序导航到`/rentals`时会与Mirage冲突。  
+为了使这个起作用，需要应用程序来默认向`/api`命名空间发送请求。为此，我们要生成一个应用程序适配器。[适配器](https://guides.emberjs.com/v2.15.0/models/customizing-adapters)是一个对象，[Ember Data](https://guides.emberjs.com/v2.15.0/models)用它来确定我们如何与后台进行通信。我们将在本教程的后面更详细地介绍Ember Data。现在，我们为应用程序生成一个适配器：   
+```
+$ ember generate adapter application
+```
+这个适配器(`app/adapters/application.js`)扩展了Ember Data的基础类[JSONAPIAdapter](http://emberjs.com/api/data/classes/DS.JSONAPIAdapter.html):  
+```javascript
+import DS from 'ember-data';
+
+export default DS.JSONAPIAdapter.extend({
+  namespace: 'api'
+});
+```
+请注意，在本教程的这一节上，`app/routes/rentals.js`文件仍然提供数据。我们将在“使用Ember Data”一节中使用这里设置的mirage数据。  
+
+### 创建简单组件
+当用户查看我们的租借列表时，他们可能希望有一些交互式选项来帮助他们作出决定。让我们添加切换每个租赁图像大小的功能。为此，我们将使用一个组件。  
+我们生成一个`rental-listing`组件来管理我们每个租赁的行为。每个组件名称中都要有一个破折号，来避免与可能的HTML元素冲突，因此命名`rental-listing`允许，受但命名`rental`不允许。  
+生成一个组件：
+```
+$ ember g component rental-listing
+installing component
+  create app/components/rental-listing.js
+  create app/templates/components/rental-listing.hbs
+installing component-test
+  create tests/integration/components/rental-listing-test.js
+```
+组件由两部分组成：  
+- 一个定义它外观的模板（`app/templates/components/rental-listing.hbs`）
+一个JavaScript源文件（`app/components/rental-listing.js`），用于定义它的行为方式。
+
+我们的新`rental-listing`组件将管理用户看到的样子和与租赁交互。首先，我们将租赁显示详细信息从`rentals.hbs`模板中移到`rental-listing.hbs`(`app/templates/components/rental-listing.hbs`)并添加图像字段：  
+```handlebars
+<article class="listing">
+  <img src="{{rental.image}}" alt="">
+  <h3>{{rental.title}}</h3>
+  <div class="detail owner">
+    <span>Owner:</span> {{rental.owner}}
+  </div>
+  <div class="detail type">
+    <span>Type:</span> {{rental.propertyType}}
+  </div>
+  <div class="detail location">
+    <span>Location:</span> {{rental.city}}
+  </div>
+  <div class="detail bedrooms">
+    <span>Number of bedrooms:</span> {{rental.bedrooms}}
+  </div>
+</article>
+```
+对比看看原来的`app/templates/rentals.hbs`，会发现基本上是把`each model`循环中内容定义的内容移到了组件模板中。那么现在修改`rentals.hbs`，在`each model`循环中引用新建立的组件：
+```handlebars
+<div class="jumbo">
+  <div class="right tomster"></div>
+  <h2>Welcome!</h2>
+  <p>
+    We hope you find exactly what you're looking for in a place to stay.
+  </p>
+  {{#link-to 'about' class="button"}}
+    About Us
+  {{/link-to}}
+</div>
+
+{{#each model as |rentalUnit|}}
+  {{rental-listing rental=rentalUnit}}
+{{/each}}
+```
+这里我们调用名称为`rental-listing`的组件，并将其`rentalUnit`赋予组件的`rental`属性。  
+用`ember s`运行超级租赁应用，通过浏览器访问`http://c7302.ambari.apache.org:4200`，会发现每个租赁附加了图像：  
+![](https://guides.emberjs.com/v2.15.0/images/simple-component/app-with-images.png)  
+
+#### 隐藏和显示图片
+现在添加按用户请求显示图片的功能。  
+我们使用`{{if}}`助手检查`isWide`是否为true来决定是否显示租赁图像。我们还将添加一些文本来指示可以单击图像，并使用一个锚点元素包含它，给它一个`image`类名，以便我们的测试可以找到它。  
+修改组件模板文件`app/templates/components/rental-listing.hbs`：
+```handlebars
+<article class="listing">
+  <a class="image {{if isWide "wide"}}">
+    <img src="{{rental.image}}" alt="">
+    <small>View Larger</small>
+  </a>
+  <h3>{{rental.title}}</h3>
+(下略)
+```
+`isWide`的值来自于组件的JavaScript文件(`app/components/rental-listing.js`)。由于我们希望以小图像开始，因此把属性设置为`false`：
+```javascript
+import Ember from 'ember';
+
+export default Ember.Component.extend({
+  isWide: false
+});
+```
+为了让用户可以放大图像，我们添加一个动作(action)来切换`isWide`的值，我们定义这个动作叫`toggleImageSize`。组件模板`app/templates/components/rental-listing.hbs`修改为：
+```handlebars
+<article class="listing">
+  <a {{action 'toggleImageSize'}} class="image {{if isWide "wide"}}">
+    <img src="{{rental.image}}" alt="">
+    <small>View Larger</small>
+  </a>
+...
+```
+单击锚点元素将发送动作到组件。然后，Ember将进入`actions`散列并调用`toggleImageSize`函数。  
+[动作散列](https://guides.emberjs.com/v2.15.0/templates/actions/)是一个包含多个函数的组件对象。当用户与UI进行交互（例如点击）时，将调用这些函数。  
+
+我们创建`toggleImageSize`函数并切换组件上的`isWide`属性(`app/components/rental-listing.js`)：  
+```javascript
+import Ember from 'ember';
+
+export default Ember.Component.extend({
+  isWide: false,
+  actions: {
+    toggleImageSize() {
+      this.toggleProperty('isWide');
+    }
+  }
+});
+```
+现在，当我们在浏览器中点击图形或`View Larger`链接时，会看到大图像显示。当我们再次点击放大的图像，我们看到它变小。  
+
+#### 集成测试
+Ember组件通常通过[组件集成测试](https://guides.emberjs.com/v2.15.0/testing/testing-components/)进行测试。组件集成测试在Ember渲染引擎的上下文中验证组件的行为。当在集成测试中运行时，组件将经历其常规[渲染生命周期](https://guides.emberjs.com/v2.15.0/components/the-component-lifecycle/)，访问依赖对象，并且通过Ember解析器加载。  
+
+我们的组件集成测试将测试两种不同的行为：  
+- 组件应显示有关租赁的详细信息  
+- 该组件应该在点击时切换`isWide`，以及扩展和缩小租赁照片。  
+  
+对于测试，我们将会向组件传递具有租赁模型所有属性的假对象。我们给变量命名为`rental`，在每个测试中，我们用`this`对象，将`rental`设置到本地范围(scope)。渲染模板可以访问本地范围内的值。
+最终的`tests/integration/components/rental-listing-test.js`:  
+```javascript
+import { moduleForComponent, test } from 'ember-qunit';
+import hbs from 'htmlbars-inline-precompile';
+import Ember from 'ember';
+
+let rental = Ember.Object.create({
+  image: 'fake.png',
+  title: 'test-title',
+  owner: 'test-owner',
+  propertyType: 'test-type',
+  city: 'test-city',
+  bedrooms: 3
+});
+
+moduleForComponent('rental-listing', 'Integration | Component | rental listing', {
+  integration: true
+});
+
+test('should display rental details', function(assert) {
+  this.set('rentalObj', rental);
+  this.render(hbs`{{rental-listing rental=rentalObj}}`);
+  assert.equal(this.$('.listing h3').text(), 'test-title', 'Title: test-title');
+  assert.equal(this.$('.listing .owner').text().trim(), 'Owner: test-owner', 'Owner: test-owner')
+});
+
+test('should toggle wide class on click', function(assert) {
+  this.set('rentalObj', rental);
+  this.render(hbs`{{rental-listing rental=rentalObj}}`);
+  assert.equal(this.$('.image.wide').length, 0, 'initially rendered small');
+  Ember.run(() => document.querySelector('.image').click());
+  assert.equal(this.$('.image.wide').length, 1, 'rendered wide after click');
+  Ember.run(() => document.querySelector('.image').click());
+  assert.equal(this.$('.image.wide').length, 0, 'rendered small after second click');
+});
+```
+运行集成测试`ember t -s`，浏览器访问7357端口，显示为7个测试3个失败。  
 
 
 ## 参考
