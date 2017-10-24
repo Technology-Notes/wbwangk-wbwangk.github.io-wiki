@@ -1234,30 +1234,128 @@ export default Ember.Component.extend({
 您现在可以继续执行下一个功能，或继续测试我们新创建的过滤器组件。
 
 #### 集成测试
-
 `tests/integration/components/list-filter-test.js`:
 ```javascript
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
+import wait from 'ember-test-helpers/wait';
 import RSVP from 'rsvp';
+
+moduleForComponent('list-filter', 'Integration | Component | filter listing', {
+  integration: true
+});
 
 const ITEMS = [{city: 'San Francisco'}, {city: 'Portland'}, {city: 'Seattle'}];
 const FILTERED_ITEMS = [{city: 'San Francisco'}];
 
-moduleForComponent('list-filter', 'Integration | Component | list filter', {
-  integration: true
-});
-
 test('should initially load all listings', function (assert) {
-  // we want our actions to return promises,
-  //since they are potentially fetching data asynchronously
+  // we want our actions to return promises, since they are potentially fetching data asynchronously
   this.on('filterByCity', () => {
     return RSVP.resolve({ results: ITEMS });
   });
+
+  // with an integration test,
+  // you can set up and use your component in the same way your application will use it.
+  this.render(hbs`
+    {{#list-filter filter=(action 'filterByCity') as |results|}}
+      <ul>
+      {{#each results as |item|}}
+        <li class="city">
+          {{item.city}}
+        </li>
+      {{/each}}
+      </ul>
+    {{/list-filter}}
+  `);
+
+  return wait().then(() => {
+    assert.equal(this.$('.city').length, 3);
+    assert.equal(this.$('.city').first().text().trim(), 'San Francisco');
+  });
 });
 ```
+由于我们的组件期望过滤器过程是异步的，我们使用[Ember的RSVP库](http://emberjs.com/api/classes/RSVP.html)从我们的过滤器返回promise。 
+`this.on`将提供的`filterByCity`函数添加到测试本地范围，我们可以使用它来提供给组件。  
+`filterByCity`函数将被装扮成为我们组件的动作函数，实际过滤出租列表。  
 
+测试的最后，添加了一个`wait`调用来检验返回结果。  
 
+Ember的[wait助手](https://guides.emberjs.com/v2.15.0/testing/testing-components/#toc_waiting-on-asynchronous-behavior) 在运行给定的函数回调之前等待所有异步任务完成。它返回一个从测试返回的promise。
+
+第一测试模拟了空值过滤，返回了所有城市的租赁列表。下面是第二个测试，它将模仿用户输入过滤条件，检测返回的租赁列表是否符合输入的城市。  
+我们将为`filterByCity`动作添加一些附加功能，以返回单个租赁，`FILTERED_ITEMS`变量就是设置的过滤条件。  
+
+我们通过`keyUp`在输入字段上生成一个事件来强制执行该操作，然后检测确保只渲染一个项目。  
+`tests/integration/components/list-filter-test.js`:
+```javascript
+test('should update with matching listings', function (assert) {
+  this.on('filterByCity', (val) => {
+    if (val === '') {
+      return RSVP.resolve({
+        query: val,
+        results: ITEMS });
+    } else {
+      return RSVP.resolve({
+        query: val,
+        results: FILTERED_ITEMS });
+    }
+  });
+
+  this.render(hbs`
+    {{#list-filter filter=(action 'filterByCity') as |results|}}
+      <ul>
+      {{#each results as |item|}}
+        <li class="city">
+          {{item.city}}
+        </li>
+      {{/each}}
+      </ul>
+    {{/list-filter}}
+  `);
+
+  // The keyup event here should invoke an action that will cause the list to be filtered
+  this.$('.list-filter input').val('San').keyup();
+
+  return wait().then(() => {
+    assert.equal(this.$('.city').length, 1);
+    assert.equal(this.$('.city').text().trim(), 'San Francisco');
+  });
+});
+```
+现在两个集成测试场景都应该能通过。您可以通过`ember t -s`命令来启动我们的测试套件来验证这一点。  
+
+#### 验收测试
+现在我们已经测试了`list-filter`组件的行为与预期的一样，让我们​​来测试一下，页面本身也可以正常地进行验收测试。我们会验证访问租借页面的用户可以在搜索字段中输入文字，并按城市缩小租赁列表。
+
+打开我们现有的验收测试，`tests/acceptance/list-rentals-test.js`并实施标签为“should filter the list of rentals by city”的测试。
+`tests/acceptance/list-rentals-test.js`:
+```javascript
+test('should filter the list of rentals by city.', function (assert) {
+  visit('/');
+  fillIn('.list-filter input', 'Seattle');
+  keyEvent('.list-filter input', 'keyup', 69);
+  andThen(function() {
+    assert.equal(find('.listing').length, 1, 'should show 1 listing');
+    assert.equal(find('.listing .location:contains("Seattle")').length, 1, 'should contain 1 listing with location Seattle');
+  });
+});
+```
+我们在测试中引入了两个新的帮手，`fillIn`和`keyEvent`。
+
+- `fillIn`助手“填写”给定的文本到给定的选择相匹配的输入字段。  
+- `keyEvent`助手发送键击事件的UI，模拟用户输入一个按键。  
+
+在`app/components/list-filter.js`中，我们有一个被类型是`list-filter`的组件渲染出来的顶层元素。我们使用选择器在组件内定位搜索输入`.list-filter input`，因为我们知道列表过滤器组件中只有一个输入元素。
+
+我们的测试填写“Seattle”作为搜索字段中的搜索条件，然后`keyup`使用`69`（字母`e`的按键值）的代码将事件发送到同一个字段，以模拟用户输入。
+
+在测试中通过查找类型是`listing`的元素，定位出在本教程的“构建简单组件”部分中定义的`rental-listing`组件。
+
+由于我们的数据在Mirage中是硬编码的，所以我们知道只有一个城市名称为“Seattle”的租金，所以我们断定数量是一个，它显示的位置被命名为“Seattle”。
+
+测试验证在填写“Seattle”搜索输入后，租赁列表从3减少到1，显示的项目显示“Seattle”作为位置。
+
+按原文，到现在应只剩下2个验收测试失败，但我测试3个失败。  
 
 
 
