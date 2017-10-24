@@ -1168,6 +1168,97 @@ export default function() {
 修改了mirage配置后，在应用的首页上显示了输入框，可以按输入过滤城市。  
 ![](https://guides.emberjs.com/v2.15.0/images/autocomplete-component/styled-super-rentals-filter.png)  
 
+#### 
+在我们的示例中，您可能会注意到，如果快速输入结果可能与输入的当前过滤器文本不同步。这是因为我们的数据过滤功能是异步的，这意味着函数中的代码将被调度为稍后执行，而调用该函数的代码将继续执行。通常，可能使网络请求的代码设置为异步，因为服务器可能会在不同的时间返回其响应。
+
+让我们添加一些保护代码，以避免查询结果与过滤器输入不同步。为此，我们将简单地将过滤器文本提供给过滤器函数，以便当结果返回时，我们可以将原始过滤器值与当前过滤器值进行比较。只有原始过滤器值和当前过滤器值相同，我们才会在屏幕上更新结果。
+`app/controllers/rentals.js`(注释掉的是原来的代码):  
+```javascript
+import Ember from 'ember';
+
+export default Ember.Controller.extend({
+  actions: {
+    filterByCity(param) {
+      if (param !== '') {
+//        return this.get('store').query('rental', { city: param });
+        return this.get('store')
+          .query('rental', { city: param }).then((results) => {
+            return { query: param, results: results };
+          });
+      } else {
+//        return this.get('store').findAll('rental');
+        return this.get('store')
+          .findAll('rental').then((results) => {
+            return { query: param, results: results };
+          });
+      }
+    }
+  }
+});
+```
+在上述`filterByCity`租赁控制器的函数中，我们添加了一个新的属性`query`，而不是像以前一样返回一系列租赁。  
+`app/components/list-filter.js`:
+```javascript
+import Ember from 'ember';
+
+export default Ember.Component.extend({
+  classNames: ['list-filter'],
+  value: '',
+
+  init() {
+    this._super(...arguments);
+//    this.get('filter')('').then((results) => this.set('results', results));
+    this.get('filter')('').then((allResults) => {
+      this.set('results', allResults.results);
+    });
+  },
+
+  actions: {
+    handleFilterEntry() {
+      let filterInputValue = this.get('value');
+      let filterAction = this.get('filter');
+//      filterAction(filterInputValue).then((filterResults) => this.set('results', filterResults));
+      filterAction(filterInputValue).then((resultsObj) => {
+        if (resultsObj.query === this.get('value')) {
+          this.set('results', resultsObj.results);
+        }
+      });
+    }
+  }
+});
+```
+在我们的列表过滤器组件JavaScript中，我们使用该`query`属性来比较组件的`value`属性。该`value`属性表示输入字段的最新状态。因此，我们现在检查结果与输入字段是否匹配，确保结果与用户输入保持同步。
+
+虽然这种方法将使我们的结果顺序保持一致，但在处理多个并发任务时还需要考虑其他问题，例如[限制对服务器发出的请求数量](https://emberjs.com/api/classes/Ember.run.html#method_debounce)。为了为应用程序创建有效和强大的自动完成行为，我们建议您考虑使用[ember-concurrencyaddon](http://ember-concurrency.com/#/docs/introduction)项目。
+
+您现在可以继续执行下一个功能，或继续测试我们新创建的过滤器组件。
+
+#### 集成测试
+
+`tests/integration/components/list-filter-test.js`:
+```javascript
+import { moduleForComponent, test } from 'ember-qunit';
+import hbs from 'htmlbars-inline-precompile';
+import RSVP from 'rsvp';
+
+const ITEMS = [{city: 'San Francisco'}, {city: 'Portland'}, {city: 'Seattle'}];
+const FILTERED_ITEMS = [{city: 'San Francisco'}];
+
+moduleForComponent('list-filter', 'Integration | Component | list filter', {
+  integration: true
+});
+
+test('should initially load all listings', function (assert) {
+  // we want our actions to return promises,
+  //since they are potentially fetching data asynchronously
+  this.on('filterByCity', () => {
+    return RSVP.resolve({ results: ITEMS });
+  });
+});
+```
+
+
+
 
 
 
