@@ -49,6 +49,34 @@ $ vi info.json
 ```
 重新启动`brunch watch --server`后问题解决！
 
+## api-docs
+ambari的api文档以swagger.json的方式提供。在ambari-web目录看到一个api-docs目录，这个目录是swagger显示引擎的目录。可以将nginx的根目录设置到这里。
+```
+$ nginx -t 
+nginx: the configuration file /usr/local/openresty/nginx/conf/nginx.conf syntax is ok
+```
+编辑上面的nginx.conf文件：
+```
+   server {
+        listen       80;
+        server_name  localhost;
+        location / {
+            root /opt/ambari/ambari-web/api-docs;
+            index  index.html index.htm;
+        }
+   }
+```
+然后找到ambari的swagger.json文件：
+```
+$ find /opt/ambari -name swagger.json
+/opt/ambari/ambari-server/docs/api/generated/swagger.json
+$ cp /opt/ambari/ambari-server/docs/api/generated/swagger.json /opt/ambari/ambari-web/api-docs
+$ nginx -t
+$ nginx
+$ curl localhost
+```
+假设这个linux虚拟机的ip是：192.168.73.102。则在windows下用浏览器访问地址`http://192.168.73.102`就可以用swagger阅读ambari API文档了。
+
 ## Ember.js
 [原文](https://guides.emberjs.com/v2.15.0/getting-started/quick-start/)  
 安装Ember.js。用npm很慢，cnpm快很多。
