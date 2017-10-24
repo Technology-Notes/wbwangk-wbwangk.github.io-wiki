@@ -78,39 +78,8 @@ $ curl localhost
 假设这个linux虚拟机的ip是：192.168.73.102。则在windows下用浏览器访问地址`http://192.168.73.102`就可以用swagger阅读ambari API文档了。
 
 ## Ember.js
-[原文](https://guides.emberjs.com/v2.15.0/getting-started/quick-start/)  
-安装Ember.js。用npm很慢，cnpm快很多。
-```
-$ cnpm install -g ember-cli@2.15
-```
-创建一个新应用，按原文的办法使用npm安装依赖包很慢。改进后的办法是：
-```
-$ ember new --skip-npm ember-quickstart
-$ cd ember-quickstart
-$ cnpm install
-```
-这样就是使用cnpm安装依赖包，怀疑能快10倍。  
-启用开发服务器：
-```
-$ ember serve
-```
-用浏览器访问`http://c7302.ambari.apache.org:4200`就可以看到刚创建的Ember应用的欢迎页。  
-编辑`app/templates/application.hbs`为下列内容：
-```
-<h1>PeopleTracker</h1>
-{{outlet}}
-```
-重新执行`ember serve`，然后可以看到欢迎页变了。  
-
-## Test
-#### Ember's test helpers
-- **visit** - loads a given URL
-- **click** - pretends to be a user clicking on a specific part of the screen
-- **andThen** - waits for our previous commands to run before executing our function. In our test below, we want to wait for our page to load after click is called so that we can double-check that the new page has loaded
- - **currentURL** - returns the URL of the page we're currently on
-
-### Ember Addon
-https://emberobserver.com/
+[原文](https://guides.emberjs.com/v2.15.0/getting-started/quick-start/)   
+整理后中Ember.js的快速开始和教程在[这里](https://github.com/wbwangk/wbwangk.github.io/wiki/ember.js)。  
 
 ## Mustache
 Mustache是一个无逻辑模板语言。称无逻辑，因为它的定义中没有循环、判断等语法，只有标签。  
