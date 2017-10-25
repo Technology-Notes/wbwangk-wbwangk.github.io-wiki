@@ -1,4 +1,28 @@
-https://cwiki.apache.org/confluence/display/AMBARI/Coding+Guidelines+for+Ambari
+原文地址：`https://cwiki.apache.org/confluence/display/AMBARI/Coding+Guidelines+for+Ambari`  
+### 安装和启动过程
+```
+$ git clone https://git-wip-us.apache.org/repos/asf/ambari.git
+$ cd ambari/ambari-web
+$ sudo npm install -g brunch@1.7.20
+$ rm -rf node_modules public
+$ npm install
+$ brunch build
+``
+启动前端服务：
+```
+$ brunch watch --server
+```
+
+### 安装中碰到的问题
+用手机上网问题少，用公司网络上网问题多。手机上网只出现了`phantomjs-prebuilt@2.1.15`安装失败。  
+
+#### 1.phantomjs安装失败
+如果内网安装报错，可以用手机联网试试。用手机联网报过错：`phantomjs-prebuilt@2.1.15`安装失败。直接手工装安装上面的包，再执行`npm install`:   
+```
+$ npm install phantomjs-prebuilt@2.1.15
+$ npm install
+```
+#### npm relocation错误
 ```
 $ sudo npm install -g brunch@1.7.20
 npm: relocation error: npm: symbol SSL_set_cert_cb, version libssl.so.10 not defined in file libssl.so.10 with link time reference
@@ -16,6 +40,7 @@ $ alias cnpm="npm --registry=https://registry.npm.taobao.org \
 --userconfig=$HOME/.cnpmrc"
 $ sudo cnpm install -g brunch@1.7.20
 ```
+#### 3. phantomjs错误的另一个办法
 运行`cnpm install`时提示phantomjs没有在路径上，手工下载phantomjs，并添加到PATH:
 ```
 $ cd /opt
@@ -23,6 +48,7 @@ $ wget https://github.com/Medium/phantomjs/releases/download/v2.1.1/phantomjs-2.
 $ tar -xjf phantomjs-2.1.1-linux-x86_64.tar.bz2
 $ export PATH=$PATH:/opt/phantomjs-2.1.1-linux-x86_64/bin
 ```
+#### 4. 缺少info.json
 根据社区文章：https://community.hortonworks.com/questions/26377/how-can-i-build-hdp-for-source.html
 从github上下载HDP的ambari源码包：
 https://github.com/hortonworks/ambari-release/archive/AMBARI-2.5.1.7-tag.zip
