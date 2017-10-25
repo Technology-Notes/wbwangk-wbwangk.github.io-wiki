@@ -57,7 +57,7 @@ https://github.com/hortonworks/ambari-release/archive/AMBARI-2.5.1.7-tag.zip
 ```
 $ brunch watch --server
 ```
-登录ambari UI后报错，发现少了`info.json`文件。自己造一个：
+登录ambari UI后报错:`You are using test mode`，发现少了`info.json`文件。自己造一个：
 ```
 $ cd app/assets/data/clusters
 $ vi info.json
