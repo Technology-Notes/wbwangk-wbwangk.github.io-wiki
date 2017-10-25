@@ -25,3 +25,8 @@ $ git commit -m "add t.txt"   （提交到本地库）
 $ git push -u orgin master     （推送到远程库）
 ```
 可以用浏览器到github.com/wbwangk/git-webb库下查看，发现增加了一个t.txt文件。
+
+克隆指定分支：
+```
+$ git clone -b branch-2.6 https://github.com/apache/ambari.git
+```
