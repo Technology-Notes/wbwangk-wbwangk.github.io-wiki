@@ -7,7 +7,7 @@ $ sudo npm install -g brunch@1.7.20
 $ rm -rf node_modules public
 $ npm install
 $ brunch build
-``
+```
 启动前端服务：
 ```
 $ brunch watch --server
