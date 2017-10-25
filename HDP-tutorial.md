@@ -11,24 +11,24 @@ HDP教程含有一系列文档，这些文档按以下维度进行了标签化�
 
 ## 开发
 ### Apache Hive
-1. HDP快速开始
+1. HDP快速开始  
   Files View、Hive View 2.0、Pig View、Zeppelin
-2. 如何用Apache Hive处理数据
+2. 如何用Apache Hive处理数据  
   Files View、Hive View 2.0
-3. 用Hadoop加载和查询数据
+3. 用Hadoop加载和查询数据  
   Hive View 2.0
 4. 使用Hive ACID事务插入，更新和删除数据
 5. 基于Hive LLAP的Hadoop交互式SQL
 7. 基于Tez和Hive的Hadoop交互式查询
 ### Apache Spark
 1. Apache Spark的5分钟教程
-2. 单词计数和SparkR REPL(交互式解释器)例子
+2. 单词计数和SparkR REPL(交互式解释器)例子  
    spark shell
-3. Spark REPL(交互式解释器)的DataFrame和Dataset例子
+3. Spark REPL(交互式解释器)的DataFrame和Dataset例子  
    spark shell
 5. Apache Zeppelin入门
 6. 用Zeppelin学习Spark SQL
-7. Spark SQL Thrift Server示例
+7. Spark SQL Thrift Server示例  
    beeline
 8. 使用Hive与ORC在Apache Spark REPL
 9. Spark on YARN示例
