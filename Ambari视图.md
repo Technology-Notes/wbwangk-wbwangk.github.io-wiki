@@ -4,3 +4,14 @@ Ambari视图可运行在独立(standalone)Ambari服务器下。当Views运行在
 - 本地，视图要连接的集群时Ambari的本地集群
 - 远程，视图要连接的集群时Ambari管理下远程集群
 - 定制，视图要连接的集群是非Ambari管理的远程集群
+
+Files View
+Falcon View
+Hive View
+Pig View
+Slider View
+SmartSense View
+Storm View
+Tez View
+Workflow View
+Yarn Queue View
