@@ -30,3 +30,28 @@ $ git push -u orgin master     （推送到远程库）
 ```
 $ git clone -b branch-2.6 https://github.com/apache/ambari.git
 ```
+### git与基础认证
+gitlib与AD进行了集成，当对于私有库进行克隆时提示输入用户名口令，如：
+```
+git clone http://open.inspur.com/imaidata/docs.git
+正克隆到 'docs'...
+Username for 'http://open.inspur.com': wbwang
+Password for 'http://wbwang@open.inspur.com':
+remote: Counting objects: 32, done.
+remote: Compressing objects: 100% (20/20), done.
+remote: Total 32 (delta 12), reused 30 (delta 11)
+Unpacking objects: 100% (32/32), done.
+```
+如果需要填入自动用户名口令，则编辑`~/.netrc`，输入下列内容：
+```
+machine <git host>
+       login <user>
+       password <password>
+```
+如：
+```
+machine open.inspur.com
+       login wbwang
+       password <password>
+```
+然后再执行克隆命令就不再提示输入用户名口令了。
