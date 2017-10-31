@@ -68,9 +68,42 @@ Update all services of the cluster identified by ":clusterName".
 
 Update the service identified by ":serviceName" of the cluster identified by ":clusterName".  
 `PUT /clusters/:clusterName/services/:serviceName`  
-
+https://developer.okta.com/docs/api/resources/groups.html
 ### Okta Groups API
+[参考](https://developer.okta.com/docs/api/resources/groups.html)  
 Add Group
 ```
 POST /api/v1/groups
+```
+Get Group
+```
+GET /api/v1/groups/:id
+```
+List Groups
+```
+GET /api/v1/groups
+```
+Update Group
+```
+PUT /api/v1/groups/:id
+```
+Remove Group
+```
+DELETE /api/v1/groups/:id
+```
+List Group Members
+```
+GET /api/v1/groups/:id/users
+```
+Add User to Group
+```
+PUT /api/v1/groups/:gid/users/:uid
+```
+Remove User from Group
+```
+DELETE /api/v1/groups/:gid/users/:uid
+```
+List Assigned Applications
+```
+GET /api/v1/groups/:id/apps
 ```
