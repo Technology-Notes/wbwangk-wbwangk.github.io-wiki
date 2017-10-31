@@ -7,25 +7,25 @@ List groups
  `POST /v3/groups`
 Create group
 
- GET /v3/groups/{group_id}
+ `GET /v3/groups/{group_id}`
 Show group s
 
- PATCH /v3/groups/{group_id}
+`PATCH /v3/groups/{group_id}`
 Update group
 
 
- DELETE /v3/groups/{group_id}
+ `DELETE /v3/groups/{group_id}`
 Delete group
 
- GET /v3/groups/{group_id}/users
+ `GET /v3/groups/{group_id}/users`
 List users in group
 
- PUT /v3/groups/{group_id}/users/{user_id}
+ `PUT /v3/groups/{group_id}/users/{user_id}`
 Add user to group
 
 
- HEAD /v3/groups/{group_id}/users/{user_id}
+`HEAD /v3/groups/{group_id}/users/{user_id}`
 Check whether user belongs to group
 
- DELETE /v3/groups/{group_id}/users/{user_id}
+ `DELETE /v3/groups/{group_id}/users/{user_id}`
 Remove user from group
