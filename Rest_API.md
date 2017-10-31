@@ -96,9 +96,6 @@ Update the service identified by ":serviceName" of the cluster identified by ":c
 ```
 PUT /clusters/:clusterName/services/:serviceName
 ```  
-https://developer.okta.com/docs/api/resources/groups.html
-
-
 ### Okta Groups API
 [参考](https://developer.okta.com/docs/api/resources/groups.html)  
 Add Group
