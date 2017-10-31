@@ -2,86 +2,73 @@
 
 #### openstack keystone 用户组
 [1](https://developer.openstack.org/api-ref/identity/v3/index.html#groups)  
+List groups:
 ```
 GET /v3/groups
 ```
-List groups
 
+Create group:
 ```
 POST /v3/groups
-```  
-Create group
-
- ```
+```
+Show group:  
+```
 GET /v3/groups/{group_id}
 ```  
-Show group s
-
+Update group:
 ```
 PATCH /v3/groups/{group_id}
 ```  
-Update group
-
+Delete group:
 ```
 DELETE /v3/groups/{group_id}
 ```  
-Delete group
-
+List users in group:
 ```
 GET /v3/groups/{group_id}/users
 ```  
-List users in group
-
+Add user to group:
 ```
 PUT /v3/groups/{group_id}/users/{user_id}
 ```  
-Add user to group
-
-
+Check whether user belongs to group:
 ```
 HEAD /v3/groups/{group_id}/users/{user_id}
 ```  
-Check whether user belongs to group
-
+Remove user from group:
 ```
 DELETE /v3/groups/{group_id}/users/{user_id}
 ```  
-Remove user from group
 
 #### openstack swift 对象
 [1](https://developer.openstack.org/api-ref/object-store/)  
+Get object content and metadata:
 ```
 GET /v1/{account}/{container}/{object}
 ```  
-Get object content and metadata
 
-
+Create or replace object:
 ```
 PUT /v1/{account}/{container}/{object}
 ```  
-Create or replace object
 
-
+Copy object:
 ```
 COPY /v1/{account}/{container}/{object}
 ```  
-Copy object
 
-
+Delete object:
 ```
 DELETE /v1/{account}/{container}/{object}
 ```  
-Delete object
-
+Show object metadata:
 ```
 HEAD /v1/{account}/{container}/{object}
 ```
-Show object metadata
-
+Create or update object metadata:
 ```
 POST /v1/{account}/{container}/{object}
 ```  
-Create or update object metadata
 
 ### apache ambari 服务
 Returns a collection of the services for the cluster identified by ":name".  
