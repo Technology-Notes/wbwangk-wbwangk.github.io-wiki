@@ -68,3 +68,9 @@ Update all services of the cluster identified by ":clusterName".
 
 Update the service identified by ":serviceName" of the cluster identified by ":clusterName".  
 `PUT /clusters/:clusterName/services/:serviceName`  
+
+### Okta Groups API
+Add Group
+```
+POST /api/v1/groups
+```
