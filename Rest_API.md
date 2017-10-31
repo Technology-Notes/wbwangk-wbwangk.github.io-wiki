@@ -1,7 +1,7 @@
 各种流行开源软件的REST API节选：
 
-#### openstack keystone 用户组
-[1](https://developer.openstack.org/api-ref/identity/v3/index.html#groups)  
+### openstack keystone 用户组
+[参考](https://developer.openstack.org/api-ref/identity/v3/index.html#groups)  
 List groups:
 ```
 GET /v3/groups
@@ -40,8 +40,8 @@ Remove user from group:
 DELETE /v3/groups/{group_id}/users/{user_id}
 ```  
 
-#### openstack swift 对象
-[1](https://developer.openstack.org/api-ref/object-store/)  
+### openstack swift 对象
+[参考](https://developer.openstack.org/api-ref/object-store/)  
 Get object content and metadata:
 ```
 GET /v1/{account}/{container}/{object}
@@ -71,6 +71,7 @@ POST /v1/{account}/{container}/{object}
 ```  
 
 ### apache ambari 服务
+[参考](https://github.com/apache/ambari/blob/trunk/ambari-server/docs/api/v1/service-resources.md)  
 Returns a collection of the services for the cluster identified by ":name".  
 ```
 GET /clusters/:name/services
