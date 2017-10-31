@@ -1,10 +1,10 @@
 各种流行开源软件的REST API节选：
 
 #### openstack keystone 用户组
-GET /v3/groups
+`GET /v3/groups`
 List groups
 
- POST /v3/groups
+ `POST /v3/groups`
 Create group
 
  GET /v3/groups/{group_id}
