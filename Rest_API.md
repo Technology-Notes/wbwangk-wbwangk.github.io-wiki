@@ -2,7 +2,7 @@
 
 #### openstack keystone 用户组
 [1](https://developer.openstack.org/api-ref/identity/v3/index.html#groups)  
-`GET /v3/groups`  
+```GET /v3/groups```
 List groups
 
  `POST /v3/groups`  
