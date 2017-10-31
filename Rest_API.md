@@ -134,3 +134,22 @@ List Assigned Applications
 ```
 GET /api/v1/groups/:id/apps
 ```
+
+### github文件API
+[参考](https://github.com/imaidev/imaidev.github.io/wiki/github%E6%96%87%E4%BB%B6API%E6%B5%8B%E8%AF%95)  
+取开源库的内容不需要认证。  
+```
+GET /repos/:owner/:repo/contents/:path
+```
+创建文件就需要认证了，需要在curl命令上增加-u参数。
+```
+PUT /repos/:owner/:repo/contents/:path
+```
+基本上与创建文件的API相同，只是输入的json串中多了一个"sha"对象，为要更新的文件哈希值。这个sha可以通过“取内容”的API返回。
+```
+PUT /repos/:owner/:repo/contents/:path
+```
+删除文件：
+```
+DELETE /repos/:owner/:repo/contents/:path
+```
