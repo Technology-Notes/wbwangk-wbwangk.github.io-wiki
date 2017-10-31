@@ -52,3 +52,19 @@ Show object metadata
 
  `POST /v1/{account}/{container}/{object}`  
 Create or update object metadata
+
+### apache ambari 服务
+Returns a collection of the services for the cluster identified by ":name".  
+`GET /clusters/:name/services`   
+
+Gets the service information for the service identified by ":serviceName" for cluster identified by ":clusterName".  
+`GET /clusters/:clusterName/services/:serviceName`  
+
+Create the service identified by ":serviceName" in the cluster identified by ":clusterName".  
+`POST /clusters/:clusterName/services/:serviceName`  
+
+Update all services of the cluster identified by ":clusterName".  
+`PUT /clusters/:clusterName/services`  
+
+Update the service identified by ":serviceName" of the cluster identified by ":clusterName".  
+`PUT /clusters/:clusterName/services/:serviceName`  
