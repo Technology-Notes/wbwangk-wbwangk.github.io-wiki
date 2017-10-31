@@ -1,4 +1,4 @@
-[快速开始](https://mariadb.com/kb/en/library/a-mariadb-primer/)  
+[快速开始](https://mariadb.com/kb/en/library/a-mariadb-primer/)  [MySQL GUI Tools](https://downloads.mysql.com/archives/gui/)  
 连接到数据库：  
 ```
 $ mysql -u //user_name// -p -h //ip_address// //db_name//
