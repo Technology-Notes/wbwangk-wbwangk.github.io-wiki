@@ -54,3 +54,6 @@ https://franchise.cloud
 
 ### A collection of useful resources for building RESTful HTTP+JSON APIs.
 https://github.com/yosriady/api-development-tools
+
+### awesome useful-java-links
+https://github.com/Vedenin/useful-java-links
