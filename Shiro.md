@@ -29,11 +29,15 @@ shiro.ini是shiro配置文件，可以找一下它的位置。在quickstart目�
 $ find . -name shiro.ini
 ./src/main/resources/shiro.ini
 ```
-可以查看一下`src/main/java/Quickstart.java`看看shiro的基本用法。其中三行代码是最关键的：
+可以查看一下`src/main/java/Quickstart.java`看看shiro的基本用法。其中三行代码是最关键的，下面是这三行代码的示例：
 ```java
-        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
-        SecurityManager securityManager = factory.getInstance();
-        SecurityUtils.setSecurityManager(securityManager);
+  public static void main(String[] args) {
+    log.info("My First Apache Shiro Application");
+    Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
+    SecurityManager securityManager = factory.getInstance();
+    SecurityUtils.setSecurityManager(securityManager);
+    System.exit(0);
+  }
 ```
 在上面的代码中：  
 1. 我们使用Shiro的`IniSecurityManager`实现来提取我们的shiro.ini文件，它位于classpath的根目录。该实现反
@@ -43,4 +47,19 @@ $ find . -name shiro.ini
 3. 在这个简单的例子中，我们把`SecurityManager`设置为一个静态的（memory）单例，能够跨JVM访问。但请
 注意，这是不可取的，如果你在单个的JVM只中会有不只一个启用Shiro的应用程序。对于这个简单的例子
 而言，这是没有问题的，但更为复杂的应用程序环境通常将`SecurityManager`置于应用程序特定的存储中（如
-在 Web 应用中的 ServletContext 或 Spring，Guice 后 JBoss DI 容器实例）。
+在Web应用中的`ServletContext`或Spring，Guice后JBoss DI容器实例）。
+
+几乎在所有的环境中，你可以通过下面的调用获取当前正在执行的用户：
+```java
+   Subject currentUser = SecurityUtils.getSubject();
+```
+使用`SecurityUtils.getSubject()`，我们可以获得当前正在执行的`Subject`。`Subject`是一个安全术语，它基本上的意思是
+“当前正在执行的用户的特定的安全视图”。它并没有被称为"User"是因为"User"一词通常和人类相关联。在安全
+界，术语"Subject"可以表示为人类，而且可是第三方进程，cron job，daemon account，或其他类似的东西。它仅仅
+意味着“该事物目前正与软件交互”。对于大多数的意图和目的，你可以把 Subject 看成是 Shiro 的"User"概念。  
+
+现在你拥有了一个`Subject`，你能拿它来获得当前`Subject`的会话：
+```java
+    Session session = currentUser.getSession();
+    session.setAttribute("someKey", "aValue");
+```
