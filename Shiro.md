@@ -1,4 +1,6 @@
 本文参考了《[Apache_Shiro_reference(中文版)](http://www.java1234.com/a/javabook/javaweb/2013/1107/1027.html)》一书。  
+
+### 快速开始
 将Apache Shiro源码克隆到本地(centos7):
 ```
 $ git clone https://github.com/apache/shiro.git
@@ -111,3 +113,15 @@ $ find . -name shiro.ini
    currentUser.logout();
 ```
 [这里](https://raw.githubusercontent.com/apache/shiro/master/samples/quickstart/src/main/java/Quickstart.java)是上面`QuickStart.java`的完整代码。  
+
+### 体系架构
+在最高的概念层次，Shiro的架构有3个主要的概念：Subject，SecurityManager和Realms。  
+- **Subject**：Subject实质上是一个当前执行用户的特定的安全“视图”。所有Subject实例都被绑定到（且这是必须的）一个SecurityManager上。当你与一个Subject交互时，那些交互作用转化为与SecurityManager交互的特定subject的交互作用。  
+- **SecurityManager**：SecurityManager是Shiro架构的心脏，并作为一种“保护伞”对象来协调内部的安全组件共同构成一个对象图。然而，一旦SecurityManager和它的内置对象图已经配置给一个应用程序，那么它单独留下来，且应用程序开发人员几乎使用他们所有的时间来处理Subject API。  
+- **Realms**：Realms担当Shiro和你的应用程序的安全数据(保存了用户和密码)之间的“桥梁”或“连接器”。Shiro可以从多个Realm中寻找用户身份或授权数据。  
+Realm本质上是一个特定安全的DAO：它封装了数据源的连接详细信息。当配置Shiro时，你必须指定至少一个Realm用来进行身份验证和/或授权。SecurityManager可能配置多个 Realms，但至少有一个是必须的。    
+Shiro提供了立即可用的Realms来连接一些安全数据源（即目录），如LDAP、关系数据库（JDBC）、文本配置源，像INI及属性文件，以及更多。你可以插入你自己实现的Realm实现来代表自定义的数据源。  
+
+### 配置
+[快速开始]()一章种
+
