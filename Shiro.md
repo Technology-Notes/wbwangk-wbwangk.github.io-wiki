@@ -123,5 +123,31 @@ Realm本质上是一个特定安全的DAO：它封装了数据源的连接详细
 Shiro提供了立即可用的Realms来连接一些安全数据源（即目录），如LDAP、关系数据库（JDBC）、文本配置源，像INI及属性文件，以及更多。你可以插入你自己实现的Realm实现来代表自定义的数据源。  
 
 ### 配置
-[快速开始]()一章种
+[快速开始](https://github.com/wbwangk/wbwangk.github.io/wiki/Shiro#toc0)一章中讲到能够从一个INI资源路径创建SecurityManager实例。如果你需要，INI 配置也可以通过`org.apache.shiro.config.Ini类使用编程方式创建。Ini类的功能与JDK的`java.util.Properties`类相似，但通过`section`名称它同时还支持分割。
+```java
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.util.Factory;
+import org.apache.shiro.config.Ini;
+import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.mgt.SecurityManager;
+...
+    Ini ini = new Ini();
+...
+    Factory<SecurityManager> factory = new IniSecurityManagerFactory(ini);
+    SecurityManager securityManager = factory.getInstance();
+    SecurityUtils.setSecurityManager(securityManager);
+```
+现在，我们知道如何从INI配置构建出一个SecurityManager了，我们看看到底是如何定义一个Shiro INI配置的。  
 
+#### INI Sections
+下面示范了INI文件结构：
+```config
+[main]
+...
+[users]
+...
+[roles]
+...
+[urls]
+...
+```
