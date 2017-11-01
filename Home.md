@@ -51,3 +51,6 @@ https://github.com/confluentinc/kafka-rest
 
 ### 浏览器中的sql笔记本 Franchise
 https://franchise.cloud
+
+### A collection of useful resources for building RESTful HTTP+JSON APIs.
+https://github.com/yosriady/api-development-tools
