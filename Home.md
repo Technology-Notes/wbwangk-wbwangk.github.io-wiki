@@ -60,3 +60,6 @@ https://github.com/Vedenin/useful-java-links
 
 ### Awesome_APIs 包括国内API服务清单
 https://github.com/TonnyL/Awesome_APIs
+
+### awesome rest
+https://github.com/marmelab/awesome-rest
