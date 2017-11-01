@@ -48,3 +48,6 @@ String urlEncoded = java.util.Base64.getUrlEncoder().encodeToString("subjects?ab
 ```
 ### Confluent REST Proxy for Kafka
 https://github.com/confluentinc/kafka-rest
+
+### 数据笔记本 Franchise
+https://franchise.cloud
