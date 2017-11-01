@@ -57,3 +57,6 @@ https://github.com/yosriady/api-development-tools
 
 ### awesome useful-java-links
 https://github.com/Vedenin/useful-java-links
+
+### Awesome_APIs 包括国内API服务清单
+https://github.com/TonnyL/Awesome_APIs
