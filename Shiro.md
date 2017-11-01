@@ -151,3 +151,45 @@ import org.apache.shiro.mgt.SecurityManager;
 [urls]
 ...
 ```
+**[users]**  
+[users] section允许你定义一组静态的用户帐户。这在大部分拥有少数用户帐户或用户帐户不需要在运行时被动态地创建的环境下是很有用的。以下是一个例子：
+```config
+# format: username = password, role1, role2, ..., roleN
+root = secret,admin
+guest = guest,guest
+presidentskroob = 12345,president
+darkhelmet = ludicrousspeed,darklord,schwartz
+lonestarr = vespa,goodguy,schwartz
+```
+如果你不想[users] section 中密码是纯文本的，你可以使用你喜爱的散列算法（MD5，Sha1，Sha256，等等）来进行加密，并使用生产的字符串作为密码值。默认情况下，密码字符串是1 进制编码，但可以使用Base64编码代替16进制编码来配置（见下面）。
+一旦你指定了文本密码散列值，你得告诉Shiro这些都是加密的。你可以通过配置在[main] section 中隐式地创建iniRealm 来使用合适的CredentialsMatcher实现来对应到你所指定的哈希算法:
+```
+[main]
+...
+sha256Matcher = org.apache.shiro.authc.credential.Sha256CredentialsMatcher
+...
+iniRealm.credentialsMatcher = $sha256Matcher
+[users]
+user1 = sha256-hashed-hex-encoded-password,role1,role2,role3 
+```
+你可以像任何其他对象一样在CredentialsMatcher上配置任何属性，以反映你哈希策略，例如，指定salting是否被使用或需要执行多少次哈希迭代。请参见org.apache.shiro.authc.credential.HashedCredentialsMatcher的JavaDoc来更好的理解哈希策略。  
+
+**[roles]**
+[roles] section 允许你把定义在[users] section 中的角色与权限关联起来。另外，这在大部分拥有少数用户帐户或用户帐户不需要在运行时被动态地创建的环境下是很有用的。以下是一个例子：
+```
+[roles]
+# format: roleName = permission1, permission2, ..., permissionN
+admin = *
+schwartz = lightsaber:*
+goodguy = winnebago:drive:eagle5
+```
+在[roles] section 中每个配置行必须定义一个映射以下格式的角色到权限的键/值：
+```
+rolename = permissionDefinition1, permissionDefinition2, … , permissionDefinitionN
+```
+`permissionDefinition`是一个任意的字符串，但大多数人将会使用符合`org.apache.shiro.authz.permission.WildcardPermission`格式的字符串，为了易用性和灵活性。  
+
+### 身份认证(Authentication)
+Authentication是证明一个用户实际上是不是他们所说的他们是谁。这是通过提交用户的身份和凭证给 Shiro，以判断它们是否和应用程序预期的相匹配。
+- **Principals(身份)**是Subject的identifying attributes(标识属性)。Principals(身份)可以是任何能够证明Subject的东西，如名，姓氏，用户名，社会保险号（类似身份证号码）等等。最好的用来进行身份验证的Principals(身份)是对应用程序来说应该是独一无二的——通常是用户名或电子邮件地址。  
+- **Credentials(凭证)**通常是只被Subject知道的秘密值，它用来作为一种起支持作用的证据，此证据事实上包含着所谓的身份证明。一些常见 credentials(凭证)的例子有密码，生物特征数据如指纹和视网膜扫描，以及X.509证书。  
