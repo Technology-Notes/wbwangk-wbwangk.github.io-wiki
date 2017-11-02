@@ -193,3 +193,41 @@ rolename = permissionDefinition1, permissionDefinition2, … , permissionDefinit
 Authentication是证明一个用户实际上是不是他们所说的他们是谁。这是通过提交用户的身份和凭证给 Shiro，以判断它们是否和应用程序预期的相匹配。
 - **Principals(身份)**是Subject的identifying attributes(标识属性)。Principals(身份)可以是任何能够证明Subject的东西，如名，姓氏，用户名，社会保险号（类似身份证号码）等等。最好的用来进行身份验证的Principals(身份)是对应用程序来说应该是独一无二的——通常是用户名或电子邮件地址。  
 - **Credentials(凭证)**通常是只被Subject知道的秘密值，它用来作为一种起支持作用的证据，此证据事实上包含着所谓的身份证明。一些常见 credentials(凭证)的例子有密码，生物特征数据如指纹和视网膜扫描，以及X.509证书。  
+
+`Remembered`和`Authenticated`是subject的两个属性。`Remembered`表示用户在之前的会话中被认证，并被记住；`Authenticated`表示用户在当前会话中被认证。对于敏感操作，必须是`Authenticated`为true。两者是互斥的，值必然相反。  
+
+#### 多Realm认证
+当在INI文件中配置多个Realm时，需要用`AuthenticationStrategy`参数配置认证策略。Shiro有3个具体的`AuthenticationStrategy`实现：
+- AtLeastOneSuccessfulStrategy，只要有一个realm认证成功，结果就认证成功
+- FirstSuccessfulStrategy，第一个realm认证后，后续的被忽略，结果认证成功
+- AllSucessfulStrategy，所有realm都认证成功，结果才认证成功
+该策略与PAM的策略类似。可以实现自己的认证策略。  
+
+### Authorization（授权）
+#### 权限粒度
+权限粒度可以是某一资源类型（入口，文件，客户等等）的行为（打开，阅读，删除等等）。在某些情况下，它们甚至可以指定非常细粒度的实例级的行为——例如，“删除”（行为）用户名为"jsmith"的“用户”（资源类型）。在 Shiro，你有能力来定义这些声明能够达到的精确粒度。 
+shiro支持基于字符串的权限检查。用冒号将“资源”、“行为”、“对象”分隔开，形成一个字符串。可以在代码中、注解中、配置文件中使用权限字符串。如：
+```java
+@RequiresAuthentication
+public void updateAccount(Account userAccount) { 
+...
+@RequiresPermissions("account:create")
+public void createAccount(Account account) { 
+...
+@RequiresRoles("administrator")
+public void deleteUser(User user) { 
+...
+```
+授权字符串支持多个动作和通配符，如：
+```
+printer:print, query
+printer:*
+*:view
+```
+授权字符串支持实例(第三段)授权，如：
+```
+printer:query:lp7200
+printer:print:epsoncolor
+printer:*:lp7200
+printer:query, print:lp7200
+```
