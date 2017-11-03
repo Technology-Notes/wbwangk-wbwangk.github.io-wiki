@@ -1,4 +1,5 @@
 [.](/e/vagrant10/ambari-vagrant/centos7.3，c7302)  
+kong是微服务API网关。kong底层是nginx，利用lua插件进行扩展实现而达成。nginx的逻辑只能用配置文件配置，而kong可以通过REST API来配置，更灵活和更容易扩展。  
 先[下载rpm包](https://getkong.org/install/centos/#packages)，然后安装：
 ```
 $ sudo yum install epel-release
