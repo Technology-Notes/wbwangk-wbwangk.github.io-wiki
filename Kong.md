@@ -93,6 +93,46 @@ $ curl -i -X GET --url http://localhost:8000/ \
 按HTTP协议，标头中的`Host`代表了虚拟主机的域名。一个IP上可能有多个虚拟主机域名。一般来说，如果不指定Host，它会被自动设置为URL中的主机域名。  
 Kong会将上述请求转发到`http://httpbin.org`，然后将响应发回给curl，并现在屏幕上。  
 
+### 基础认证插件
+向`example-api`API添加`basic-auth`插件：
+```
+$ curl -X POST http://localhost:8001/apis/example-api/plugins \
+    --data "name=basic-auth"
+{"created_at":1509703102000,"config":{"hide_credentials":false,"anonymous":""},"id":"b191aec9-5170-4e47-80de-6a6ab2c0735a","name":"basic-auth","api_id":"a52568c1-50fc-4b63-a49e-aa77b2080be6","enabled":true}
+```
+如果想为所有API都启用"基础认证"插件，则需要这样：
+```
+$ curl -X POST http://localhost:8001/plugins \
+    --data "name=basic-auth"
+```
+#### 创建凭据
+`webb`消费者添加两个用户：`tom`和`jack`：
+```
+ curl -X POST http://localhost:8001/consumers/webb/basic-auth \
+>     --data "username=tom" \
+>     --data "password=1"
+{"created_at":1509703515000,"id":"848ad6fc-0176-4460-a367-6591a7f79e21","username":"tom","password":"3ae99f595e0397d0a2982e24001e47c3aaa6c624","consumer_id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c"}
+[root@c7302 kong]# curl -X POST http://localhost:8001/consumers/webb/basic-auth     --data "username=jack"     --data "password=1"
+{"created_at":1509703533000,"id":"07147481-87c6-4e47-940a-75eaec42476f","username":"jack","password":"3ae99f595e0397d0a2982e24001e47c3aaa6c624","consumer_id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c"}
+```
+`example-api`API添加了基础认证插件后，如果再向其发送请求，则会提示401错误：
+```
+$ curl -i -X GET --url http://localhost:8000/ 
+         --header 'Host: c7302.ambari.apache.org'
+{"message":"Unauthorized"}
+```
+下面在请求中增加基础认证：
+```
+$ curl http://localhost:8000/ \
+    --header 'Host: c7302.ambari.apache.org' \
+    -H 'Authorization: Basic dG9tOjEK'
+```
+curl -X POST http://localhost:8001/consumers/webb/basic-auth \
+    --data "username=Aladdin" \
+    --data "password=OpenSesame"
+{"created_at":1509704641000,"id":"98466068-c0ff-483e-8baa-b0fdceb6ef23","username":"Aladdin","password":"e3faa8bcbf417f3aabf364eeba0f5ca2ee5a3cff","consumer_id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c"}
+ curl http://localhost:8000/ \
+    -H 'Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l'
 ### 启用key-auth插件
 key-auth可以给API添加“基础认证” 。为kong API添加插件的语法是：
 ```
@@ -353,7 +393,14 @@ $ curl -X POST http://localhost:8001/apis/example-api/plugins \
     --data "config.whitelist=192.168.73.102,127.0.0.1"
 ```
 启用IP限制插件，同时告诉了插件IP白名单。这个插件貌似没有提供“更新”API，所以如果要更改白名单，只能先删除再添加。删除方法见上一节的“删除JWT插件”。
-
+Kong所在VM的IP就是`192.168.73.102`，所以执行下列调用是可以的：
+```
+$ curl -i -X GET --url http://c7302.ambari.apache.org:8000/   --header 'Host: c7302.ambari.apache.org'
+```
+如果换到另一个IP为`192.168.73.103`的虚拟机，再执行上述调用，则显示：
+```
+{"message":"Your IP address is not allowed"}
+```
 
 ### 管理命令备忘
 查询某消费者的JWT凭据清单：
