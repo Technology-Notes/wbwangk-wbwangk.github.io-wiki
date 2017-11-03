@@ -75,7 +75,7 @@ kong的底层是nginx，所以可以通过命令查看kong监听的端口：
 ```
 $ netstat -anp | grep nginx
 ```
-### 测试kong
+## 测试kong
 用[Mockbin API](https://mockbin.com/)充当后台API服务器，添加配置：
 ```
 $ curl -i -X POST --url http://localhost:8001/apis/ \
@@ -93,7 +93,7 @@ $ curl -i -X GET --url http://localhost:8000/ \
 按HTTP协议，标头中的`Host`代表了虚拟主机的域名。一个IP上可能有多个虚拟主机域名。一般来说，如果不指定Host，它会被自动设置为URL中的主机域名。  
 Kong会将上述请求转发到`http://httpbin.org`，然后将响应发回给curl，并现在屏幕上。  
 
-#### 启用key-auth插件
+### 启用key-auth插件
 key-auth可以给API添加“基础认证” 。为kong API添加插件的语法是：
 ```
 POST /apis/{name or id}/plugins/
@@ -331,6 +331,29 @@ $ curl -X PATCH http://localhost:8001/apis/example-api/plugins/3931733a-149c-457
 $ curl http://localhost:8000 -H "Host: c7302.ambari.apache.org" -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJKTDhtTkM3UFpqclFpSnBtQnF5M3h3UDRTSXZZbTQzdiJ9.SfVOXuk-0-VELm4QV1nPteJC9toXtH2xqqhClBueO-zrGn5K2lCsPjku2TwGMiLYFVLqfzFSjNlLuCNZIjpzSW3Hq7fjeEcVRyVhrdwAMOJm0SWRL9x5BOQIK_anLvoQA2ONTKFzD61wLlnEpnGK3vSh6sFquqd8rTOxii7DK9nHGP1svpymetB0AO5ma-wQuK_6fVOzuxdqK3bwigyRjByHrsZaQIS6U8Rx_KTtAE-5T-siBkGRdlSq7wxNvaYvsnMykfJs6b-hXkEb4ErOT-qfX4KVjG9JvgjD3dGYcuDYxMgbIfPat9b1913_exgt9UtjklRpJaWy5iVa0UtSGQ'
 ```
 发现终于正常显示了网页信息。
+
+#### 删除JWT插件
+先查看插件清单，找到jwt插件的id，然后调用DELETE方法删除jwt插件：
+```
+$ curl http://localhost:8001/apis/example-api/plugins/
+...
+    "id": "3931733a-149c-4577-aa16-426cf5f92b48",
+      "enabled": true,
+      "api_id": "a52568c1-50fc-4b63-a49e-aa77b2080be6",
+      "name": "jwt"
+...
+$ curl -X DELETE http://localhost:8001/apis/example-api/plugins/3931733a-149c-4577-aa16-426cf5f92b48
+```
+### IP限制插件
+为了测试IP限制插件，首先要删除JWT插件等影响测试插件，具体方法见上文。  
+为`example-api`API启用"IP限制"插件：
+```
+$ curl -X POST http://localhost:8001/apis/example-api/plugins \
+    --data "name=ip-restriction" \
+    --data "config.whitelist=192.168.73.102,127.0.0.1"
+```
+启用IP限制插件，同时告诉了插件IP白名单。这个插件貌似没有提供“更新”API，所以如果要更改白名单，只能先删除再添加。删除方法见上一节的“删除JWT插件”。
+
 
 ### 管理命令备忘
 查询某消费者的JWT凭据清单：
