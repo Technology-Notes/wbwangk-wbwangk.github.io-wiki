@@ -348,3 +348,5 @@ $ curl -X POST http://kong:8001/consumers/{consumer}/jwt/{id} \
 $ curl -X PATCH http://localhost:8001/consumers/webb/jwt/JL8mNC7PZjrQiJpmBqy3xwP4SIvYm43v \
   --data "algorithm=RS256"
 ```
+
+[KONG API DOC](https://getkong.org/docs/0.11.x/admin-api/)  
