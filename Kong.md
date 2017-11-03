@@ -83,6 +83,7 @@ $ curl -i -X POST --url http://localhost:8001/apis/ \
   --data 'hosts=c7302.ambari.apache.org' \
   --data 'upstream_url=http://httpbin.org'
 ```
+解释：上述命令向kong的管理API发送请求，创建了一个名叫`example-api`的API，在该API中监听发往主机`c7302.ambari.apache.org`的请求，并代理到地址`http://httpbin.org`。  
 kong将nginx改造成了通过REST API来配置，更容易扩展。但其管理API的与nginx的配置文件从思想上很一致。  
 测试以上配置：
 ```
@@ -93,13 +94,17 @@ $ curl -i -X GET --url http://localhost:8000/ \
 Kong会将上述请求转发到`http://httpbin.org`，然后将响应发回给curl，并现在屏幕上。  
 
 #### 启用key-auth插件
-key-auth可以给API添加认证，可以理解为颁发给开发者的API key。下面给`example-api`这个API启用认证：
+key-auth可以给API添加“基础认证” 。为kong API添加插件的语法是：
+```
+POST /apis/{name or id}/plugins/
+```
+下面的命令为`example-api`这个API增加`key-auth`插件：
 ```
 $ curl -i -X POST \
   --url http://localhost:8001/apis/example-api/plugins/ \
   --data 'name=key-auth'
 ```
-当`example-api`这个API启用了key-auth之后，再象之前那么访问它就会报401错误。
+当`example-api`这个API启用了key-auth之后，再象之前那么访问它就会报401错误。关于“kong插件API”可参考[这个文档](https://getkong.org/docs/0.11.x/admin-api/#plugin-object)。  
 
 #### 创建消费者
 利用管理API创建消费者`webb`:
@@ -130,7 +135,8 @@ $ curl -X DELETE http://localhost:8001/apis/example-api/plugins/30f745fd-67c3-4f
 ```
 ### JWT插件       
 [原文](https://getkong.org/plugins/jwt/)  
-为`example-api`启用jwt插件：
+
+为Kong API`example-api`增加jwt插件：
 ```
 $ curl -X POST http://localhost:8001/apis/example-api/plugins \
     --data "name=jwt"
@@ -174,7 +180,7 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk
 $ curl http://localhost:8000   --header "Host: c7302.ambari.apache.org" -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg'
 $ curl --header "Host: c7302.ambari.apache.org" http://localhost:8000?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUlg
 ```
-上述两种使用JWT的方法都可以通过验证。可以故意把签名输入错，如删除最后的`g`，再测试：
+上述两种使用JWT的方法都可以通过验证，前者将JWT令牌放在标头，后者放在URL参数中。可以故意把签名输入错，如删除最后的`g`，再测试：
 ```
 $ curl --header "Host: c7302.ambari.apache.org" http://localhost:8000?0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiJ9.wc0tE4XSb-iYxBs9a_XWgT0btABQM6JyWCHpSlleUl
 {"message":"Invalid signature"}
