@@ -1,3 +1,4 @@
+[.](/e/vagrant10/ambari-vagrant/centos7.3，c7302)  
 先[下载rpm包](https://getkong.org/install/centos/#packages)，然后安装：
 ```
 $ sudo yum install epel-release
