@@ -82,6 +82,7 @@ $ netstat -anp | grep nginx
 ### 添加API
 在添加API时，有三个参数很关键：`hosts`、`uris`、`methods`，三个参数至少需要一个，还可以是两个或三个。  
 #### hosts参数测试
+`hosts`参数的含义是：将发往虚拟主机`{hosts}`的请求转发到`{upstream_url}`。  
 用[Mockbin API](https://mockbin.com/)充当后台API服务器，添加配置：
 ```
 $ curl -i -X POST --url http://localhost:8001/apis/ \
@@ -100,6 +101,7 @@ $ curl -i -X GET --url http://localhost:8000/ \
 Kong会将上述请求转发到`http://httpbin.org`，然后将响应发回给curl，并现在屏幕上。  
 
 #### uri参数测试
+`uris`参数的含义是：将发往路径`{uris}`的请求转发到`{upstream_url}`。  
 下面的例子中创建的API(`example-api2`)将发送到`/my-path`路径的请求转发到`http://webdav.imaicloud.com/`。如何设置`strip_uri=false`则发送到`/my-path`的请求会转发到`http://webdav.imaicloud.com/my-path`。  
 新增API:
 ```
@@ -110,6 +112,8 @@ $ curl -i -X POST --url http://localhost:8001/apis/ \
 $ curl -X GET --url http://localhost:8000/my-path
 (显示了http://webdav.imaicloud.com/目录下的文件清单)
 ```
+#### 三个参数的组合
+假如将`hosts`和`uris`进行组合的含义是：将发往`{hosts}`虚拟主机的`{uris}`路径的请求转发到`{upstream_url}`
 #### API删除、修改
 现在的Kong修改API有bug。  
 修改API相比增加API，需要在请求体中增加id参数，以便精确定位API。  
