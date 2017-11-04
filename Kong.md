@@ -1,5 +1,6 @@
 [.](/e/vagrant10/ambari-vagrant/centos7.3，c7302)  
 kong是微服务API网关。kong底层是nginx，利用lua插件进行扩展实现而达成。nginx的逻辑只能用配置文件配置，而kong可以通过REST API来配置，更灵活和更容易扩展。  
+## kong安装
 先[下载rpm包](https://getkong.org/install/centos/#packages)，然后安装：
 ```
 $ sudo yum install epel-release
@@ -75,7 +76,7 @@ kong的底层是nginx，所以可以通过命令查看kong监听的端口：
 ```
 $ netstat -anp | grep nginx
 ```
-## 测试kong
+## kong快速开始
 用[Mockbin API](https://mockbin.com/)充当后台API服务器，添加配置：
 ```
 $ curl -i -X POST --url http://localhost:8001/apis/ \
@@ -92,6 +93,49 @@ $ curl -i -X GET --url http://localhost:8000/ \
 ```
 按HTTP协议，标头中的`Host`代表了虚拟主机的域名。一个IP上可能有多个虚拟主机域名。一般来说，如果不指定Host，它会被自动设置为URL中的主机域名。  
 Kong会将上述请求转发到`http://httpbin.org`，然后将响应发回给curl，并现在屏幕上。  
+
+$ curl -i -X POST --url http://localhost:8001/apis/ \
+  --data 'name=example-api2' \
+  --data 'uris=my-path' \
+  --data 'strip_uri=false' \
+  --data 'upstream_url=http://webdav.imaicloud.com/t.txt'
+
+$ curl -i -X PUT --url http://localhost:8001/apis/ \
+  --data 'id=8d74e3ff-510b-43da-afc6-a760e3635057' \
+  --data 'name=example-api2' \
+  --data 'uris=/my-path' \
+  --data 'strip_uri=false' \
+  --data 'upstream_url=http://webdav.imaicloud.com/t.txt'
+
+## Kong插件系统
+Kong支持插件扩展。可以到[插件库](https://konghq.com/plugins/)查看Kong的可用插件清单， 其中的企业版插件需要付费，这与Nginx的商业策略类似。  
+插件可以添加到全局(所有API)、到某API、到某个消费者、到某个API与某个消费者的组合。当进行组合配置时，最终的执行优先顺序从最高到最低：  
+1. 插件应用于API和消费者的组合（如果请求被认证）。  
+2. 应用于消费者的插件（如果请求被认证）。  
+3. 插件应用于API。  
+4. 插件配置为全局运行。  
+当插件被添加多次时，每次的配置可能不一样，则只有优先级高的被执行。  
+
+您可以通过四种不同的方式添加插件：  
+- 对于每个API和消费者。不要设置api_id和consumer_id。  
+- 对于每个API和特定的消费者。只有设置consumer_id。  
+- 对于每个消费者和特定的API。只有设置api_id。  
+- 对于特定的消费者和API。同时设置api_id和consumer_id。  
+请注意，并非所有插件都允许指定consumer_id。检查插件文档。
+为特定API添加插件的语法：
+```
+POST /apis/{API-name or API-id}/plugins/
+```
+为全部API(全局)添加插件的语法：
+```
+POST /plugins/
+```
+插件名称、消费者等通过“请求正文”传递：  
+属性 | 描述
+-----|------
+name | 将要添加的插件的名称。目前插件必须分别安装在每个Kong实例中
+consumer_id(可选) | 消费者的唯一标识符，覆盖传入请求中此特定消费者的现有设置
+config.{property} | 插件的配置属性，可以在具体插件的文档页面找到
 
 ### 基础认证插件
 向`example-api`API添加`basic-auth`插件：
@@ -403,6 +447,11 @@ $ curl -i -X GET --url http://c7302.ambari.apache.org:8000/   --header 'Host: c7
 ```
 
 ### 管理命令备忘
+查询API清单，并删除一种一个：
+```
+$ curl -X GET http://localhost:8001/apis          (查询出API的id)
+$ curl -X DELETE http://localhost:8001/apis/{API id}
+```
 查询某消费者的JWT凭据清单：
 ```
 $ curl -X GET http://localhost:8001/consumers/{consumer}/jwt
