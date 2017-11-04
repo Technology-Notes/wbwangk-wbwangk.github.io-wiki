@@ -53,6 +53,7 @@ pg_password = 1
 pg_database = kong              # The database name to connect to.
 pg_ssl = off                    # Toggles client-server TLS connections
 ```
+上面的配置中，注意8000和8001端口。8000端口是个运行时端口，是实际的网关工作端口。8001端口是配置端口，或者叫admin端口，用于配置Kong。  
 对kong的数据库初始化：
 ```
 $ kong migrations up -c /etc/kong/kong.conf
@@ -77,6 +78,10 @@ kong的底层是nginx，所以可以通过命令查看kong监听的端口：
 $ netstat -anp | grep nginx
 ```
 ## kong快速开始
+
+### 添加API
+在添加API时，有三个参数很关键：`hosts`、`uris`、`methods`，三个参数至少需要一个，还可以是两个或三个。  
+#### hosts参数测试
 用[Mockbin API](https://mockbin.com/)充当后台API服务器，添加配置：
 ```
 $ curl -i -X POST --url http://localhost:8001/apis/ \
@@ -94,19 +99,28 @@ $ curl -i -X GET --url http://localhost:8000/ \
 按HTTP协议，标头中的`Host`代表了虚拟主机的域名。一个IP上可能有多个虚拟主机域名。一般来说，如果不指定Host，它会被自动设置为URL中的主机域名。  
 Kong会将上述请求转发到`http://httpbin.org`，然后将响应发回给curl，并现在屏幕上。  
 
+#### uri参数测试
+下面的例子中创建的API(`example-api2`)将发送到`/my-path`路径的请求转发到`http://webdav.imaicloud.com/`。如何设置`strip_uri=false`则发送到`/my-path`的请求会转发到`http://webdav.imaicloud.com/my-path`。  
+新增API:
+```
 $ curl -i -X POST --url http://localhost:8001/apis/ \
   --data 'name=example-api2' \
-  --data 'uris=my-path' \
-  --data 'strip_uri=false' \
-  --data 'upstream_url=http://webdav.imaicloud.com/t.txt'
-
-$ curl -i -X PUT --url http://localhost:8001/apis/ \
-  --data 'id=8d74e3ff-510b-43da-afc6-a760e3635057' \
-  --data 'name=example-api2' \
   --data 'uris=/my-path' \
-  --data 'strip_uri=false' \
-  --data 'upstream_url=http://webdav.imaicloud.com/t.txt'
-
+  --data 'upstream_url=http://webdav.imaicloud.com/'
+$ curl -X GET --url http://localhost:8000/my-path
+(显示了http://webdav.imaicloud.com/目录下的文件清单)
+```
+#### API删除、修改
+现在的Kong修改API有bug。  
+修改API相比增加API，需要在请求体中增加id参数，以便精确定位API。  
+可以用下面的办法查询API清单(里面有id)：
+```
+$ curl http://localhost:8001/apis/ | jq  
+```
+查到API的id后就可以删除它了：
+```
+$ curl -X DELETE http://localhost:8001/apis/920579a0-e6d1-4479-bf9f-f221da81f083
+```
 ## Kong插件系统
 Kong支持插件扩展。可以到[插件库](https://konghq.com/plugins/)查看Kong的可用插件清单， 其中的企业版插件需要付费，这与Nginx的商业策略类似。  
 插件可以添加到全局(所有API)、到某API、到某个消费者、到某个API与某个消费者的组合。当进行组合配置时，最终的执行优先顺序从最高到最低：  
