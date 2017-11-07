@@ -463,8 +463,65 @@ $ curl -i -X GET --url http://c7302.ambari.apache.org:8000/   --header 'Host: c7
 ```
 {"message":"Your IP address is not allowed"}
 ```
+### middleman子请求插件
+在调用API前，[middleman](https://github.com/pantsel/kong-middleman-plugin)插件使得Kong向一个地址发送额外的HTTP请求。似乎是把Nginx的[ngx_http_auth_request_module](http://nginx.org/en/docs/http/ngx_http_auth_request_module.html)模块的发送认证“子请求”(subrequest)的功能搬运到了Kong中。  
+middleman插件可用于授权检查。在调用真正的Kong API前，利用middleman向某个权限检查的地址发送子请求。如果子请求返回2xx的响应，Kong API会被继续调用。如果子请求返回401或403，向API发出的请求会终止。  
 
-### 管理命令备忘
+#### 插件安装
+middleman不是官方插件，而是一个定制插件。使用前需要先安装。假定kong安装目录是`/usr/local/kong`。  
+```
+$ cd /usr/local/kong  && mkdir plugins && cd plugins
+$ git clone https://github.com/pantsel/kong-middleman-plugin middleman
+$ cd middleman
+$ uarocks make *.rockspec
+```
+然后配置kong以便加载定制插件。编辑`/etc/kong/kong.conf`，添加下列配置（如果有多个定制插件需要配置，就逗号隔开）：
+```
+custom_plugins = middleman 
+```
+重启Kong。
+#### 插件测试（首先是子请求状态码401）
+http://httpbin.org是一个免费的http调试云服务（首页是帮助）。测试用到下面的两个URI，一个返回200状态码，另一个返回401状态码：
+```
+$ curl -i http://httpbin.org/status/200
+HTTP/1.1 200 OK
+$ curl -i http://httpbin.org/status/401
+HTTP/1.1 401 UNAUTHORIZED
+```
+在下面的测试中，向API `example-api2`添加middleman插件。首先让httpbin.org返回401状态码，然后测试让httpbin.org返回200状态码。由于当前版本的Kong的插件更新(PATCH方法)存在bug，只能删除后重新添加middleman插件来修改`config.url`。
+```
+$ curl -X POST http://localhost:8001/apis/example-api2/plugins \
+    --data "name=middleman" \
+    --data "config.url=http://httpbin.org/status/401"
+```
+`example-api2`API的路径(`uris`)是`/my-path`，下面是测试该路径：
+```
+$ curl http://localhost:8000/my-path
+{"message":""}
+```
+如果`example-api2`API正常执行应返回`http://webdav.imaicloud.com`的网页，现在只显示了个空的`message`，说明401的状态码阻止了API的正常执行。 
+
+#### 测试子请求返回200状态码
+参考下列命令查询出middleman的插件id，删除它：
+```
+$ curl localhost:8001/plugins/     (找到插件middleman的id)
+$ curl -X DELTE localhost:8001/plugins/4e19f07c-328f-454d-9d03-4ca66bad63fc
+```
+重新向`example-api2`添加middleman插件，让httpbin.org返回的子请求状态码是200：
+```
+$ curl -X POST http://localhost:8001/apis/example-api2/plugins \
+    --data "name=middleman" \
+    --data "config.url=http://httpbin.org/status/200"
+```
+再次测试`example-api2`API:
+```
+$ curl http://localhost:8000/my-path
+```
+可以看到正常返回了`http://webdav.imaicloud.com`网页的内容。  
+
+上述测试说明middleman插件可以用于Kong外部的认证、权限检查等功能。  
+
+## 管理命令备忘
 查询API清单，并删除一种一个：
 ```
 $ curl -X GET http://localhost:8001/apis          (查询出API的id)
