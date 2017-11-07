@@ -459,7 +459,7 @@ $ curl -i -X GET --url http://c7302.ambari.apache.org:8000/   --header 'Host: c7
 ```
 {"message":"Your IP address is not allowed"}
 ```
-### middleman子请求插件
+### middleman插件
 在调用API前，[middleman](https://github.com/pantsel/kong-middleman-plugin)插件使得Kong向一个地址发送额外的HTTP请求。似乎是把Nginx的[ngx_http_auth_request_module](http://nginx.org/en/docs/http/ngx_http_auth_request_module.html)模块的发送认证“子请求”(subrequest)的功能搬运到了Kong中。  
 middleman插件可用于授权检查。在调用真正的Kong API前，利用middleman向某个权限检查的地址发送子请求。如果子请求返回2xx的响应，Kong API会被继续调用。如果子请求返回401或403，向API发出的请求会终止。  
 
