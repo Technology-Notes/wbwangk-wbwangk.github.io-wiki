@@ -215,7 +215,7 @@ $ curl -i -X POST --url http://localhost:8001/consumers/ \
   --data "username=webb"
 {"created_at":1506494530000,"username":"webb","id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c"}
 ```
-为消费者创建凭据(key)：
+为消费者创建apikey：
 ```
 $ curl -i -X POST --url http://localhost:8001/consumers/webb/key-auth/ \
   --data 'key=1'
