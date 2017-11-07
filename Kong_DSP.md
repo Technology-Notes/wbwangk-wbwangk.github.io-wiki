@@ -42,7 +42,8 @@ DSP需要提供一个界面供用户申请apikey。在申请apikey的逻辑中�
 $ curl -X POST --url http://kong:8001/consumers/ \
   --data "username=webb"
 ```
-将webb替换为DSP的当前用户id。如果kong提示这个用户id已经存在，说明他申请过apikey，忽略“用户id已存在”的错误，继续执行即可。  
+将webb替换为DSP的当前用户id。如果kong提示这个用户id已经存在，说明他申请过apikey，忽略“用户id已存在”的错误，继续执行即可。因为同一个consumer可以创建多个apikey。  
+  
 当有了consumer后，DSP接着执行下面的逻辑来创建apikey：
 ```
 $ curl -i -X POST --url http://localhost:8001/consumers/webb/key-auth/ \
@@ -53,3 +54,10 @@ apikey为自动生成的32位的随机数或UUID。上述逻辑成功后再屏�
 $ curl http://kong:8000/<api-path>?apikey=<apikey>   (或)
 $ curl -H "apikey: <apikey>" http://kong:8000/<api-path>
 ```
+
+### 授权
+DSP的有条件共享服务的授权比较特殊，它通过一个申请流程来完成服务的授权。这导致传统的基于角色的授权(RBAC)模型变得无效。因为用户是否有权限访问某个服务是“随机”的，无法用角色对服务进行分组。  
+Kong的官方授权插件不能满足需求，选择了一个定制插件`middleman`来满足这个特殊的授权需求。`middleman`插件使得Kong在执行对API的反向代理前向一个指定URL发送请求，如果返回的HTTP状态码是2xx，反向代理会顺利执行，如果返回的状态码是401或402，反向代理会终止。`middleman`除了可以用于授权，还可用于认证或其他任意适合的用途。  
+关于`middleman`的更多细节，可以参考[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#middleman子请求插件)。`middleman`不是官方插件，需要手工下载和构建，安装办法参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85)。手工安装后，执行下列命令向  
+
+为了利用`middleman`完成服务的授权检查，需要DSP提供一个REST API来接收来自Kong的子请求(Nginx叫subrequest)。
