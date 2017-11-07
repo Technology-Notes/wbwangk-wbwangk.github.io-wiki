@@ -189,12 +189,8 @@ $ curl http://localhost:8000/ \
     --header 'Host: c7302.ambari.apache.org' \
     -H 'Authorization: Basic dG9tOjEK'
 ```
-curl -X POST http://localhost:8001/consumers/webb/basic-auth \
-    --data "username=Aladdin" \
-    --data "password=OpenSesame"
-{"created_at":1509704641000,"id":"98466068-c0ff-483e-8baa-b0fdceb6ef23","username":"Aladdin","password":"e3faa8bcbf417f3aabf364eeba0f5ca2ee5a3cff","consumer_id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c"}
- curl http://localhost:8000/ \
-    -H 'Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l'
+请求应该可以正常返回响应了。`dG9tOjEK`是`tom:1`的base64编码。  
+
 ### key-auth插件
 key-auth可以给API添加“基础认证” 。为kong API添加插件的语法是：
 ```
