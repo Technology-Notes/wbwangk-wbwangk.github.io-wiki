@@ -477,7 +477,7 @@ custom_plugins = middleman
 ```
 重启Kong。
 #### 插件测试（首先是子请求状态码401）
-http://httpbin.org是一个免费的http调试云服务（首页是帮助）。测试用到下面的两个URI，一个返回200状态码，另一个返回401状态码：
+[httpbin.org](http://httpbin.org)是一个免费的http调试云服务（首页是帮助）。测试用到下面的两个URI，一个返回200状态码，另一个返回401状态码：
 ```
 $ curl -i http://httpbin.org/status/200
 HTTP/1.1 200 OK
