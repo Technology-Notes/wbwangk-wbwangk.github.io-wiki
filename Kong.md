@@ -100,7 +100,7 @@ $ curl -i -X GET --url http://localhost:8000/ \
 按HTTP协议，标头中的`Host`代表了虚拟主机的域名。一个IP上可能有多个虚拟主机域名。一般来说，如果不指定Host，它会被自动设置为URL中的主机域名。  
 Kong会将上述请求转发到`http://httpbin.org`，然后将响应发回给curl，并现在屏幕上。  
 
-#### uri参数测试
+#### uris参数测试
 `uris`参数的含义是：将发往路径`{uris}`的请求转发到`{upstream_url}`。  
 下面的例子中创建的API(`example-api2`)将发送到`/my-path`路径的请求转发到`http://webdav.imaicloud.com/`。如何设置`strip_uri=false`则发送到`/my-path`的请求会转发到`http://webdav.imaicloud.com/my-path`。  
 新增API:
@@ -530,6 +530,7 @@ Host: httpbin.org
 
  {"headers":{"accept":"*/*","host":"localhost:8000","user-agent":"curl/7.29.0","x-consumer-id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c","x-consumer-username":"webb"},"uri_args":{"apikey":"1"},"body_data":null} 
 ```
+(上述内容是用justniffer抓取的)  
 middleman并没有将API请求的原始URL信息发送到子请求中（这应是一个缺陷），如果用middleman用于授权，则必须知道API的原始URL。上面用了一种变通的方法将原始API的URL以参数（`?api=example-api2`）的形式发送给子请求的实现。  
 
 
