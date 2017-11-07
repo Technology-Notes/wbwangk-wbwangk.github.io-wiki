@@ -507,7 +507,7 @@ $ curl -X DELTE localhost:8001/plugins/4e19f07c-328f-454d-9d03-4ca66bad63fc
 ```
 $ curl -X POST http://localhost:8001/apis/example-api2/plugins \
     --data "name=middleman" \
-    --data "config.url=http://httpbin.org/status/200"
+    --data "config.url=http://httpbin.org/status/200?api=example-api2"
 ```
 再次测试`example-api2`API:
 ```
@@ -520,7 +520,7 @@ $ curl http://localhost:8000/my-path
 #### 子请求API的实现
 Kong向指定URL(如前文的`http://httpbin.org/status/200`)发送请求的格式如下：
 ```
-POST /status/200 HTTP/1.1
+POST /status/200?api=example-api2 HTTP/1.1
 Content-Length: 208
 TE: trailers
 Connection: close, TE
@@ -530,6 +530,7 @@ Host: httpbin.org
 
  {"headers":{"accept":"*/*","host":"localhost:8000","user-agent":"curl/7.29.0","x-consumer-id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c","x-consumer-username":"webb"},"uri_args":{"apikey":"1"},"body_data":null} 
 ```
+middleman并没有将API请求的原始URL信息发送到子请求中（这应是一个缺陷），如果用middleman用于授权，则必须知道API的原始URL。上面用了一种变通的方法将原始API的URL以参数（`?api=example-api2`）的形式发送给子请求的实现。  
 
 
 ## 管理命令备忘
