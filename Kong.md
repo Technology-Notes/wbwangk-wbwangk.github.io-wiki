@@ -517,6 +517,21 @@ $ curl http://localhost:8000/my-path
 
 上述测试说明middleman插件可以用于Kong外部的认证、权限检查等功能。  
 
+#### 子请求API的实现
+Kong向指定URL(如前文的`http://httpbin.org/status/200`)发送请求的格式如下：
+```
+POST /status/200 HTTP/1.1
+Content-Length: 208
+TE: trailers
+Connection: close, TE
+User-Agent: LuaSocket 3.0-rc1
+Content-Type: application/json
+Host: httpbin.org
+
+ {"headers":{"accept":"*/*","host":"localhost:8000","user-agent":"curl/7.29.0","x-consumer-id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c","x-consumer-username":"webb"},"uri_args":{"apikey":"1"},"body_data":null} 
+```
+
+
 ## 管理命令备忘
 查询API清单，并删除一种一个：
 ```
