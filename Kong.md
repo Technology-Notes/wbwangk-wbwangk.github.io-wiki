@@ -195,7 +195,7 @@ curl -X POST http://localhost:8001/consumers/webb/basic-auth \
 {"created_at":1509704641000,"id":"98466068-c0ff-483e-8baa-b0fdceb6ef23","username":"Aladdin","password":"e3faa8bcbf417f3aabf364eeba0f5ca2ee5a3cff","consumer_id":"9c270f20-f3e0-4af1-a3a1-91b58f11072c"}
  curl http://localhost:8000/ \
     -H 'Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l'
-### 启用key-auth插件
+### key-auth插件
 key-auth可以给API添加“基础认证” 。为kong API添加插件的语法是：
 ```
 POST /apis/{name or id}/plugins/
