@@ -57,7 +57,44 @@ $ curl -H "apikey: <apikey>" http://kong:8000/<api-path>
 
 ### 授权
 DSP的有条件共享服务的授权比较特殊，它通过一个申请流程来完成服务的授权。这导致传统的基于角色的授权(RBAC)模型变得无效。因为用户是否有权限访问某个服务是“随机”的，无法用角色对服务进行分组。  
-Kong的官方授权插件不能满足需求，选择了一个定制插件`middleman`来满足这个特殊的授权需求。`middleman`插件使得Kong在执行对API的反向代理前向一个指定URL发送请求，如果返回的HTTP状态码是2xx，反向代理会顺利执行，如果返回的状态码是401或402，反向代理会终止。`middleman`除了可以用于授权，还可用于认证或其他任意适合的用途。  
-关于`middleman`的更多细节，可以参考[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#middleman子请求插件)。`middleman`不是官方插件，需要手工下载和构建，安装办法参考[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85)。手工安装后，执行下列命令向  
 
-为了利用`middleman`完成服务的授权检查，需要DSP提供一个REST API来接收来自Kong的子请求(Nginx叫subrequest)。
+Kong的官方授权插件不能满足需求，选择了一个定制插件`middleman`来满足这个特殊的授权需求。`middleman`插件使得Kong在执行对API的反向代理前向一个指定URL发送请求，如果返回的HTTP状态码是2xx，反向代理会顺利执行，如果返回的状态码是401或402，反向代理会终止。`middleman`除了可以用于授权，还可用于认证或其他任意适合的用途。  
+
+关于`middleman`的更多细节，可以参考[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#middleman插件)。`middleman`不是官方插件，需要手工下载和构建，安装办法参考上文的文档。  
+手工安装后，执行下列逻辑向指定API添加插件：
+```
+$ curl -X POST http://kong:8001/apis/example-api2/plugins \
+    --data "name=middleman" \
+    --data "config.url=http://<DSP_hook>?api=example-api2"
+```  
+需要注意的是，只有“有条件共享”的服务才需要添加`middleman`插件，无条件共享的服务不需要添加该插件。  
+上面的`<DSP_hook>`是需要DSP提供的REST API，用来接收来自Kong的子请求(Nginx叫subrequest)。DSP_hook收到的请求体是个json串(格式见[这里](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#测试子请求返回200状态码))，里面有请求的用户id，而URL参数中有API名称。根据用户id和API名称可以定位到“数据资源”，然后到共享申请结果表中查看这个用户是否允许访问这个服务，以决定返回200还是401状态码。  
+
+至于API名称如何对应数据资源，见下文。  
+
+#### 数据资源与API名称
+数据资源分三种：数据库、文件、接口。接口又称服务，Kong中称为API，一般是SOAP（俗称web service）格式或REST风格。  
+数据资源维护时，当用户选择“接口”类型时，需要渲染出服务定义区域，内容有：  
+- URI前缀，就是例子中的`/my-path`，在Kong中同时作为API名称(例子中叫example-api2)和'uris'属性。约定API名称与`uris`相同。  
+- 上游URL，就是将`/my-path`反向代理到的URL。也就是`upstream_url`的值。  
+
+由于服务定义的属性很少，暂时不增加服务定义表，而是直接将服务的属性保存在“数据资源”表中。URI前缀保存到`TABLE_NAME`字段，上游URL保存到`TABLE_DESCRIPTION`字段。  
+
+当用户按保存按钮后，DSP应执行下列逻辑，将这个服务定义到Kong中：
+```
+$ curl http://kong:8001/apis \
+  --data name=<URI前缀> \
+  --data uris=/<URI前缀> \
+  --data upstream_url=<上游URL>
+```
+如果当前的数据资源是“有条件共享”的，还要执行下列逻辑，为这个API添加权限检查：
+```
+$ curl -X POST http://kong:8001/apis/<URI前缀>/plugins \
+    --data "name=middleman" \
+    --data "config.url=http://<DSP_hook>?api=<URI前缀>"
+```
+当把一个数据资源从“有条件共享”修改成“无条件共享”时，需要删除权限检查逻辑：
+```
+$ curl kong:8001/apis/example-api2/plugins      (显示某API的插件清单，找到middleman的插件id)
+$ curl -X DELETE kong:8001/apis/example-api2/plugins/<middleman plugin id>
+```
