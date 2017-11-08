@@ -660,6 +660,26 @@ $ curl -X POST http://kong:8001/oauth2_tokens \
     --data "expires_in=3600"
 {"refresh_token":"refresh_token1","token_type":"bearer","access_token":"access_token1","created_at":1510110884000,"expires_in":3600,"credential_id":"e45921d3-76a9-4da8-ab50-a3557b4b6685","id":"9802fe24-bb3a-4a01-8de3-a09d2fad1715"}
 ```
+### OAuth 2.0 Hello World for Kong
+这是一个利用Kong实现OAuth2的Hello World示范。界面以Node.js实现。  
+安装：
+```
+$ git clone https://github.com/Kong/kong-oauth2-hello-world.git kong-oauth2
+$ cd kong-oauth2
+$ npm install
+```
+设置环境变量：
+```
+export PROVISION_KEY="dNYLur1pJPKAvEKhAyQsBeyrO2YdYm96"
+export KONG_ADMIN="http://c7302:8001"
+export KONG_API="https://c7302:8443"
+export API_PATH="/ssl-api"
+export SCOPES="{ \
+  \"db\": \"Grant permissions to db\", \
+  \"file\": \"Grant permissions to file\", \
+  \"api\": \"Grant permissions to api\" \
+}"
+```
 
 ## 管理命令备忘
 查询API清单，并删除一种一个：
