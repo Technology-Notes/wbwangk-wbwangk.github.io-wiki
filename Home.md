@@ -63,3 +63,10 @@ https://github.com/TonnyL/Awesome_APIs
 
 ### awesome rest
 https://github.com/marmelab/awesome-rest
+
+### vagrant配置端口转发
+```
+Vagrant.configure("2") do |config|
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+end
+```
