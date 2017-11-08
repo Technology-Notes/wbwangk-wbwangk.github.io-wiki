@@ -533,6 +533,29 @@ Host: httpbin.org
 (上述内容是用justniffer抓取的)  
 middleman并没有将API请求的原始URL信息发送到子请求中（这应是一个缺陷），如果用middleman用于授权，则必须知道API的原始URL。上面用了一种变通的方法将原始API的URL以参数（`?api=example-api2`）的形式发送给子请求的实现。  
 
+## Kong与Webdav
+上文中`example-api2`这个API，将发向`/my-path`的请求代理到了`http://webdav.imaicloud.com/`这个地址。这个地址是用Nginx的{ngx_http_dav_module](http://nginx.org/en/docs/http/ngx_http_dav_module.html)模块实现的一个webdav协议测试虚拟主机。[这个文章](https://github.com/imaidev/imaidev.github.io/wiki/WebDav%E6%B5%8B%E8%AF%95)是讲以前做的webdav协议测试。  
+
+下面测试一下Kong对Webdav协议的支持情况。 
+为了减少干扰，删除middleman插件： 
+```
+$ curl localhost:8001/apis/example-api2/plugins | jq      (查询出middleman的插件id)
+$ curl -XDELETE localhost:8001/apis/example-api2/plugins/b39fcfcf-f2ba-4d2c-a568-30f6313b4aff
+```
+测试一下通过Kong代理的删除文件webdav协议：
+```
+$ curl -XDELETE -H "apikey:1" localhost:8000/my-path/t1.txt
+```
+key-auth插件仍在，所以需要在标头发送apikey。  
+测试一下反面上传：
+```
+$ curl -T './t1.txt' -H "apikey:1" localhost:8000/my-path/
+```
+用浏览器看一下，发现t1.txt已经传送到了`http://webdav.imaicloud.com/t1.txt`地址。  
+
+### OAUTH认证
+上面使用key-auth插件对webdav协议附加了apikey认证。如果总是从后台应用访问webdav服务器，apikey认证是满足需求的。但如果想支持从网页上用js直接访问webdav服务器，则面临着apikey的泄密问题。这时候，OAUTH认证才是个更好的选择。  
+
 
 ## 管理命令备忘
 查询API清单，并删除一种一个：
