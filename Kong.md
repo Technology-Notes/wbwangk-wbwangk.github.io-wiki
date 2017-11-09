@@ -658,7 +658,8 @@ http {
 ```
 文件`cors-include.conf`的内容参考文章[CORS](https://github.com/wbwangk/wbwangk.github.io/wiki/CORS)。
 
-**实测发现Kong没有加载webdav模块！**
+**实测发现Kong没有加载webdav模块！**   
+目前只能另外部署一个Nginx，然后用Kong代理Nginx的WebDav服务，就是象[Kong与Webdav](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#kong%E4%B8%8Ewebdav)一章中讲到的那样。  
 
 
 ## JWT插件管理命令备忘
