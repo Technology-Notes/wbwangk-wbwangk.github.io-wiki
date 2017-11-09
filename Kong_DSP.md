@@ -119,3 +119,6 @@ DSP需要实现一个授权检查API，供Kong的middleman插件调用。这个�
 ```
 可以定义多个ip，操作系统会自动选择一个(这貌似叫DNS轮询)。这种办法虽然可以定义一个简单的集群，但端口号只能配置成一样的。如果有条件，可以用Nginx或httpd配置出更完善的集群，然后将dsp配置到Nginx或httpd的ip。  
 
+### 前端OAuth授权
+文件上传可以通过前端js完成，也可以通过后端java应用完成。直接用前端js实现文件上传更简单，但apikey是后端用的，前端一般用OAuth实现认证和授权。  
+利用Kong的oauth2插件实现OAuth授权很容易。尤其在DSP的场景下，只需要“客户端凭据”方式的授权即可。详细描述见文档"[Kong_OAuth2](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong_OAuth2)"。  
