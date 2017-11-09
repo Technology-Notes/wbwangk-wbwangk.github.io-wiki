@@ -15,6 +15,7 @@ $ yum install nginx -y
 $ whereis nginx
 nginx: /usr/sbin/nginx /usr/lib64/nginx /etc/nginx /usr/share/nginx /usr/share/man/man8/nginx.8.gz
 ```
+### 配置Nginx以支持WebDav
 根据whereis得知nginx的配置文件位于`/etc/nginx`。这个目录下有个nginx.conf，是nginx的主配置文件。下级目录`conf.d`的所有conf扩展名的文件都会被include进入nginx.conf。
 
 编辑`conf.d/default.conf`，添加以下内容：
