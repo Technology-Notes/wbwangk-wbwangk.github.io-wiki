@@ -11,7 +11,6 @@ cors-include.conf的内容如下：
 #
 # Wide-open CORS config for nginx
 #
-location / {
      if ($request_method = 'OPTIONS') {
         add_header 'Access-Control-Allow-Origin' '*';
         add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, MKCOL, COPY, MOVE';
