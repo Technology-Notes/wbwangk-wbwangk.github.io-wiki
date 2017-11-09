@@ -53,6 +53,8 @@ oauth2插件默认是禁止客户端证书授权方式的，所以启用插件�
 ```
 "provision_key":"LNeLjurIrzYDJlczl6psClGCC0lbPYMs"
 ```
+令牌的有效期默认是7200(两个小时)，可以在启用oauth2插件时设置`config.token_expiration`参数来调整这个值得大小。  
+
 #### 2. 创建oauth应用
 首先，创建API消费者`thefosk2`，一般是某个应用开发者：
 ```
