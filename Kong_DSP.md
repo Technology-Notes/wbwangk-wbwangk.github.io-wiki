@@ -122,3 +122,6 @@ DSP需要实现一个授权检查API，供Kong的middleman插件调用。这个�
 ### 前端OAuth授权
 文件上传可以通过前端js完成，也可以通过后端java应用完成。直接用前端js实现文件上传更简单，但apikey是后端用的，前端一般用OAuth实现认证和授权。  
 利用Kong的oauth2插件实现OAuth授权很容易。尤其在DSP的场景下，只需要“客户端凭据”方式的授权即可。详细描述见文档"[Kong_OAuth2](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong_OAuth2)"。  
+
+需要强调的是，添加API、创建消费者、创建oauth应用等步骤只需要手工完成。拿到客户端凭据后，根据客户端凭据换取令牌的动作才需要写程序。  
+利用Kong对Webdav协议(文件服务)进行代理的测试见[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#kong与webdav)
