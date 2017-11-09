@@ -537,7 +537,7 @@ middleman并没有将API请求的原始URL信息发送到子请求中（这应�
 OAuth2认证插件的篇幅较长，单独写了[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong_OAuth2)。  
 
 ## Kong与Webdav
-上文中`example-api2`这个API，将发向`/my-path`的请求代理到了`http://webdav.imaicloud.com/`这个地址。这个地址是用Nginx的{ngx_http_dav_module](http://nginx.org/en/docs/http/ngx_http_dav_module.html)模块实现的一个webdav协议测试虚拟主机。[这个文章](https://github.com/imaidev/imaidev.github.io/wiki/WebDav%E6%B5%8B%E8%AF%95)是讲以前做的webdav协议测试。  
+上文中`example-api2`这个API，将发向`/my-path`的请求代理到了`http://webdav.imaicloud.com/`这个地址。这个地址是用Nginx的[ngx_http_dav_module](http://nginx.org/en/docs/http/ngx_http_dav_module.html)模块实现的一个webdav协议测试虚拟主机。[这个文章](https://github.com/imaidev/imaidev.github.io/wiki/WebDav%E6%B5%8B%E8%AF%95)是讲以前做的webdav协议测试。  
 
 下面测试一下Kong对Webdav协议的支持情况。 
 为了减少干扰，删除middleman插件： 
