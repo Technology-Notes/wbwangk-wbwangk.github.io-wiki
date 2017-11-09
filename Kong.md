@@ -556,11 +556,112 @@ $ curl -T './t1.txt' -H "apikey:1" localhost:8000/my-path/
 ```
 用浏览器看一下，发现t1.txt已经传送到了`http://webdav.imaicloud.com/t1.txt`地址。  
 
-## 管理命令备忘
-API | 描述
-----|------
-GET /apis  |  查询已经定义的API清单
-DELETE /apis/{API id} | 删除指定API
+## 定制Nginx配置文件
+Kong的底层是Nginx，Kong利用Lua语言自动生成Nginx配置文件。自动生成的配置文件是：
+```
+/usr/local/kong/nginx.conf
+/usr/local/kong/nginx-kong.conf
+```
+其中nginx.conf中include了nginx-kong.conf。所谓定制Nginx配置文件，就是想办法把自己的个性化配置放到nginx.conf中。  
+在[Custom Nginx configuration](https://getkong.org/docs/0.11.x/configuration/#custom-nginx-configuration)中，Kong给出了定制Nginx配置文件的方案。  
+方案就是定制一个模板文件(`custom_nginx.template`)，包含下列内容：
+```
+# ---------------------
+# custom_nginx.template
+# ---------------------
+
+worker_processes ${{NGINX_WORKER_PROCESSES}}; # can be set by kong.conf
+daemon ${{NGINX_DAEMON}};                     # can be set by kong.conf
+
+pid pids/nginx.pid;                      # this setting is mandatory
+error_log logs/error.log ${{LOG_LEVEL}}; # can be set by kong.conf
+
+events {
+    use epoll; # custom setting
+    multi_accept on;
+}
+
+http {
+    # include default Kong Nginx config
+    include 'nginx-kong.conf';
+
+    # custom server
+    server {
+        listen 8002;
+        server_name kong;
+
+        location / {
+            root html;
+        }
+    }
+}
+```
+为了与上面配置吻合，创建下面的目录和文件：
+```
+$ cd /usr/local/kong
+$ mkdir html
+$ echo "This is a index.html" > html/index.html
+```
+然后用下列方式重新启动Kong：
+```
+$ kong restart --nginx-conf custom_nginx.template
+```
+测试一下：
+```
+$  curl kong:8002/index.html
+This is a index.html
+```
+这样kong这个主机在8000端口上进行API转发，在8002端口上进行静态网页服务。  
+
+### Kong提供WebDav服务
+将`custom_nginx.template`按下面的内容配置：
+```
+# ---------------------
+# custom_nginx.template
+# ---------------------
+
+worker_processes ${{NGINX_WORKER_PROCESSES}}; # can be set by kong.conf
+daemon ${{NGINX_DAEMON}};                     # can be set by kong.conf
+
+pid pids/nginx.pid;                      # this setting is mandatory
+error_log logs/error.log ${{LOG_LEVEL}}; # can be set by kong.conf
+
+events {
+    use epoll; # custom setting
+    multi_accept on;
+}
+
+http {
+    # include default Kong Nginx config
+    include 'nginx-kong.conf';
+
+    # custom server
+    server {
+        listen 8002;
+        server_name kong;
+        client_max_body_size  30m;
+        root html;
+
+        location / {
+            #开启文件列表功能
+            autoindex on;
+
+            ## webdav config
+            include cors-include.conf;
+            client_body_temp_path /var/tmp;
+            dav_methods PUT DELETE MKCOL COPY MOVE;
+            create_full_put_path  on;
+            dav_access    group:rw  all:r;
+        }
+    }
+}
+```
+文件`cors-include.conf`的内容参考文章[CORS](https://github.com/wbwangk/wbwangk.github.io/wiki/CORS)。
+
+**实测发现Kong没有加载webdav模块！**
+
+
+## JWT插件管理命令备忘
 
 查询某消费者的JWT凭据清单：
 ```
