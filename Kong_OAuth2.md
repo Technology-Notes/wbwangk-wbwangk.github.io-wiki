@@ -161,6 +161,7 @@ API_PATH is /cats
 SCOPES is {   "email": "Grant permissions to read your email address",   "address": "Grant permissions to read your address information",   "phone": "Grant permissions to read your mobile phone number" }
 Running at Port 3000
 ```
+#### 4.测试授权码方式OAuth2
 我应用是跑在虚拟机里的，而浏览器是宿主机windows下的，虚拟机的IP是`192.168.73.102`。用浏览器访问HelloWorld应用应该访问`192.168.73.102`这个地址，而不是`127.0.0.1`。  
 在浏览器中输入：
 ```
@@ -170,7 +171,7 @@ http://192.168.73.102:3000/authorize?response_type=code&scope=email%20address&cl
 ```
 https://getkong.org/?code=qaZnTA8wlqutux7064JsT0oxBoi1FXVo
 ```
-上面的code就是授权码。如果实际使用时，`redirect_uri`会被设置成Web应用的某个URI，这个URI会接收到授权码，然后用下面的逻辑换取访问令牌：
+上面的code就是授权码。如果实际使用时，`redirect_uri`会被设置成Web应用的某个URI，这个URI会接收到授权码，然后用下面的逻辑换取访问令牌：  
 ```
 $ curl https://127.0.0.1:8443/cats/oauth2/token \
      -d "grant_type=authorization_code" \
@@ -179,5 +180,5 @@ $ curl https://127.0.0.1:8443/cats/oauth2/token \
      -d "redirect_uri=http://getkong.org/" \
      -d "code=qaZnTA8wlqutux7064JsT0oxBoi1FXVo" --insecure
 ```
-
+获得访问令牌后，访问具体API就与上一章的客户端凭据方式一样了。  
 
