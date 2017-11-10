@@ -56,7 +56,7 @@ $ curl --header "Host: c7302.ambari.apache.com" http://localhost:8000?0eXAiOiJKV
 ```  
 然后发现验证通过了，因为没有定义这个kong API，JWT插件自然不起作用，所以没有JWT验证，即使签名错误也可以通过。  
 
-#### 验证声明(claim)
+### 验证声明(claim)
 Kong还可以对[RFC 7519](https://tools.ietf.org/html/rfc7519)中定义的注册声明进行验证。要对声明执行验证，请将其添加到`config.claims_to_verify`属性。下面是相关语法：
 ```
 $ curl -X PATCH http://kong:8001/apis/{api}/plugins/{jwt plugin id} \
@@ -110,7 +110,7 @@ $  curl http://localhost:8000   --header "Host: c7302.ambari.apache.org" -H 'Aut
 ```
 curl http://localhost:8000   --header "Host: c7302.ambari.apache.org" -H ization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnNUwxQmFFbFdmcHhLalM4SUpsdWNFczk5VEZ0b2g4WiIsIm5iZiI6MTUwNjU2MjEwNiwiZXhwIjoxNTA2NTY1NzA2fQ.EBsK5FPDEKcC34BuKLdM5l3LDk9rAtAgVkZIFPUXLts'
 ```
-#### 用公钥/私钥（RS256或ES256）制作JWT
+### 用公钥/私钥（RS256或ES256）制作JWT
 要创建一对全新的公钥/私钥，可以运行以下命令：
 ```
 $ openssl genrsa -out private.pem 2048
@@ -197,7 +197,7 @@ $ curl http://localhost:8000 -H "Host: c7302.ambari.apache.org" -H 'Authorizatio
 ```
 发现终于正常显示了网页信息。
 
-#### 删除JWT插件
+### 删除JWT插件
 先查看插件清单，找到jwt插件的id，然后调用DELETE方法删除jwt插件：
 ```
 $ curl http://localhost:8001/apis/example-api/plugins/
