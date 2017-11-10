@@ -1,4 +1,4 @@
-### JWT插件       
+## JWT插件       
 [原文](https://getkong.org/plugins/jwt/)  
 
 为Kong API`example-api`增加jwt插件：
@@ -208,4 +208,29 @@ $ curl http://localhost:8001/apis/example-api/plugins/
       "name": "jwt"
 ...
 $ curl -X DELETE http://localhost:8001/apis/example-api/plugins/3931733a-149c-4577-aa16-426cf5f92b48
+```
+
+## JWT插件管理命令备忘
+
+查询某消费者的JWT凭据清单：
+```
+$ curl -X GET http://localhost:8001/consumers/{consumer}/jwt
+$ curl -X GET http://localhost:8001/consumers/webb/jwt
+```
+查询某消费者的某JWT凭据明细：
+```
+$ curl -X GET http://localhost:8001/consumers/{consumer}/jwt/{id}
+$ curl -X GET http://localhost:8001/consumers/webb/jwt/JL8mNC7PZjrQiJpmBqy3xwP4SIvYm43v
+```
+删除一个JWT凭据：
+```
+$ curl -X DELETE http://localhost:8001/consumers/{consumer}/jwt/{id}
+$ curl -X DELETE http://localhost:8001/consumers/webb/jwt/SJqJnm1cPXpqlmT9QRp8srcKZtHR36Yx
+```
+更新一个JWT凭据属性：
+```
+$ curl -X POST http://kong:8001/consumers/{consumer}/jwt/{id} \
+  --data "algorithm=RS256"
+$ curl -X PATCH http://localhost:8001/consumers/webb/jwt/JL8mNC7PZjrQiJpmBqy3xwP4SIvYm43v \
+  --data "algorithm=RS256"
 ```
