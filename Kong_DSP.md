@@ -125,3 +125,7 @@ DSP需要实现一个授权检查API，供Kong的middleman插件调用。这个�
 
 需要强调的是，添加API、创建消费者、创建oauth应用等步骤只需要手工完成。拿到客户端凭据后，根据客户端凭据换取令牌的动作才需要写程序。  
 利用Kong对Webdav协议(文件服务)进行代理的测试见[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#kong与webdav)
+
+### CORS跨域资源共享
+将来部署时，如果Kong所在的域与DSP所在的域不一样，需要设置CORS，以便让DSP域的网页js可以调用Kong域的API。  
+在[这个WIKI](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#cors插件)中示范了Kong允许所有域的API调用。  
