@@ -101,3 +101,49 @@ $  ./pan.sh /file /opt/data-integration/Tutorial/hello.ktr /norep
 ```
 `/file`和`/norep`都是pan.sh的参数，参数格式有些怪。  
 `/norep`参数的含义是告诉pan不连接repository。kettle的转换定义可以保存到repository，也可以保存到.ktr文件。  
+
+## 将kettle日志保存到数据库
+[官方原文](https://help.pentaho.com/Documentation/6.0/0P0/0U0/0A0/000)  
+
+### 创建日志数据库
+为保存kettle日志创建数据库（postgresql位于c7301节点）：
+```
+$ sudo -u postgres psql
+postgres=# CREATE USER kettle WITH PASSWORD 'vagrant';              (新建一个数据库用户hive，密码是vagrant)
+CREATE ROLE
+postgres=# CREATE DATABASE pdi_logging OWNER kettle;                       (创建用户数据库hive，并指定所有者为hive)
+CREATE DATABASE
+postgre=# \q    
+```
+远程连接测试：
+```
+$ psql -h 192.168.73.101 -U kettle -d pdi_logging
+Password for user kettle: vagrant
+```
+### 转换日志配置
+通过kettle菜单Edit->Settings->Logging->Transformation打开配置窗口。  
+1. 对于Log Connection输入框，点击New按钮。输入：  
+主机名称：c7301.ambari.apache.org(或ip：192.168.73.101)  
+数据库名称：pdi_logging  
+端口号：5432（默认）  
+用户名：kettle  
+密码：vagrant  
+
+2. Log table name数入库输入pdi_log  
+3. 选择写入到日志的字段  
+4. 点SQL按钮，显示建表语句，并点执行按钮，从而在数据库中创建日志表  、
+5. 点OK完成配置
+
+### 完成
+重新执行转换。连接到数据库查看日志数据：
+```
+$ psql -h 192.168.73.101 -U kettle -d pdi_logging
+Password for user kettle: vagrant
+pdi_logging=>\dt          (查看所有表)
+         List of relations
+ Schema |  Name   | Type  | Owner
+--------+---------+-------+--------
+ public | pdi_log | table | kettle
+
+pdi_logging=>select * from pdi_log;
+```
