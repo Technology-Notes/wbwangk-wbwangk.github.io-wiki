@@ -42,6 +42,7 @@ postgres=# CREATE DATABASE kong OWNER kong;                       (创建用户�
 CREATE DATABASE
 postgre=# \q    
 ```
+(250.249: passwd postgres, diadiadia3D)  
 配置kong的配置文件`/etc/kong/kong.conf`:
 ```
 proxy_listen = 0.0.0.0:8000
