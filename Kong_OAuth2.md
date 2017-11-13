@@ -63,7 +63,7 @@ $ curl -X POST http://127.0.0.1:8001/consumers/  \
 ```
 为开发者`thefosk2`创建一个需要OAuth认证的应用：
 ```
-curl -X -POST http://127.0.0.1:8001/consumers/thefosk2/oauth2/ \
+curl -X POST http://127.0.0.1:8001/consumers/thefosk2/oauth2/ \
      -d "name=Hello World App2" \
      -d "redirect_uri=http://getkong.org/" 
 
@@ -130,7 +130,7 @@ $ curl -X POST http://127.0.0.1:8001/consumers/  \
 ```
 为开发者`thefosk`创建一个需要OAuth认证的应用：
 ```
-$ curl -X -POST http://127.0.0.1:8001/consumers/thefosk/oauth2/ \
+$ curl -X POST http://127.0.0.1:8001/consumers/thefosk/oauth2/ \
      -d "name=Hello World App" \
      -d "redirect_uri=http://getkong.org/" 
 
