@@ -37,3 +37,19 @@ curl -X POST http://kong:8001/plugins \
     --data "config.credentials=true" \
     --data "config.max_age=1728000"
 ```
+
+### POST2PUT for Nginx_Webdav
+创建一个API专门处理发往webdav的POST请求
+```
+$ curl -i -X POST --url http://localhost:8001/apis/ \
+  --data 'name=webdav_post' \
+  --data 'uris=/webdav' \
+  --data 'methods=POST' \
+  --data 'upstream_url=http://webdav/'
+```
+为这个API启用请求转换插件，将POST方法变成PUT。
+```
+$ curl -X POST http://kong:8001/apis/webdav_post/plugins \
+    --data "name=request-transformer" \
+    --data "config.http_method=PUT" 
+```
