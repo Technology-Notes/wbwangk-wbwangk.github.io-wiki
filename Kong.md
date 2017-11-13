@@ -354,6 +354,28 @@ $ curl -X POST http://kong:8001/plugins \
 ```
 {"config.methods":"\"OPTIONS\" is not allowed. Allowed values are: \"HEAD\", \"GET\", \"POST\", \"PUT\", \"PATCH\", \"DELETE\""}
 ```
+### 请求转换插件
+该插件可以修改HTTP请求的参数。  
+Nginx配置出的Webdav服务不支持POST方法。利用Kong的请求转换插件，可以把POST方法转换成PUT。  
+首先，定义创建一个API专门处理发往webdav的POST请求
+```
+$ curl -i -X POST --url http://localhost:8001/apis/ \
+  --data 'name=webdav_post' \
+  --data 'uris=/webdav' \
+  --data 'methods=POST' \
+  --data 'upstream_url=http://webdav/'
+```
+为这个API启用请求转换插件，将POST方法变成PUT。
+```
+$ curl -X POST http://kong:8001/apis/webdav_post/plugins \
+    --data "name=request-transformer" \
+    --data "config.http_method=PUT" 
+```
+测试一下这个API：
+```
+$ curl -X POST http://kong:8000/webdav/t.txt -d "this is t.txt"
+```
+
 ## Kong与Webdav
 上文中`example-api2`这个API，将发向`/my-path`的请求代理到了`http://webdav.imaicloud.com/`这个地址。这个地址是用Nginx的[ngx_http_dav_module](http://nginx.org/en/docs/http/ngx_http_dav_module.html)模块实现的一个webdav协议测试虚拟主机。[这个文章](https://github.com/imaidev/imaidev.github.io/wiki/WebDav%E6%B5%8B%E8%AF%95)是讲以前做的webdav协议测试。  
 
