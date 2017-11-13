@@ -25,3 +25,15 @@ $ curl -i -X POST --url http://localhost:8001/apis/ \
 $ curl -X PUT http://kong:8000/webdav/test.txt -d "this is a test.txt"
 $ curl -X GET --url http://kong:8000/webdav/test.txt
 ```
+
+### CORS
+```
+curl -X POST http://kong:8001/plugins \
+    --data "name=cors" \
+    --data "config.origins=*" \
+    --data "config.methods=GET, POST, HEAD, PUT, DELETE, PATCH" \
+    --data "config.headers=DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type" \
+    --data "config.exposed_headers=X-Auth-Token" \
+    --data "config.credentials=true" \
+    --data "config.max_age=1728000"
+```
