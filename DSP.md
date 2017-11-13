@@ -53,3 +53,41 @@ $ curl -X POST http://kong:8001/apis/webdav_post/plugins \
     --data "name=request-transformer" \
     --data "config.http_method=PUT" 
 ```
+
+### OAUTH2之客户端凭据
+
+#### Kong启用SSL
+为Kong的代理端口8000启用SSL。  
+修改Kong配置文件`/etc/kong/kong.conf`，将下面两行配置的注释`#`去掉：
+```conf
+proxy_listen_ssl = 0.0.0.0:8443
+ssl = on
+```
+重启Kong，然后用curl测试启用SSL的Kong（端口8443）：
+```
+$ kong restart
+$  curl -k https://kong:8443
+{"message":"no API found with those values"}
+```
+上面表示Kong的代理端口已经启用SSL。不启用SSL就无法使用OAuth2插件。  
+
+#### 启用OAUTH2插件
+需要为`webdav和`webdav_post`两个API启用OAUTH2认证(认证方式为客户端凭据)。
+```  
+$ curl -X POST http://kong:8001/apis/webdav/plugins/  \
+     -d "name=oauth2" \
+     -d "config.enable_client_credentials=true" 
+$ curl -X POST http://kong:8001/apis/webdav_post/plugins/  \
+     -d "name=oauth2" \
+     -d "config.enable_client_credentials=true" 
+```
+#### 创建消费者和应用
+约定文件上传消费者为webdav，约定文件服务应用名为webdav。  
+```
+$ curl -X POST http://kong:8001/consumers/  \
+     -d "username=webdav" 
+$ curl -X POST http://kong:8001/consumers/webdav/oauth2/ \
+     -d "name=webdav" \
+     -d "redirect_uri=http://webdav" 
+("client_id":"FRsC7XCAWW0PQcKczr2ZqjjQCSeGXeq7","client_secret":"R5O3IZLnPs219X1vvYsgWerpp5Gs7ekA")
+```
