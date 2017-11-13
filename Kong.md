@@ -269,7 +269,7 @@ middleman不是官方插件，而是一个定制插件。使用前需要先安�
 $ cd /usr/local/kong  && mkdir plugins && cd plugins
 $ git clone https://github.com/pantsel/kong-middleman-plugin middleman
 $ cd middleman
-$ uarocks make *.rockspec
+$ luarocks make *.rockspec
 ```
 然后配置kong以便加载定制插件。编辑`/etc/kong/kong.conf`，添加下列配置（如果有多个定制插件需要配置，就逗号隔开）：
 ```
