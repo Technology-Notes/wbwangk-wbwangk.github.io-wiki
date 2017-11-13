@@ -344,7 +344,7 @@ OAuth2认证插件的篇幅较长，单独写了[这个文档](https://github.co
 $ curl -X POST http://kong:8001/plugins \
     --data "name=cors" \
     --data "config.origins=*" \
-    --data "config.methods=GET, POST, HEAD, PUT, DELETE, PATCH, OPTIONS" \
+    --data "config.methods=GET, POST, HEAD, PUT, DELETE, PATCH" \
     --data "config.headers=DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type" \
     --data "config.exposed_headers=X-Auth-Token" \
     --data "config.credentials=true" \
