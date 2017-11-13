@@ -1,3 +1,4 @@
+## 部署
 1. 安装Nginx，并配置Webdav，[这里](https://github.com/wbwangk/wbwangk.github.io/wiki/nginx)。 
    nginx配置webdav时，注意server_name增加webdav域名(这是一个约定)：  
 ```nginx
@@ -38,7 +39,7 @@ curl -X POST http://kong:8001/plugins \
     --data "config.max_age=1728000"
 ```
 
-### POST2PUT for Nginx_Webdav
+### 转换插件
 创建一个API专门处理发往webdav的POST请求
 ```
 $ curl -i -X POST --url http://localhost:8001/apis/ \
@@ -91,3 +92,16 @@ $ curl -X POST http://kong:8001/consumers/webdav/oauth2/ \
      -d "redirect_uri=http://webdav" 
 ("client_id":"FRsC7XCAWW0PQcKczr2ZqjjQCSeGXeq7","client_secret":"R5O3IZLnPs219X1vvYsgWerpp5Gs7ekA")
 ```
+### middleman插件
+middleman不是官方插件，而是一个定制插件。使用前需要先安装。假定kong安装目录是`/usr/local/kong`。
+```
+$ cd /usr/local/kong  && mkdir plugins && cd plugins
+$ git clone https://github.com/pantsel/kong-middleman-plugin middleman
+$ cd middleman
+$ luarocks make *.rockspec
+```
+然后配置kong以便加载定制插件。编辑`/etc/kong/kong.conf`，添加下列配置（如果有多个定制插件需要配置，就逗号隔开）：
+```
+custom_plugins = middleman 
+```
+重启Kong。
