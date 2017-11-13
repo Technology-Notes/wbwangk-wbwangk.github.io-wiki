@@ -1,10 +1,17 @@
 [.](/e/vagrant10/ambari-vagrant/centos7.3，c7302)  
 kong是微服务API网关。kong底层是nginx，利用lua插件进行扩展实现而达成。nginx的逻辑只能用配置文件配置，而kong可以通过REST API来配置，更灵活和更容易扩展。  
 ## kong安装
-先[下载rpm包](https://getkong.org/install/centos/#packages)，然后安装：
+参考官方[安装文档](https://getkong.org/install/centos/#packages)
+
+在Packages一节中有个centos7图标，图标链接：`https://bintray.com/kong/kong-community-edition-rpm/download_file?file_path=dists/kong-community-edition-0.11.1.el7.noarch.rpm`。  
+下载rpm包：
+```
+$ wget -O kong-community-edition-0.11.1.el7.noarch.rpm https://bintray.com/kong/kong-community-edition-rpm/download_file?file_path=dists/kong-community-edition-0.11.1.el7.noarch.rpm
+```
+然后安装：
 ```
 $ sudo yum install epel-release
-$ sudo yum install kong-community-edition-0.11.0.*.noarch.rpm --nogpgcheck
+$ sudo yum install kong-community-edition-0.11.1.el7.noarch.rpm
 ```
 然后安装postgreSQL9.4+。 一开始直接使用ambari带的postgres，后来才发现那是个9.2版本，不行，只好[手工装postgreSQL](https://www.postgresql.org/download/linux/redhat/)。  
 ```
