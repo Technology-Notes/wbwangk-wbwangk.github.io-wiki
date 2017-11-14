@@ -376,6 +376,97 @@ $ curl -X POST http://kong:8001/apis/webdav_post/plugins \
 $ curl -X POST http://kong:8000/webdav/t.txt -d "this is t.txt"
 ```
 
+### HTTP日志插件
+这个插件可以将Kong日志以HTTP协议实时发送到某个URI。  
+我用requestb.in模拟接收日志的服务器。[关于requestb.in的更多细节](https://github.com/wbwangk/wbwangk.github.io/wiki/HTTP%E6%A8%A1%E6%8B%9F#requestbin)  
+```
+$ curl -X POST http://kong:8001/apis/example-api2/plugins \
+    --data "name=http-log" \
+    --data "config.http_endpoint=https://requestb.in/r9x8mlr9" \
+    --data "config.method=POST" \
+    --data "config.timeout=1000" \
+    --data "config.keepalive=1000"
+$ curl http://kong:8000/my-path
+```
+`/my-path`是API`example-api2`的路径。  
+用浏览器到地址`https://requestb.in/r9x8mlr9?inspect`去查看Kong的日志，可以看到的信息：
+```
+{
+  "consumer": {
+    "created_at": 1506494530000,
+    "username": "webb",
+    "id": "9c270f20-f3e0-4af1-a3a1-91b58f11072c"
+  },
+  "api": {
+    "created_at": 1510620873000,
+    "strip_uri": true,
+    "id": "7a2ab4e9-325b-4922-9ad1-7c53c5e0ec1e",
+    "name": "example-api2",
+    "http_if_terminated": false,
+    "https_only": false,
+    "upstream_url": "http://webdav.imaicloud.com/",
+    "uris": [
+      "/my-path"
+    ],
+    "preserve_host": false,
+    "upstream_connect_timeout": 60000,
+    "upstream_read_timeout": 60000,
+    "upstream_send_timeout": 60000,
+    "retries": 5
+  },
+  "request": {
+    "querystring": {},
+    "size": "90",
+    "uri": "/my-path",
+    "request_uri": "http://kong:8000/my-path",
+    "method": "GET",
+    "headers": {
+      "host": "kong:8000",
+      "x-consumer-username": "webb",
+      "user-agent": "curl/7.29.0",
+      "accept": "*/*",
+      "x-consumer-id": "9c270f20-f3e0-4af1-a3a1-91b58f11072c",
+      "apikey": "1"
+    }
+  },
+  "client_ip": "192.168.73.102",
+  "authenticated_entity": {
+    "consumer_id": "9c270f20-f3e0-4af1-a3a1-91b58f11072c",
+    "id": "c0ca1b8c-0d38-4b18-a77e-f69c35974c03"
+  },
+  "latencies": {
+    "request": 45,
+    "kong": 0,
+    "proxy": 45
+  },
+  "response": {
+    "headers": {
+      "content-type": "text/html; charset=UTF-8",
+      "date": "Tue, 14 Nov 2017 09:28:19 GMT",
+      "connection": "close",
+      "via": "kong/0.11.0",
+      "access-control-allow-headers": "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-Auth-Token",
+      "x-kong-proxy-latency": "0",
+      "server": "nginx/1.10.3",
+      "transfer-encoding": "chunked",
+      "x-kong-upstream-latency": "45",
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "GET, POST, OPTIONS,DELETE, PUT, COPY, MOVE,MKCOL"
+    },
+    "status": 200,
+    "size": "1991"
+  },
+  "tries": [
+    {
+      "balancer_latency": 0,
+      "port": 80,
+      "ip": "60.216.42.102"
+    }
+  ],
+  "started_at": 1510651699463
+}
+```
+需要说明的是，API`example-api2`添加了key-auth认证插件，所以日志中有`consumer`的信息。对于没有添加任何认证插件的API，则不会在日志中输出消费者信息。  
 ## Kong与Webdav
 上文中`example-api2`这个API，将发向`/my-path`的请求代理到了`http://webdav.imaicloud.com/`这个地址。这个地址是用Nginx的[ngx_http_dav_module](http://nginx.org/en/docs/http/ngx_http_dav_module.html)模块实现的一个webdav协议测试虚拟主机。[这个文章](https://github.com/imaidev/imaidev.github.io/wiki/WebDav%E6%B5%8B%E8%AF%95)是讲以前做的webdav协议测试。  
 
