@@ -45,13 +45,9 @@ $ curl -i -X POST \
 ```
 $ curl -i -X POST --url http://kong:8001/consumers/ \
   --data "username=webdav"
-$ curl -i -X POST --url http://kong:8001/consumers/webdav/key-auth/
+$ curl -i -X POST --url http://kong:8001/consumers/webdav/key-auth/ \
+    --data 'key=XXXX'
 ```
-响应的json串中有自动生成的API-KEY:
-```
-"key":"XXXXX"
-```
-
 ### CORS
 ```
 curl -X POST http://kong:8001/plugins \
@@ -82,7 +78,7 @@ custom_plugins = middleman
 ### key-auth认证
 在java程序中访问文件服务器，需要带上API-KEY，逻辑示例：
 ```
-curl -i -X GET --url http://kong:8000/webdav \
+$ curl -i -X GET --url http://kong:8000/webdav \
   --header "apikey: XXXX"
 ```
 
@@ -114,7 +110,8 @@ $ curl -X POST --url http://kong:8001/consumers/ \
 ```
 API-KEY的生成逻辑：
 ```
-$ curl -X POST --url http://kong:8001/consumers/<DSP中的用户ID>/key-auth/ 
+$ curl -X POST --url http://kong:8001/consumers/<DSP中的用户ID>/key-auth/ \
+   --data 'key=XXXX'
 ```
 ### middleman钩子
 需要DSP实现一个middleman钩子服务，对于添加了middleman插件的API，Kong会向上游服务器代理HTTP流之前调用钩子服务。调用的参数：  
