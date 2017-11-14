@@ -390,7 +390,7 @@ $ curl http://kong:8000/my-path
 ```
 `/my-path`是API`example-api2`的路径。  
 用浏览器到地址`https://requestb.in/r9x8mlr9?inspect`去查看Kong的日志，可以看到的信息：
-```
+```json
 {
   "consumer": {
     "created_at": 1506494530000,
