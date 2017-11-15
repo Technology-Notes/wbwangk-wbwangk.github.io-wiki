@@ -54,7 +54,8 @@ $ curl localhost/t.txt
 ```
 ## Kong与nginx并存
 Kong自带的Nginx的模块不全，没有webdav模块。可以象上面一样用yum安装nginx。但启动nginx要小心，最好直接指定启动目录，否则很容易起来Kong自带的Nginx。而且最好不要绑定默认的80端口，如改成8002端口。  
-下面是个与Kong并存的Nginx配置文件(/etc/nginx/conf.d/default.conf)：
+
+编辑Nginx配置文件(/etc/nginx/conf.d/default.conf)：
 ```nginx
 server {
     listen       8002;
