@@ -1,11 +1,25 @@
 ## 部署
-1. 安装Nginx，并配置Webdav，[这里](https://github.com/wbwangk/wbwangk.github.io/wiki/nginx)。 
-   nginx配置webdav时，注意server_name增加webdav域名(这是一个约定)：  
+1. 安装Nginx，并配置Webdav，[参考这里](https://github.com/wbwangk/wbwangk.github.io/wiki/nginx)。 
+   配置nginx的配置文件(`/etc/nginx/conf.d/default.conf`)：  
 ```nginx
 server {
-    listen       80;
+    listen       8002;
     server_name  webdav;
-
+    location / {
+        root   /usr/share/nginx/html;
+            autoindex on;
+            ## webdav config
+            client_body_temp_path /tmp;
+            dav_methods PUT DELETE MKCOL COPY MOVE;
+            create_full_put_path  on;
+            dav_access    group:rw  all:r;
+    }
+...
+```
+设置webdav根目录权限和启动nginx：
+```
+$ chmod 777 /usr/share/nginx/html
+$ /usr/sbin/nginx
 ```
 2. 安装Kong，[这里](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#kong%E5%AE%89%E8%A3%85)。 
   Nginx和Kong都安装在10.10.250.249上。编辑249的`/etc/hosts`文件，添加：
