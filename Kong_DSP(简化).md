@@ -14,19 +14,11 @@ server {
 ```
 这样做是为了约定文件服务器域名是webdav，网关服务器的域名是kong。  
 ### Webdav API
-利用Kong代理Webdav，对于PUT/DELETE方法需要认证；对于GET方法不认证(js可以直接访问)。需要创建两个API：
-- webdav，PUT/DELETE方法  
-- webdav_get，GET方法
+利用Kong代理Webdav文件上传服务，创建`webdav`API:
 ```
 $ curl -i -X POST --url http://kong:8001/apis/ \
   --data 'name=webdav' \
   --data 'uris=/webdav' \
-  --data 'methods=PUT,DELETE' \
-  --data 'upstream_url=http://webdav/'
-$ curl -i -X POST --url http://kong:8001/apis/ \
-  --data 'name=webdav_get' \
-  --data 'uris=/webdav_get' \
-  --data 'methods=GET' \
   --data 'upstream_url=http://webdav/'
 ```
 测试一下：
