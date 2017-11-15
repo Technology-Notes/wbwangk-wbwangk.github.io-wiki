@@ -52,3 +52,29 @@ $ curl -T './t.txt' localhost
 $ ll /usr/share/nginx/html      (可以看到t.txt上传到了这里)
 $ curl localhost/t.txt
 ```
+## Kong与nginx并存
+Kong自带的Nginx的模块不全，没有webdav模块。可以象上面一样用yum安装nginx。但启动nginx要小心，最好直接指定启动目录，否则很容易起来Kong自带的Nginx。而且最好不要绑定默认的80端口，如改成8002端口。  
+下面是个与Kong并存的Nginx配置文件(/etc/nginx/conf.d/default.conf)：
+```nginx
+server {
+    listen       8002;
+    server_name  localhost;
+    location / {
+        root   /usr/share/nginx/html;
+            autoindex on;
+            ## webdav config
+            client_body_temp_path /tmp;
+            dav_methods PUT DELETE MKCOL COPY MOVE;
+            create_full_put_path  on;
+            dav_access    group:rw  all:r;
+    }
+```
+启动nginx(默认使用/etc/nginx下的配置文件)：
+```
+$ chmod 777 /usr/share/nginx/html
+$ /usr/sbin/nginx
+```
+然后测试一下webdav协议：
+```
+$ curl -T './t.txt' localhost:8002
+```
