@@ -1,6 +1,7 @@
 ## 部署
-1. 安装Nginx，并配置Webdav，[参考这里](https://github.com/wbwangk/wbwangk.github.io/wiki/nginx)。 
-   配置nginx的配置文件(`/etc/nginx/conf.d/default.conf`)：  
+#### 安装nginx
+安装Nginx，并配置Webdav，[参考这里](https://github.com/wbwangk/wbwangk.github.io/wiki/nginx)。 
+配置nginx的配置文件(`/etc/nginx/conf.d/default.conf`)：  
 ```nginx
 server {
     listen       8002;
@@ -21,12 +22,22 @@ server {
 $ chmod 777 /usr/share/nginx/html
 $ /usr/sbin/nginx
 ```
-2. 安装Kong，[这里](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#kong%E5%AE%89%E8%A3%85)。 
+机器上可能装了多个nginx，如Kong自带的，启动Nginx时最好带上全路径，以防止误启动了其它路径的Nginx。下面的方式可以查找nginx的所在目录，已经现有的Nginx进程：
+```
+$ whereis nginx 
+nginx: /usr/sbin/nginx /usr/lib64/nginx /etc/nginx /usr/share/nginx /usr/local/openresty/nginx/sbin/nginx /usr/share/man/man8/nginx.8.gz
+$ ps -ef | grep nginx
+```
+`/usr/local/openresty`目录下的nginx是Kong自带的。其它目录的是手工安装的nginx所在的目录。  
+
+#### 安装Kong
+安装Kong，[这里](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong#kong%E5%AE%89%E8%A3%85)。 
   Nginx和Kong都安装在10.10.250.249上。编辑249的`/etc/hosts`文件，添加：
 ```
 10.10.250.249 kong webdav
 ```
 这样做是为了约定文件服务器域名是webdav，网关服务器的域名是kong。  
+
 ### Webdav API
 利用Kong代理Webdav文件上传服务，创建`webdav`API:
 ```
