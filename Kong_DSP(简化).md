@@ -44,7 +44,7 @@ $ ps -ef | grep nginx
 $ curl -i -X POST --url http://kong:8001/apis/ \
   --data 'name=webdav' \
   --data 'uris=/webdav' \
-  --data 'upstream_url=http://webdav/'
+  --data 'upstream_url=http://webdav:8002/'
 ```
 测试一下：
 ```
