@@ -102,6 +102,74 @@ $  ./pan.sh /file /opt/data-integration/Tutorial/hello.ktr /norep
 `/file`和`/norep`都是pan.sh的参数，参数格式有些怪。  
 `/norep`参数的含义是告诉pan不连接repository。kettle的转换定义可以保存到repository，也可以保存到.ktr文件。  
 
+## Hello World 2
+[官方原文](http://wiki.pentaho.com/display/EAI/04.+Refining+Hello+World)  
+引入了作业(Job)。作业由作业条目(Job Entry)组成。作业条目可能是转换或另一个作业。  
+首先在kettle配置文件**kettle.properties**中定义一个变量`FILES`，`FILES`变量指出输入输出文件的地址。对于win10，配置文件位于`C:\Users\<用户>\.kettle`目录，对于linux位于`kettle.properties`目录。打开kettle.properties，在文件的最后加上：
+```
+FILES=E:\data-integration\Tutorial\Logs
+```
+要使上述配置生效，必须重启kettle工作台。  
+### 创建转换  
+创建一个新的转换，命名为`get_file_name`。保存的文件名为`get_file_name.ktr`。  
+新转换配置成下图的样子：  
+![](http://wiki.pentaho.com/download/attachments/8291384/get_file_name_transform_diagram.png?version=1&modificationDate=1243014147000)   
+各个步骤分别是：  
+- Input类型：Get System Info  
+- Flow类型： Filter rows  
+- Flow类型: Abort  
+- Job类型：Set Variable  
+画从Filter rows引出的跳转线会出现下拉框，随便选个值即可。   
+#### 设置Get System Info步骤  
+1. 双击Get System Info步骤  
+2. 在表格第一行，Name列下输入**my_file**  
+3. 在表格第一行，Type列下选择**command line argument 1**  
+4. 点**OK**  
+#### 设置Filter rows步骤  
+1. 双击Filter rows步骤  
+2. 输入条件：**<field>**中选择**my_file**，等号`=`替换成**IS NULL**  
+3. 下游步骤选择，'true'时选**Abort**  
+4. 下游步骤选择，'false'时选**Set Variable**  
+5. 点**OK**  
+#### 设置Abort步骤  
+默认值即可。  
+#### 设置Set Variable步骤  
+1. 双击Set Variable步骤  
+2. 点击**Get Fields**按钮，唯一的字段**my_file**显示出来，其值是**MY_FILE**。  
+3. 点**OK**  
+
+### 运行  
+1. 点击Action->Run菜单  
+2. 在Run对话框中，点击Arguments(legacy)按钮，输入**list**为第一个参数的值，其它参数有就删除。  
+3. 点Run按钮  
+在日志面板中看到下列内容：
+```
+Set Variables.0 - Set variable MY_FILE to value [list]
+```
+4. 点击Action->Run菜单，重新运行转换  
+5. 在Run对话框中，点击Arguments(legacy)按钮，删除第一个参数。  
+6. 点Run按钮  
+日志面板中看到一些报错信息，Kettle执行到了Abort步骤。  
+
+### 修改转换(hello.ktr)
+原来的hello转换写死了输入文件名和输出文件名。现在想把hello转换修改成可以根据参数处理不同的文件。如果作业参数设为`foo`，则会读入文件`foo.csv`，输出文件是`foo_with_greetings.xml`。  
+1. 用kettle打开hello.ktr文件
+2. 双击第一个步骤(CSV File Input)
+3. 删除之前设定的filename。按原文的说明，按**Ctrl+空格**可以调出之前在kettle.propertys 配置的**FILES**变量。但中文windows将**Ctrl+空格**占用了，无法调出变量。只能在filename输入框中输入下面的内容：
+```
+${FILES}/${MY_FILE}.csv
+```
+`FILES`是kettle.propertys中设置的工作目录，`MY_FILE`是输入文件名。  
+4. 点OK  
+5. 双击第3个步骤  
+6. 删除之前设置的filename，在filename输入框中输入：  
+```
+${FILES}/${MY_FILE}_with_greetings
+```
+这定义了输出文件的名字。  
+7. 点击Show Filename(s)按钮，`${FILES}`会被替换为kettle.propertys中设定的值。  
+8. 点OK  
+
 ## 将kettle日志保存到数据库
 [官方原文](https://help.pentaho.com/Documentation/6.0/0P0/0U0/0A0/000)  
 
