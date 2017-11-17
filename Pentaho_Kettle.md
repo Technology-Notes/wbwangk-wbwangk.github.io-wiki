@@ -105,7 +105,7 @@ $  ./pan.sh /file /opt/data-integration/Tutorial/hello.ktr /norep
 ## Hello World 2
 [官方原文](http://wiki.pentaho.com/display/EAI/04.+Refining+Hello+World)  
 引入了作业(Job)。作业由作业条目(Job Entry)组成。作业条目可能是转换或另一个作业。  
-首先在kettle配置文件**kettle.properties**中定义一个变量`FILES`，`FILES`变量指出输入输出文件的地址。对于win10，配置文件位于`C:\Users\<用户>\.kettle`目录，对于linux位于`kettle.properties`目录。打开kettle.properties，在文件的最后加上：
+首先在kettle配置文件**kettle.properties**中定义一个变量`FILES`，`FILES`变量指出输入输出文件的地址。通过kettle菜单Edit->Set the kettle.properties file打开kettle.properties配置窗口，在窗口中添加：  
 ```
 FILES=E:\data-integration\Tutorial\Logs
 ```
@@ -183,6 +183,41 @@ ${FILES}/${MY_FILE}_with_greetings
 4. 点Run  
 5. 在运行窗口的variables面板中可以看到之前涉及到的FILES和MY_FILE两个变量。点击Run。  
 6. 最后看到生成的文件(list_with_greetings.txt)  
+
+### 创建作业
+作业由作业条目组成。作业条目可能是转换或作业(子作业)。  
+1. 通过菜单File->New->Job新建作业
+2. 通过File->Save保存作业为`Hello`(Hello.kjb)  
+3. 拖动General->Start步骤、两个General->Transformation步骤和一个Conditions->File Exists步骤到工作区  
+4. 以顺序Start, Transformation, File Exists, Transformation连接它们  
+5. 拖动两个Utility->Abort job步骤到工作区。连接它们到第一个Transformation步骤和File Exists步骤。新创建的跳转(连线)将是红色。  
+6. 双击第一个转换条目，在Transformation filename输入域中输入：
+```
+${Internal.Job.Filename.Directory}/get_file_name.ktr
+```
+上述以变量表示目录，使得转换和作业使用同样的目录。在作业条目名称域中输入`get_file_name`。点OK  
+7. 双击第二个转换条目，在Transformation Filename域中输入:
+```
+${Internal.Job.Filename.Directory}/Hello_with_parameter.ktr
+```
+8. 双击File Exists条目，在Filename域中输入：
+```
+${FILES}/${MY_FILE}.csv
+```  
+这将检测上述文件是否存在。  
+9. 双击连接到第一个转换的Abort步骤，在消息框中输入`The file name argument is missing`。  
+10. 双击连接到第二个转换的Abort步骤，在消息框中输入：
+```
+The file ${FILES}/${MY_FILE}.csv does not exist
+```
+#### 配置跳转(Hop)
+黑色跳转：总会流转到它的下一条目  
+绿色跳转：上一个作业条目成功才会流转到它的下一条目  
+红色跳转：上一个作业条目失败才会流转到它的下一条目  
+
+### 运行作业
+运行作业前需要先设置参数。  
+1. 双击第一个转换(get_file_name)，在窗口的Arguments面板中输入参数list。这指出了输入文件是list.csv。  
 
 ## 将kettle日志保存到数据库
 [官方原文](https://help.pentaho.com/Documentation/6.0/0P0/0U0/0A0/000)  
