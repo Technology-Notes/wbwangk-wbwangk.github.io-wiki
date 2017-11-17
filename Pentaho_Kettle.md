@@ -167,8 +167,22 @@ ${FILES}/${MY_FILE}.csv
 ${FILES}/${MY_FILE}_with_greetings
 ```
 这定义了输出文件的名字。  
-7. 点击Show Filename(s)按钮，`${FILES}`会被替换为kettle.propertys中设定的值。  
+7. 点击`Show Filename(s)`按钮，`${FILES}`会被替换为kettle.propertys中设定的值。  
 8. 点OK  
+9. 拖动一个`Filter Rows`步骤到转换
+10. 拖动`Filter Rows`到步骤`CSV Input`和步骤`Modified Javascript Script Value`之间的连线(Hop)上，直到连线高亮(加粗)再释放鼠标按钮。这样就将步骤`Filter Rows`串联到步骤`CSV Input`和步骤`Modified Javascript Script Value`之间。  
+11. 在<field>输入框中选择`name`，在等号输入框中选择`IS NOT NULL`。  
+12. 输入框`Send 'true' data to Step`和`Send 'false' data to Step`保持为空   
+13. 点OK
+14. 通过菜单File->Save as将当前转换保存到`Hello_with_parameters`。  
+### 运行转换
+新建的这个转换依赖一个环境变量`MY_FILE`，在运行转换前必须要手工定义这个值。  
+1. 通过菜单Edit->Set Environment Variables，打开环境变量定义窗口
+2. 定义变量`MY_FILE`的值，如list。这是一个文件名，list.csv存在。    
+3. 点OK  
+4. 点Run  
+5. 在运行窗口的variables面板中可以看到之前涉及到的FILES和MY_FILE两个变量。点击Run。  
+6. 最后看到生成的文件(list_with_greetings.txt)  
 
 ## 将kettle日志保存到数据库
 [官方原文](https://help.pentaho.com/Documentation/6.0/0P0/0U0/0A0/000)  
