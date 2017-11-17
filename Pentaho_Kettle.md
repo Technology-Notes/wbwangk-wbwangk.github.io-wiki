@@ -47,7 +47,7 @@ kettle利用图形化界面的方式定义数据处理逻辑。在界面中两�
 var msg = 'Hello, ' + name + "!";
 ```
 这会在Java script functions面板的转换脚本分类下创建了`Script 1`脚本(可以重命名)。  
-4. 点Get variables按钮，在下面的表格中添加msg变量。删除name和last_name字段。  
+4. 点Get variables按钮，在下面的表格中添加msg变量。  
 5. 点OK完成配置  
 
 #### 配置步骤三
