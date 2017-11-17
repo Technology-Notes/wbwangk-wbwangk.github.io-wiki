@@ -135,3 +135,39 @@ $ curl -X POST --url http://kong:8001/consumers/<DSP中的用户ID>/key-auth/ \
 - <DSP中的用户ID>  
 - URL参数`api=<URI前缀>`  
 根据这两个参数需要计算出当前的有条件共享API是否允许当前用户调用。[更多细节](https://github.com/wbwangk/wbwangk.github.io/wiki/Kong_DSP#%E6%8E%88%E6%9D%83)  
+
+## 测试
+使用自动REST测试工具[pyresttest](https://github.com/imaidev/imaidev.github.io/wiki/REST%E8%87%AA%E5%8A%A8%E6%B5%8B%E8%AF%95(pyresttest))对DSP+Kong进行自动化测试。  
+dsp_kong.yaml:
+```
+---
+- config:
+    - testset: "测试DSP与Kong的集成环境"
+    - variable_binds: {apikey: '1'}
+
+- test:
+  - group: "webdav"
+  - name: "GET /webdav/"
+  - url: "/webdav/"
+  - headers: {'apikey': "$apikey"}
+
+- test: 
+  - group: "webdav"
+  - name: "PUT /webdav/test.txt"
+  - url: "/webdav/test.txt"
+  - method: "PUT"
+  - body: "this is content of file test.txt"
+  - headers: {'apikey': "$apikey"}
+
+- test: 
+  - group: "webdav"
+  - name: "DELETE /webdav/test.txt"
+  - url: "/webdav/test.txt"
+  - method: "DELETE"
+  - headers: {'apikey': "$apikey"}
+
+- test: 
+  - name: "GET /admin-api/，上游是kong:8001"
+  - url: "/admin-api/"
+
+```
