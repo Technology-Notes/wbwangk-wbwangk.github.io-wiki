@@ -68,6 +68,12 @@ $ echo '{"name": "webb"}' | jq
   "name": "webb"
 }
 ```
+或直接下载运行包：
+```
+$ wget https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+$ chmod +x jq-linux64
+$ echo '{"name": "webb"}' | ./jq-linux64
+```
 #### pyresttest
 ```
 $ apt-get install python-pycurl
