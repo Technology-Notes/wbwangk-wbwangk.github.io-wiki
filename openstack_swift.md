@@ -46,6 +46,35 @@ $ export ADMIN_TOKEN=d8ce9c91fa77473b9d89378f96ad68d0
 $ curl http://openstack:5000/v3/users \
   -H "X-Auth-Token: $ADMIN_TOKEN"
 ```
+## Swift安装
+可以用下列命令查看一下当前部署的openstack的端点清单：
+```
+$ openstack endpoint list
+```
+悲催的发现，当前VM中没有安装对象存储服务(swift)，只能手工安装。计划安装单节点swift服务。  
+下面的swift安装参考了[openstack swift官方安装文档](https://docs.openstack.org/swift/pike/install/controller-install-ubuntu.html)和一篇文章《[swift(Object Storage对象存储服务)(单节点)](http://www.jianshu.com/p/c1da0b5f5668)》。  
+#### 创建swift用户
+```
+$ . admin-openrc
+$ openstack user create --domain default --password-prompt swift
+```
+创建了一个`default`域下的用户`swift`。  
+为`swift`用户添加`admin`角色：
+```
+$ openstack role add --project service --user swift admin
+```
+创建`swift`服务实体：
+```
+$ openstack service create --name swift \
+  --description "OpenStack Object Storage" object-store
+```
+#### 创建对象存储服务API端点
+```
+$ openstack endpoint create --region RegionOne \
+  object-store public http://openstack:8080/v1/AUTH_%\(project_id\)s
+```
+
+
 ### 测试swift
 按照之前写的文档[openstack-swift测试](https://github.com/imaidev/imaidev.github.io/wiki/openstack-swift%E6%B5%8B%E8%AF%95)中操作来测试刚刚安装的VM中swift。  
 
