@@ -177,6 +177,23 @@ curl http://controller:5000/v3/auth/tokens \
 ```
 则“取用户清单”的请求就可以正常执行了。而admin明明是admin角色，却被keystone认为没有权限。这可能是个keystone的bug。用scoped令牌，没有问题。
 
+### 创建项目
+```
+curl http://controller:5000/v3/projects  \
+ -H "X-Auth-Token: $token" \
+ -H "Content-Type: application/json" \
+-d '
+{
+    "project": {
+        "description": "My new project",
+        "domain_id": "027f20c08b4744db836eb448e0a8af6a",
+        "enabled": true,
+        "is_domain": false,
+        "name": "wbwangProject"
+    }
+}'
+```
+
 ## 概念
  - **project**  
     一个对服务或认证对象进行分组或隔离的容器。可以映射到客户、账号、组织或租户。
