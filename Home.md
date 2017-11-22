@@ -70,3 +70,5 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 80, host: 8080
 end
 ```
+### openstack all in one
+在(https://app.vagrantup.com/boxes/search)中搜索openstack发现了stackinabox/openstack这个vagrant box。它号称将这个openstack装入了这一个盒子中，操作系统是ubuntu16。
