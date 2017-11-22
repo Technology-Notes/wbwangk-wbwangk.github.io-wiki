@@ -179,7 +179,7 @@ curl http://controller:5000/v3/auth/tokens \
 
 ### 创建项目
 ```
-curl http://controller:5000/v3/projects  \
+$ curl -X POST http://controller:5000/v3/projects  \
  -H "X-Auth-Token: $token" \
  -H "Content-Type: application/json" \
 -d '
@@ -192,6 +192,10 @@ curl http://controller:5000/v3/projects  \
         "name": "wbwangProject"
     }
 }'
+```
+#### 取项目清单
+```
+$ curl http://controller:35357/v3/auth/projects --header "X-Auth-Token: $token" | jq
 ```
 
 ## 概念
