@@ -47,3 +47,50 @@ ChainCode的集成平台，为ChainCode提供安全的部署、运⾏的环境�
 • Client Node.js SDK  
 • REST APIs  
 • Basic CLI  
+
+获取Compose⽂件:  
+```
+$ git clone h1ps://github.com/yeasy/docker-compose-files
+```
+fabric安装参考: [Fabri Getting Started](http://hyperledger-fabric.readthedocs.io/en/latest/getting_started.html)  
+安装docker-compose引擎：
+```
+$ curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+```
+
+### Chaincode
+### shared ledger
+Ledger provides a verifiable history of all successful state changes. It is THE system of record for a
+business. Business will have multiple ledgers for multiple business networks in which they participate. The
+ledger is SHARED, REPLICATED and PERMISSIONED.
+ Transaction – an asset transfer onto or off the ledger
+John gives a car to Anthony (simple)
+ Contract – conditions for transaction to occur
+If Anthony pays John money, then car passes from John to Anthony (simple)
+If car won't start, funds do not pass to John (as decided by third party arbitrator) (more complex)
+
+Block ledger
+ - File system based, only new Blocks appending
+ - Blocks are stored on all committers and optional subset of ordering service nodes
+State ledger
+ - World/Ledger state holds current value of smart contract data
+ e.g. vehicleOwner=Daisy
+ - KVS hidden from developer by chaincode APIs
+ e.g. GetState(), PutState(), GetStateByRange(), etc…
+ - Stored on all committers
+History ledger
+ - Holding historic sequence of all chain code transactions
+ e.g. updateOwner(from=John, to=Anthony); updateOwner (from=Anthony, to=Daisy);etc
+ - Index stored in KVS and hidden from developer by chaincode APIs
+ e.g. GetHistoryForKey()
+ - Stored on all committ
+
+### 共识机制
+#### Nodes and roles
+Peer:	Commits	transacUons,	maintains	ledger	and	state	
+Endorsing	peer:	Specialised	peer	that	receives	a	transacUon	
+proposal	for	endorsement,	responds	granUng	or	denying	
+endorsement	
+Ordering	peer:	Approves	the	inclusion	of	transacUon	blocks	
+into	the	ledger	and	communicates	with	peer	and	endorsing	
+peer	nodes
