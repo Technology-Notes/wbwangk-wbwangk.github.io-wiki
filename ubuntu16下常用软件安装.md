@@ -47,6 +47,11 @@ npm的自我升级:
 ```
 $ npm install npm@latest -g
 ```
+#### centos下装nodejs
+```sh
+$ yum install epel-release
+$ yum install nodejs
+```
 #### golang
 $ cd /usr/local
 $ wget https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz
