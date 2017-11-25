@@ -1,4 +1,4 @@
-### 《/区块链技术指南0.7.9.pdf》
+### 《区块链技术指南0.7.9.pdf》
 #### 历史
 1. 2008 年 10 月 31 日，中本聪发布比特币唯一的白皮书：《Bitcoin：A Peer-to-PeerElectronic Cash System/比特币：一种点对点的电子现金系统》。
 2. 2009 年 1 月 3 日，中本聪在位于芬兰赫尔辛基的一个小型服务器上挖出了第一批 50 个比特币，并记录下当天泰晤士报的头版标题：“ The Times 03/Jan/2009 Chancellor on brink ofsecond bailout for banks ”。
