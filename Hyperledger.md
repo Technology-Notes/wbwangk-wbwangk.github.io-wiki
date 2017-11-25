@@ -1,5 +1,6 @@
 (/e/vagrant10/ambari-agrant/centos7.3 c7303)
 ### Hyperledger Projects
+把一段时间内生成的信息（包括数据或代码）打包成一个区块，盖上时间 戳，与上一个区块衔接在一起，每下一个区块的页首都包含了上一个区块的索引数据，然后再在本页中写入新的信息，从而形成新的区块，首尾相连，最终形成了区块链。  
 5个主项目：Cello、Fabric(Golang)、SawtoothLake(Python)、Iroha、Blockchain Explorer  
 #### Fabric
 区块链技术的⼀个实现  
@@ -87,10 +88,15 @@ History ledger
 
 ### 共识机制
 #### Nodes and roles
-Peer:	Commits	transacUons,	maintains	ledger	and	state	
-Endorsing	peer:	Specialised	peer	that	receives	a	transacUon	
-proposal	for	endorsement,	responds	granUng	or	denying	
-endorsement	
-Ordering	peer:	Approves	the	inclusion	of	transacUon	blocks	
-into	the	ledger	and	communicates	with	peer	and	endorsing	
-peer	nodes
+- **Peer**: Commits transacUons, maintains ledger and state 
+- **Endorsing peer**: Specialised peer that receives a transaction proposal for endorsement, responds granting or denying endorsement 
+- **Ordering peer**: Approves the inclusion of transaction blocks into the ledger and communicates with peer and endorsing peer nodes
+
+### 隐私与安全
+交易方持有多种类型的证书，交易不同环节将使用如下这些类型的证书：  
+• E-Cert（Enrollment Cert）  
+  – 长期持有，携带或可以追溯使用者信息  
+  – 用于身份认证  
+• T-Cert（Transaction Cert）  
+  – 每个交易时生成，用于交易的签名  
+• TLS-Cert，长期持有，主要用于SSL/TLS通讯  
