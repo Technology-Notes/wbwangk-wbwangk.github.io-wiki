@@ -59,6 +59,31 @@ fabric安装参考: [Fabri Getting Started](http://hyperledger-fabric.readthedoc
 $ curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
 ```
 
+### 启动 hyperledger
+```
+$ cd /opt
+$ git clone https://github.com/yeasy/docker-compose-files.git
+$ cd docker-compose-files/hyperledger_fabric/latest
+$ make start
+```
+花费几个小时，下载了数个docker镜像，然后查看docker镜像：
+```
+$ docker images
+REPOSITORY                      TAG                 IMAGE ID            CREATED             SIZE
+yeasy/hyperledger-fabric-peer   1.0.4               5e7484dcb7d6        5 days ago          1.02GB
+hyperledger/fabric-tools        x86_64-1.0.4        6051774928a6        3 weeks ago         1.33GB
+hyperledger/fabric-orderer      x86_64-1.0.4        b17741e7b036        3 weeks ago         151MB
+```
+查看docker容器：
+```
+$ docker ps
+CONTAINER ID        IMAGE                                   COMMAND                  CREATED             STATUS                          PORTS               NAMES
+758aeb009e33        yeasy/hyperledger-fabric-peer:1.0.4     "peer node start"        21 hours ago        Restarting (1) 12 seconds ago                       peer0.org2.example.com
+d15a5bda0c0c        yeasy/hyperledger-fabric-peer:1.0.4     "peer node start"        21 hours ago        Restarting (1) 12 seconds ago                       peer1.org2.example.com
+44f425a9309d        yeasy/hyperledger-fabric-peer:1.0.4     "peer node start"        21 hours ago        Restarting (1) 12 seconds ago                       peer1.org1.example.com
+1b639f5b35ac        hyperledger/fabric-tools:x86_64-1.0.4   "bash -c 'cd /tmp; s…"   21 hours ago        Up 35 minutes                                       fabric-cli
+d52d739b2122        yeasy/hyperledger-fabric-peer:1.0.4     "peer node start"        21 hours ago        Restarting (1) 11 seconds ago                       peer0.org1.example.com
+```
 ### Chaincode
 ### shared ledger
 Ledger provides a verifiable history of all successful state changes. It is THE system of record for a
