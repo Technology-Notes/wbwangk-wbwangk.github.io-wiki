@@ -84,3 +84,9 @@ dddd(stdin)= 5bf8aa57fc5a6bc547decf1cc6db63f10deb55a3c6c5df497d631fb3d95e1abf
 dddd是要进行hash的文本，之后是组合键ctrl+d，而且要多按几次。dddd之后不要回车，否则回车也会被加入到hash输入中。
 ### html2pdf
 http://www.pdfonfly.com/
+
+### docker远程管理
+centos:`/etc/sysconfig/docker`，ubunut:`/etc/default/docker`:
+```
+DOCKER_OPTS="$DOCKER_OPTS -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375 --api-cors-header='*'"
+```
