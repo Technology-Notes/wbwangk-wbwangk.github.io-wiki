@@ -75,3 +75,10 @@ end
 
 ### Blockchain Demo
 https://anders.com/blockchain/
+
+### openssl sha256
+```
+$ openssl dgst -sha256
+dddd(stdin)= 5bf8aa57fc5a6bc547decf1cc6db63f10deb55a3c6c5df497d631fb3d95e1abf
+```
+dddd是要进行hash的文本，之后是组合键ctrl+d，而且要多按几次。dddd之后不要回车，否则回车也会被加入到hash输入中。
