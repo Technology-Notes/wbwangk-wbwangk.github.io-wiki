@@ -56,7 +56,26 @@ $ git clone h1ps://github.com/yeasy/docker-compose-files
 fabric安装参考: [Fabri Getting Started](http://hyperledger-fabric.readthedocs.io/en/latest/getting_started.html)  
 安装docker-compose引擎：
 ```
-$ curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+$ curl -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+$ chmod +x /usr/local/bin/docker-compose
+```
+可以到docker-compose的[发布页面](https://github.com/docker/compose/releases)看最新的版本号。
+#### go lang
+```
+$ cd /opt
+$ wget https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz
+$ tar -C /usr/local -xzf go1.9.2.linux-amd64.tar.gz
+```
+在文件`/etc/profile`的最后添加：
+```
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=/opt/gopath
+```
+使环境变量生效后验证go版本：
+```
+$ source /etc/profile
+$ go version
+go version go1.9.2 linux/amd64
 ```
 
 ### 启动 hyperledger
