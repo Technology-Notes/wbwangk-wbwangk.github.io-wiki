@@ -92,3 +92,6 @@ DOCKER_OPTS="$DOCKER_OPTS -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375 -
 ```
 ### PDF2MD
 http://pdf2md.morethan.io/
+
+### 供应链可追溯性/防伪
+https://wiki.hyperledger.org/_media/groups/requirements/hyperledger_-_supply_chain_traceability-_anti_counterfeiting.pdf
