@@ -1,5 +1,6 @@
 ## Confd+Redis实现Kettle配置文件的自动生成
-通过confd监听redis数据变化，根据定义的Kettle配置模板自动生成配置文件
+通过confd监听redis数据变化，根据定义的Kettle配置模板自动生成配置文件<br>
+以drive_job.kjb模版为例（drive_trans.ktr同）
 ### Confd安装
 下载：
 ```
@@ -73,9 +74,29 @@ check_cmd = ""
 reload_cmd = ""
 ......
 ```
-该文件生成后，confd就会自动执行步骤[1]的reload_cmd指定的脚本命令，解析该文件的[template]标签，每个[template]标签的内容，均生成一个独立的配置文件，该配置文件即为最终的能够被第三方服务使用的配置文件
+该文件生成后，confd就会自动执行步骤[1]的reload_cmd指定的脚本命令，解析该文件的[template]标签，每个[template]标签的内容，均生成一个独立的配置文件，该配置文件即为最终的能够被第三方服务使用的配置文件<br>
+4、Kettle模板
+/etc/confd/templates/redis_drive_job.kjb：
+```
+{{range gets "/kettle/*"}}
+{{$data := json .Value}}
+<job>
+  <name>use_{{$data.resource_id}}_{{$data.created_user}}</name>   <!-- 作业名（需按照约定格式来，不可重复） -->
+  <description></description >          <!-- 作业描述 （可选）-->
+  <extended_description ></extended_description > 
+  <job_version></job_version >            
+  <job_status>0</job_status>
+  <directory>/</directory>
+  <created_user>{{$data.created_user}}</created_user> <!-- 创建者（部门id可选） -->
+  <created_date>{{$data.created_date}}</created_date><!-- 创建时间 -->
+  <modified_user></modified_user><!-- 修改者（可选） -->
+  <modified_date></modified_date><!-- 修改时间 -->
+  ......
+</job>
+{{end}}
+```
 
-4、测试<br>
+5、测试<br>
 启动confd：
 ```
 confd -config-file /etc/confd/conf.d/redis_kettle.toml -interval 10 -backend redis -node http://localhost:2379
