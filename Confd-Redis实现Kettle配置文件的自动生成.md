@@ -52,7 +52,7 @@ reload_cmd = ""  #此处可以指定nginx或者kettle的重新加载脚本命令
 ```
 说明：循环读取etcd数据库的/kettle目录下的所有key，key的值均为json字符串数据，解析出json的所需字段，填入模板中，生成配置文件<br>
 
-3、上述两个步骤的目的是生成[1]中dest指定的配置模板列表文件：/etc/confd/redis_kettle_list.conf，该文件格式为：
+3、上述两个步骤的目的是生成步骤[1]中dest指定的配置模板列表文件：/etc/confd/redis_kettle_list.conf，该文件格式为：
 ```
 [template]
 src = "redis_drive_job.kjb"
@@ -73,7 +73,7 @@ check_cmd = ""
 reload_cmd = ""
 ......
 ```
-该文件生成后，confd就会自动执行[1]步骤reload_cmd指定的脚本命令，解析该文件的[template]标签，每个[template]标签的内容，均生成一个独立的配置文件，该配置文件即为最终的能够被第三方服务使用的配置文件
+该文件生成后，confd就会自动执行步骤[1]的reload_cmd指定的脚本命令，解析该文件的[template]标签，每个[template]标签的内容，均生成一个独立的配置文件，该配置文件即为最终的能够被第三方服务使用的配置文件
 
 4、测试<br>
 启动confd：
