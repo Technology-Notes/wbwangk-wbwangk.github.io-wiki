@@ -9,8 +9,13 @@ wget https://artifacts.elastic.co/downloads/logstash/logstash-6.0.0.tar.gz
 ```
 tar -xf logstash-6.0.0.tar.gz -C /opt/
 ```
+安装jdbc-output插件：
+```
+cd /opt/logstash-6.0.0/bin
+./logstash-plugin install logstash-output-jdbc
+```
 ## Logstash配置文件
-/opt/logstash/conf/http-log.conf:
+/opt/logstash-6.0.0/conf/http-log.conf:
 ```
 input {
   http {
@@ -47,7 +52,7 @@ output：<br>
     statement：执行的数据更新SQL，拼接SQL中使用json数据的格式：%{[api][id]}
 ## 启动logstash
 ```
-cd /opt/logstash/bin
+cd /opt/logstash-6.0.0/bin
 /logstash -f ../conf/http-log.conf &
 ```
 ## 测试
