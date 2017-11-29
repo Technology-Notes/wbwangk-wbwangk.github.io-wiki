@@ -203,9 +203,27 @@ fabric官方库提供了一个Vagrantfile，是个ubuntu16的环境，供开发�
 ```
 $ cd /e/vagrant10/ambari-vagrant
 $ git clone https://github.com/hyperledger/fabric.git
-$ cd fabric
+$ cd fabric/devenv
 $ vagrant up
 $ vagrant ssh
 ```
 这样，你就拥有了一个fabric开发环境，如进入目录`/opt/fabric-samples/first-network`，这里就是hyperledger官方文档“[Building Your First Network](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html)”描述的工作目录。  
 可以象文件中描写的那样执行`./byfn.sh --help`看看帮助文档。  
+### 启动网络
+```
+cd /opt/fabric-samples/first-network
+./byfn.sh -m up
+```
+上述命令会编译Golang链码镜像，和启动相应的容器。Go是默认的链码语言，但也支持Node.js链码。如果你想用node链码运行本教程，象下面这样执行：
+```sh
+# we use the -l flag to specify the chaincode language
+# forgoing the -l flag will default to Golang
+
+./byfn.sh -m up -l node
+```
+停止网络：
+```
+./byfn.sh -m down
+```
+### 密钥生成器
+我们用`cryptogen`工具为不同的网络实体生成密码学文件。这些证书表达身份，进行实体间通信的签名 和 
