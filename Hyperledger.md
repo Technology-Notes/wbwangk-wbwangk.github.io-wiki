@@ -226,4 +226,14 @@ cd /opt/fabric-samples/first-network
 ./byfn.sh -m down
 ```
 ### 密钥生成器
-我们用`cryptogen`工具为不同的网络实体生成密码学文件。这些证书表达身份，进行实体间通信的签名 和 
+我们用`cryptogen`工具为不同的网络实体生成密码学文件。这些证书表达身份，对实体间通信和交易认证进行签名和验证。  
+Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，允许我们为组织以及属于组织的组件生成一系列证书和密钥。每个组织都会分配一个根证书(`ca-cert`)，该证书绑定特殊组件(peer和orderer)到组织。  
+配置文件中有个`count`变量，我们用它来指定组织下的peer数量，在我们示例中，每个组织下有两个peer。我们在本文不会详述[X509证书和PKI](https://en.wikipedia.org/wiki/Public_key_infrastructure)。  
+在`crypto-config.yaml`文件中，注意`OrdererOrgs`之下的“Name”, “Domain” and “Specs”参数。网络实体的命名约定是：`{{.Hostname}}.{{.Domain}}`。例如，排序节点的名称是`orderer.example.com`，这关联了一个MSP ID `Orderer`，关于MSP的更多细节参考[Membership Service Providers (MSP)](http://hyperledger-fabric.readthedocs.io/en/latest/msp.html)文档。  
+执行`cryptogen`后，生成的证书和密钥保存到了目录`crypto-config`下。  
+#### 配置交易生成器
+工具`configtxgen`用于生成四个配置工件：
+- 排序器(orderer)`genesis block`  
+- 通道`configuration transaction`  
+- 两个`anchor peer transactions`，每个组织生成一个  
+关于`configtxgen`更多细节参考[Channel Configuration (configtxgen)](http://hyperledger-fabric.readthedocs.io/en/latest/configtxgen.html)。  
