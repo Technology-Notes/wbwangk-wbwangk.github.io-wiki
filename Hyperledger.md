@@ -207,6 +207,11 @@ $ cd fabric/devenv
 $ vagrant up
 $ vagrant ssh
 ```
+虚拟机启动过程中会自动执行一个`setup.sh`脚本进行初始化。有时会半途执行失败。可以进入linux后手工执行脚本：
+```
+$ cd /hyperledger/devenv
+$ ./setup.sh
+```
 这样，你就拥有了一个fabric开发环境，如进入目录`/opt/fabric-samples/first-network`，这里就是hyperledger官方文档“[Building Your First Network](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html)”描述的工作目录。  
 可以象文件中描写的那样执行`./byfn.sh --help`看看帮助文档。  
 ### 启动网络
