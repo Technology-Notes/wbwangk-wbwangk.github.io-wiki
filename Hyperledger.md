@@ -246,9 +246,16 @@ Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，
 ## Membership Service Providers (MSP)
 [原文](http://hyperledger-fabric.readthedocs.io/en/latest/msp.html)  
 #### 组织与MSP映射
-- 一个组织映射为一个MSP  
+1. 一个组织映射为一个MSP  
   其他可能：组织下的部门都映射到一个MSP；多个组织共用同一个MSP   
-- 组织下有多个部门(OU)，各部门访问不同的通道  
+2. 组织下有多个部门(OU)，各部门访问不同的通道  
   有两种可能的选择：  
   1) 定义一个MSP容纳组织的所有成员  
-     配置MSP由一系列的根证书、中间证书和管理员证书组成，成员identity包含他所属的部门(OU)。策略将使用这一OU，这些策略包括对通道的读写策略，或对链码的背书策略。
+     配置MSP由一系列的根证书、中间证书和管理员证书组成，成员identity包含他所属的部门(OU)。策略将使用这一OU，这些策略包括对通道的读写策略，或对链码的背书策略。  
+  2) 为每个OU定义一个MSP  
+3. 隔离同一组织下的peer  
+  在这一需求下，各peer为自己背书？  
+4. 管理员和CA证书  
+  将管理员证书和CA证书分离更安全。  
+5. CA和TLS CA
+  MSP identity 根CA和MSP TLS 证书根CA需要放在不同目录下。
