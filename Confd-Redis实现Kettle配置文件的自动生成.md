@@ -99,7 +99,7 @@ reload_cmd = ""
 5、测试<br>
 启动confd：
 ```
-confd -config-file /etc/confd/conf.d/redis_kettle.toml -interval 10 -backend redis -node http://localhost:2379
+confd -config-file /etc/confd/conf.d/redis_kettle.toml -interval 10 -backend redis -node localhost:2379
 ```
 指定配置文件、confd后端为redis、redis服务url启动confd，并每隔10s监听一次redis的数据变化更新配置文件<br>
 向redis中存入数据:
