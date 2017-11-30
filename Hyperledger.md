@@ -269,5 +269,6 @@ Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，
   Specialized committing peer that receives a transaction proposal for endorsement, responds granting or denying endorsement. Must hold smart contract.  
 - Ordering Nodes(service)  
   Approves the inclusion of transaction blocks into the ledger and communicates with committing and endorsing peer nodes. Does not hold smart contract. Does not hold ledger.  
-
+#### 交易逻辑
+![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction.jpg)
 [Hyperledger Composer](https://hyperledger.org/projects/composer)
