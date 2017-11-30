@@ -32,7 +32,7 @@ reload_cmd = "cd /etc/confd/conf.d & java ConfdTemplateSplit /etc/confd/redis_ke
 src: 指定配置模板文件<br>
 dest：根据模板文件生成的配置模板列表文件，生成的该文件内容是根据数据key不同生成的若干个配置集合<br>
 mode: 生成文件的权限<br>
-keys：etcd中存放数据的目录<br>
+keys：redis中存放数据的目录<br>
 check_cmd: 检查配置文件脚本，如:nginx -t -c {{.src}}，验证nginx配置文件正确性<br>
 reload_cmd: 重新加载配置文件脚本，如:nginx -s reload，重启nginx;  该例中，此处指定配置模板表文件(/etc/confd/redis_kettle_list.conf)的处理脚本<br>
 
@@ -51,7 +51,7 @@ check_cmd = ""  #此处可以指定nginx或者kettle的配置检查脚本命令
 reload_cmd = ""  #此处可以指定nginx或者kettle的重新加载脚本命令
 {{end}}
 ```
-说明：循环读取etcd数据库的/kettle目录下的所有key，key的值均为json字符串数据，解析出json的所需字段，填入模板中，生成配置文件<br>
+说明：循环读取redis数据库的/kettle目录下的所有key，key的值均为json字符串数据，解析出json的所需字段，填入模板中，生成配置文件<br>
 
 3、上述两个步骤的目的是生成步骤[1]中dest指定的配置模板列表文件：/etc/confd/redis_kettle_list.conf，该文件格式为：
 ```
