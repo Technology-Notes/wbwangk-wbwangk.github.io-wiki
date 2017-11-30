@@ -288,3 +288,4 @@ step 7/7 - notify transaction:
 Transactions typically follow a seven-step process to become a block on the chain.
 ## 备忘
 [Hyperledger Composer](https://hyperledger.org/projects/composer)  
+[Hyperledger Composer教程](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#11982)，含composer的安装。  
