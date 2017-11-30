@@ -285,5 +285,6 @@ step 6/7 - validate transaction:
 step 7/7 - notify transaction: 
 ![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction7.jpg)  
 
+Transactions typically follow a seven-step process to become a block on the chain.
 ## 备忘
 [Hyperledger Composer](https://hyperledger.org/projects/composer)  
