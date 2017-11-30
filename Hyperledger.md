@@ -270,5 +270,20 @@ Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，
 - Ordering Nodes(service)  
   Approves the inclusion of transaction blocks into the ledger and communicates with committing and endorsing peer nodes. Does not hold smart contract. Does not hold ledger.  
 #### 交易逻辑
-![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction.jpg)
-[Hyperledger Composer](https://hyperledger.org/projects/composer)
+step 1/7 - propose transaction:  
+![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction.jpg)  
+step 2/7 - execute transaction:  
+![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction2.jpg)
+step 3/7 - propose response:  
+![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction3.jpg)  
+step 4/7 - order transaction:  
+![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction4.jpg)  
+step 5/7 - deliver transaction: 
+![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction5.jpg)  
+step 6/7 - validate transaction: 
+![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction6.jpg)  
+step 7/7 - notify transaction: 
+![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction7.jpg)  
+
+## 备忘
+[Hyperledger Composer](https://hyperledger.org/projects/composer)  
