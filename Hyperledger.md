@@ -183,19 +183,7 @@ History ledger
   – 每个交易时生成，用于交易的签名  
 • TLS-Cert，长期持有，主要用于SSL/TLS通讯  
 
-## Hyperledger Fabric Samples
-[Hyperledger官方GETTING STARTED](https://hyperledger-fabric.readthedocs.io/en/latest/samples.html)  
-```
-$ cd /opt
-$ git clone -b master https://github.com/hyperledger/fabric-samples.git
-$ cd fabric-samples
-$ curl -sSL https://goo.gl/fMh2s3 | bash
-```
-如果执行后无反应，也可以下载`https://goo.gl/fMh2s3`，自己创建脚本文件，手工执行。执行后，在`bin`目录下多了几个可执行文件：
-```
-cryptogen,configtxgen,configtxlator, peer
-```
-然后，自动下载了很多docker镜像。  
+ 
 
 ## vagrant VM
 fabric官方库提供了一个Vagrantfile，是个ubuntu16的环境，供开发调试用。  
@@ -212,7 +200,24 @@ $ vagrant ssh
 $ cd /hyperledger/devenv
 $ ./setup.sh
 ```
-这样，你就拥有了一个fabric开发环境，如进入目录`/opt/fabric-samples/first-network`，这里就是hyperledger官方文档“[Building Your First Network](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html)”描述的工作目录。  
+这样，你就拥有了一个fabric开发环境。
+### Hyperledger Fabric Samples
+[Hyperledger官方GETTING STARTED](https://hyperledger-fabric.readthedocs.io/en/latest/samples.html)  
+```
+$ cd /opt
+$ git clone -b master https://github.com/hyperledger/fabric-samples.git
+$ cd fabric-samples
+$ curl -sSL https://goo.gl/fMh2s3 | bash
+```
+如果执行后无反应，这是因为该链接被 墙。设置proxy:
+```
+$ export https_proxy=http://10.180.36.75:25378
+$ export http_proxy=http://10.180.36.75:25378
+```
+25378是宿主机的翻&墙软件端口号，ip是宿主机ip。  
+
+脚本会自动下载了很多docker镜像。 
+进入目录`/opt/fabric-samples/first-network`，这里就是hyperledger官方文档“[Building Your First Network](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html)”描述的工作目录。  
 可以象文件中描写的那样执行`./byfn.sh --help`看看帮助文档。  
 ### 启动网络
 ```
