@@ -259,3 +259,15 @@ Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，
   将管理员证书和CA证书分离更安全。  
 5. CA和TLS CA
   MSP identity 根CA和MSP TLS 证书根CA需要放在不同目录下。
+
+## 备忘
+#### 节点类型
+[出处](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#12034)   
+- Committing Peer  
+  Maintains Ledger and state. Commits Transactions. May hold smart contract(chaincode).  
+- Endorsing Peer  
+  Specialized committing peer that receives a transaction proposal for endorsement, responds granting or denying endorsement. Must hold smart contract.  
+- Ordering Nodes(service)  
+  Approves the inclusion of transaction blocks into the ledger and communicates with committing and endorsing peer nodes. Does not hold smart contract. Does not hold ledger.  
+
+[Hyperledger Composer](https://hyperledger.org/projects/composer)
