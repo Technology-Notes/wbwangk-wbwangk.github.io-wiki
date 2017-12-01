@@ -311,6 +311,10 @@ const request = {
 };
 ```
 应用执行时，它调用了peer的`fabcar`链码，执行其中的`queryAllCars`函数。 
+如果想看看有哪些链码函数可以调用，可以打开文件`../chaincode/fabcar/go/fabcar.go`来看。可以看到下列函数可以调用：`initLedger`, `queryCar`, `queryAllCars`, `createCar`和`changeCarOwner`。  
+下图图示了应用、智能合约和账本的关系：  
+![](http://hyperledger-fabric.readthedocs.io/en/latest/_images/RunningtheSample.png)  
+下面示范一下调用链码的`queryCar`函数来查询某一辆车的信息。将`query.js`中的`queryAllCars`
 
 ### 密钥生成器
 我们用`cryptogen`工具为不同的网络实体生成密码学文件。这些证书表达身份，对实体间通信和交易认证进行签名和验证。  
