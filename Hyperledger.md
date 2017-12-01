@@ -228,6 +228,35 @@ API可以把SDK访问。SDK封装了应用与智能合约通信的接口，如�
 开始链码编程参考[Chaincode for Developers](http://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html)。  
 更多背书策略参考[Endorsement policies](http://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html)。  
 更多fabric架构信息参考[Architecture Explained](http://hyperledger-fabric.readthedocs.io/en/latest/arch-deep-dive.html)。  
+## 编写首个应用
+在实践本章前，请按[启动首个网络(first-network)]()一章的描述准备好环境。  
+本章的工作目录是`/opt/fabric-samples/fabcar`。  
+在本章中，首先访问CA生成注册证书(ECert)，然后利用生成的身份(用户对象)查询和更新账本。  
+### 建立开发环境
+可以通过执行下列命令停止“first-network”一章中的各种容器：
+```
+$ cd /opt/fabric-samples/fabcar
+$ ../first-network/byfn.sh -m down
+```
+或使用docker命令删除所有容器(可以与上面的命令混合使用)：
+```
+$ docker rm -f $(docker ps -aq)
+```
+删除所有缓存网络：
+```
+$ docker network prune
+```
+#### 安装客户端和启动网络
+`/opt/fabric-samples/fabcar`目录下有个`package.json`文件，定义了示范应用的依赖包，通过执行下列命令安装依赖（与java的maven类似）：
+```
+$ npm install
+```
+使用脚本`startFabric.sh`启动网络。这个命令会启动几个Fabric实体和一个智能合约容器(链码)。
+```
+$ ./startFabric.sh
+$ docker ps
+```
+用上述docker命令可以看到启动的容器清单。  
 
 ### 密钥生成器
 我们用`cryptogen`工具为不同的网络实体生成密码学文件。这些证书表达身份，对实体间通信和交易认证进行签名和验证。  
