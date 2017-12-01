@@ -229,7 +229,8 @@ API可以把SDK访问。SDK封装了应用与智能合约通信的接口，如�
 更多背书策略参考[Endorsement policies](http://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html)。  
 更多fabric架构信息参考[Architecture Explained](http://hyperledger-fabric.readthedocs.io/en/latest/arch-deep-dive.html)。  
 ## 编写首个应用
-在实践本章前，请按[启动首个网络(first-network)]()一章的描述准备好环境。  
+在实践本章前，请按[启动首个网络(first-network)](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%90%AF%E5%8A%A8%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)一章的描述准备好环境。  
+本章原文是官网的[Writing Your First Application](http://hyperledger-fabric.readthedocs.io/en/latest/write_first_app.html)  
 本章的工作目录是`/opt/fabric-samples/fabcar`。  
 在本章中，首先访问CA生成注册证书(ECert)，然后利用生成的身份(用户对象)查询和更新账本。  
 ### 建立开发环境
@@ -257,6 +258,59 @@ $ ./startFabric.sh
 $ docker ps
 ```
 用上述docker命令可以看到启动的容器清单。  
+### 理解Fabric网络
+参考章节[理解Fabric网络]()  
+### 注册用户
+#### 注册管理员用户
+前面的`startFabric.sh`命令会启动一个CA容器，可以通过下列命令查看CA容器的日志：
+```
+$ docker logs -f ca.example.com
+```
+执行下列命令来注册admin用户：
+```
+$ node enrollAdmin.js
+```
+上述代码会向创建目录`hfc-key-store`，创建私钥，向CA发送证书签名请求(CSR)，然后把返回的CA签名证书(eCert)存放在`hfc-key-store`目录。  
+#### 注册用户user1
+admin用户是运维人员用的管理员证书。在一般的业务场景下，应用程序使用“普通用户”(非管理员)来访问Fabric网络。需要说明的是，向Fabric网络注册普通用户需要使用管理员身份，如现在就是用admin身份来注册`user1`用户。  
+```
+$ node registerUser.js
+```
+与注册admin用户类似，代码会创建user1用户私钥，向CA发送证书签名请求(CSR)，并将返回的CA签名证书(eCert)存放在`hfc-key-store`目录。  
+### 查询账本
+用`docker ps`命令可以看到一个`hyperledger/fabric-couchdb`的容器，这是一个保存“世界状态”的key-value数据库(couchdb)。查询账本实际上就是在查询key-value数据库中的数据（数据库变化日志保存在区块链中）。查询参数一般是一个或几个key，也可以用json串当参数进行复杂查询。  
+演示查询的代码文件是`query.js`，其中可以看到下面的代码，说明应用使用`user1`作为签名实体。
+```
+fabric_client.getUserContext('user1', true);
+```
+user1的身份证明材料已经放在了`hfc-key-store`目录下，我们简单地告诉应用去获取身份。  
+```
+$ node query.js
+```
+会返回一个json串，里面是全部10辆车的信息。  
+观察一下`query.js`源码。在应用的初始化区段，定义了几个变量，如通道名称、证书库地址和网络端点。
+```js
+var channel = fabric_client.newChannel('mychannel');
+var peer = fabric_client.newPeer('grpc://localhost:7051');
+channel.addPeer(peer);
+
+var member_user = null;
+var store_path = path.join(__dirname, 'hfc-key-store');
+console.log('Store path:'+store_path);
+var tx_id = null;
+```
+下面是执行查询的代码：
+```js
+// queryCar chaincode function - requires 1 argument, ex: args: ['CAR4'],
+// queryAllCars chaincode function - requires no arguments , ex: args: [''],
+const request = {
+  //targets : --- letting this default to the peers assigned to the channel
+  chaincodeId: 'fabcar',
+  fcn: 'queryAllCars',
+  args: ['']
+};
+```
+应用执行时，它调用了peer的`fabcar`链码，执行其中的`queryAllCars`函数。 
 
 ### 密钥生成器
 我们用`cryptogen`工具为不同的网络实体生成密码学文件。这些证书表达身份，对实体间通信和交易认证进行签名和验证。  
