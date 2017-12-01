@@ -144,15 +144,8 @@ go version go1.9.2 linux/amd64
 $ cd /opt
 $ git clone -b master https://github.com/hyperledger/fabric-samples.git
 $ cd fabric-samples
-$ curl -sSL https://goo.gl/fMh2s3 | bash
+$ curl -sSL https://goo.gl/6wtTN5 | bash -s 1.1.0-preview
 ```
-如果执行后无反应，这是因为该链接被 墙。设置proxy:
-```
-$ export https_proxy=http://10.180.36.75:25378
-$ export http_proxy=http://10.180.36.75:25378
-```
-25378是宿主机的翻&墙软件端口号，ip是宿主机ip。  
-
 脚本会自动下载了很多docker镜像:
 ```
 hyperledger/fabric-ca          latest                 2736904862db        4 weeks ago         218MB
@@ -174,10 +167,15 @@ hyperledger/fabric-javaenv     x86_64-1.0.4           a517b70135c7        4 week
 hyperledger/fabric-ccenv       latest                 856061b1fed7        4 weeks ago         1.28GB
 hyperledger/fabric-ccenv       x86_64-1.0.4           856061b1fed7        4 weeks ago         1.28GB
 ```
-(snap a3)  
-进入目录`/opt/fabric-samples/first-network`，这里就是hyperledger官方文档“[Building Your First Network](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html)”描述的工作目录。  
-可以象文件中描写的那样执行`./byfn.sh --help`看看帮助文档。  
-### 启动网络
+上述脚本还下载了几个工具到`/opt/fabric-samples/bin`目录下，它们是cryptogen,configtxgen,configtxlator,peer。  
+为了访问它们方便，需要修改PATH参数。编辑`/etc/profile`，在文件的最后添加内容：
+```
+export PATH=/opt/fabric-samples/bin:$PATH
+```
+为了保存VM当前状态，回到vagrant命令行下执行`vagrant snapshot save a3`  
+
+### 启动首个网络(first-network)
+本节遵循hyperledger官方文档“[Building Your First Network](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html)  
 ```
 cd /opt/fabric-samples/first-network
 ./byfn.sh -m up
@@ -185,70 +183,31 @@ cd /opt/fabric-samples/first-network
 上述命令会编译Golang链码镜像，和启动相应的容器。  
 #### 启动网络的过程
 ```
-/opt/fabric-samples/first-network/../bin/cryptogen
-##### Generate certificates using cryptogen tool #########
-org1.example.com
-org2.example.com
-
-/opt/fabric-samples/first-network/../bin/configtxgen
-#########  Generating Orderer Genesis block ##############
-### Generating channel configuration transaction 'channel.tx' ###
-#######    Generating anchor peer update for Org1MSP   ##########
-#######    Generating anchor peer update for Org2MSP   ##########
-Creating network "net_byfn" with the default driver
-Creating peer0.org2.example.com
-Creating orderer.example.com
-Creating peer0.org1.example.com
-Creating peer1.org2.example.com
-Creating peer1.org1.example.com
-Creating cli
-Build your first network (BYFN) end-to-end test
-Channel name : mychannel
-CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
-CORE_PEER_LOCALMSPID=Org1MSP
-CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
-CORE_PEER_TLS_ENABLED=true
-CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-CORE_PEER_ID=cli
-CORE_LOGGING_LEVEL=DEBUG
-CORE_PEER_ADDRESS=peer0.org1.example.com:7051
-2017-12-01 00:18:56.553 UTC [msp] GetLocalMSP -> DEBU 001 Returning existing local MSP
-2017-12-01 00:18:56.553 UTC [msp] GetDefaultSigningIdentity -> DEBU 002 Obtaining default signing identity
-2017-12-01 00:18:56.557 UTC [channelCmd] InitCmdFactory -> INFO 003 Endorser and orderer connections initialized
-2017-12-01 00:18:56.557 UTC [msp] GetLocalMSP -> DEBU 004 Returning existing local MSP
-2017-12-01 00:18:56.557 UTC [msp] GetDefaultSigningIdentity -> DEBU 005 Obtaining default signing identity
-2017-12-01 00:18:56.557 UTC [msp] GetLocalMSP -> DEBU 006 Returning existing local MSP
-2017-12-01 00:18:56.557 UTC [msp] GetDefaultSigningIdentity -> DEBU 007 Obtaining default signing identity
-2017-12-01 00:18:56.557 UTC [msp/identity] Sign -> DEBU 008 Sign: plaintext: 0A8C060A074F7267314D53501280062D...53616D706C65436F6E736F727469756D
-2017-12-01 00:18:56.557 UTC [msp/identity] Sign -> DEBU 009 Sign: digest: 9A80DF47A65393485A9C2B58128FF155BD580D1E24ECD9C0444CAF8C94F1B31F
-2017-12-01 00:18:56.557 UTC [msp] GetLocalMSP -> DEBU 00a Returning existing local MSP
-2017-12-01 00:18:56.557 UTC [msp] GetDefaultSigningIdentity -> DEBU 00b Obtaining default signing identity
-2017-12-01 00:18:56.557 UTC [msp] GetLocalMSP -> DEBU 00c Returning existing local MSP
-2017-12-01 00:18:56.557 UTC [msp] GetDefaultSigningIdentity -> DEBU 00d Obtaining default signing identity
-2017-12-01 00:18:56.557 UTC [msp/identity] Sign -> DEBU 00e Sign: plaintext: 0AC3060A1508021A0608F0BF82D10522...A423E135F9CD9F18E36B294A6FF8784F
-2017-12-01 00:18:56.557 UTC [msp/identity] Sign -> DEBU 00f Sign: digest: A9798416D18CC0B3DC73B7A44CE4E88D2564D48C0A91A1AF80D49F7E9CBBC588
-2017-12-01 00:18:56.643 UTC [msp] GetLocalMSP -> DEBU 010 Returning existing local MSP
-2017-12-01 00:18:56.643 UTC [msp] GetDefaultSigningIdentity -> DEBU 011 Obtaining default signing identity
-2017-12-01 00:18:56.643 UTC [msp] GetLocalMSP -> DEBU 012 Returning existing local MSP
-2017-12-01 00:18:56.643 UTC [msp] GetDefaultSigningIdentity -> DEBU 013 Obtaining default signing identity
-2017-12-01 00:18:56.643 UTC [msp/identity] Sign -> DEBU 014 Sign: plaintext: 0AC3060A1508021A0608F0BF82D10522...3CDB0590DEB112080A021A0012021A00
-2017-12-01 00:18:56.643 UTC [msp/identity] Sign -> DEBU 015 Sign: digest: 364089C19F34DDB140F7925DADB4642DA0EC785A29108A09738B9CF00AFB13AC
-2017-12-01 00:18:56.643 UTC [channelCmd] readBlock -> DEBU 016 Got status: &{NOT_FOUND}
-2017-12-01 00:18:56.643 UTC [msp] GetLocalMSP -> DEBU 017 Returning existing local MSP
-2017-12-01 00:18:56.643 UTC [msp] GetDefaultSigningIdentity -> DEBU 018 Obtaining default signing identity
-2017-12-01 00:18:56.646 UTC [channelCmd] InitCmdFactory -> INFO 019 Endorser and orderer connections initialized
-2017-12-01 00:18:56.846 UTC [msp] GetLocalMSP -> DEBU 01a Returning existing local MSP
-2017-12-01 00:18:56.846 UTC [msp] GetDefaultSigningIdentity -> DEBU 01b Obtaining default signing identity
-2017-12-01 00:18:56.847 UTC [msp] GetLocalMSP -> DEBU 01c Returning existing local MSP
-2017-12-01 00:18:56.847 UTC [msp] GetDefaultSigningIdentity -> DEBU 01d Obtaining default signing identity
-2017-12-01 00:18:56.847 UTC [msp/identity] Sign -> DEBU 01e Sign: plaintext: 0AC3060A1508021A0608F0BF82D10522...3D13FDF1DC4412080A021A0012021A00
-2017-12-01 00:18:56.847 UTC [msp/identity] Sign -> DEBU 01f Sign: digest: 945D10ED9D2C5D060ADC61CCDDD2E46EEA42923A483B4D05B095E07250DFB283
-2017-12-01 00:18:56.849 UTC [channelCmd] readBlock -> DEBU 020 Received block: 0
-2017-12-01 00:18:56.850 UTC [main] main -> INFO 021 Exiting.....
-===================== Channel "mychannel" is created successfully =====================
-
+Generate certificates using cryptogen tool 
+Generating Orderer Genesis block
+Generating channel configuration transaction 'channel.tx'
+Generating anchor peer update for Org1MSP
+Generating anchor peer update for Org2MSP  
+Channel "mychannel" is created successfully =====================
+PEER0 joined on the channel "mychannel" =====================
+PEER1 joined on the channel "mychannel" =====================
+PEER2 joined on the channel "mychannel" =====================
+PEER3 joined on the channel "mychannel" =====================
+Anchor peers for org "Org1MSP" on "mychannel" is updated successfully =====================
+Anchor peers for org "Org2MSP" on "mychannel" is updated successfully =====================
+Chaincode is installed on remote peer PEER0 =====================
+Chaincode is installed on remote peer PEER2 =====================
+Chaincode Instantiation on PEER2 on channel 'mychannel' is successful =====================
+Querying on PEER0 on channel 'mychannel'... =====================
+Invoke transaction on PEER0 on channel 'mychannel' is successful =====================
+Chaincode is installed on remote peer PEER3 =====================
+Querying on PEER3 on channel 'mychannel'... =====================
+========= All GOOD, BYFN execution completed ===========
+ _____   _   _   ____
+| ____| | \ | | |  _ \
+|  _|   |  \| | | | | |
+| |___  | |\  | | |_| |
+|_____| |_| \_| |____/
 ```
 停止网络：
 ```
@@ -312,3 +271,14 @@ Transactions typically follow a seven-step process to become a block on the chai
 ## 备忘
 [Hyperledger Composer](https://hyperledger.org/projects/composer)  
 [Hyperledger Composer教程](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#11982)，含composer的安装。  
+### 问题
+#### VM翻墙问题
+```
+$ curl -sSL https://goo.gl/fMh2s3 | bash
+```
+如果执行后无反应，这是因为该链接被 墙。设置proxy:
+```
+$ export https_proxy=http://10.180.36.75:25378
+$ export http_proxy=http://10.180.36.75:25378
+```
+25378是宿主机的翻&墙软件端口号，ip是宿主机ip。  
