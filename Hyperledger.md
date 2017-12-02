@@ -663,14 +663,53 @@ $ go build --tags nopkcs11
 通常链码由peer启动和维护。但在“开发模式”下，链码由用户构建和启动。在快速代码/构建/运行/调试周期转换的链码开发阶段，此模式非常有用。  
 我们利用预生成的排序器和通道工件启动“开发模式”，获得一个示范开发网络。用户可以直接跳到编译链码过程和驱动调用。  
 
-### 测试与执行
+### 调试与测试
 需要启动3个终端窗口。  
 #### 窗口1：启动网络
 ```
 $ cd /opt/fabric-samples/chaincode-docker-devmode
 $ docker-compose -f docker-compose-simple.yaml up
 ```
-The above starts the network with the SingleSampleMSPSolo orderer profile and launches the peer in “dev mode”. It also launches two additional containers - one for the chaincode environment and a CLI to interact with the chaincode. The commands for create and join channel are embedded in the CLI container, so we can jump immediately to the chaincode calls.
+上面的命令用`SingleSampleMSPSolo`排序器profile启动网络，并以开发模式启动peer。还启动了两个附加容器，一个是链码环境，另一个是与链码交互的CLI。创建和加入通道的命令被嵌入到CLI容器中，从而我们可以直接调用链码。  
+#### 窗口2：构建和启动链码
+用下列命令进入`chaincode`容器内的bash环境:
+```
+$ docker exec -it chaincode bash
+root@d2629980e76b:/opt/gopath/src/chaincode#
+```
+虽然看上去与宿主机类似，其实已经在`chaincode`容器内。下面执行的都是该容器内的命令。下面编译你的链码：  
+```
+$ cd sacc
+$ go build
+```
+运行链码：
+```
+$ CORE_PEER_ADDRESS=peer:7051 CORE_CHAINCODE_ID_NAME=mycc:0 ./sacc
+```
+上述链码随peer启动，链码日志表示它成功注册到peer。注意，现阶段的链码还没有与通道关联。这个会在后续的步骤中通过实例化命令做到。  
+#### 窗口3：使用链码
+虽然你处于`--peer-chaincodedev`模式，你仍然需要安装链码，因此生命周期系统链码可以像通常一样执行检查。将来这个需求可能在`--peer-chaincodedev`模式下移除。  
+我们利用CLI容器执行这些调用：
+```
+$ docker exec -it cli bash
+$ peer chaincode install -p chaincodedev/chaincode/sacc -n mycc -v 0
+$ peer chaincode instantiate -n mycc -v 0 -c '{"Args":["a","10"]}' -C myc
+```
+现在发出一个调用将`a`的值改成`20`。
+```
+$ peer chaincode invoke -n mycc -c '{"Args":["set", "a", "20"]}' -C myc
+```
+最后，查询`a`，可以看到值是`20`。
+```
+$ peer chaincode query -n mycc -c '{"Args":["query","a"]}' -C myc
+```
+#### 测试新链码
+默认我们仅挂载`sacc`。然而，你通过将它们添加到`chaincode`子目录来测试不同的链码（需要重启网络）。你可以在`chaincode`容器中访问它们。  
+
+#### 链码加密
+在某些情况下，需要对key关联的全部值或部分值进行加密。例如，当一个人的社会安全号码或地址在写入账本时，可能不希望这些数据以明文形式出现。链码加密利用[实体扩展](https://github.com/hyperledger/fabric/tree/master/core/chaincode/shim/ext/entities)，它内部包装了BCCSP，支持加密和椭圆曲线数字签名。例如，为了加密，链码的调用者通过临时字段传入加密密钥。然后可以将相同的密钥用于随后的查询操作，从而允许对加密的状态值进行解密。
+
+对于更多详细信息和示范，看`fabric/examples`目录下的[Encc Example](https://github.com/hyperledger/fabric/tree/master/examples/chaincode/go/enccc_example)。特别注意utils.go 助手程序。该实用程序加载链码代码API和实体扩展，并构建一个新的函数类（例如`encryptAndPutState`＆`getStateAndDecrypt`），以便示例加密链码利用。因此，链码现在可以和基本的shim API结合起来，使`Get`和`Put`可以添加解密和加密功能。  
 
 ### 密钥生成器
 我们用`cryptogen`工具为不同的网络实体生成密码学文件。这些证书表达身份，对实体间通信和交易认证进行签名和验证。  
