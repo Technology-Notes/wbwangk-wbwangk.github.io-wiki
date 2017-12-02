@@ -661,6 +661,20 @@ func main() {
 $ go get -u --tags nopkcs11 github.com/hyperledger/fabric/core/chaincode/shim
 $ go build --tags nopkcs11
 ```
+执行上述`go get`时碰到问题：
+```
+# cd /opt/gopath/src/github.com/hyperledger/fabric; git pull --ff-only
+error: Your local changes to the following files would be overwritten by merge:
+        docs/source/kafka.rst
+Please, commit your changes or stash them before you can merge.
+```
+解决办法是：
+```
+$ cd /opt/gopath/src/github.com/hyperledger/fabric;
+$ git reset --hard
+```
+上述命令的含义是放弃本地的修改，以网上版本为准。  
+回到原来的目录，重新执行`go get`，问题解决。  
 #### 使用开发模式测试
 通常链码由peer启动和维护。但在“开发模式”下，链码由用户构建和启动。在快速代码/构建/运行/调试周期转换的链码开发阶段，此模式非常有用。  
 我们利用预生成的排序器和通道工件启动“开发模式”，获得一个示范开发网络。用户可以直接跳到编译链码过程和驱动调用。  
