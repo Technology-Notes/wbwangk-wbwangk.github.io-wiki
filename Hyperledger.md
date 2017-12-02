@@ -417,7 +417,9 @@ Fabric通过调用这些约定的函数来运行事务。在响应中通过调�
 假定`GOPATH=/opt/gopath`，下面创建示范代码的工作目录：
 ```
 $ mkdir -p $GOPATH/src/sacc && cd $GOPATH/src/sacc
+$ touch sacc.go
 ```
+touch命令创建了一个叫sacc.go的空文件。下面描写如何向sacc.go中添加代码。    
 首先用go的import语句添加链码的必要依赖，shim包和[peer protobuf](http://godoc.org/github.com/hyperledger/fabric/protos/peer)包。然后，增加一个`SimpleAsset`结构作为链码shim函数的接收者。
 ```go
 package main
