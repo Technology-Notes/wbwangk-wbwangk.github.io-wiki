@@ -314,8 +314,80 @@ const request = {
 如果想看看有哪些链码函数可以调用，可以打开文件`../chaincode/fabcar/go/fabcar.go`来看。可以看到下列函数可以调用：`initLedger`, `queryCar`, `queryAllCars`, `createCar`和`changeCarOwner`。  
 下图图示了应用、智能合约和账本的关系：  
 ![](http://hyperledger-fabric.readthedocs.io/en/latest/_images/RunningtheSample.png)  
-下面示范一下调用链码的`queryCar`函数来查询某一辆车的信息。将`query.js`中的`queryAllCars`
-
+下面示范一下调用链码的`queryCar`函数来查询某一辆车的信息。将`query.js`中的`queryAllCars`函数换成`quieryCar`，参数key是`CAR4`。
+```js
+const request = {
+  //targets : --- letting this default to the peers assigned to the channel
+  chaincodeId: 'fabcar',
+  fcn: 'queryCar',
+  args: ['CAR4']
+};
+```
+保存`query.js`，并执行，可以看到返回了`CAR4`的车辆信息：
+```
+$ node query.js
+{"colour":"black","make":"Tesla","model":"S","owner":"Adriana"}
+```
+#### 更新账本
+更新账本的过程：先提议，后背书，结果返回到应用，然后发送给排序节点，再写到各个peer的账本。  
+![](http://hyperledger-fabric.readthedocs.io/en/latest/_images/UpdatingtheLedger.png)  
+js文件`invoke.js`是更新账本的程序示范。首先可以看到程序中构造请求的代码：
+```js
+var request = {
+  //targets: let default to the peer assigned to the client
+  chaincodeId: 'fabcar',
+  fcn: 'createCar',
+  args: ['CAR10', 'Chevy', 'Volt', 'Red', 'Nick'],
+  chainId: 'mychannel',
+  txId: tx_id
+};
+```
+在代码中通过调用链码`fabcar`的`createCar`函数，试图创建一个10号车(key是`CAR10`)。执行`invoke.js`：
+```
+$ node invoke.js
+Store path:/opt/fabric-samples/fabcar/hfc-key-store
+Successfully loaded user1 from persistence
+Assigning transaction_id:  1adb925d24db20816bcfc97f0216f3b094f3291778af775c1d07d0d3179a3031
+Transaction proposal was good
+Successfully sent Proposal and received ProposalResponse: Status - 200, message - "OK"
+info: [EventHub.js]: _connect - options {"grpc.max_receive_message_length":-1,"grpc.max_send_message_length":-1}
+The transaction has been committed on peer localhost:7053
+Send transaction promise and event listener promise have completed
+Successfully sent transaction to the orderer.
+Successfully committed the change to the ledger by the peer
+```
+从上面可以看到关于`ProposalResponse`的终端输出和promise(一个异步调用标准)。上文的`The transaction has been committed on peer localhost:7053`表示事务已经成功写到peer。下面可以回到`query.js`，将查询条件由`CAR4`改成`CAR10`：
+```js
+const request = {
+  //targets : --- letting this default to the peers assigned to the channel
+  chaincodeId: 'fabcar',
+  fcn: 'queryCar',
+  args: ['CAR10']
+};
+```
+重新执行`query.js`可以查询到最新添加的10号车的信息：
+```
+$ node query.js
+Response is  {"colour":"Red","make":"Chevy","model":"Volt","owner":"Nick"}
+```
+下面重新修改代码`invoke.js`。将函数`createCar`改成`changeCarOwner`，目的是把10号车的车主改成`Dave`：
+```js
+var request = {
+  //targets: let default to the peer assigned to the client
+  chaincodeId: 'fabcar',
+  fcn: 'changeCarOwner',
+  args: ['CAR10', 'Dave'],
+  chainId: 'mychannel',
+  txId: tx_id
+};
+```
+重新执行`invoke.js`和`query.js`，可以看到车主信息被从`Nick`改成了`Dave`。
+```
+$ node invoke.js
+$ node query.js
+Response is  {"colour":"Red","make":"Chevy","model":"Volt","owner":"Dave"}
+```
+本章主要讲应用开发，后面的章节会讲链码的开发。  
 ### 密钥生成器
 我们用`cryptogen`工具为不同的网络实体生成密码学文件。这些证书表达身份，对实体间通信和交易认证进行签名和验证。  
 Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，允许我们为组织以及属于组织的组件生成一系列证书和密钥。每个组织都会分配一个根证书(`ca-cert`)，该证书绑定特殊组件(peer和orderer)到组织。  
