@@ -745,7 +745,7 @@ Hyperledger Fabric API允许与区块链网络中的不同节点(peer、orderer�
 
 #### 建包
 有两个方法对链码打包。当链码具有多个拥有者时，它需要被多个身份签名。这需要我们首先建立一个签名的链码包(`SignedCDS`)，然后发给其他拥有者进行签名。
-简化流程是，当你部署的SignedCDS的签名者恰好是发起安装事务的到 that has only the signature of the identity of the node that is issuing the install transaction.
+简化流程是，当你部署的SignedCDS只有一个签名，而且签名者就是安装事务的发起者。（）
 
 
 
