@@ -765,12 +765,33 @@ $ peer chaincode package -n mycc -p github.com/hyperledger/fabric/examples/chain
 ```
 注意：当链码在一些通道实例化时，这个背书策略通过out-of-band确定MSP身份。如果实例化策略没有指定，默认策略是通道的任何MSP管理员。
 ```
+每个拥有者都对`ChaincodeDeploymentSpec`进行背书，背书方法是对CDS与拥有者身份（如证书）的组合结果进行签名。  
+一个链码拥有者使用下面的命令对以前创建的签名包进行签名：
+```
+$ peer chaincode signpackage ccpack.out signedccpack.out
+```
+`ccpack.out`和`signedccpack.out`分别是输入包和输出包。`signedccpack.out`中包含了一个对包的新增签名，签名使用了本地MSP。  
 
+#### 安装链码
+安装(`install`)事务按规定格式对链码的源码进行打包，这个格式称为`ChaincodeDeploymentSpec`（或称CDS），该事务将链码安装在将来要运行它的peer节点上。  
+```
+注意：你必须将链码安装在要运行链码的通道的每个背书peer节点上。  
+```
+当`install`API简单给予了一个`ChaincodeDeploymentSpec`，它将使用默认实例化策略和包含一个空的拥有者列表。  
+```
+注意：为了保证链码逻辑对网络上的其他成员保密，链码将仅安装在链码拥有者的背书peer节点上（可能存在一个或多个拥有者）。非拥有者成员，不能是链码事务的背书者；也就是，他们不能执行链码。然而，他们仍然可以验证和提交事务到账本。  
+```
+为了安装链码，发送一个[SignedProposal](https://github.com/hyperledger/fabric/blob/master/protos/peer/proposal.proto#L104)到会在[系统链码](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4noah.html#system-chaincode)一节中描述的`lifecycle system chaincode`(LSCC)。例如，使用CLI安装在[Simple Asset Chaincode](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html#simple-asset-chaincode)一节中描述的**sacc**示范链码时，命令如下：
+```
+$ peer chaincode install -n asset_mgmt -v 1.0 -p sacc
+```
+CLI内部为**sacc**创建一个`SignedChaincodeDeploymentSpec`，并发送它到本地peer，peer调用LSCC上的`Install`方法。`-p`选项指定了链码的路径，它必须位于用户`GOPATH`的源码树上，如`$GOPATH/src/sacc`。[CLI](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4noah.html#cli)一节有这个命令选项的详细描述。  
+请注意，为了安装在peer上，SignedProposal的签名必须来自peer的本地MSP管理员之一。  
 
+#### 实例化
+`instantiate`事务调用`lifecycle System Chaincode`(LSCC)在一个通道上创建和实例化某个链码。这是一个链码-通道绑定过程：一个链码可以绑定到任意数量的通道，独立和互不依赖地运行在每个通道上。换句话说，无论链码在多少个其他通道上安装和实例化，对于提交事务的通道状态是隔离的。  
 
-
-
-
+The instantiate transaction invokes the lifecycle System Chaincode (LSCC) to create and initialize a chaincode on a channel. This is a chaincode-channel binding process: a chaincode may be bound to any number of channels and operate on each channel individually and independently. In other words, regardless of how many other channels on which a chaincode might be installed and instantiated, state is kept isolated to the channel to which a transaction is submitted.
 
 
 ### 密钥生成器
