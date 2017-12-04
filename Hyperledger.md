@@ -1004,8 +1004,8 @@ EXPR(E[, E...])
 
 例如：  
 - `AND('Org1.member', 'Org2.member', 'Org3.member')` 要求三位身份分别签名  
-- OR('Org1.member', 'Org2.member') 两身份中任何一个签名都可以  
-- OR('Org1.member', AND('Org2.member', 'Org3.member')) 要求`Org1` MSP成员的一个签名，或`Org2`MSP成员和`Org3`MSP成员的分别签名  
+- `OR('Org1.member', 'Org2.member')` 两身份中任何一个签名都可以  
+- `OR('Org1.member', AND('Org2.member', 'Org3.member'))` 要求`Org1` MSP成员的一个签名，或`Org2`MSP成员和`Org3`MSP成员的分别签名  
 ### 定义链码的背书策略
 使用这个语言，链码部署者可以为某个链码指定特定策略。注意，默认策略是需要`DEFAULT`MSP成员的一个签名。用CLI实例化链码时，没有指定策略就使用默认策略。  
 实例化时用`-P`选项指定策略。例如：
