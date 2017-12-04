@@ -892,8 +892,46 @@ Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，
 - 两个`anchor peer transactions`，每个组织生成一个  
 关于`configtxgen`更多细节参考[Channel Configuration (configtxgen)](http://hyperledger-fabric.readthedocs.io/en/latest/configtxgen.html)。  
 
-## Membership Service Providers (MSP)
-[原文](http://hyperledger-fabric.readthedocs.io/en/latest/msp.html)  
+## 会员服务提供者(MSP)
+### MSP配置
+MSP的默认实现中，需要指定一组参数，用于身份(证书)验证和签名验证。这些参数在[RFC5280](http://www.ietf.org/rfc/rfc5280.txt)中描述。包括：
+- 一些自签名(X.509)证书，构成了信任根(root of trust)  
+- 一些X.509中间CA证书  
+- 一些X.509证书，代表MSP的管理员，管理员证书由某个信任根签署  
+- 一些这个MSP的OU证书  
+- 一些撤销证书(CRL)  
+- 一些自签名证书(X.509)，用于TLS
+- 一些X.509证书，表示中间TLS CA证书
+
+### 怎样生成MSP证书和密钥?
+1. 使用[Openssl](https://www.openssl.org/)。需要强调的是Fabric不支持RSA密钥证书。  
+2. 使用`cryptogen`工具，在[快速开始](http://hyperledger-fabric.readthedocs.io/en/latest/getting_started.html)中解释过。  
+3. 使用[Hyperledger Fabric CA](http://hyperledger-fabric-ca.readthedocs.io/en/latest/)也可以生成配置MSP的密钥和证书。  
+
+### 在peer&oderer端建立MSP
+为peer或oderer建立一个本地MSP，管理员需要创建一个文件夹(如`$MY_PATH/mspconfig`)，下面包含6个子文件夹和一个文件：  
+1. 一个`admincerts`文件夹，包含几个PEM文件，每个文件对应一个管理员证书  
+2. 一个`cacerts`文件夹，包含几个PEM文件，每个文件对应到一个根CA证书
+3. (可选)一个`intermediatecerts`文件夹，包含几个PEM文件，每个文件对应一个中间CA证书  
+4. (可选)一个`confi.yaml`文件，包含所考虑的OU的信息  
+5. (可选)一个`crls`文件夹，包含了撤销证书列表(CRL)  
+6. 一个`keystore`文件夹，包含一个PEM文件，是节点的签名密钥，不支持RSA密钥  
+7. 一个`signcerts`文件夹，包含一个PEM文件，是节点的X.509证书  
+8. (可选)一个`tlscacerts`文件夹，包含几个PEM文件，每个对应到一个TLS根CA证书  
+9. (可选)一个`tlsintermediatecerts`文件夹，包含几个PEM文件，每个对应一个中间TLS CA证书   
+
+在节点的配置文件中(对peer是core.yaml，对orderer是orderer.yaml)，需要指定到mspconfig文件夹的路径，和节点MSP的身份(Id)。到msconfig的路径是相对于FABRIC_CFG_PATH，对于peer由参数`mspConfigPath`的值定义，对于orderer由参数`LocalMSPDir`值定义。节点MSP的身份，对于peer由参数`localMspId`的值定义，对于orderer由参数`LocalMSPID`的值定义。  
+这些变量可以被环境变量覆盖，对于peer节点由前缀为CORE的环境变量覆盖(如CORE_PEER_LOCALMSPID)，对于orderer节点由前缀为ORDERER的环境变量覆盖(如ORDERER_GENERAL_LOCALMSPID)。  
+注意，对于建立orderer，需要生成和提供系统通道的创世区块(genesis block)到orderer节点。MSP配置对这个区块的需求在下一节讲到。  
+重新配置一个“本地”MSP只能手工进行，需要peer和orderer进程重启。在后续版本中，我们的目标是提供在线/动态重新配置（即使用一个用节点管理系统链码来避免停止节点）。
+
+### 通道MSP建立
+在创建系统时，需要指定出现在网络中的所有MSP的验证参数，并且包括在系统通道的创世区块中。回想一下前文讲到的组成MSP身份的MSP验证参数，信任证书的根、中间CA和管理员证书，还有OU规范和CRL。系统创世区块被提供给orderer（在orderer的创建阶段），允许它们认证通道创建请求。如果区块包括两个相同身份的MSP，oderer会拒绝，使网络自举失败。  
+对于应用通道，通道的创世区块包含了管理通道的MSP验证组件。我们强调这是应用的责任：确保在指示其一个或多个peer加入通道之前，通道的创世区块(或最新的配置区块)中包含了正确的MSP配置信息。  
+在使用`configtxgen`工具启动一个通道时，需要配置通道MSP，办法是将MSP的验证参数包含在`mspconfig`文件夹，有在`configtx.yaml`的相应章节设置文件夹路径。  
+重新配置通道的MSP，包括MSP的CA更新CRL公告，通过MSP的管理员证书之一的所有者创建`config_update`对象来实现。管理员管理的客户端应用会将这个更新广播到MSP出现的通道中。  
+
+### 最佳实践
 #### 组织与MSP映射
 1. 一个组织映射为一个MSP  
   其他可能：组织下的部门都映射到一个MSP；多个组织共用同一个MSP   
@@ -908,6 +946,8 @@ Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，
   将管理员证书和CA证书分离更安全。  
 5. CA和TLS CA
   MSP identity 根CA和MSP TLS 证书根CA需要放在不同目录下。
+6. CA和TLS CA
+  MSP身份的根CA河MSP TLS证书的根CA(和相关中间CA)需要放在不同的文件夹。这避免不同类型证书的冲突。虽然不禁止在MSP身份和TLS证书之间复用同一个CA，但最佳实践建议避免在生产系统中这样做。  
 
 ## 笔记
 ### 共识过程
