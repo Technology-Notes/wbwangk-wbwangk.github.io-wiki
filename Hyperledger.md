@@ -949,6 +949,9 @@ MSP的默认实现中，需要指定一组参数，用于身份(证书)验证和
 6. CA和TLS CA
   MSP身份的根CA河MSP TLS证书的根CA(和相关中间CA)需要放在不同的文件夹。这避免不同类型证书的冲突。虽然不禁止在MSP身份和TLS证书之间复用同一个CA，但最佳实践建议避免在生产系统中这样做。  
 
+## 通道配置(configtx)
+
+
 ## 笔记
 ### 共识过程
 [出处](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#12034)   
