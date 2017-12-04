@@ -790,8 +790,85 @@ CLI内部为**sacc**创建一个`SignedChaincodeDeploymentSpec`，并发送它�
 
 #### 实例化
 `instantiate`事务调用`lifecycle System Chaincode`(LSCC)在一个通道上创建和实例化某个链码。这是一个链码-通道绑定过程：一个链码可以绑定到任意数量的通道，独立和互不依赖地运行在每个通道上。换句话说，无论链码在多少个其他通道上安装和实例化，对于提交事务的通道状态是隔离的。  
+`instantiate`事务的创建者必须满足包含在SignedCDS中的链码实例化策略，必须还是通道的写入者（这是通道创建时的配置之一）。这对于通道安全很重要，可以阻止恶意实体部署链码和欺骗成员执行非绑定通道的链码。  
+例如，回想一下，默认实例化策略是任何通道MSP管理员，因此链码实例化事务的创建者必须是通道管理员的成员。交易提议到达背书者时，会根据实例化策略验证创建者的签名。在提交到账本之前，在交易验证期间再次执行此操作。  
+实例化事务还为通道上的链码建立了背书策略。背书策略描述了事务结果可以被通道成员接受的证据需求。  
+例如，使用CLI实例化**sacc**链码和用`john`和`0`初始化状态，命令如下：
+```
+$ peer chaincode instantiate -n sacc -v 1.0 -c '{"Args":["john","0"]}' -P "OR ('Org1.member','Org2.member')"
+```
+注意上面的背书策略(CLI使用波兰语表示法)，所有的**sacc**事务需要一个Org1成员或Org2成员的背书。就是说，为了事务生效，Org1或Org2需要对调用(Invoke)**sacc**的执行结果签名。  
+实例化成功后，通道中的链码进入活动状态，准备好处理任意[ENDORSER_TRANSACTION](https://github.com/hyperledger/fabric/blob/master/protos/common/common.proto#L42)类型的事务提议。当事务到达背书peer时，它们会被并发处理。  
+#### 版本更新
+链码可以在任何时间更新版本，版本是SignedCDS的组成部分。SignedCDS的其它部分，如拥有者和实例化策略是可选项。然而，链码名称必须相同，否则它会被视为完全不同的链码。  
+版本更新前，链码的新版本必须已经在背书者节点上安装。更新是一个类似于实例化的事务，它绑定新版本的链码到通道。绑定链码旧版本的通道仍然运行旧版本。话句话说，`upgrade`事务仅影响提交了更新事务的通道。  
+```
+注意，由于链码的多个版本可能同时有效，更新过程不会自动删除就版本，因此用户必须临时管理它。  
+```
+更新事务还是与`instantiate`事务由细微的不同：`upgrade`事务检查当前链码实例化策略，不是新策略(如果指定了策略)。这确保了只有在当前实例化策略中存在的成员才可以更新链码。  
+```
+注意，在更新时，链码的`Init`函数将被调用去执行相关数据更新或重新初始化，所以链码更新时要小心避免重置状态。
+```
+#### 停止和启动
+注意`stop`和`start`生命周期事务还没有被实现。然而，你可以手工停止链码，办法是从每个背书者peer删除链码容器和SingedCDS包。在每个运行背书peer节点的主机或虚机上删除链码容器，然后删除SignedCDS。  
+```
+(注意，为了从peer节点删除CDS，你需要先进入peer节点的容器。我们提供了干这个的工具脚本)
+$ docker rm -f <container id>
+$ rm /var/hyperledger/production/chaincodes/<ccname>:<ccversion>
+```
+停止在用于以受控方式进行升级的工作流程中是有用的，其中链码可以在发布升级之前在所有peer的信道上停止。  
+#### CLI
+```
+注意：我们正在评估是否发布平台专属Hyperledger Fabric peer二进制包。在此之前，你可以在一个docker容器中简单调用命令。
+```
+为了显示当前可用的CLI命令，在运行中的`fabric-peer`Docker容器中执行下列命令：
+```
+$ docker run -it hyperledger/fabric-peer bash
+(peer chaincode --help)
+```
+它将显示类似的以下输出：
+```
+Usage:
+  peer chaincode [command]
 
-The instantiate transaction invokes the lifecycle System Chaincode (LSCC) to create and initialize a chaincode on a channel. This is a chaincode-channel binding process: a chaincode may be bound to any number of channels and operate on each channel individually and independently. In other words, regardless of how many other channels on which a chaincode might be installed and instantiated, state is kept isolated to the channel to which a transaction is submitted.
+Available Commands:
+  install     Package the specified chaincode into a deployment spec and save it on the peer's path.
+  instantiate Deploy the specified chaincode to the network.
+  invoke      Invoke the specified chaincode.
+  list        Get the instantiated chaincodes on a channel or installed chaincodes on a peer.
+  package     Package the specified chaincode into a deployment spec.
+  query       Query using the specified chaincode.
+  signpackage Sign the specified chaincode package
+  upgrade     Upgrade chaincode.
+
+Flags:
+    --cafile string      Path to file containing PEM-encoded trusted certificate(s) for the ordering endpoint
+-h, --help               help for chaincode
+-o, --orderer string     Ordering service endpoint
+    --tls                Use TLS when communicating with the orderer endpoint
+    --transient string   Transient map of arguments in JSON encoding
+```
+为了方便在脚本式应用中使用，`peer`命令在失败事件中总是产生非零的返回码。  
+链码命令的例子：  
+```
+peer chaincode install -n mycc -v 0 -p path/to/my/chaincode/v0
+peer chaincode instantiate -n mycc -v 0 -c '{"Args":["a", "b", "c"]}' -C mychannel
+peer chaincode install -n mycc -v 1 -p path/to/my/chaincode/v1
+peer chaincode upgrade -n mycc -v 1 -c '{"Args":["d", "e", "f"]}' -C mychannel
+peer chaincode query -C mychannel -n mycc -c '{"Args":["query","e"]}'
+peer chaincode invoke -o orderer.example.com:7050  --tls --cafile $ORDERER_CA -C mychannel -n mycc -c '{"Args":["invoke","a","b","10"]}'
+```
+### 系统链码
+系统链码与普通链码具有相同的编程模型，知识它运行在peer进程中，而不是在隔离的容器中。因此，系统链码构建在peer可执行文件中，它不会遵循上述同样的生命周期。特别是，安装、实例化和版本更新不会用在系统链码上。  
+系统链码的目的是减少peer和链码间gRPC通信成本，和管理灵活性的折中。例如，系统链码只能与peer程序一起更新。它必须以一套固定参数注册，且不能有背书策略或背书策略函数。  
+Hyperledger Fabric中使用系统链代码来实现许多系统行为，以便系统集成商可以根据需要替换或修改它们。  
+当前系统链码的列表：  
+1. [LSCC](https://github.com/hyperledger/fabric/tree/master/core/scc/lscc) 生命周期系统链码，处理上述的生命周期请求。  
+2. [CSCC](https://github.com/hyperledger/fabric/tree/master/core/scc/cscc) 配置系统链码，处理peer端的通道配置。  
+3. [QSCC](https://github.com/hyperledger/fabric/tree/master/core/scc/qscc) 查询系统链码，提供账本查询API，例如获取区块和交易。  
+4. [ESCC](https://github.com/hyperledger/fabric/tree/master/core/scc/escc) 背书系统链码，通过签署交易提议响应来处理背书。  
+5. [VSCC](https://github.com/hyperledger/fabric/tree/master/core/scc/vscc) 验证系统链码，处理事务验证，包括检查背书策略和多版本并发控制。  
+更改或覆盖这些系统链码要小心，特别是LSCC、ESCC和VSCC，因为它们处在主事务的运行路径上。值得注意的是，VSCC将区块将提交到账本之前的验证，通道中的所有peer计算相同的验证以避免账本分歧（非确定性）是很重要的。因此，如果修改或更换VSCC，需要特别小心。  
 
 
 ### 密钥生成器
