@@ -393,7 +393,7 @@ Response is  {"colour":"Red","make":"Chevy","model":"Volt","owner":"Dave"}
 [官方原文](http://hyperledger-fabric.readthedocs.io/en/latest/chaincode.html)  
 链码是一个程序，用Go、Node.js编写(未来会支持其他语言，如Java)，实现了一个规定的接口。链码运行在安全的Docker容器中，隔离于背书peer过程。链码通过应用提交的事务来初始化和管理账本状态。  
 链码处理网络成员都同意的业务逻辑，所以它可以被认为是“智能合约”。链码创建的状态是不能直接被其他链码访问的（scoped）。但在同一个网络内（一般指通道？），通过适当的授权，一个链码可以调用其它链码而从访问它的状态。  
-我们提供了观看链码的两个不同视角，一个面向开发链码应用的开发者，另一个面向区块链网络的管理者，他会利用Hyperledger Fabric API去安装、实例化和更新链码，但不会涉及链码应用开发。  
+我们提供了观看链码的两个不同视角，一个面向开发链码应用的开发者，另一个面向区块链网络的管理者，他会利用Hyperledger Fabric API去安装、实例化和更新链码，但不会涉及链码应用开发（[链码教程:链码运维](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E9%93%BE%E7%A0%81%E6%95%99%E7%A8%8B%E9%93%BE%E7%A0%81%E8%BF%90%E7%BB%B4)）。  
 
 ## 链码教程:链码开发
 [原文](http://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html)    
@@ -414,7 +414,8 @@ type Chaincode interface {
 Fabric通过调用这些约定的函数来运行事务。在响应中通过调用这些方法来接收事务。当链码收到`instantiate`或`upgrade`事务时，`Init`方法会被调用，使链码可以执行必要的初始化，包括应用状态初始化。在响应中收到`invoke`事务时`Invoke`方法会被调用，使链码可以处理事务提议(proposal)。  
 链码的[“shim”](https://godoc.org/github.com/hyperledger/fabric/core/chaincode/shim)API中的另一个接口是`ChaincodeStub`[接口](http://godoc.org/github.com/hyperledger/fabric/core/chaincode/shim#ChaincodeStub))。它用于访问和修改账本，以及链码间的调用。  
 在这个教程中，我们将示范使用这些API实现一个简单链码应用，来管理简单“资产”。   
-#### 简单资产链码
+
+### 简单资产链码
 我们的应用是一个基本示范链码，用来在账本中创建资产(键值对)。  
 假定`GOPATH=/opt/gopath`，下面创建示范代码的工作目录：
 ```
