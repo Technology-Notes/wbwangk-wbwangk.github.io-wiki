@@ -768,9 +768,9 @@ $ peer chaincode package -n mycc -p github.com/hyperledger/fabric/examples/chain
  1. CDS包含的链码源码、名称和版本号。  
  2. 一个链码的实例化策略，表述为背书策略。  
  3. 链码拥有者列表，通过[背书](https://github.com/hyperledger/fabric/blob/master/protos/peer/proposal_response.proto#L111)定义。    
-```
-注意：当链码在一些通道实例化时，这个背书策略通过out-of-band确定MSP身份。如果实例化策略没有指定，默认策略是通道的任何MSP管理员。
-```
+
+*【注意】：当链码在一些通道实例化时，这个背书策略通过out-of-band确定MSP身份。如果实例化策略没有指定，默认策略是通道的任何MSP管理员。*  
+
 每个拥有者都对`ChaincodeDeploymentSpec`进行背书，背书方法是对CDS与拥有者身份（如证书）的组合结果进行签名。  
 一个链码拥有者使用下面的命令对以前创建的签名包进行签名：
 ```
@@ -780,13 +780,13 @@ $ peer chaincode signpackage ccpack.out signedccpack.out
 
 #### 安装链码
 安装(`install`)事务按规定格式对链码的源码进行打包，这个格式称为`ChaincodeDeploymentSpec`（或称CDS），该事务将链码安装在将来要运行它的peer节点上。  
-```
-注意：你必须将链码安装在要运行链码的通道的每个背书peer节点上。  
-```
+
+*【注意】：你必须将链码安装在要运行链码的通道的每个背书peer节点上。*  
+
 当`install`API简单给予了一个`ChaincodeDeploymentSpec`，它将使用默认实例化策略和包含一个空的拥有者列表。  
 
-*注意：为了保证链码逻辑对网络上的其他成员保密，链码将仅安装在链码拥有者的背书peer节点上（可能存在一个或多个拥有者）。非拥有者成员，不能是链码事务的背书者；也就是，他们不能执行链码。然而，他们仍然可以验证和提交事务到账本。  
-*
+*【注意】：为了保证链码逻辑对网络上的其他成员保密，链码将仅安装在链码拥有者的背书peer节点上（可能存在一个或多个拥有者）。非拥有者成员，不能是链码事务的背书者；也就是，他们不能执行链码。然而，他们仍然可以验证和提交事务到账本。*  
+
 为了安装链码，发送一个[SignedProposal](https://github.com/hyperledger/fabric/blob/master/protos/peer/proposal.proto#L104)到会在[系统链码](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4noah.html#system-chaincode)一节中描述的`lifecycle system chaincode`(LSCC)。例如，使用CLI安装在[Simple Asset Chaincode](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html#simple-asset-chaincode)一节中描述的**sacc**示范链码时，命令如下：
 ```
 $ peer chaincode install -n asset_mgmt -v 1.0 -p sacc
@@ -803,7 +803,7 @@ CLI内部为**sacc**创建一个`SignedChaincodeDeploymentSpec`，并发送它�
 ```
 $ peer chaincode instantiate -n sacc -v 1.0 -c '{"Args":["john","0"]}' -P "OR ('Org1.member','Org2.member')"
 ```
-注意上面的背书策略(CLI使用波兰语表示法)，所有的**sacc**事务需要一个Org1成员或Org2成员的背书。就是说，为了事务生效，Org1或Org2需要对调用(Invoke)**sacc**的执行结果签名。  
+*【注意】上面的背书策略(CLI使用波兰语表示法)，所有的**sacc**事务需要一个Org1成员或Org2成员的背书。就是说，为了事务生效，Org1或Org2需要对调用(Invoke)**sacc**的执行结果签名。*   
 实例化成功后，通道中的链码进入活动状态，准备好处理任意[ENDORSER_TRANSACTION](https://github.com/hyperledger/fabric/blob/master/protos/common/common.proto#L42)类型的事务提议。当事务到达背书peer时，它们会被并发处理。  
 #### 版本更新
 链码可以在任何时间更新版本，版本是SignedCDS的组成部分。SignedCDS的其它部分，如拥有者和实例化策略是可选项。然而，链码名称必须相同，否则它会被视为完全不同的链码。  
@@ -812,9 +812,9 @@ $ peer chaincode instantiate -n sacc -v 1.0 -c '{"Args":["john","0"]}' -P "OR ('
 注意，由于链码的多个版本可能同时有效，更新过程不会自动删除就版本，因此用户必须临时管理它。  
 ```
 更新事务还是与`instantiate`事务由细微的不同：`upgrade`事务检查当前链码实例化策略，不是新策略(如果指定了策略)。这确保了只有在当前实例化策略中存在的成员才可以更新链码。  
-```
-注意，在更新时，链码的`Init`函数将被调用去执行相关数据更新或重新初始化，所以链码更新时要小心避免重置状态。
-```
+
+*【注意】，在更新时，链码的`Init`函数将被调用去执行相关数据更新或重新初始化，所以链码更新时要小心避免重置状态。*  
+
 #### 停止和启动
 注意`stop`和`start`生命周期事务还没有被实现。然而，你可以手工停止链码，办法是从每个背书者peer删除链码容器和SingedCDS包。在每个运行背书peer节点的主机或虚机上删除链码容器，然后删除SignedCDS。  
 ```
@@ -824,9 +824,9 @@ $ rm /var/hyperledger/production/chaincodes/<ccname>:<ccversion>
 ```
 停止在用于以受控方式进行升级的工作流程中是有用的，其中链码可以在发布升级之前在所有peer的信道上停止。  
 #### CLI
-```
-注意：我们正在评估是否发布平台专属Hyperledger Fabric peer二进制包。在此之前，你可以在一个docker容器中简单调用命令。
-```
+
+*【注意】：我们正在评估是否发布平台专属Hyperledger Fabric peer二进制包。在此之前，你可以在一个docker容器中简单调用命令。*  
+
 为了显示当前可用的CLI命令，在运行中的`fabric-peer`Docker容器中执行下列命令：
 ```
 $ docker run -it hyperledger/fabric-peer bash
