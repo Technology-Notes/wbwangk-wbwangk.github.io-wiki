@@ -784,9 +784,9 @@ $ peer chaincode signpackage ccpack.out signedccpack.out
 注意：你必须将链码安装在要运行链码的通道的每个背书peer节点上。  
 ```
 当`install`API简单给予了一个`ChaincodeDeploymentSpec`，它将使用默认实例化策略和包含一个空的拥有者列表。  
-```
-注意：为了保证链码逻辑对网络上的其他成员保密，链码将仅安装在链码拥有者的背书peer节点上（可能存在一个或多个拥有者）。非拥有者成员，不能是链码事务的背书者；也就是，他们不能执行链码。然而，他们仍然可以验证和提交事务到账本。  
-```
+
+*注意：为了保证链码逻辑对网络上的其他成员保密，链码将仅安装在链码拥有者的背书peer节点上（可能存在一个或多个拥有者）。非拥有者成员，不能是链码事务的背书者；也就是，他们不能执行链码。然而，他们仍然可以验证和提交事务到账本。  
+*
 为了安装链码，发送一个[SignedProposal](https://github.com/hyperledger/fabric/blob/master/protos/peer/proposal.proto#L104)到会在[系统链码](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4noah.html#system-chaincode)一节中描述的`lifecycle system chaincode`(LSCC)。例如，使用CLI安装在[Simple Asset Chaincode](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html#simple-asset-chaincode)一节中描述的**sacc**示范链码时，命令如下：
 ```
 $ peer chaincode install -n asset_mgmt -v 1.0 -p sacc
