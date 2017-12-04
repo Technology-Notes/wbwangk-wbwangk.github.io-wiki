@@ -771,7 +771,7 @@ $ peer chaincode package -n mycc -p github.com/hyperledger/fabric/examples/chain
 
 *【注意】：当链码在一些通道实例化时，这个背书策略通过out-of-band确定MSP身份。如果实例化策略没有指定，默认策略是通道的任何MSP管理员。*  
 
-每个拥有者都对`ChaincodeDeploymentSpec`进行背书，背书方法是对CDS与拥有者身份（如证书）的组合结果进行签名。  
+每个拥有者都对`ChaincodeDeploymentSpec`进行背书，背书方法是对CDS与拥有者身份（如证书）的组合结果进行签名(算法：sign(ProposalResponse.payload + endorser))。  
 一个链码拥有者使用下面的命令对以前创建的签名包进行签名：
 ```
 $ peer chaincode signpackage ccpack.out signedccpack.out
@@ -785,13 +785,13 @@ $ peer chaincode signpackage ccpack.out signedccpack.out
 
 当`install`API简单给予了一个`ChaincodeDeploymentSpec`，它将使用默认实例化策略和包含一个空的拥有者列表。  
 
-*【注意】：为了保证链码逻辑对网络上的其他成员保密，链码将仅安装在链码拥有者的背书peer节点上（可能存在一个或多个拥有者）。非拥有者成员，不能是链码事务的背书者；也就是，他们不能执行链码。然而，他们仍然可以验证和提交事务到账本。*  
+*【注意】：为了保证链码逻辑对网络上的其他成员保密，链码只安装在链码拥有者的背书peer节点上（可能存在一个或多个拥有者）。哪些没有链码的成员，不能是链码事务的背书者；也就是说，他们不能执行链码。然而，他们仍然可以验证和提交事务到账本。*  
 
-为了安装链码，发送一个[SignedProposal](https://github.com/hyperledger/fabric/blob/master/protos/peer/proposal.proto#L104)到会在[系统链码](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4noah.html#system-chaincode)一节中描述的`lifecycle system chaincode`(LSCC)。例如，使用CLI安装在[Simple Asset Chaincode](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4ade.html#simple-asset-chaincode)一节中描述的**sacc**示范链码时，命令如下：
+为了安装链码，发送一个[SignedProposal](https://github.com/hyperledger/fabric/blob/master/protos/peer/proposal.proto#L104)到`lifecycle system chaincode`(LSCC)(LSCC会在[系统链码](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E7%B3%BB%E7%BB%9F%E9%93%BE%E7%A0%81)一节中描述)。例如，使用CLI安装**sacc**示范链码（前文在“链码教程:链码开发-[调试与测试](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E8%B0%83%E8%AF%95%E4%B8%8E%E6%B5%8B%E8%AF%95)”一节中描述过）的命令如下：
 ```
-$ peer chaincode install -n asset_mgmt -v 1.0 -p sacc
+$ peer chaincode install -p chaincodedev/chaincode/sacc -n mycc -v 0
 ```
-CLI内部为**sacc**创建一个`SignedChaincodeDeploymentSpec`，并发送它到本地peer，peer调用LSCC上的`Install`方法。`-p`选项指定了链码的路径，它必须位于用户`GOPATH`的源码树上，如`$GOPATH/src/sacc`。[CLI](https://hyperledger-fabric.readthedocs.io/en/latest/chaincode4noah.html#cli)一节有这个命令选项的详细描述。  
+CLI内部为**sacc**创建一个`SignedChaincodeDeploymentSpec`，并发送它到本地peer，peer调用LSCC上的`Install`方法。`-p`选项指定了链码的路径，它必须位于用户`GOPATH`的源码树上，如`$GOPATH/src/sacc`。[CLI](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#cli)一节有这个命令选项的详细描述。  
 请注意，为了安装在peer上，SignedProposal的签名必须来自peer的本地MSP管理员之一。  
 
 #### 实例化
