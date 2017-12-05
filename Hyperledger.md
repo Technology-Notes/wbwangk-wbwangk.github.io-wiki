@@ -1081,6 +1081,11 @@ peer还可以担当**背书peer**的特殊角色(或称**endorser**)。背书pee
 **2.1.2 消息模式**  
 
 #### 2.2 背书peer模拟一个事务并生成一个背书签名  
+从客户端收到`<PROPOSE,tx,[anchor]>`消息后，背书peer`epID`首先验证客户端签名`clientSig`，然后模拟一个事务。如果客户端指定了`anchor`，则背书peer模拟事务的方法是，在本地KVS中读取与版本号`anchor`相匹配的keys。  
+模拟一个事务包括背书peer临时性执行一个事务(`txPayload`)（调用事务中`chaincodeID`指定的链码）和背书peer本地保存的状态副本。（用状态副本和临时事务可以得到一个临时的新状态）  
+作为执行的结果，背书peer计算*读版本依赖*(`readset`)和*状态更新*(`writeset`)，在数据库语言中也叫*MVCC+postimage info*。  
+
+
 
 
 ## 笔记
