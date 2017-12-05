@@ -1074,7 +1074,7 @@ peer还可以担当**背书peer**的特殊角色(或称**endorser**)。背书pee
 
 ### 2.事务背书的基本流程
 #### 2.1 客户端创建一个事务并将它发送到选择的背书peers  
-为了调用一个事务，客户端发送一个`PROPOSE`消息给它所选择的一组背书peer（可能不是同一时间 - 见2.1.2节和2.3节）。对于给定的`chaincodeID`客户端根据背书策略(看第3节)可以获得一组背书peer。例如，根据给定`chiancodeID`事务可以发送给所有背书peer。也就是说，一些背书人可能会离线，其他人可能会反对并选择不赞成事务。提交客户端利用目前可用的背书节点尝试满足策略表达式的要求。  
+为了调用一个事务，客户端发送一个`PROPOSE`消息给它所选择的一组背书peer（可能不是同一时间 - 见2.1.2节和2.3节）。对于给定的`chaincodeID`客户端根据背书策略(看第3节)可以获得一组背书peer。例如，根据给定`chiancodeID`事务可以发送给所有背书peer。也就是说，一些背书人可能会离线，其他人可能会反对并选择不赞成事务。发起客户端利用目前可用的背书节点尝试满足策略表达式的要求。  
 
 接下来，我们首先详细描述PROPOSE消息格式，然后讨论提交客户端和背书人之间可能的交互模式。  
 **2.1.1 PROPOSE消息格式**  
@@ -1088,8 +1088,16 @@ peer还可以担当**背书peer**的特殊角色(或称**endorser**)。背书pee
 - 在背书peer执行事务前，给定状态`s`，对于事务读取的每个key`k`，键值对`(k,s(k).version)`被添加到`readset`。  
 - 此外，对于每个key`k`事务更新为新值`v'`，键值对`(k,v')`被添加到`writeset`。或者，`v'`可能是以前值(`s(k).value`)的新值的增量。  
 
+如果客户端在`PROPOSE`消息中指定了`anchor`，则客户端指定的`anchor`必须等于背书peer模拟事务时产生的`readset`。  
+然后，peer将内部`tran-proposal`（即`tx`）转发作为其背书事务逻辑的组成部分，称为**背书逻辑**。默认情况下，peer中的背书逻辑接受`tran-proposal`并简单地签名`tran-proposal`。然而，背书逻辑可能解释任意函数，例如，用`tran-proposal`和`tx`作为输入与遗留系统交互来判断是否批准事务。  
+如果背书逻辑决定对一个事务进行背书，它发送`<TRANSACTION-ENDORSED, tid, tran-proposal,epSig>`消息到发起客户端(`tx.clientID`)，这里：
+- `tran-proposal := (epID,tid,chaincodeID,txContentBlob,readset,writeset)`，`txContentBlob`是链码/事务指定信息。  
+- `epSig`是背书peer在`tran-proposal`上的签名  
 
+另外，如果背书逻辑拒绝对事务签名，背书界面会发送一个`(TRANSACTION-INVALID, tid, REJECTED)`消息到发起客户端。  
+注意，背书节点在这一步不会修改状态，因事务模拟而生成的更新不会影响状态。  
 
+#### 2.3 
 
 ## 笔记
 ### 共识过程
