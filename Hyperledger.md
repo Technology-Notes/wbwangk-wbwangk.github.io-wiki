@@ -1,68 +1,56 @@
 ## Hyperledger概述
 ### 什么是区块链
 #### 一个分布式账本
-所有交易数据被保存到账本中。账本中的记录只能增加，不能修改。所有节点(Peer)都保存了一份交易数据的全部。每间隔一定时间或交易量达到一定数量，形成一个区块(Block)。区块一旦形成就不能修改。多个区块顺序链接在一起形成区块链。  
+所有事务数据被保存到账本中。账本中的记录只能增加，不能修改。所有节点(Peer)都保存了事务数据的完整副本。每间隔一定时间或交易量达到一定数量，形成一个区块(Block)。区块一旦形成就不能修改。多个区块顺序链接在一起形成区块链。  
 （把一段时间内生成的信息（包括数据或代码）打包成一个区块，盖上时间戳，与上一个区块衔接在一起，每下一个区块的页首都包含了上一个区块的索引数据，然后再在本页中写入新的信息，从而形成新的区块，首尾相连，最终形成了区块链。）  
 事务日志保存到区块链中（有点像数据库日志），账本的当前状态体现在世界状态中。世界状态保存在NoSQL数据库中，如Leveldb、Couchdb。  
-#### 智能合约
-为了支持信息的一致性更新，区块链网络使用智能合约来提供对账本的受控访问。  
-智能合约不仅封装信息，并使其在整个网络中保持简单的关键机制，还可以写入智能合约以允许参与者自动执行交易的某些方面。  
-例如，可以写一个智能合约来规定运输项目的成本，这个成本取决于何时到达。根据双方同意并写入账本的条款，当收到物料时，适当的资金自动转账。  
-智能合约的实现，在Hyperldedger中叫链码(chaincode)。  
-Chaincode，也称为智能合同，是封装用于创建和修改资产的业务逻辑和事务处理指令的软件。当外部应用程序需要与账本交互时，它需要调用链码。在大多数情况下，链码仅与账本的的数据库组件-世界状态（例如查询）交互，而不是与交易日志(区块链)交互。  
-Chaincode可以用几种编程语言来实现。当前支持的链式代码语言是Go和node.js，支持未来发行版中的Java和其他语言。  
+#### 智能合约(smart contract)
+在Hyperldedger Fabric中链码(chaincode)和智能合约(smart contract)是一个意思。  
+链码是封装用于创建和修改资产的业务逻辑和事务处理指令的软件。当外部应用程序需要与账本交互时，它需要调用链码。在大多数情况下，链码仅与账本的的数据库组件-世界状态（例如查询）交互，而不是与事务日志(区块链)交互。  
+链码可以用几种编程语言来实现。当前支持的链式代码语言是Go和node.js，支持未来发行版中的Java和其他语言。  
 Hyperledger Fabric支持私有网络（使用通道）。每个节点（参与者或称成员）可以加入多个通道，通道内的节点同享同一个账本。  
 具有正确权限的用户可以轻松地安装和实例化通道的链式代码，并查看是谁在他们参与的渠道中，恰当授权的用户可以根据所建立的区块链网络的策略调用链码，创建新的通道，甚至更新通道的访问权限。  
 #### 共识
 在整个网络中保持账本交易同步的过程 - 确保账本只有在交易得到适当的参与者批准时才会更新，而且当账本更新时，它们以相同的顺序更新相同的交易 - 被称为共识。  
-现在，将区块链视为一个共享的，复制的交易系统就足够了，该系统通过智能合约进行更新，并通过一个称为共识的协作过程保持一致的同步。  
-交易必须按照发生的顺序写入账本。共识算法有很多。例如，PBFT（Practical Byzantine Fault Tolerance）可以提供文件副本相互通信的机制，以保持每个副本的一致性，即使在发生损坏的情况下也是如此。  
+现在，将区块链视为一个共享的，复制的事务系统就足够了，该系统通过智能合约进行更新，并通过一个称为共识的协作过程保持一致的同步。  
+事务必须按照发生的顺序写入账本。共识算法有很多。例如，PBFT（Practical Byzantine Fault Tolerance）可以提供文件副本相互通信的机制，以保持每个副本的一致性，即使在发生损坏的情况下也是如此。  
 Hyperledger Fabric被设计为允许网络发起者（指通道建立者？）选择最能代表参与者之间存在关系的共识机制。与隐私一样，还有一系列需求。从具有高度结构化的关系网络到更加对等的网络。  
 我们将更多地了解Hyperledger Fabric共识机制，目前包括SOLO和Kafka，并且很快将扩展到SBFT（简化的拜占庭容错）。  
 
-### 区块链有什么用
-传统信息系统，参与者的私有被用来更新他们的私有账本。而区块链系统，是共享程序来更新共享账本。共享程序指出智能合约(链码)，因为智能合约的实现程序源码也要在区块链网络中被传播和复制，并保存在每个参与者节点。  
-
 ### Hyperledger Projects
 5个主项目：Cello、Fabric(Golang)、SawtoothLake(Python)、Iroha、Blockchain Explorer  
-#### Fabric
-区块链技术的⼀个实现  
-Golang  
-#### STL-SawtoothLake
-⾼度模块化的分布式账本平台 
-Python  
-• PoET consensus  
-• Transaction Families  
-• Scalability  
-#### Iroha
-轻量级的分布式账本， 侧重于移动  
-C++  
-• C++ environment  
-• Mobile and Web application Support  
-• Sumeragi consensus  
-#### Blockchain Explorer
-展⽰和查询区块链块、事务和相关数据的Web应⽤  
-Node.js，UI to interact with ledger，Under-development  
-• Web UI to explorer a blockchain  
-• Single-Page	Application  
-#### Cello
-BaaS的⼯具集，帮助创建、管理、终⽌区块链  
-Blockchain as a Service  
-Python,JavaScript  
+- Fabric  
+    区块链技术的⼀个实现(Golang)  
+- STL-SawtoothLake  
+    ⾼度模块化的分布式账本平台（Python）  
+    PoET consensus、Transaction Families、Scalability    
+- Iroha  
+    轻量级的分布式账本， 侧重于移动(C++)
+- Blockchain Explorer
+    展⽰和查询区块链块、事务和相关数据的Web应⽤(node.js)    
+    UI to interact with ledger，Under-development  
+- Cello
+    BaaS的⼯具集，帮助创建、管理、终⽌区块链(Blockchain as a Service)  
 
 ### Fabric
 Hyperledger Fabric网络的成员通过成员资格服务提供商（MSP）注册，而不是一个允许未知身份参与网络的开放式无权限系统（需要证明工作证明的协议来验证交易和保护网络）。
 Hyperledger Fabric还提供了创建**通道**的能力，允许一组参与者创建单独的交易账本。用通道来控制访问账本的权限。账本可以加入通道，参与者也可以加入通道。对于一个通道，里面的参与者可以“看到”里面的账本。  
 #### 成员管理(Membership)
 会员注册、⾝份保护、 内容保密、交易审计功能，以保证平台访问的安全性。  
+在Hyperledger Fabric中，每个参与者（客户端，peer，oderer）都属于某个组织。  
+组织拥有CA，为其成员（客户端，peer，oderer）提供证书，以便向其他人或其他组织认证自己。  
+交易方持有多种类型的证书，交易不同环节将使用如下这些类型的证书：  
+- 注册证书(Enrollment Cert)。用于验证使用者身份，永不过期
+- 事务证书(Transaction Cert)。每个交易时生成，用于交易的签名  
+- 通信证书(TLS-Cert)，用于通信通道加密，永不过期  
 
 #### 区块服务（BlockChain&Transaction)
 负责节点间的共识管理、账本的分布式计算、账本的存储以及节点间的P2P协议功能的实现，是区块链的核⼼组成部分，为区块链的主体功能提供了底层⽀撑。  
-#### ChainCode
-chaincode即智能合约(smart contract)。该模块为ChainCode提供安全的部署、运⾏的环境。  
+#### 链码(ChainCode)
+chaincode即智能合约(smart contract)。该模块为链码提供安全的部署、运⾏的环境。  
 #### Event
 贯穿于其他各个组件中间，为各个组件间的异步通信提供了技术实现。  
-### shared ledger
+### 账本
 由两个组件组成：世界状态和事务日志。  
 账本提供了一个所有状态变化的历史记录。它可以是一个业务的系统记录。每个Hyperledger Fabric网络的参与者都拥有账本的副本（网络指通道）。  
 **区块账本(Block ledger)**  
@@ -75,28 +63,11 @@ chaincode即智能合约(smart contract)。该模块为ChainCode提供安全的�
    如GetState(), PutState(), GetStateByRange()等等  
  - 保存在所有提交者节点  
 **历史账本**  
- - 保存所有链码事务的顺序历史记录  
-   如updateOwner(from=John, to=Anthony); updateOwner (from=Anthony, to=Daisy);等等  
- - 索引保存在KVS，开发者通过链码API访问  
-   如GetHistoryForKey()  
+ - 保存所有链码事务的顺序历史记录。索引保存在KVS，开发者通过链码API访问  
  - 保存在所有提交者节点  
-
-### 隐私与安全
-交易方持有多种类型的证书，交易不同环节将使用如下这些类型的证书：  
-• E-Cert（Enrollment Cert）  
-  – 长期持有，携带或可以追溯使用者信息  
-  – 用于身份认证  
-• T-Cert（Transaction Cert）  
-  – 每个交易时生成，用于交易的签名  
-• TLS-Cert，长期持有，主要用于SSL/TLS通讯  
-#### 组织
-在Hyperledger Fabric中，每个参与者（客户端，peer，oderer）都属于某个组织。  
-组织拥有CA，为其成员（客户端，peer，oderer）提供证书，以便向其他人或其他组织认证自己。  
-它还提供了一种将参与者聚集在一起的简单方法，以便定义跨多个客户端，peer和oderer的访问控制规则，而不必为每个参与者单独定义。组织还可以通过发送CRL到组织参与的每个通道，来撤消其成员。  
-
  
-(/e/vagrant10/ambari-agrant/fabric/devenv)  
-## vagrant VM
+## 开发环境(vagrant)
+(/e/vagrant10/ambari-agrant/fabric/devenv)   
 fabric官方库提供了一个Vagrantfile，是个ubuntu16的环境，供开发调试用。如何想在一个空linux下手工安装，可以参考[Fabri Getting Started](http://hyperledger-fabric.readthedocs.io/en/latest/getting_started.html)。   
   
 在windows下启动git bash，然后克隆fabric库：
