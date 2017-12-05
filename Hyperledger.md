@@ -1098,8 +1098,7 @@ peer还可以担当**背书peer**的特殊角色(或称**endorser**)。背书pee
 
 (省略一些)
 
-## 笔记
-### 共识过程
+### 共识过程(视频截图)
 [出处](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#12034)   
 - Committing Peer  
   Maintains Ledger and state. Commits Transactions. May hold smart contract(chaincode).  
