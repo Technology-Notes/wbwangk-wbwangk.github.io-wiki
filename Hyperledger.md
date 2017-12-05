@@ -1122,9 +1122,49 @@ step 7/7 - notify transaction:
 ![](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/images/fabric_transaction7.jpg)  
 
 Transactions typically follow a seven-step process to become a block on the chain.
+## 术语
+#### 区块链网络
+区块链网络至少由一个peer（负责批准和提交事务）、一个排序服务和成员服务组件（CA，分发和撤销代表用户身份和权限的加密证书）组成。  
+
+#### Peer
+peer是一个组件，负责执行事务和维护账本。peer有两种角色，endorser和committer。架构被设计成peer总是一个提交者，但不一定是背书者。peer在排序事务中不起作用。  
+
+#### 成员
+成员是在区块链网络中维护组件（Peers，Orderers和应用程序）的参与者（例如公司或组织）。成员通过其CA证书进行标识（即注册证书）。最终用户会利用会员的peer在特定的通道上执行事务操作。  
+
+#### 事务
+指被授权的最终用户对账本进行读/写的操作。有三种的事务类型 - 部署，调用和查询。  
+
+#### 最终用户
+最终用户是通过一组发布的API（即hfc SDK）与区块链交互的人。可以设置一个管理员用户，他通常将权限授予成员组件，而客户端用户通过管理员用户进行适当的身份验证，可以在各种通道上驱动链码应用程序（部署，调用，查询）。在自动执行事务的情况下，应用程序本身也可以被认为是最终用户。  
+
+#### 排序服务
+一个集中或非几种的服务，对区块中事务进行排序。您可以选择“排序”功能的不同实现方式 - 例如：简化和测试的“solo”，用于碰撞容错的Kafka，或用于拜占庭容错的sBFT/PBFT。您也可以开发自己的协议来插入服务。  
+
+#### 共识
+贯穿整个事务流程的一个更广泛的术语，用来按顺序生成一致性并确认按一组事务构组成区块的正确性。  
+
+#### 排序者(Orderer)
+构成排序服务的网络实体之一。一个排序服务节点（OSN）的集合，用来将事务排序进区块。在“独奏”的情况下，只需要一个OSN。事务被“广播”给排序者，然后作为区块“交付”到适当的通道。  
+
+#### 背书者(Endorser)
+一个特定的peer角色，背书peer负责模拟事务，并且防止不稳定或不确定的事务通过网络。事务以事务提议的形式发送给背书者。所有的背书peer同时也是committer peer（即他们写账本）。  
+
+#### 提交者(Committer)  
+一个特定的peer角色，负责将有效事务写入某通道的账本。一个peer可以同时充当背书者和提交者，当很多时候只是充当提交者。  
+
+#### 引导(Bootstrap)
+对等网络的引导，在这个对等网络中，参与者之间传播策略，系统链接代码和密码资料（证书），以及订购网络的引导。订购网络的启动必须在对等网络的引导之前，因为对等网络取决于订购服务的存在。网络只需要“自举”一次。
+
+块
+一批有序的交易，可能包含无效性质的交易，交付给同行进行验证和交付。
+
+
+
 ## 备忘
 [Hyperledger Composer](https://hyperledger.org/projects/composer)  
 [Hyperledger Composer教程](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#11982)，含composer的安装。  
+[另一个官方文档](http://fabrictestdocs.readthedocs.io/en/latest/glossary.html)  
 ### 问题
 #### VM翻墙问题
 ```
