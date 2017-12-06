@@ -922,14 +922,17 @@ MSP的默认实现中，需要指定一组参数，用于身份(证书)验证和
   MSP身份的根CA河MSP TLS证书的根CA(和相关中间CA)需要放在不同的文件夹。这避免不同类型证书的冲突。虽然不禁止在MSP身份和TLS证书之间复用同一个CA，但最佳实践建议避免在生产系统中这样做。  
 
 ## 通道配置(configtx)
-Hyperledger Fabric区块链网络的共享配置被保存在一个集合配置事务中，每个通道一个。每个配置事务通常通过configtx短名称引用。  
+Hyperledger Fabric区块链网络的共享配置被保存在一个配置事务集合中，每个通道一个计划。每个配置事务通常叫做**configtx**。  
 通道配置有如下重要属性：
 1. 版本(**Versioned**)：配置的所有元素都有一个关联的版本，每次修改都会更新。此外，每次更新配置都会收到一个顺序号。  
 2. 权限(**Permissioned**)：配置的每个元素有一个关联的策略，用于管理是否允许对该元素进行修改。任何拥有以前configtx副本（并且没有其他信息）的人都可以根据这些策略验证新配置的有效性。
 3. 层次(**Hierarchical**)：根配置组包含子组，每个层次组都有关联的值和策略。这些政策可以利用层次结构从下层策略中推导出一个层次的策略。
-解剖一个配置
+### 解剖一个配置
+配置被保存在区块的一个类型为`HeaderType_CONFIG`的事务中，该区块中没有其他事务。这些区块被称为**配置区块**，第一个区块被称为**创世区块**(Genesis Block)。  
+配置的原型结构存储在`fabric/protos/common/configtx.proto`。
+
 ### 排序系统通道配置
-排序系统通道需要定义排序参数，和创建通道的合伙人。对一个排序服务必须有一个排序系统通道，它是创建的第一个通道（指自举时）。推荐不要在排序系统通道的创世配置中定义应用段，但可以在测试时这样做。注意，对排序系统通道具有读权限的成员可以看到所有通道的创建，所以这个通道的访问权限需要严格控制。  
+排序系统通道需要定义排序参数，和创建通道的合伙人。对一个排序服务必须有一个排序系统通道，它是创建的第一个通道（指引导时）。推荐不要在排序系统通道的创世配置中定义应用段，但可以在测试时这样做。注意，对排序系统通道具有读权限的成员可以看到所有通道的创建，所以这个通道的访问权限需要严格控制。  
 
 ### 应用通道配置
 通道的应用配置设计用于应用类型的事务。它的定义类似于：
@@ -954,6 +957,24 @@ Hyperledger Fabric区块链网络的共享配置被保存在一个集合配置�
 1. 排序节点对通道创建请求的合伙人身份进行验证。它通过查看顶层group的`Consortium`值来验证。  
 2. 
 ## 通道配置(configtxgen)
+本文档介绍了`configtxgen`用于操作Hyperledger Fabric通道配置的实用程序的用法。
+
+目前，该工具主要侧重于生成用于引导orderer的创世区块，但是将来要增强生成新的通道配置以及重新配置现有通道。  
+
+### 引导orderer
+```
+$ configtxgen -profile <profile_name> -outputBlock orderer_genesisblock.pb
+```
+将在当面目录下创建一个`orderer_genesisblock.pb`文件。这个创世区块被用于引导排序系统通道，该通道被orderer用于授权和编排其他通道的创建。默认情况下，由`configtxgen`生成，编码进创世区块的通道ID是`testchainid`。  
+
+为了利用生成的创世区块，在启动orderer之前，需要设定环境变量：
+```
+ORDERER_GENERAL_GENESISMETHOD=file
+ORDERER_GENERAL_GENESISFILE=$PWD/orderer_genesisblock.pb
+```
+或者修改配置文件orderer.yaml，将上述值包含进文件中。  
+
+### 创建一个通道
 
 ## 背书策略
 [原文](http://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html)  
