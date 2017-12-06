@@ -975,6 +975,25 @@ ORDERER_GENERAL_GENESISFILE=$PWD/orderer_genesisblock.pb
 或者修改配置文件orderer.yaml，将上述值包含进文件中。  
 
 ### 创建一个通道
+```
+$ configtxgen -profile <profile_name> -channelID <channel_name> -outputCreateChannelTx <tx_filename>
+```
+这将输出一个`Envelope`消息并广播出去来创建一个通道。  
+### 显示一个配置
+除了能够生成配置，`configtxgen`工具还有查看配置的能力。  
+它支持查看配置区块和配置事务。可以分别使用查看标志`-inspectBlock`和`-inspectChannelCreateTx`并在后面附加文件路径来输出一个JSON串来显示配置信息。  
+还可以对查看标志进行组合，例如：
+```
+$ configtxgen -channelID foo -outputBlock foo_genesisblock.pb -inspectBlock foo_genesisblock.pb
+2017-11-02 17:56:04.489 EDT [common/tools/configtxgen] main -> INFO 001 Loading configuration
+2017-11-02 17:56:04.564 EDT [common/tools/configtxgen] doOutputBlock -> INFO 002 Generating genesis block
+2017-11-02 17:56:04.564 EDT [common/tools/configtxgen] doOutputBlock -> INFO 003 Writing genesis block
+2017-11-02 17:56:04.564 EDT [common/tools/configtxgen] doInspectBlock -> INFO 004 Inspecting block
+2017-11-02 17:56:04.564 EDT [common/tools/configtxgen] doInspectBlock -> INFO 005 Parsing genesis block
+(json略)
+```
+上述命令先生成区块，再显示它。  
+
 
 ## 背书策略
 [原文](http://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html)  
