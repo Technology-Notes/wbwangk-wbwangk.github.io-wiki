@@ -1,5 +1,18 @@
-## 会员服务提供者(MSP)
+## 成员服务提供者(MSP)
+本文提供了有关MSP的设置和最佳实践的详细信息。
+
+成员服务提供商（MSP）是一个旨在提供成员维护体系结构抽象的组件。
+
+特别是，MSP将发布和验证证书背后的所有密码学机制和协议以及用户认证抽象出来。MSP可以定义他们自己的身份概念，以及这些身份管理（身份验证）和认证（签名生成和验证）的规则。
+
+Hyperledger Fabric区块链网络可以由一个或多个MSP管理。这提供了成员资格维护的模块化，以及跨不同成员标准和体系结构的互操作性。
+
+在本文的其余部分中，我们将详细介绍由Hyperledger Fabric支持的MSP实现的设置，并讨论关于其使用的最佳实践。
+
 ### MSP配置
+要创建一个MSP实例，需要在每个peer和orderer的本地指定其配置。
+
+首先，对于每一个MSP名称需要以引用MSP在网络中指定（例如msp1，org2和org3.divA）。这个名称代表一个组织或组织单元(OU)，通道中会引用这个名称。这也被称为MSP标识符或MSP ID。MSP标识符在每个MSP实例中必须唯一的。
 MSP的默认实现中，需要指定一组参数，用于身份(证书)验证和签名验证。这些参数在[RFC5280](http://www.ietf.org/rfc/rfc5280.txt)中描述。包括：
 - 一些自签名(X.509)证书，构成了信任根(root of trust)  
 - 一些X.509中间CA证书  
@@ -19,7 +32,7 @@ MSP的默认实现中，需要指定一组参数，用于身份(证书)验证和
 1. 一个`admincerts`文件夹，包含几个PEM文件，每个文件对应一个管理员证书  
 2. 一个`cacerts`文件夹，包含几个PEM文件，每个文件对应到一个根CA证书
 3. (可选)一个`intermediatecerts`文件夹，包含几个PEM文件，每个文件对应一个中间CA证书  
-4. (可选)一个`confi.yaml`文件，包含所考虑的OU的信息  
+4. (可选)一个`config.yaml`文件，包含所考虑的OU的信息  
 5. (可选)一个`crls`文件夹，包含了撤销证书列表(CRL)  
 6. 一个`keystore`文件夹，包含一个PEM文件，是节点的签名密钥，不支持RSA密钥  
 7. 一个`signcerts`文件夹，包含一个PEM文件，是节点的X.509证书  
@@ -36,24 +49,6 @@ MSP的默认实现中，需要指定一组参数，用于身份(证书)验证和
 对于应用通道，通道的创世区块包含了管理通道的MSP验证组件。我们强调这是应用的责任：确保在指示其一个或多个peer加入通道之前，通道的创世区块(或最新的配置区块)中包含了正确的MSP配置信息。  
 在使用`configtxgen`工具启动一个通道时，需要配置通道MSP，办法是将MSP的验证参数包含在`mspconfig`文件夹，有在`configtx.yaml`的相应章节设置文件夹路径。  
 重新配置通道的MSP，包括MSP的CA更新CRL公告，通过MSP的管理员证书之一的所有者创建`config_update`对象来实现。管理员管理的客户端应用会将这个更新广播到MSP出现的通道中。  
-
-### 最佳实践
-#### 组织与MSP映射
-1. 一个组织映射为一个MSP  
-  其他可能：组织下的部门都映射到一个MSP；多个组织共用同一个MSP   
-2. 组织下有多个部门(OU)，各部门访问不同的通道  
-  有两种可能的选择：  
-  1) 定义一个MSP容纳组织的所有成员  
-     配置MSP由一系列的根证书、中间证书和管理员证书组成，成员identity包含他所属的部门(OU)。策略将使用这一OU，这些策略包括对通道的读写策略，或对链码的背书策略。  
-  2) 为每个OU定义一个MSP  
-3. 隔离同一组织下的peer  
-  在这一需求下，各peer为自己背书？  
-4. 管理员和CA证书  
-  将管理员证书和CA证书分离更安全。  
-5. CA和TLS CA
-  MSP identity 根CA和MSP TLS 证书根CA需要放在不同目录下。
-6. CA和TLS CA
-  MSP身份的根CA河MSP TLS证书的根CA(和相关中间CA)需要放在不同的文件夹。这避免不同类型证书的冲突。虽然不禁止在MSP身份和TLS证书之间复用同一个CA，但最佳实践建议避免在生产系统中这样做。  
 
 ## 通道配置(configtx)
 Hyperledger Fabric区块链网络的共享配置被保存在一个配置事务集合中，每个通道一个计划。每个配置事务通常叫做**configtx**。  
@@ -272,3 +267,55 @@ peer还可以担当**背书peer**的特殊角色(或称**endorser**)。背书pee
 形式上，背书策略是对背书的一个判断，并可能进一步陈述评估为“真”或“假”。对于部署事务，根据系统范围的策略（例如从系统链码）获得背书。
 
 (省略一些)
+
+# Fabric实战
+
+## MSP配置(cryptogen)
+要运行cryptogen，需要一个指定一个配置文件`crypto-config.yaml`，如：
+```
+$ cd /opt/fabric-samples/first-network
+$ cryptogen generate --config=./crypto-config.yaml
+```
+执行后，会在当前目录下创建一个`crypto-config`文件夹。`crypto-config`文件夹的结构如下：
+```
+crypto-config
+    ordererOrganizations
+        example.com
+            ca
+            msp
+            orderers
+            tlsca
+            users
+    peerOrganizations
+        org1.example.com
+            ca
+            msp
+            orderers
+            tlsca
+            users
+        org2.example.com
+            (同上)
+```
+上述目录结构是根据`crypto-config.yaml`的内容生成的。`crypto-config.yaml`的内容如下：
+```
+OrdererOrgs:
+  - Name: Orderer
+    Domain: example.com
+    Specs:
+      - Hostname: orderer
+PeerOrgs:
+  - Name: Org1
+    Domain: org1.example.com
+  - Name: Org2
+    Domain: org2.example.com
+```
+上述`crypto-config.yaml`是fabric-sample带的示范配置文件，它将Orderer和Peer两种节点的MSP都定义到了同一个文件中。而在实际的生产环境下，Orderer节点和Peer节点一般部署在不同的虚拟机中，则两种节点的`crypto-config.yaml`配置文件将有所不同。  
+
+要搭建一个Fabric网络，首先应建立Orderer节点。而Orderer节点存在着一个系统区块链，上面保存了整个Fabric网络的基础信息。要创建一个区块链，先用`cryptogen`工具生成MSP密码文件，再用`configtxgen`工具生成创世区块。更具体的，应先生成Orderer节点的创世区块。  
+
+## configtxgen
+`configtxgen`运行时需要查找配置文件`configtx.yaml`，这个配置文件的位置是靠环境变量来指定的：
+```
+$ export FABRIC_CFG_PATH=/opt/fabric-samples/first-network
+```
+
