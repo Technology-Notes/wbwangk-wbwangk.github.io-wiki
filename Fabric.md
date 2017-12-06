@@ -1,7 +1,2 @@
-本节将演示使用Hyperledger Fabric V1.0体系结构的示例。该方案将包括通道的创建和加入，客户端认证以及链码的部署和调用。CLI将被用于通道的创建和加入，节点SDK将被用于客户端认证以及利用该通道的链码功能。
-
-Docker Compose将被用来创建一个由三个组织组成的联盟，每个联盟都运行一个背书/提交的peer，以及一个“SOLO”排序者和一个认证机构（CA）。基于标准PKI实施的密码材料已经预先生成并包含在`sfhackfest.tar.gz`内以便加快流程。负责发布，撤销和维护加密材料的CA代表其中一个组织，也是客户端（节点SDK）认证的需求。在企业场景中，每个组织都可能拥有自己的CA，实施更复杂的安全措施 - 例如交叉签名证书等。
-
-网络在执行`docker-compose up`时自动生成，创建通道和连接通道的API将被解释和演示; 因此，用户可以手动生成自己的网络和通道，或者快速跳到应用开发阶段。
-
-建议按照它的布局顺序遍历本节 - 首先是节点程序，然后是CLI方法。  
+# Fabric CA User’s Guide
+[官方原文](http://hyperledger-fabric-ca.readthedocs.io/en/latest/users-guide.html#table-of-contents)  
