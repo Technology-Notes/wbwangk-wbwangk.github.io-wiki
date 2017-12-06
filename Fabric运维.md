@@ -370,3 +370,5 @@ Organizations:
 MSPDir: crypto-config/ordererOrganizations/example.com/msp
 ```
 这个目录中密码文件由`cryptogen`生成。如果之前没有用`cryptogen`生成这些文件，`configtxgen`执行时会提示这些上述目录不存在。
+
+### 用configtxgen查看区块信息
