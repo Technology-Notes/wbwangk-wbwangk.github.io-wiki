@@ -372,3 +372,10 @@ MSPDir: crypto-config/ordererOrganizations/example.com/msp
 这个目录中密码文件由`cryptogen`生成。如果之前没有用`cryptogen`生成这些文件，`configtxgen`执行时会提示这些上述目录不存在。
 
 ### 用configtxgen查看区块信息
+```
+$ export FABRIC_CFG_PATH=/opt/bcnet
+$ configtxgen -profile TwoOrgsOrdererGenesis -inspectBlock ./channel-artifacts/genesis.block
+```
+`configtxgen`会到FABRIC_CFG_PATH环境变量定义的目录下找`configtx.yaml`这个配置文件，并按配置文件中的定义先找`profile`，根据`profile`的值所对应的`MSPDir`下寻找密钥文件，然后利用密钥文件对创世区块进行解密并转换为json格式输出。
+
+有的创世区块可以不加`-profile`参数就能正常显示，原因不明。  
