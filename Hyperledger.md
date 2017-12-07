@@ -226,6 +226,30 @@ Configtxgen会根据文件`configtx.yaml`定义的配置运行，文件包含了
 这个文件还包含了两个值得注意的附加内容。首先，为每个peer组织(`peer0.org1.example.com`和`peer0.org2.example.com`)定义了锚点peer。其次，定义了每个成员的MSP目录地址，这让我们在排序器创世区块中保存了每个组织的根证书。这是一个关键概念。现在与排序服务通信的任何网络实体可以被验证其数字签名了。  
 
 ### 运行工具
+你可以使用`configtxgen`和`cryptogen`工具手工生成证书/密钥和不同的配置工件。或者，你也可以修改`byfn.sh`脚本来达到你的目的。  
+
+#### 手工生成工件
+你可以参考byfn.sh脚本中的generateCerts函数，里面的命令可以根据`crypto-config.yaml`文件中定义的网络配置生成证书。  
+
+首先，让我们运行`cryptogen`工具。它位于`bin`目录，所以要使用相对路径了执行它（或者修改操作系统的PATH）:
+```
+$ ../bin/cryptogen generate --config=./crypto-config.yaml
+org1.example.com
+org2.example.com
+```
+证书和密钥(即MSP文书)会被输出到`crypto-config`目录（位于`first-network`目录之下）。  
+
+下一步，我们需要告诉`configtxgen`工具到哪里去寻找`configtx.yaml`文件。需要通过下面的环境变量告诉它($PWD表示当前目录)：
+```
+$ export FABRIC_CFG_PATH=$PWD
+```
+然后，我们调用`configtxgen`工具去生成排序器创世区块：
+```
+$ ../bin/configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+```
+#### 创建一个通道配置事务
+（在Fabric中通道配置信息也保存在区块链中，而区块链的内容是靠事务写入的，所以要新建通道需要创建一个事务。）  
+下一步，
 
 
 
