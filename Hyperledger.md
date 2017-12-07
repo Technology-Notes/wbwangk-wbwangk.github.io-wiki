@@ -137,7 +137,7 @@ export PATH=/opt/fabric-samples/bin:$PATH
 ```
 为了保存VM当前状态，回到vagrant命令行下执行`vagrant snapshot save a3`  
 
-### 启动首个网络(first-network)
+## 启动首个网络(first-network)
 本节遵循hyperledger官方文档“[Building Your First Network](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html)  
 first-network提供了一个脚本来帮助初学者体验fabric，它就是`byfn.sh`。可以通过帮助命令看看它的功能：
 ```
@@ -145,7 +145,7 @@ $ cd /opt/fabric-samples/first-network
 $ ./byfn.sh --help
  byfn.sh -m up|down|restart|generate [-c <channel name>] [-t <timeout>] [-d <delay>] [-f <docker-compose-file>] [-s <dbtype>]
 ```
-#### 生成网络工件
+### 生成网络工件
 generate required certificates and genesis block
 fabric的网络和通道具有类似的含义。通道可以视为一种虚拟网络，多个通道就多个虚拟网络。docker支持overlay网络，为同一个peer加入不同的网络创造了底层技术基础（以上认识还没有得到确认）。
 ```
@@ -159,7 +159,7 @@ Continue (y/n)?y
 2. 创建了一个通道。生成了一个叫`channel.tx`的文件。  
 3. 生成了组织Org1MSP和Org2MSP的锚peer。锚peer用于跨组织的通信。  
 
-#### 启动网络
+### 启动网络
 ```
 $ ./byfn.sh -m up
 （适当删减）
@@ -190,7 +190,7 @@ $ docker ps
 4. dev-peer0.org1.example.com-mycc-1.0-xxxx， 是链码容器
 在其他的fabric环境中(如生产环境下)，还可能看到ca-server的容器、couchdb的容器等。  
 
-#### 停止网络
+### 停止网络
 ```
 $ ./byfn.sh -m down
 $ docker ps
@@ -207,14 +207,27 @@ $ cryptogen generate --config=./crypto-config.yaml
 配置文件中有个`count`变量，我们用它来指定每个组织下的peer数量；在我们示例中，每个组织下有两个peer。我们在本文不会详述[X509证书和PKI](https://en.wikipedia.org/wiki/Public_key_infrastructure)。  
 在`crypto-config.yaml`文件中，注意`OrdererOrgs`之下的“Name”, “Domain” and “Specs”参数。网络实体的命名约定是：`{{.Hostname}}.{{.Domain}}`。例如，排序节点的名称是`orderer.example.com`，这关联了一个MSP ID `Orderer`，关于MSP的更多细节参考[Membership Service Providers (MSP)](http://hyperledger-fabric.readthedocs.io/en/latest/msp.html)文档。  
  
-#### 配置交易生成器
+### 配置交易生成器
 工具`configtxgen`用于生成四个配置工件：
 - 排序器(orderer)`genesis block`
 - 通道`configuration transaction`  
 - 两个`anchor peer transactions`，每个组织生成一个  
 关于`configtxgen`更多细节参考[Channel Configuration (configtxgen)](http://hyperledger-fabric.readthedocs.io/en/latest/configtxgen.html)。  
 
-生成的四个工件中的`genesis block`是排序服务的[创世区块](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%88%9B%E4%B8%96%E5%8C%BA%E5%9D%97)。[通道](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E9%80%9A%E9%81%93)的`configuration transaction`文件在通道创建时被广播到orderer。至于`anchor peer transactions`，顾名思义，定义组织在这个通道的[锚点peer](#锚点peer)。  
+生成的四个工件中的`genesis block`是排序服务的[创世区块](#创世区块)。[通道](#通道)的`configuration transaction`文件在通道创建时被广播到orderer。至于`anchor peer transactions`，顾名思义，定义组织在这个通道的[锚点peer](#锚点peer)。  
+
+#### 工作原理
+
+Configtxgen会根据文件`configtx.yaml`定义的配置运行，文件包含了示范网络的定义。其中有三个成员：一个排序器组织(`OrdererOrg`)和两个Peer组织(`Org1`和`Org2`)，每个Peer组织管理和维护了两个peer节点。这个文件还定义了一个联盟(`SampleConsortium`)，联盟包含了两个peer组织。特别需要注意文件开头的“Profiles”小节。你应该注意到了它有两个唯一的头。一个是排序器创世区块(`TwoOrgsOrdererGenesis`)，另一个是通道(`TwoOrgsChannel`)。  
+
+这些头很重要，当生成工件时，它们将作为参数发送。  
+*注意：我们的`SampleConsortium`联盟定义在系统级profile，然后被通道集profile引用。通道将存在于整个联盟范围。*  
+
+这个文件还包含了两个值得注意的附加内容。首先，为每个peer组织(`peer0.org1.example.com`和`peer0.org2.example.com`)定义了锚点peer。其次，定义了每个成员的MSP目录地址，这让我们在排序器创世区块中保存了每个组织的根证书。这是一个关键概念。现在与排序服务通信的任何网络实体可以被验证其数字签名了。  
+
+### 运行工具
+
+
 
 ### 理解Fabric网络
 应用通过API调用智能合约。智能合约托管在网络中，靠名称和版本号识别。例如，智能合约容器的名称是`dev-peer0.org1.example.com-fabcar-1.0`，其中`fabcar`是智能合约名称，`1.0`是智能合约版本号，而`dev-peer0.org1.example.com`是peer名称。  
@@ -969,8 +982,8 @@ peer是一个组件，负责执行事务和维护账本。peer有两种角色，
 
 #### 系统链
 包含一个配置区块，在系统级定义网络。  
-系统链存在于排序服务中，与通道类似，具有包含以下信息的初始配置：参与者组织的根证书和排序服务节点、策略、OSN(排序服务节点)监听地址以及配置详细信息。对整个网络的任何改变（例如一个新的组织加入或新增的OSN）将导致新的配置区块被添加到系统链中。  
-系统链可以被认为是通道或一组通道的通用绑定。例如，一系列金融机构可以组成一个财团（通过系统链表示），然后再根据联盟或业务议程创建通道。  
+系统链存在于排序服务中，与通道类似，具有包含以下信息的初始配置：参与者组织的根证书和排序服务节点、策略、OSN(排序服务节点)监听地址以及配置详细信息。对整个网络的任何改变（例如一个新的组织加入或新增一个排序节点）将导致新的配置区块被添加到系统链中。  
+系统链可以被认为是通道或通道组的通用绑定。例如，一系列金融机构可以组成一个联盟（通过系统链表示），然后再根据联盟或业务议程创建通道。  
 
 #### 配置区块
 为系统链(排序服务)或通道保存配置数据(成员和策略)。任何对一个通道或全部网络(如成员离开或加入)的任何配置修改都导致一个新的配置区块追加到相应链中。配置区块包含创世区块，再加上delta。
