@@ -148,18 +148,30 @@ export PATH=/opt/fabric-samples/bin:$PATH
 
 ### 启动首个网络(first-network)
 本节遵循hyperledger官方文档“[Building Your First Network](http://hyperledger-fabric.readthedocs.io/en/latest/build_network.html)  
+first-network提供了一个脚本来帮助初学者体验fabric，它就是`byfn.sh`。可以通过帮助命令看看它的功能：
 ```
-cd /opt/fabric-samples/first-network
-./byfn.sh -m up
+$ cd /opt/fabric-samples/first-network
+$ ./byfn.sh --help
+ byfn.sh -m up|down|restart|generate [-c <channel name>] [-t <timeout>] [-d <delay>] [-f <docker-compose-file>] [-s <dbtype>]
 ```
-上述命令会编译Golang链码镜像，和启动相应的容器。  
-#### 启动网络的过程
+#### 生成网络工件
+generate required certificates and genesis block
+fabric的网络和通道具有类似的含义。通道可以视为一种虚拟网络，多个通道就多个虚拟网络。docker支持overlay网络，为同一个peer加入不同的网络创造了底层技术基础（以上认识还没有得到确认）。
 ```
-Generate certificates using cryptogen tool 
-Generating Orderer Genesis block
-Generating channel configuration transaction 'channel.tx'
-Generating anchor peer update for Org1MSP
-Generating anchor peer update for Org2MSP  
+$ ./byfn.sh -m generate
+Generating certs and genesis block for with channel 'mychannel' and CLI timeout of '10000'
+Continue (y/n)?y
+(后略)
+```
+`byfn.sh`会在屏幕上有很多输出，通过这些文字也可以知道该脚本的功能：
+1. 生成了Orderer的创世区块。在排序节点上fabric维护了一个“系统账本”，保存了整个fabric区块链网络的参数、元数据等。对于区块链来说，第一个块(有时称0号区块)被称为创世区块(Genesis block)。该创世区块对应了一个文件，一般是`genesis.block`。  
+2. 创建了一个通道。生成了一个叫`channel.tx`的文件。  
+3. 生成了组织Org1MSP和Org2MSP的锚peer。锚peer用于跨组织的通信。  
+
+#### 启动网络
+```
+$ ./byfn.sh -m up
+（适当删减）
 Channel "mychannel" is created successfully =====================
 PEER0 joined on the channel "mychannel" =====================
 PEER1 joined on the channel "mychannel" =====================
@@ -175,16 +187,29 @@ Invoke transaction on PEER0 on channel 'mychannel' is successful ===============
 Chaincode is installed on remote peer PEER3 =====================
 Querying on PEER3 on channel 'mychannel'... =====================
 ========= All GOOD, BYFN execution completed ===========
- _____   _   _   ____
-| ____| | \ | | |  _ \
-|  _|   |  \| | | | | |
-| |___  | |\  | | |_| |
-|_____| |_| \_| |____/
 ```
-停止网络：
+启动后屏幕仍被锁定为日志输出，可以打开另外的终端窗口进行后续的操作。如，查看容器清单：
 ```
-./byfn.sh -m down
+$ docker ps
 ```
+可以看到容器有：
+1. cli(fabric-tools)，是fabric的命令行工具  
+2. peer0.org1.example.com等(fabric-peer)，是peer节点的进程容器  
+3. orderer.example.com(fabric-orderer)，是orderer节点的进程容器  
+4. dev-peer0.org1.example.com-mycc-1.0-xxxx， 是链码容器
+在其他的fabric环境中(如生产环境下)，还可能看到ca-server的容器、couchdb的容器等。  
+
+#### 停止网络
+```
+$ ./byfn.sh -m down
+$ docker ps
+```
+网络停止后，通过docker ps命令可以看到所有的容器都消失了。
+
+### 密钥生成器(Crypto Generator)
+
+
+
 ### 理解Fabric网络
 应用通过API调用智能合约。智能合约托管在网络中，靠名称和版本号识别。例如，智能合约容器的名称是`dev-peer0.org1.example.com-fabcar-1.0`，其中`fabcar`是智能合约名称，`1.0`是智能合约版本号，而`dev-peer0.org1.example.com`是peer名称。  
 API可以把SDK访问。SDK封装了应用与智能合约通信的接口，如查询或接收账本更新。这些API使用几个不同的网络地址，接收一些输入参数。智能合约由peer管理员安装，然后按照链码的策略被实例化到通道中。智能合约的实例化流程与普通调用的事务流程相同，背书、排序、验证、提交，之后才能与链码容器交互（智能合约实例化就是链码容器启动）。   
