@@ -923,6 +923,8 @@ step 7/7 - notify transaction:
 
 Transactions typically follow a seven-step process to become a block on the chain.
 ## 术语
+[原文](http://hyperledger-fabric.readthedocs.io/en/latest/glossary.html)  
+
 #### 区块链网络
 区块链网络至少由一个peer（负责批准和提交事务）、一个排序服务和成员服务组件（CA，分发和撤销代表用户身份和权限的加密证书）组成。  
 
