@@ -120,23 +120,14 @@ $ curl -sSL https://goo.gl/6wtTN5 | bash -s 1.1.0-preview
 ```
 脚本会自动下载了很多docker镜像:
 ```
-hyperledger/fabric-ca          latest                 2736904862db        4 weeks ago         218MB
 hyperledger/fabric-ca          x86_64-1.1.0-preview   2736904862db        4 weeks ago         218MB
-hyperledger/fabric-tools       latest                 6051774928a6        4 weeks ago         1.33GB
 hyperledger/fabric-tools       x86_64-1.0.4           6051774928a6        4 weeks ago         1.33GB
-hyperledger/fabric-couchdb     latest                 cf24b91dfeb1        4 weeks ago         1.5GB
 hyperledger/fabric-couchdb     x86_64-1.0.4           cf24b91dfeb1        4 weeks ago         1.5GB
-hyperledger/fabric-kafka       latest                 7a9d6f3c4a7c        4 weeks ago         1.29GB
 hyperledger/fabric-kafka       x86_64-1.0.4           7a9d6f3c4a7c        4 weeks ago         1.29GB
-hyperledger/fabric-zookeeper   latest                 53c4a0d95fd4        4 weeks ago         1.3GB
 hyperledger/fabric-zookeeper   x86_64-1.0.4           53c4a0d95fd4        4 weeks ago         1.3GB
-hyperledger/fabric-orderer     latest                 b17741e7b036        4 weeks ago         151MB
 hyperledger/fabric-orderer     x86_64-1.0.4           b17741e7b036        4 weeks ago         151MB
-hyperledger/fabric-peer        latest                 1ce935adc397        4 weeks ago         154MB
 hyperledger/fabric-peer        x86_64-1.0.4           1ce935adc397        4 weeks ago         154MB
-hyperledger/fabric-javaenv     latest                 a517b70135c7        4 weeks ago         1.41GB
 hyperledger/fabric-javaenv     x86_64-1.0.4           a517b70135c7        4 weeks ago         1.41GB
-hyperledger/fabric-ccenv       latest                 856061b1fed7        4 weeks ago         1.28GB
 hyperledger/fabric-ccenv       x86_64-1.0.4           856061b1fed7        4 weeks ago         1.28GB
 ```
 上述脚本还下载了几个工具到`/opt/fabric-samples/bin`目录下，它们是cryptogen,configtxgen,configtxlator,peer。  
@@ -207,6 +198,7 @@ $ docker ps
 网络停止后，通过docker ps命令可以看到所有的容器都消失了。
 
 ### 密钥生成器(Crypto Generator)
+我们用工具`cryptogen`为各种网络实体生成密码学文件(x509证书和签名密钥)。这些证书代表了身份（签名、认证），用于实体间通信和做交易。  
 
 
 
