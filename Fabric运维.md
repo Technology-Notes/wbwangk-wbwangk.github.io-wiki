@@ -313,7 +313,7 @@ PeerOrgs:
 
 要搭建一个Fabric网络，首先应建立Orderer节点。而Orderer节点存在着一个系统区块链，上面保存了整个Fabric网络的基础信息。要创建一个区块链，先用`cryptogen`工具生成MSP密码文件，再用`configtxgen`工具生成创世区块。更具体的，应先生成Orderer节点的创世区块。  
 
-## configtxgen
+## 生成创世区块(configtxgen)
 `configtxgen`运行时需要查找配置文件`configtx.yaml`，这个配置文件的位置是靠环境变量来指定的：
 ```
 $ export FABRIC_CFG_PATH=/opt/fabric-samples/first-network
@@ -379,3 +379,17 @@ $ configtxgen -profile TwoOrgsOrdererGenesis -inspectBlock ./channel-artifacts/g
 `configtxgen`会到FABRIC_CFG_PATH环境变量定义的目录下找`configtx.yaml`这个配置文件，并按配置文件中的定义先找`profile`，根据`profile`的值所对应的`MSPDir`下寻找密钥文件，然后利用密钥文件对创世区块进行解密并转换为json格式输出。
 
 有的创世区块可以不加`-profile`参数就能正常显示，原因不明。  
+
+## 生成通道(configtxgen)
+```
+$ export FABRIC_CFG_PATH=/opt/fabric-samples/first-network
+$ configtxgen -profile TwoOrgChannel -outputCreateChannelTx ./channel-artifacts/channel1.tx -channelID channel1
+```
+
+## peer加入通道(peer)
+peer直接在宿主机上直接运行会报错，一般进入`cli`容器内执行:
+```
+$ docker exec -it cli bash
+$$ peer --help
+```
+
