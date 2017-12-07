@@ -198,9 +198,23 @@ $ docker ps
 网络停止后，通过docker ps命令可以看到所有的容器都消失了。
 
 ### 密钥生成器(Crypto Generator)
-我们用工具`cryptogen`为各种网络实体生成密码学文件(x509证书和签名密钥)。这些证书代表了身份（签名、认证），用于实体间通信和做交易。  
+我们用`cryptogen`工具为各种的网络实体生成密码学文件(x509证书和签名密钥)。这些证书表达身份，对实体间通信和交易认证进行签名和验证。  
+Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，允许我们为组织以及属于组织的组件生成一系列证书和密钥。执行示范：
+```
+$ cryptogen generate --config=./crypto-config.yaml
+```
+运行后会自动创建一个`crypto-config`目录，里面有很多密码学文件。在生成的文件中，每个组织都会分配一个根证书(`ca-cert`)，该证书绑定特殊组件(peer和orderer)到组织。假定每个组织都有一个唯一的CA证书，我们模仿了一个典型的网络，其中每个[成员](http://hyperledger-fabric.readthedocs.io/en/latest/glossary.html#member)拥有自己的CA。在Hyperledger Fabric中，实体使用自己的私钥(`keystore`)对事务和通信进行签名，并用对方的公钥(`signcerts`)验证签名。  
+配置文件中有个`count`变量，我们用它来指定每个组织下的peer数量；在我们示例中，每个组织下有两个peer。我们在本文不会详述[X509证书和PKI](https://en.wikipedia.org/wiki/Public_key_infrastructure)。  
+在`crypto-config.yaml`文件中，注意`OrdererOrgs`之下的“Name”, “Domain” and “Specs”参数。网络实体的命名约定是：`{{.Hostname}}.{{.Domain}}`。例如，排序节点的名称是`orderer.example.com`，这关联了一个MSP ID `Orderer`，关于MSP的更多细节参考[Membership Service Providers (MSP)](http://hyperledger-fabric.readthedocs.io/en/latest/msp.html)文档。  
+ 
+#### 配置交易生成器
+工具`configtxgen`用于生成四个配置工件：
+- 排序器(orderer)`genesis block`
+- 通道`configuration transaction`  
+- 两个`anchor peer transactions`，每个组织生成一个  
+关于`configtxgen`更多细节参考[Channel Configuration (configtxgen)](http://hyperledger-fabric.readthedocs.io/en/latest/configtxgen.html)。  
 
-
+生成的四个工件中的`genesis block`是排序服务的[创世区块](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%88%9B%E4%B8%96%E5%8C%BA%E5%9D%97)。[通道](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E9%80%9A%E9%81%93)的`configuration transaction`文件在通道创建时被广播到orderer。
 
 ### 理解Fabric网络
 应用通过API调用智能合约。智能合约托管在网络中，靠名称和版本号识别。例如，智能合约容器的名称是`dev-peer0.org1.example.com-fabcar-1.0`，其中`fabcar`是智能合约名称，`1.0`是智能合约版本号，而`dev-peer0.org1.example.com`是peer名称。  
