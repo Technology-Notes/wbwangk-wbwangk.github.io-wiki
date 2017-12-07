@@ -291,6 +291,17 @@ $ CHANNEL_NAME=$CHANNEL_NAME docker-compose -f docker-compose-cli.yaml up -d
 如果你想看到网络的实时日志，就不要加上`-d`标志。如果不加`-d`表示，你需要另外打开一个终端窗口了执行CLI。  
 
 #### 环境变量
+为了通过CLI命令让`peer0.org1.example.com`工作起来，我们需要准备4个环境变量。这些变量之前被“烧入”了`peer0.org1.example.com`CLI容器中，所以我们不用输入它们就能操作。但如果你需要调用其他peer或orderer，则需要正确的设置这些变量值。查看`docker-compose-base.yaml`文件可以看到这四个变量的值：
+```
+# Environment variables for PEER0
+
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+CORE_PEER_LOCALMSPID="Org1MSP"
+CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+```
+#### 创建和加入通道
+回想一下上面我们在[创建一个通道配置事务](#创建一个通道配置事务)一节中使用`configtxgen`工具创建通道配置事务。你可以重复那个过程来创建另外的通道配置事务，传递
 
 
 
