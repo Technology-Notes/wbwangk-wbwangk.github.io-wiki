@@ -214,7 +214,7 @@ $ cryptogen generate --config=./crypto-config.yaml
 - 两个`anchor peer transactions`，每个组织生成一个  
 关于`configtxgen`更多细节参考[Channel Configuration (configtxgen)](http://hyperledger-fabric.readthedocs.io/en/latest/configtxgen.html)。  
 
-生成的四个工件中的`genesis block`是排序服务的[创世区块](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%88%9B%E4%B8%96%E5%8C%BA%E5%9D%97)。[通道](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E9%80%9A%E9%81%93)的`configuration transaction`文件在通道创建时被广播到orderer。
+生成的四个工件中的`genesis block`是排序服务的[创世区块](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%88%9B%E4%B8%96%E5%8C%BA%E5%9D%97)。[通道](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E9%80%9A%E9%81%93)的`configuration transaction`文件在通道创建时被广播到orderer。至于`anchor peer transactions`，顾名思义，定义组织在这个通道的[锚点peer](#锚点peer)。  
 
 ### 理解Fabric网络
 应用通过API调用智能合约。智能合约托管在网络中，靠名称和版本号识别。例如，智能合约容器的名称是`dev-peer0.org1.example.com-fabcar-1.0`，其中`fabcar`是智能合约名称，`1.0`是智能合约版本号，而`dev-peer0.org1.example.com`是peer名称。  
