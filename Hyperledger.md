@@ -249,7 +249,48 @@ $ ../bin/configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artif
 ```
 #### 创建一个通道配置事务
 （在Fabric中通道配置信息也保存在区块链中，而区块链的内容是靠事务写入的，所以要新建通道需要创建一个事务。）  
-下一步，
+下一步，我们需要创建通道事务工件。确保替换`$CHANNEL_NAME`或设置`CHANNEL_NAME`为环境变量，然后执行下列指令：
+```
+$ export CHANNEL_NAME=mychannel  
+$ ../bin/configtxgen -profile TwoOrgsChannel \
+ -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+```
+下一步，我们将在刚刚创建的通道上定义Org1的锚点peer。同样，确保覆盖`$CHANNEL_NAME`或设置为下面的命令设置环境变量。
+```
+$ ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
+./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+2017-12-07 08:59:42.756 UTC [common/tools/configtxgen] main -> INFO 001 Loading configuration
+2017-12-07 08:59:42.762 UTC [common/tools/configtxgen] doOutputAnchorPeersUpdate -> INFO 002 Generating anchor peer update
+2017-12-07 08:59:42.762 UTC [common/tools/configtxgen] doOutputAnchorPeersUpdate -> INFO 003 Writing anchor peer update
+```
+现在，我们将在同一个通道中定义Org2的锚点peer：
+```
+$ ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
+./channel-artifacts/Org2MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org2MSP
+```
+总结一下本节，执行了上述一系列命令后，`crypto-config`目录生成了一些证书和密钥；`channel-artifacts`下生成了一个创世区块文件和3个事务文件：
+```
+$ ls ./channel-artifacts
+channel.tx  genesis.block  Org1MSPanchors.tx  Org2MSPanchors.tx
+```
+### 启动网络
+我们将使用docker-compose脚本启动我们的网络。docker-compose会使用我们之前下载的docker镜像，用我们之前生成`genesis.block`(创世区块)引导排序器(orderer)。  
+在启动网络前，打开`docker-compose-cli.yaml`文件，注释掉CLI容器的`script.sh`。让你的`docker-compose-cli.yaml`文件变成这样：
+```
+working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+# command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME}; sleep $TIMEOUT'
+volumes
+```
+如果不注释掉这一样，脚本就会利用CLI命令把网络启动起来了。然而，我们的目的是手工执行这些命令，以便解释这些调用的语法和功能。  
+CLI默认超时是10000秒。如果你需要容器存在的更久，需要通过设置`TIMEOUT`环境变量覆盖这一默认值。  
+
+启动网络(如果网络已经启动，需要用`./byfn.sh -m down`命令先停止它)：
+```
+$ CHANNEL_NAME=$CHANNEL_NAME docker-compose -f docker-compose-cli.yaml up -d
+```
+如果你想看到网络的实时日志，就不要加上`-d`标志。如果不加`-d`表示，你需要另外打开一个终端窗口了执行CLI。  
+
+#### 环境变量
 
 
 
