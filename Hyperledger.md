@@ -338,6 +338,11 @@ peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-ar
 ```
 CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp CORE_PEER_ADDRESS=peer0.org2.example.com:7051 CORE_PEER_LOCALMSPID="Org2MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org2MSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 ```
+#### 安装和实例化链码
+*注意，我们简单实用了一个已有链码。如果想学习链码开发，请参考[链码开发](链码教程:链码开发)一章。*  
+应用通过链码与区块链账本交互。我们需要安装链码到那些执行和为事务背书的peer上，并在通道上实例化链码。  
+首先，安装示范Go链码到4个peer节点的某个上。这些命令会将源码放到指定peer的文件系统上。  
+*注意，对于每个链码名称和版本，你只能安装一个版本的源码。源码以链码的名称和版本号为上下文存在于peer的文件系统中，它不关注语言。*  
 
 
 
