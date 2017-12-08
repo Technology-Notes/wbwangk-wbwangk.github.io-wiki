@@ -247,6 +247,7 @@ $ export FABRIC_CFG_PATH=$PWD
 ```
 $ ../bin/configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
 ```
+需要先手工创建目录`channel-artifacts`，否则上述命令会出错。  
 #### 创建一个通道配置事务
 （在Fabric中通道配置信息也保存在区块链中，而区块链的内容是靠事务写入的，所以要新建通道需要创建一个事务。）  
 下一步，我们需要创建通道事务工件。确保替换`$CHANNEL_NAME`或设置`CHANNEL_NAME`为环境变量，然后执行下列指令：
@@ -284,7 +285,7 @@ volumes
 如果不注释掉这一样，脚本就会利用CLI命令把网络启动起来了。然而，我们的目的是手工执行这些命令，以便解释这些调用的语法和功能。  
 CLI默认超时是10000秒。如果你需要容器存在的更久，需要通过设置`TIMEOUT`环境变量覆盖这一默认值。  
 
-启动网络(如果网络已经启动，需要用`./byfn.sh -m down`命令先停止它)：
+启动网络(确保用命令`docker ps -a`看不到任何容器)：
 ```
 $ TIMEOUT=10000 CHANNEL_NAME=$CHANNEL_NAME docker-compose -f docker-compose-cli.yaml up -d
 ```
@@ -317,7 +318,23 @@ $$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
 ./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
 ```
 注意此命令行中的`--cafile`参数，它是一个指向orderer根CA证书的本地路径，用于验证TLS握手。  
-命令会返回一个创世区块(`<channel-ID.block>`)，我们用它加入通道。它里面包含了在`channel.tx`中定义的配置信息，如果你没有改变过通道名称，该命令将返回一个叫`mychannel.block`的原型。
+命令会返回一个创世区块(`<channel-ID.block>`)，我们用它加入通道。它里面包含了在`channel.tx`中定义的配置信息，如果你没有改变过通道名称，该命令将返回一个叫`mychannel.block`的原型。在当前目录下可以看到这个`mychannel.block`文件。  
+现在，让我们把`peer0.org1.example.com`节点加入通道：
+```
+$$ peer channel join -b mychannel.block
+```
+你还可以将其他peer加入通道，方法是修改之前在[环境变量](#环境变量)一节中提到的4个环境变量。如果你用`env`命令查看一下环境变量，会发现那4个环境变量的值都是`peer0.org1.example.com`对应的。  
+我们不将每个peer都加入网络，而是将`peer0.org2.example.com`加入网络，这样我们可以修改通道的锚点peer定义。我们用下面的命令将预先烧制在CLI容器中的4个环境变量替换掉:
+```
+CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp CORE_PEER_ADDRESS=peer0.org2.example.com:7051 CORE_PEER_LOCALMSPID="Org2MSP" CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt peer channel join -b mychannel.block
+```
+你也可以把4个环境变量分别export到操作系统，然后再简单执行`peer channel join`命令。  
+ 
+
+
+
+
+
 
 ### 理解Fabric网络
 应用通过API调用智能合约。智能合约托管在网络中，靠名称和版本号识别。例如，智能合约容器的名称是`dev-peer0.org1.example.com-fabcar-1.0`，其中`fabcar`是智能合约名称，`1.0`是智能合约版本号，而`dev-peer0.org1.example.com`是peer名称。  
