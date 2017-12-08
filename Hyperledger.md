@@ -286,7 +286,7 @@ CLI默认超时是10000秒。如果你需要容器存在的更久，需要通过
 
 启动网络(如果网络已经启动，需要用`./byfn.sh -m down`命令先停止它)：
 ```
-$ CHANNEL_NAME=$CHANNEL_NAME docker-compose -f docker-compose-cli.yaml up -d
+$ TIMEOUT=10000 CHANNEL_NAME=$CHANNEL_NAME docker-compose -f docker-compose-cli.yaml up -d
 ```
 如果你想看到网络的实时日志，就不要加上`-d`标志。如果不加`-d`表示，你需要另外打开一个终端窗口了执行CLI。  
 
@@ -301,9 +301,23 @@ CORE_PEER_LOCALMSPID="Org1MSP"
 CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
 ```
 #### 创建和加入通道
-回想一下上面我们在[创建一个通道配置事务](#创建一个通道配置事务)一节中使用`configtxgen`工具创建通道配置事务。你可以重复那个过程来创建另外的通道配置事务，传递
-
-
+回想一下上面我们在[创建一个通道配置事务](#创建一个通道配置事务)一节中使用`configtxgen`工具创建通道配置事务。你可以重复那个过程来创建另外的通道配置事务，使用相同或不同的profile参数(在`configtx.yaml`中定义)传递给`configtxgen`。你可以重复这一过程，用来在网络中创建其他通道。  
+用下列命令进入CLI容器：
+```
+$ docker exec -it cli bash
+root@0d78bb69300d:/opt/gopath/src/github.com/hyperledger/fabric/peer#
+```
+首先进入的是在`docker-compose.ymal`中定义的`working_dir`目录。下面用`$$`表示在容器内的命令行操作。  
+在之前[创建一个通道配置事务](#创建一个通道配置事务)一节中我们创建了通道配置事务工件("channel.txt")，下面我们把它作为创建通道请求的一部分发给orderer。  
+我们用`-c`标志指定通道名称，用`-f`标志指定通道配置事务。在这里它叫`channel.txt`，然而你可以用其他名字来挂载你自己的通道配置事务。我们又一次在CLI容器内设置`CHANNEL_NAME`环境变量，所以不用显式地传递这个参数。  
+```
+$$ export CHANNEL_NAME=mychannel
+$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
+./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
+```
+注意此命令行中的`--cafile`参数，它是一个指向orderer根CA证书的本地路径，用于验证TLS握手。  
+命令会返回一个创世区块(`<channel-ID.block>`)，我们用它加入通道。它里面包含了在`channel.tx`中定义的配置信息，如果你没有改变过通道名称，该命令将返回一个叫`mychannel.block`的原型。
 
 ### 理解Fabric网络
 应用通过API调用智能合约。智能合约托管在网络中，靠名称和版本号识别。例如，智能合约容器的名称是`dev-peer0.org1.example.com-fabcar-1.0`，其中`fabcar`是智能合约名称，`1.0`是智能合约版本号，而`dev-peer0.org1.example.com`是peer名称。  
