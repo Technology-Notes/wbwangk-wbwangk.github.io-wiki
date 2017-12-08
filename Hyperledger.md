@@ -341,9 +341,13 @@ CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypt
 #### 安装和实例化链码
 *注意，我们简单实用了一个已有链码。如果想学习链码开发，请参考[链码开发](链码教程:链码开发)一章。*  
 应用通过链码与区块链账本交互。我们需要安装链码到那些执行和为事务背书的peer上，并在通道上实例化链码。  
-首先，安装示范Go链码到4个peer节点的某个上。这些命令会将源码放到指定peer的文件系统上。  
+首先，安装Go语言示范链码到4个peer节点的某个上。这些命令会将源码放到指定peer的文件系统上。  
 *注意，对于每个链码名称和版本，你只能安装一个版本的源码。源码以链码的名称和版本号为上下文存在于peer的文件系统中，它不关注语言。*  
-
+```
+$$ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+```
+下一步在通道上实例化链码。这将在通道上初始化链码、为链码设置背书策略和为目标peer启动一个链码容器。注意`-P`参数。这是链码的背书策略，用于对链码事务进行验证。  
+在下面的命令中，你注意到了我们将策略设置为`-P "OR ('Org0MSP.member','Org1MSP.member')"`。这意味着我们需要从Org1或Org2的peer上获得一个背书。如果把`OR`改成`AND`，则表示我们需要两个背书。  
 
 
 
