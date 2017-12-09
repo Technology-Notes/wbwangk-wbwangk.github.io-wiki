@@ -348,7 +348,36 @@ $$ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_examp
 ```
 下一步在通道上实例化链码。这将在通道上初始化链码、为链码设置背书策略和为目标peer启动一个链码容器。注意`-P`参数。这是链码的背书策略，用于对链码事务进行验证。  
 在下面的命令中，你注意到了我们将策略设置为`-P "OR ('Org0MSP.member','Org1MSP.member')"`。这意味着我们需要从Org1或Org2的peer上获得一个背书。如果把`OR`改成`AND`，则表示我们需要两个背书。  
+```
+$$ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
+```
+关于背书策略的细节可以看到[背书策略](http://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html)。  
+如果你想更多的peer与账本交互，你需要将它们加入通道，安装同样名字、版本和语言的链码到相应peer的文件系统。一个链码容器被在peer上启动，然后就可以与相应链码交互了。需要知道的是，Node.js镜像的编译相对较慢。  
+当链码在通道上被实例化后，我们只需传入通道id和链码名称来访问它。  
+#### 查询
+让我们查询一下键`a`的值，以便确认链码已经实例化和状态数据库已经填充。查询语句如下：
+```
+$$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+Query Result: 100    (其它信息省略)
+```
+#### 调用(Inoke)
+现在让我们把`a`的10个给`b`（即a减少10，b增加10）。这个事务会切割一个新区块并更新状态数据库。调用的语法如下：
+```
+$ peer chaincode invoke -o orderer.example.com:7050  --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem  -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
+```
+然后分别查询一下`a`和`b`的值：
+```
+$$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+Query Result: 90    (其它信息省略)
+$$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","b"]}'
+Query Result: 210    (其它信息省略)
+```
+#### 这演示了什么？
+为了对账本进行读写操作，peer必须安装链码。此外，链码容器并没有启动，直到对链码进行初始化或执行读写事务(如查询`a`的值)。这些事务促使容器启动。而且，通道中的所有peer会维持一个账本的完全副本，其中包括不可修改、区块中的顺序记录，以及状态数据库(其中维护了当前状态的快照)。这包含没有安装链码的peer（就像上面例子中的`peer1.org1.example.com`peer)。 最终，链码在安装后可以访问(就像上面例子中的`peer1.org2.example.com`)，因为它已经被实例化。  
+#### 怎么看到这些事务？
+Check the logs for the CLI Docker container.
 
+docker logs -f cli
 
 
 
