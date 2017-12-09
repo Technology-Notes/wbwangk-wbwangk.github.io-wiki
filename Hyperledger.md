@@ -409,6 +409,44 @@ CHANNEL_NAME=$CHANNEL_NAME TIMEOUT=<pick_a_value> docker-compose -f docker-compo
 ```
 下面的链码**chaincode_example02**将使用CouchDB。  
 *注意：如果你选择了将fabric-couchdb容器的端口映射到主机端口，请确保端口的远程访问是安全的。在开发环境下映射端口使CouchDB REST API可用，并使通过CoutchDB web接口(Fauxton)使数据库可见。在生产环境下进行端口映射要慎重，需要限制从外部访问CouchDB容器的端口。*  
+你可以用**chaincode_example02**链码访问CouchDB状态数据库，就像前面讲的那样。但为了执行CouchDB特性的查询，你需要使用数据模型为JSON的链码(如**marbles02**)。你可以在`fabric/examples/chaincode/go`目录找到**marbles02**链码。
+我们可以使用相同的步骤创建和加入通道，就像前面在[创建和加入通道](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#创建和加入通道)一节中讲的那样。一旦将peer加入了通道，使用下面的步骤与**marbles02**链码交互：
+1. 在`peer0.org1.example.com`上安装和实例化链码:  
+```
+$$ peer chaincode install -n marbles -v 1.0 -p github.com/hyperledger/fabric/examples/chaincode/go/marbles02
+$$ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n marbles -v 1.0 -c '{"Args":["init"]}' -P "OR ('Org0MSP.member','Org1MSP.member')"
+```
+2. 创建一些弹珠并移动它们：
+```
+$$ peer chaincode invoke -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n marbles -c '{"Args":["initMarble","marble1","blue","35","tom"]}'
+$$ peer chaincode invoke -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n marbles -c '{"Args":["initMarble","marble2","red","50","tom"]}'
+$$ peer chaincode invoke -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n marbles -c '{"Args":["initMarble","marble3","blue","70","tom"]}'
+$$ peer chaincode invoke -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n marbles -c '{"Args":["transferMarble","marble2","jerry"]}'
+$$ peer chaincode invoke -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n marbles -c '{"Args":["transferMarblesBasedOnColor","blue","jerry"]}'
+$$ peer chaincode invoke -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n marbles -c '{"Args":["delete","marble1"]}'
+```
+3. 如果你选择在docker-compse中映射CouchDB端口，你现在就可以通过CouchDB的web接口(Fauxton)查询状态数据库，方法是打开一个浏览器并导航到下列URL：
+```
+http://localhost:5984/_utils
+```
+你可以看到一个叫`mychannel`的数据库(或你自己定义的通道名称)和里面的文档数据。
+*注意：你需要更新$CHANNEL_NAME为合适的值*  
+你可以通过CLI运行一般查询(如读`marble2`):
+```
+$$ peer chaincode query -C $CHANNEL_NAME -n marbles -c '{"Args":["readMarble","marble2"]}'
+Query Result: {"color":"red","docType":"marble","name":"marble2","owner":"jerry","size":50}
+```
+你可以查询一个特定弹珠的历史，如`marble1`:
+```
+$$ peer chaincode query -C $CHANNEL_NAME -n marbles -c '{"Args":["getHistoryForMarble","marble1"]}'
+Query Result: [{"TxId":"1c3d3caf124c89f91a4c0f353723ac736c58155325f02890adebaa15e16e6464", "Valu
+```
+你还可以对数据内容执行富文本查询，如查询拥有者`jerry`的弹珠字段：
+```
+peer chaincode query -C $CHANNEL_NAME -n marbles -c '{"Args":["queryMarblesByOwner","jerry"]}'
+Query Result: [{"Key":"marble2", "Record":{"color":"red","docType":"marble","name":"marble2","owner"
+```
+
 
 
 
