@@ -479,49 +479,41 @@ $ docker rm -f $(docker ps -aq)
 $ docker rmi -f $(docker images -q)
 ```
 - 如果你在创建、实例化、调用或查询命令中看到错误，确保你的通道名称和链码名称正确。
-If you see errors on your create, instantiate, invoke or query commands, make sure you have properly updated the channel name and chaincode name. There are placeholder values in the supplied sample commands.
-If you see the below error:
-
+- 如果你看到下面的错误：
+```
 Error: Error endorsing chaincode: rpc error: code = 2 desc = Error installing chaincode code mycc:1.0(chaincode /var/hyperledger/production/chaincodes/mycc.1.0 exits)
-You likely have chaincode images (e.g. dev-peer1.org2.example.com-mycc-1.0 or dev-peer0.org1.example.com-mycc-1.0) from prior runs. Remove them and try again.
-
-docker rmi -f $(docker images | grep peer[0-9]-peer[0-9] | awk '{print $3}')
-If you see something similar to the following:
-
+```
+看来你已经有了一个链码镜像（例如`dev-peer1.org2.example.com-mycc-1.0`或`dev-peer0.org1.example.com-mycc-1.0`)已经在运行。删除它们重试。
+```
+$ docker rmi -f $(docker images | grep peer[0-9]-peer[0-9] | awk '{print $3}')
+```
+- 如果你看到类似下面的内容：
+```
 Error connecting: rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure
 Error: rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure
-Make sure you are running your network against the “1.0.0” images that have been retagged as “latest”.
-If you see the below error:
+```
+确保你正在运行的网络是“1.0.0”镜像并且tag是“latest”。  
 
+- 如果你看到下面的错误：
+```
 [configtx/tool/localconfig] Load -> CRIT 002 Error reading configuration: Unsupported Config Type ""
 panic: Error reading configuration: Unsupported Config Type ""
-Then you did not set the FABRIC_CFG_PATH environment variable properly. The configtxgen tool needs this variable in order to locate the configtx.yaml. Go back and execute an export FABRIC_CFG_PATH=$PWD, then recreate your channel artifacts.
-To cleanup the network, use the down option:
-
-./byfn.sh -m down
-If you see an error stating that you still have “active endpoints”, then prune your Docker networks. This will wipe your previous networks and start you with a fresh environment:
-
-docker network prune
-You will see the following message:
-
+```
+说明你没有正确设置环境变量`FABRIC_CFG_PATH`。configtxgen工具需要这个变量来定位configtx.yaml。返回和执行`export FABRIC_CFG_PATH=$PWD`，然后重建你的通道工件。  
+- 使用`down`选项清理网络：
+```
+$ ./byfn.sh -m down
+```
+- 如果你看到一个错误说你仍有活动的端点，则需要prune你的docker网络。这将清除之前的网络，重新启动一个干净的环境：
+```
+$ docker network prune
+```
+你会看到下列信息：
+```
 WARNING! This will remove all networks not used by at least one container.
 Are you sure you want to continue? [y/N]
-Select y.
-Note
-
-If you continue to see errors, share your logs on the fabric-questions channel on Hyperledger Rocket Chat or on StackOverflow.
-
-
-
-
-
-
-
-
-
-
-
-
+```
+选择`y`。
 
 ### 理解Fabric网络
 应用通过API调用智能合约。智能合约托管在网络中，靠名称和版本号识别。例如，智能合约容器的名称是`dev-peer0.org1.example.com-fabcar-1.0`，其中`fabcar`是智能合约名称，`1.0`是智能合约版本号，而`dev-peer0.org1.example.com`是peer名称。  
