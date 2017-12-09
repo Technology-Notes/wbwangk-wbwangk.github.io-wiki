@@ -395,6 +395,26 @@ Query Response:{"Name":"a","Amount":"90"}
 ex02 Invoke
 Query Response:{"Name":"b","Amount":"210"}
 ```
+### 理解docker-comopse拓扑
+BYFN范例提供了两种风格的Docker Compose文件，都是从`docker-compose-base.yaml`(位于`base`目录)扩展而来。第一种风格是`docker-compose-cli.yaml`，提供了一个CLI容器,以及一个orderer和4个peer。我们在这个文章中主要使用这个文件。  
+注意：本文剩余部分的内容主要讲一个为了SDK设计的docker-compose文件。更多细节参考[Node SDK库](https://github.com/hyperledger/fabric-sdk-node)。*  
+第二种风格的是`docker-compose-e2e.yaml`，这个用于使用Node.js SDK进行的端到端测试。为了使用SDK，它的主要不同是包含一个运行fabric-ca服务器的容器。因此，我们可以发送REST请求到组织的CA，用来进行用户的登记(registration)和注册(enrollment)。  
+如果你想使用`docker-compose-e2e.yaml`而不运行`byfn.sh`脚本，需要进行4个小修改。我们需要指出组织CA的私钥。你可以指出私钥在crypto-config目录中的位置。例如，Org1的私钥是路径`crypto-config/peerOrganizations/org1.example.com/ca/`。这个私钥的文件名是一个以`_sk`结尾的长哈希值。Org2的私钥路径是`crypto-config/peerOrganizations/org2.example.com/ca/`。  
+在`docker-compose-e2e.yaml`中为ca0和ca1修改`FABRIC_CA_SERVER_TLS_KEYFILE`变量。你还需要修改启动ca服务器的命令路径。你需要为每个CA容器提供同样的私钥两次。  
+### 使用CouchDB
+状态数据库可以从默认(goleveldb)切换到CouchDB。同样的链码函数可以用于CouchDB，然而，当把链码数据建模为JSON后，还可以对状态数据库的数据内容执行丰富而复杂的查询。  
+使用CouchDB代替默认数据库(goleveldb)，与之前描述相同步骤生成工件，除了启动网络时使用`docker-compose-couch.yaml`：
+```
+CHANNEL_NAME=$CHANNEL_NAME TIMEOUT=<pick_a_value> docker-compose -f docker-compose-cli.yaml -f docker-compose-couch.yaml up -d
+```
+下面的链码**chaincode_example02**将使用CouchDB。  
+*注意：如果你选择了将fabric-couchdb容器的端口映射到主机端口，请确保端口的远程访问是安全的。在开发环境下映射端口使CouchDB REST API可用，并使通过CoutchDB web接口(Fauxton)使数据库可见。在生产环境下进行端口映射要慎重，需要限制从外部访问CouchDB容器的端口。*  
+
+
+
+
+
+
 
 
 
