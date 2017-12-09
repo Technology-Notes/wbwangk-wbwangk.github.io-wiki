@@ -364,7 +364,7 @@ Query Result: 100    (其它信息省略)
 现在让我们把`a`的10个给`b`（即a减少10，b增加10）。这个事务会切割一个新区块并更新状态数据库。调用的语法如下：
 ```
 $ peer chaincode invoke -o orderer.example.com:7050  --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem  -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
-```
+``` 
 然后分别查询一下`a`和`b`的值：
 ```
 $$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
@@ -375,9 +375,28 @@ Query Result: 210    (其它信息省略)
 #### 这演示了什么？
 为了对账本进行读写操作，peer必须安装链码。此外，链码容器并没有启动，直到对链码进行初始化或执行读写事务(如查询`a`的值)。这些事务促使容器启动。而且，通道中的所有peer会维持一个账本的完全副本，其中包括不可修改、区块中的顺序记录，以及状态数据库(其中维护了当前状态的快照)。这包含没有安装链码的peer（就像上面例子中的`peer1.org1.example.com`peer)。 最终，链码在安装后可以访问(就像上面例子中的`peer1.org2.example.com`)，因为它已经被实例化。  
 #### 怎么看到这些事务？
-Check the logs for the CLI Docker container.
+检查CLI docker容器的日志(需要先通过exit命令先退出容器，返回到宿主操作系统):
+```
+$ docker logs -f cli
+```
+但，我的cli容器的日志是空的！原因不明
+#### 怎么看到链码日志？
+用`docker logs`命令查看不同链码容器的日志，来分别查看各个事务的日志。需要先用`docker ps`命令找到链码容器id。下面是刚刚测试的链码容器日志：
+```
+docker logs 3daea3abfab2
+ex02 Init
+Aval = 100, Bval = 200
+ex02 Invoke
+Query Response:{"Name":"a","Amount":"100"}
+ex02 Invoke
+Aval = 90, Bval = 210
+ex02 Invoke
+Query Response:{"Name":"a","Amount":"90"}
+ex02 Invoke
+Query Response:{"Name":"b","Amount":"210"}
+```
 
-docker logs -f cli
+
 
 
 
