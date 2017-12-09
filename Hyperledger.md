@@ -446,6 +446,70 @@ Query Result: [{"TxId":"1c3d3caf124c89f91a4c0f353723ac736c58155325f02890adebaa15
 peer chaincode query -C $CHANNEL_NAME -n marbles -c '{"Args":["queryMarblesByOwner","jerry"]}'
 Query Result: [{"Key":"marble2", "Record":{"color":"red","docType":"marble","name":"marble2","owner"
 ```
+### 为什么是CouchDB？
+CouchDB是一种NoSQL解决方案。它是一个面向文档的数据库，其中文档字段被存储为键值对。字段可以是简单的键/值对，列表或映射。除了LevelDB支持的keyed/composite-key/key-range查询外，CouchDB还支持完整的富文本查询功能，例如对整个区块链数据的非键查询，因为其数据内容以JSON格式存储，完全可查询。因此，CouchDB可以满足不受LevelDB支持的许多用例的链码，审计和报告要求。
+
+CouchDB还可以增强区块链中合规性和数据保护的安全性。因为它能够通过过滤和屏蔽事务内的属性来实现字段级别的安全性，并且在需要时授权只读权限。  
+
+另外，CouchDB属于CAP定理的AP类型（Availability和Partition Tolerance）。它使用主 - 主复制模型。有关更多信息，请参阅CouchDB文档的“[ 最终一致性](http://docs.couchdb.org/en/latest/intro/consistency.html)”页面。但是，在每个Fabric peer下，不存在数据库副本，写入数据库将保证一致性和持久性（非`Eventual Consistency`）。
+
+CouchDB是Fabric的第一个外部可插入状态数据库，可能也会有其他外部数据库选项。例如，IBM为关系数据库启用区块链。而CP型（一致性和分区容忍）数据库也可能是需要的，以便在没有应用级保证的情况下实现数据一致性。  
+
+### 一个关于数据持久化的备注
+如果在peer容器或CouchDB容器上需要数据持久性，有一种选择是将docker宿主机中的目录挂载到容器中的相关目录中。例如，您可以在`docker-compose-base.yaml`文件中的peer容器定义中添加以下两行：
+```
+volumes:
+ - /var/hyperledger/peer0:/var/hyperledger/production
+```
+对于CouchDB容器，您可以在CouchDB容器定义中添加以下两行：、
+```
+volumes:
+ - /var/hyperledger/couchdb0:/opt/couchdb/data
+```
+### Troubleshooting
+- 总是干净地启动网络。使用下列命令删除共建、密钥、容器和链码镜像：
+```
+./byfn.sh -m down
+```
+*注意：如果不删除旧的容器和镜像会报错。*  
+- 如果你看到Docker错误，首先检查docker版本，然后重启docker进程。docker问题往往不好识别。例如，你可能看到的错误是不能找到挂在到容器的密钥文件。  
+如果你想删除镜像重新开始：
+```
+$ docker rm -f $(docker ps -aq)
+$ docker rmi -f $(docker images -q)
+```
+- 如果你在创建、实例化、调用或查询命令中看到错误，确保你的通道名称和链码名称正确。
+If you see errors on your create, instantiate, invoke or query commands, make sure you have properly updated the channel name and chaincode name. There are placeholder values in the supplied sample commands.
+If you see the below error:
+
+Error: Error endorsing chaincode: rpc error: code = 2 desc = Error installing chaincode code mycc:1.0(chaincode /var/hyperledger/production/chaincodes/mycc.1.0 exits)
+You likely have chaincode images (e.g. dev-peer1.org2.example.com-mycc-1.0 or dev-peer0.org1.example.com-mycc-1.0) from prior runs. Remove them and try again.
+
+docker rmi -f $(docker images | grep peer[0-9]-peer[0-9] | awk '{print $3}')
+If you see something similar to the following:
+
+Error connecting: rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure
+Error: rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure
+Make sure you are running your network against the “1.0.0” images that have been retagged as “latest”.
+If you see the below error:
+
+[configtx/tool/localconfig] Load -> CRIT 002 Error reading configuration: Unsupported Config Type ""
+panic: Error reading configuration: Unsupported Config Type ""
+Then you did not set the FABRIC_CFG_PATH environment variable properly. The configtxgen tool needs this variable in order to locate the configtx.yaml. Go back and execute an export FABRIC_CFG_PATH=$PWD, then recreate your channel artifacts.
+To cleanup the network, use the down option:
+
+./byfn.sh -m down
+If you see an error stating that you still have “active endpoints”, then prune your Docker networks. This will wipe your previous networks and start you with a fresh environment:
+
+docker network prune
+You will see the following message:
+
+WARNING! This will remove all networks not used by at least one container.
+Are you sure you want to continue? [y/N]
+Select y.
+Note
+
+If you continue to see errors, share your logs on the fabric-questions channel on Hyperledger Rocket Chat or on StackOverflow.
 
 
 
