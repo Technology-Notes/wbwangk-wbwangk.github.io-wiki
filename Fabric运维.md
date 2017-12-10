@@ -153,12 +153,28 @@ $ configtxgen -channelID foo -outputBlock foo_genesisblock.pb -inspectBlock foo_
 $ configtxlator start
 2017-06-21 18:16:58.248 HKT [configtxlator] startServer -> INFO 001 Serving HTTP requests on 0.0.0.0:7059
 ```
-### 原型翻译
-为了扩展性，并且由于某些字段必须被签名，许多原始字段被存储为字节。这使得使用该jsonpb包的JSON翻译的自然原始版本无法生成人类可读版本的protobufs。相反，configtxlator公开REST组件来做更复杂的翻译。
+### Proto翻译
+为了扩展性，并且由于某些字段必须被签名，许多proto字段被存储为字节。这使得无法使用`jsonpb`包来完成原生proto到JSON的翻译。作为代替，`configtxlator`暴露了一个REST组件来做更复杂的翻译。
 
-为了将proto转换为人类可读的JSON等价物，只需将二进制proto发布到其余目标 http://$SERVER:$PORT/protolator/decode/<message.Name>，其中<message.Name>是消息的完全限定的原始名称。
+为了将proto转换为人类可读的JSON等价物，只需将二进制proto发布到REST地址`http://$SERVER:$PORT/protolator/decode/<message.Name>`，其中`<message.Name>`是消息的完全限定的proto名称。
 
-例如，要解码另存为的配置块 configuration_block.pb，请运行以下命令：
+例如，要解码一个配置区块并另存为`configuration_block.pb`，请运行以下命令：:
+```
+$ curl -X POST --data-binary @configuration_block.pb http://127.0.0.1:7059/protolator/decode/common.Block
+```
+为了转换人类可读JSON版本的prot消息，只需要把JSON消息发送到`http://$SERVER:$PORT/protolator/encode/<message.Name`，这里`<message.Name>`仍然是消息的完全限定的proto名称。  
+例如，重编码区块另存为`configuration_block.json`，运行命令：
+```
+$ curl -X POST --data-binary @configuration_block.json http://127.0.0.1:7059/protolator/encode/common.Block
+```
+任何配置相关proto，包括`common.Block`、`common.Envelope`、`common.ConfigEnvelope`、`common.ConfigUpdateEnvelope`
+、`common.Config`和`common.ConfigUpdate`都是这些URL有效目标。未来，可能会增加其它proto编码类型，如背书者事务。  
+
+### 配置更新计算
+给定两种不同的配置，可以计算在它们之间转换的配置更新。只需将两个`common.Config`原始编码的配置作为`multipart/formdata`原始字段 `original`和更新后的字段发布`updated`到`http://$SERVER:$PORT/configtxlator/compute/update-from-configs`。
+
+例如，给定原始配置文件`original_config.pb`和更新的配置文件`updated_config.pb`作为通道`desiredchannel`：
+
 
 
 
