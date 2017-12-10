@@ -123,6 +123,45 @@ $ configtxgen -channelID foo -outputBlock foo_genesisblock.pb -inspectBlock foo_
 ```
 上述命令先生成区块，再显示它。  
 
+## 用configtxlator重新配置
+### 概述
+创建`configtxlator`工具的目的是支持不依赖SDK的重新配置。通道配置被当作一个事务存储在通道的配置区块中，可以被直接操作，如在bdd行为测试中。不过，在撰写本文时，SDK本身不支持直接操作配置，因此该configtxlator工具旨在提供API，供任何SDK的使用者与之交互以协助配置更新。
+
+工具名称是configtx和translator的混合，旨在表达该工具只是在两者之间进行转换。它不会生成配置。它不递交或检索配置。它不会自己修改配置，它只是在configtx格式的不同视图之间提供一些双向操作。
+
+标准用法为：
+
+1. SDK检索最新的配置  
+2. `configtxlator` 产生人类可读的配置版本  
+3. 用户或应用程序编辑配置  
+4. `configtxlator`用于计算配置的变更  
+5. SDK递交签名和递交配置  
+
+`configtxlator`工具暴露了一个真正的无状态的REST API来与配置元素进行交互。这些REST组件支持将原生配置格式转换为人类可读的JSON格式，或者根据两种配置之间的差异来计算配置变更。
+
+由于`configtxlator`服务故意不包含任何密钥材料或其他秘密信息，因此不包含任何授权或访问控制。预期的典型部署将在本地与应用程序一起作为沙盒容器来运行，因而`configtxlator`是个为消费者提供的专用进程。
+
+### 运行configtxlator
+`configtxlator`工具可以与其他Hyperledger Fabric平台相关的二进制文件一起下载。 详细信息查看download-platform-specific-binaries。
+
+该工具可能被配置为侦听不同的端口，您也可以使用`--port`和`--hostname`标志来指定主机名。要查看完整的命令和标志，请运行`configtxlator --help`。
+
+该二进制包将启动一个监听指定端口的http服务器，然后就可以处理请求了。
+
+要启动`configtxlator`服务器：
+```
+$ configtxlator start
+2017-06-21 18:16:58.248 HKT [configtxlator] startServer -> INFO 001 Serving HTTP requests on 0.0.0.0:7059
+```
+### 原型翻译
+为了扩展性，并且由于某些字段必须被签名，许多原始字段被存储为字节。这使得使用该jsonpb包的JSON翻译的自然原始版本无法生成人类可读版本的protobufs。相反，configtxlator公开REST组件来做更复杂的翻译。
+
+为了将proto转换为人类可读的JSON等价物，只需将二进制proto发布到其余目标 http://$SERVER:$PORT/protolator/decode/<message.Name>，其中<message.Name>是消息的完全限定的原始名称。
+
+例如，要解码另存为的配置块 configuration_block.pb，请运行以下命令：
+
+
+
 
 ## 背书策略
 [原文](http://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html)  
