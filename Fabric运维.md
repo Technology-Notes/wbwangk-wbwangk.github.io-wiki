@@ -171,11 +171,118 @@ $ curl -X POST --data-binary @configuration_block.json http://127.0.0.1:7059/pro
 、`common.Config`和`common.ConfigUpdate`都是这些URL有效目标。未来，可能会增加其它proto编码类型，如背书者事务。  
 
 ### 配置更新计算
-给定两种不同的配置，可以计算在它们之间转换的配置更新。只需将两个`common.Config`原始编码的配置作为`multipart/formdata`原始字段 `original`和更新后的字段发布`updated`到`http://$SERVER:$PORT/configtxlator/compute/update-from-configs`。
+给定两种不同的配置，可以计算在它们之间转换的配置更新。只需将两个`common.Config`proto编码的配置作为`multipart/formdata`、original作为字段`original`和updated作为字段`updated`，发送到`http://$SERVER:$PORT/configtxlator/compute/update-from-configs`。
 
-例如，给定原始配置文件`original_config.pb`和更新的配置文件`updated_config.pb`作为通道`desiredchannel`：
+例如，给定原始配置文件`original_config.pb`和更新的配置文件`updated_config.pb`，对于通道`desiredchannel`：
+```
+$ curl -X POST -F channel=desiredchannel -F original=@original_config.pb -F updated=@updated_config.pb http://127.0.0.1:7059/configtxlator/compute/update-from-configs
+```
+### 自举例子
+启动`configtxlator`:
+```
+$ configtxlator start
+2017-05-31 12:57:22.499 EDT [configtxlator] main -> INFO 001 Serving HTTP requests on port: 7059
+```
+首先，为排序系统通道生成一个创世区块：
+```
+$ configtxgen -outputBlock genesis_block.pb
+2017-05-31 14:15:16.634 EDT [common/configtx/tool] main -> INFO 001 Loading configuration
+2017-05-31 14:15:16.646 EDT [common/configtx/tool] doOutputBlock -> INFO 002 Generating genesis block
+2017-05-31 14:15:16.646 EDT [common/configtx/tool] doOutputBlock -> INFO 003 Writing genesis block
+```
+将创世区块解码为人类可编辑格式：
+```
+$ curl -X POST --data-binary @genesis_block.pb http://127.0.0.1:7059/protolator/decode/common.Block > genesis_block.json
+```
+编辑生成的文件`genesis_block.json`，或者用程序操作它。这里我们使用JOSN CLI工具`jq`。为了简单，我们编辑通道的批大小，因为它是个简单的数字。然而，所有都可以编辑，包括策略和MSP。
 
+首先，让我们建立一个环境变量来保存指向json中属性的路径：
+```
+$ export MAXBATCHSIZEPATH=".data.data[0].payload.data.config.channel_group.groups.Orderer.values.BatchSize.value.max_message_count"
+```
+然后，让我们显示这个属性的值：
+```
+$ jq "$MAXBATCHSIZEPATH" genesis_block.json
+10
+```
+现在，我们设置新的批大小，并显示这个新值：
+```
+$ jq “$MAXBATCHSIZEPATH = 20” genesis_block.json > updated_genesis_block.json
+$ jq “$MAXBATCHSIZEPATH” updated_genesis_block.json
+20
+```
+创世区块现在准备好被重编码为用于自举的原生proto格式：
+```
+$ curl -X POST --data-binary @updated_genesis_block.json http://127.0.0.1:7059/protolator/encode/common.Block > updated_genesis_block.pb
+```
+`updated_genesis_block.pb`文件现在可以作为创世区块用于一个排序系统通道的自举。
 
+### 重新配置的例子
+利用另外的终端窗口，使用默认配置启动排序服务，临时自举器会创建一个`testchainid`排序系统通道。
+```
+ORDERER_GENERAL_LOGLEVEL=debug orderer
+```
+重新配置一个通道的操作非常类似于改变一个创世配置。
+
+首先，取得配置区块proto：
+```
+$ peer channel fetch config config_block.pb -o 127.0.0.1:7050 -c testchainid
+2017-05-31 15:11:37.617 EDT [msp] getMspConfig -> INFO 001 intermediate certs folder not found at [/home/yellickj/go/src/github.com/hyperledger/fabric/sampleconfig/msp/intermediatecerts]. Skipping.: [stat /home/yellickj/go/src/github.com/hyperledger/fabric/sampleconfig/msp/intermediatecerts: no such file or directory]
+2017-05-31 15:11:37.617 EDT [msp] getMspConfig -> INFO 002 crls folder not found at [/home/yellickj/go/src/github.com/hyperledger/fabric/sampleconfig/msp/intermediatecerts]. Skipping.: [stat /home/yellickj/go/src/github.com/hyperledger/fabric/sampleconfig/msp/crls: no such file or directory]
+Received block:  1
+Received block:  1
+2017-05-31 15:11:37.635 EDT [main] main -> INFO 003 Exiting.....
+```
+然后，发送配置区块到`configtxlator`服务进行解码：
+```
+curl -X POST --data-binary @config_block.pb http://127.0.0.1:7059/protolator/decode/common.Block > config_block.json
+```
+从区块中提取配置节：
+```
+$ jq .data.data[0].payload.data.config config_block.json > config.json
+```
+编辑配置，把它另存为一个新的`updated_config.json`。这里，我们设置批大小为30。
+```
+$ jq ".channel_group.groups.Orderer.values.BatchSize.value.max_message_count = 30" config.json  > updated_config.json
+```
+对原始配置和变更的配置进行重编码到proto格式：
+```
+$ curl -X POST --data-binary @config.json http://127.0.0.1:7059/protolator/encode/common.Config > config.pb
+$ curl -X POST --data-binary @updated_config.json http://127.0.0.1:7059/protolator/encode/common.Config > updated_config.pb
+```
+现在，两个配置都进行适当编码，发送它们到*configtxlator*服务，去计算它们之间的配置变更。
+```
+$ curl -X POST -F original=@config.pb -F updated=@updated_config.pb http://127.0.0.1:7059/configtxlator/compute/update-from-configs -F channel=testchainid > config_update.pb
+```
+这时，计算出来的配置变更已经准备好了。传统上，使用一个SDK签名和包装这个消息。然而，为了仅使用peer cli，*configtxlator*也可以用于完成这个任务。
+
+首先，我们对配置变更(ConfigUPdate)进行解码，以便可以用文本方式操作它：
+```
+$ curl -X POST --data-binary @config_update.pb http://127.0.0.1:7059/protolator/decode/common.ConfigUpdate > config_update.json
+```
+然后，我们把它包裹进一个信封(envelope)消息：
+```
+$ echo '{"payload":{"header":{"channel_header":{"channel_id":"testchainid", "type":2}},"data":{"config_update":'$(cat config_update.json)'}}}' > config_update_as_envelope.json
+```
+接下来，将其转换回完整的配置事务的proto格式：
+```
+$ curl -X POST --data-binary @config_update_as_envelope.json http://127.0.0.1:7059/protolator/encode/common.Envelope > config_update_as_envelope.pb
+```
+最后，发送配置变更事务到排序服务去执行一个配置变更。
+```
+$ peer channel update -f config_update_as_envelope.pb -c testchainid -o 127.0.0.1:7050
+```
+### 增加一个组织
+先启动`configtxlator`：
+```
+$ configtxlator start
+2017-05-31 12:57:22.499 EDT [configtxlator] main -> INFO 001 Serving HTTP requests on port: 7059
+```
+使用`SampleDevModeSolo`profile选项启动排序服务。
+```
+$ ORDERER_GENERAL_LOGLEVEL=debug ORDERER_GENERAL_GENESISPROFILE=SampleDevModeSolo orderer
+```
+增加一个组织的过程与批大小的例子非常类似。然而，不同与设置批大小，一个新组织定义在应用级别。添加一个组织稍微牵扯一点，因为我们必须先创建一个通道，然后修改它的成员组成。  
 
 
 
