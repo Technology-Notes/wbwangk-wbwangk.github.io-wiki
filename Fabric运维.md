@@ -218,25 +218,25 @@ $ curl -X POST --data-binary @updated_genesis_block.json http://127.0.0.1:7059/p
 `updated_genesis_block.pb`文件现在可以作为创世区块用于一个排序系统通道的自举。
 
 ### 重新配置的例子
-（先用命令删除所有docker容器`docker rm -f $(docker ps -aq)`，否则byfn.sh启动的排序服务也会绑定端口7050）
+*（先用命令删除所有docker容器`docker rm -f $(docker ps -aq)`，否则byfn.sh启动的排序服务也会绑定端口7050）*  
 利用另外的终端窗口，使用默认配置启动排序服务，临时自举器会创建一个`testchainid`排序系统通道。
 ```
 ORDERER_GENERAL_LOGLEVEL=debug orderer
 ```
 重新配置一个通道的操作非常类似于改变一个创世配置。
 
+*（现在configtxlator、orderer各占了一个终端窗口，下面需要启动第三个终端窗口）*  
 首先，取得配置区块proto：
 ```
 $ peer channel fetch config config_block.pb -o 127.0.0.1:7050 -c testchainid
-2017-05-31 15:11:37.617 EDT [msp] getMspConfig -> INFO 001 intermediate certs folder not found at [/home/yellickj/go/src/github.com/hyperledger/fabric/sampleconfig/msp/intermediatecerts]. Skipping.: [stat /home/yellickj/go/src/github.com/hyperledger/fabric/sampleconfig/msp/intermediatecerts: no such file or directory]
-2017-05-31 15:11:37.617 EDT [msp] getMspConfig -> INFO 002 crls folder not found at [/home/yellickj/go/src/github.com/hyperledger/fabric/sampleconfig/msp/intermediatecerts]. Skipping.: [stat /home/yellickj/go/src/github.com/hyperledger/fabric/sampleconfig/msp/crls: no such file or directory]
-Received block:  1
-Received block:  1
-2017-05-31 15:11:37.635 EDT [main] main -> INFO 003 Exiting.....
+-o 127.0.0.1:7050 -c testchainid
+2017-12-11 09:00:15.658 UTC [channelCmd] InitCmdFactory -> INFO 001 Endorser and orderer connections initialized
+2017-12-11 09:00:15.660 UTC [main] main -> INFO 002 Exiting.....
 ```
+*(当前目录下创建了文件`config_block.pb`)*  
 然后，发送配置区块到`configtxlator`服务进行解码：
 ```
-curl -X POST --data-binary @config_block.pb http://127.0.0.1:7059/protolator/decode/common.Block > config_block.json
+$ curl -X POST --data-binary @config_block.pb http://127.0.0.1:7059/protolator/decode/common.Block > config_block.json
 ```
 从区块中提取配置节：
 ```
