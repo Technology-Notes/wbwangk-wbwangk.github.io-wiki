@@ -284,8 +284,6 @@ $ ORDERER_GENERAL_LOGLEVEL=debug ORDERER_GENERAL_GENESISPROFILE=SampleDevModeSol
 ```
 增加一个组织的过程与批大小的例子非常类似。然而，不同与设置批大小，一个新组织定义在应用级别。添加一个组织稍微牵扯一点，因为我们必须先创建一个通道，然后修改它的成员组成。  
 
-
-
 ## 背书策略
 [原文](http://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html)  
 背书策略是用来指导peer如何决定事务是否得到适当的赞同。当peer收到一个事务时，作为事务验证流程的一部分，它调用与事务的链码相关联的VSCC(验证系统链码)来确定事务的有效性。回忆一下，一个事务包含来自任何背书peer的一个或多个背书。VSCC的任务是做出以下决定：
