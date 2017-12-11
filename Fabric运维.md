@@ -218,6 +218,7 @@ $ curl -X POST --data-binary @updated_genesis_block.json http://127.0.0.1:7059/p
 `updated_genesis_block.pb`文件现在可以作为创世区块用于一个排序系统通道的自举。
 
 ### 重新配置的例子
+（先用命令删除所有docker容器`docker rm -f $(docker ps -aq)`，否则byfn.sh启动的排序服务也会绑定端口7050）
 利用另外的终端窗口，使用默认配置启动排序服务，临时自举器会创建一个`testchainid`排序系统通道。
 ```
 ORDERER_GENERAL_LOGLEVEL=debug orderer
