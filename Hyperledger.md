@@ -1,7 +1,7 @@
 ## Hyperledger概述
 ### 什么是区块链
 #### 一个分布式账本
-所有事务数据被保存到账本中。账本中的记录只能增加，不能修改。所有节点(Peer)都保存了事务数据的完整副本。每间隔一定时间或交易量达到一定数量，形成一个区块(Block)。区块一旦形成就不能修改。多个区块顺序链接在一起形成区块链。  
+所有事务数据被保存到账本中。账本中的记录只能增加，不能修改。所有节点(Peer)都保存了事务数据的完整副本。每间隔一定时间或事务量达到一定数量，形成一个区块(Block)。区块一旦形成就不能修改。多个区块顺序链接在一起形成区块链。  
 （把一段时间内生成的信息（包括数据或代码）打包成一个区块，盖上时间戳，与上一个区块衔接在一起，每下一个区块的页首都包含了上一个区块的索引数据，然后再在本页中写入新的信息，从而形成新的区块，首尾相连，最终形成了区块链。）  
 事务日志保存到区块链中（有点像数据库日志），账本的当前状态体现在世界状态中。世界状态保存在NoSQL数据库中，如Leveldb、Couchdb。  
 #### 智能合约(smart contract)
@@ -11,7 +11,7 @@
 Hyperledger Fabric支持私有网络（使用通道）。每个节点（参与者或称成员）可以加入多个通道，通道内的节点同享同一个账本。  
 具有正确权限的用户可以轻松地安装和实例化通道的链式代码，并查看是谁在他们参与的渠道中，恰当授权的用户可以根据所建立的区块链网络的策略调用链码，创建新的通道，甚至更新通道的访问权限。  
 #### 共识
-在整个网络中保持账本交易同步的过程 - 确保账本只有在交易得到适当的参与者批准时才会更新，而且当账本更新时，它们以相同的顺序更新相同的交易 - 被称为共识。  
+在整个网络中保持账本事务同步的过程 - 确保账本只有在事务得到适当的参与者批准时才会更新，而且当账本更新时，它们以相同的顺序更新相同的事务 - 被称为共识。  
 将共识定义为三阶段流程：认可，排序和生效证。
 现在，将区块链视为一个共享的，复制的事务系统就足够了，该系统通过智能合约进行更新，并通过一个称为共识的协作过程保持一致的同步。  
 事务必须按照发生的顺序写入账本。共识算法有很多。例如，PBFT（Practical Byzantine Fault Tolerance）可以提供文件副本相互通信的机制，以保持每个副本的一致性，即使在发生损坏的情况下也是如此。  
@@ -34,15 +34,15 @@ Hyperledger Fabric被设计为允许网络发起者（指通道建立者？）�
     BaaS的⼯具集，帮助创建、管理、终⽌区块链(Blockchain as a Service)  
 
 ### Fabric
-Hyperledger Fabric网络的成员通过成员资格服务提供商（MSP）注册，而不是一个允许未知身份参与网络的开放式无权限系统（需要证明工作证明的协议来验证交易和保护网络）。
-Hyperledger Fabric还提供了创建**通道**的能力，允许一组参与者创建单独的交易账本。用通道来控制访问账本的权限。账本可以加入通道，参与者也可以加入通道。对于一个通道，里面的参与者可以“看到”里面的账本。  
+Hyperledger Fabric网络的成员通过成员资格服务提供商（MSP）注册，而不是一个允许未知身份参与网络的开放式无权限系统（需要证明工作证明的协议来验证事务和保护网络）。
+Hyperledger Fabric还提供了创建**通道**的能力，允许一组参与者创建单独的事务账本。用通道来控制访问账本的权限。账本可以加入通道，参与者也可以加入通道。对于一个通道，里面的参与者可以“看到”里面的账本。  
 #### 成员管理(Membership)
-会员注册、⾝份保护、 内容保密、交易审计功能，以保证平台访问的安全性。  
+会员注册、⾝份保护、 内容保密、事务审计功能，以保证平台访问的安全性。  
 在Hyperledger Fabric中，每个参与者（客户端，peer，oderer）都属于某个组织。  
 组织拥有CA，为其成员（客户端，peer，oderer）提供证书，以便向其他人或其他组织认证自己。  
-交易方持有多种类型的证书，交易不同环节将使用如下这些类型的证书：  
+事务方持有多种类型的证书，事务不同环节将使用如下这些类型的证书：  
 - 注册证书(Enrollment Cert)。用于验证使用者身份，永不过期
-- 事务证书(Transaction Cert)。每个交易时生成，用于交易的签名  
+- 事务证书(Transaction Cert)。每个事务开始时生成，用于事务的签名  
 - 通信证书(TLS-Cert)，用于通信通道加密，永不过期  
 
 #### 区块服务（BlockChain&Transaction)
@@ -198,7 +198,7 @@ $ docker ps
 网络停止后，通过docker ps命令可以看到所有的容器都消失了。
 
 ### 密钥生成器(Crypto Generator)
-我们用`cryptogen`工具为各种的网络实体生成密码学文件(x509证书和签名密钥)。这些证书表达身份，对实体间通信和交易认证进行签名和验证。  
+我们用`cryptogen`工具为各种的网络实体生成密码学文件(x509证书和签名密钥)。这些证书表达身份，对实体间通信和事务认证进行签名和验证。  
 Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，允许我们为组织以及属于组织的组件生成一系列证书和密钥。执行示范：
 ```
 $ cryptogen generate --config=./crypto-config.yaml
@@ -207,7 +207,7 @@ $ cryptogen generate --config=./crypto-config.yaml
 配置文件中有个`count`变量，我们用它来指定每个组织下的peer数量；在我们示例中，每个组织下有两个peer。我们在本文不会详述[X509证书和PKI](https://en.wikipedia.org/wiki/Public_key_infrastructure)。  
 在`crypto-config.yaml`文件中，注意`OrdererOrgs`之下的“Name”, “Domain” and “Specs”参数。网络实体的命名约定是：`{{.Hostname}}.{{.Domain}}`。例如，排序节点的名称是`orderer.example.com`，这关联了一个MSP ID `Orderer`，关于MSP的更多细节参考[Membership Service Providers (MSP)](http://hyperledger-fabric.readthedocs.io/en/latest/msp.html)文档。  
  
-### 配置交易生成器
+### 配置事务生成器
 工具`configtxgen`用于生成四个配置工件：
 - 排序器(orderer)`genesis block`
 - 通道`configuration transaction`  
@@ -1099,7 +1099,7 @@ CLI内部为**sacc**创建一个`SignedChaincodeDeploymentSpec`，并发送它�
 #### 实例化
 `instantiate`事务调用`lifecycle System Chaincode`(LSCC)在一个通道上创建和实例化某个链码。这是一个链码-通道绑定过程：一个链码可以绑定到任意数量的通道，独立和互不依赖地运行在每个通道上。换句话说，无论链码在多少个其他通道上安装和实例化，对于提交事务的通道状态是隔离的。  
 `instantiate`事务的创建者必须满足包含在SignedCDS中的链码实例化策略，必须还是通道的写入者（这是通道创建时的配置之一）。这对于通道安全很重要，可以阻止恶意实体部署链码和欺骗成员执行非绑定通道的链码。  
-例如，回想一下，默认实例化策略是任何通道MSP管理员，因此链码实例化事务的创建者必须是通道管理员的成员。交易提议到达背书者时，会根据实例化策略验证创建者的签名。在提交到账本之前，在交易生效期间再次执行此操作。  
+例如，回想一下，默认实例化策略是任何通道MSP管理员，因此链码实例化事务的创建者必须是通道管理员的成员。事务提议到达背书者时，会根据实例化策略验证创建者的签名。在提交到账本之前，在事务生效期间再次执行此操作。  
 实例化事务还为通道上的链码建立了背书策略。背书策略描述了事务结果可以被通道成员接受的证据需求。  
 例如，使用CLI实例化**sacc**链码和用`john`和`0`初始化状态，命令如下：
 ```
@@ -1173,25 +1173,11 @@ Hyperledger Fabric中使用系统链代码来实现许多系统行为，以便�
 当前系统链码的列表：  
 1. [LSCC](https://github.com/hyperledger/fabric/tree/master/core/scc/lscc) 生命周期系统链码，处理上述的生命周期请求。  
 2. [CSCC](https://github.com/hyperledger/fabric/tree/master/core/scc/cscc) 配置系统链码，处理peer端的通道配置。  
-3. [QSCC](https://github.com/hyperledger/fabric/tree/master/core/scc/qscc) 查询系统链码，提供账本查询API，例如获取区块和交易。  
-4. [ESCC](https://github.com/hyperledger/fabric/tree/master/core/scc/escc) 背书系统链码，通过签署交易提议响应来处理背书。  
+3. [QSCC](https://github.com/hyperledger/fabric/tree/master/core/scc/qscc) 查询系统链码，提供账本查询API，例如获取区块和事务。  
+4. [ESCC](https://github.com/hyperledger/fabric/tree/master/core/scc/escc) 背书系统链码，通过签署事务提议响应来处理背书。  
 5. [VSCC](https://github.com/hyperledger/fabric/tree/master/core/scc/vscc) 生效系统链码，处理事务生效，包括检查背书策略和多版本并发控制。  
 
 更改或覆盖这些系统链码要小心，特别是LSCC、ESCC和VSCC，因为它们处在主事务的运行路径上。值得注意的是，VSCC将区块将提交到账本之前的生效验证，通道中的所有peer计算相同的生效验证以避免账本分歧（非确定性）是很重要的。因此，如果修改或更换VSCC，需要特别小心。  
-
-
-### 密钥生成器
-我们用`cryptogen`工具为不同的网络实体生成密码学文件。这些证书表达身份，对实体间通信和交易认证进行签名和验证。  
-Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，允许我们为组织以及属于组织的组件生成一系列证书和密钥。每个组织都会分配一个根证书(`ca-cert`)，该证书绑定特殊组件(peer和orderer)到组织。  
-配置文件中有个`count`变量，我们用它来指定组织下的peer数量，在我们示例中，每个组织下有两个peer。我们在本文不会详述[X509证书和PKI](https://en.wikipedia.org/wiki/Public_key_infrastructure)。  
-在`crypto-config.yaml`文件中，注意`OrdererOrgs`之下的“Name”, “Domain” and “Specs”参数。网络实体的命名约定是：`{{.Hostname}}.{{.Domain}}`。例如，排序节点的名称是`orderer.example.com`，这关联了一个MSP ID `Orderer`，关于MSP的更多细节参考[Membership Service Providers (MSP)](http://hyperledger-fabric.readthedocs.io/en/latest/msp.html)文档。  
-执行`cryptogen`后，生成的证书和密钥保存到了目录`crypto-config`下。  
-#### 配置交易生成器
-工具`configtxgen`用于生成四个配置工件：
-- 排序器(orderer)`genesis block`  
-- 通道`configuration transaction`  
-- 两个`anchor peer transactions`，每个组织生成一个  
-关于`configtxgen`更多细节参考[Channel Configuration (configtxgen)](http://hyperledger-fabric.readthedocs.io/en/latest/configtxgen.html)。  
 
 # Fabric运维
 参考另一篇wiki文章《[Fabric运维](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E8%BF%90%E7%BB%B4)》  
@@ -1252,7 +1238,7 @@ Transactions typically follow a seven-step process to become a block on the chai
 贯穿整个事务流程的一个更广泛的术语，用来按顺序生成一致性并确认按一组事务构组成区块的正确性。  
 
 #### 当前状态
-账本的当前状态表示包含在它的链式交易日志中的所有密钥的最新值。针对包含在已处理区块中的每个有效事务，peer将最新值提交到账本的当前状态。由于当前状态代表通道已知的所有最新键值，因此有时称为世界状态。链码针对当前状态数据执行事务提议。  
+账本的当前状态表示包含在它的链式事务日志中的所有密钥的最新值。针对包含在已处理区块中的每个有效事务，peer将最新值提交到账本的当前状态。由于当前状态代表通道已知的所有最新键值，因此有时称为世界状态。链码针对当前状态数据执行事务提议。  
 
 #### 动态成员资格
 Hyperledger Fabric在不影响这个网络的可靠性的前提下，支持增减会员、peer和排序服务节点。当业务关系调整和引各种原因需要增减实体时，动态成员资格是很需要的。   
