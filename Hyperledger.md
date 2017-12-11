@@ -130,7 +130,7 @@ hyperledger/fabric-peer        x86_64-1.0.4           1ce935adc397        4 week
 hyperledger/fabric-javaenv     x86_64-1.0.4           a517b70135c7        4 weeks ago         1.41GB
 hyperledger/fabric-ccenv       x86_64-1.0.4           856061b1fed7        4 weeks ago         1.28GB
 ```
-上述脚本还下载了几个工具到`/opt/fabric-samples/bin`目录下，它们是cryptogen,configtxgen,configtxlator,peer。  
+上述脚本还下载了几个工具到`/opt/fabric-samples/bin`目录下，它们是`cryptogen`、`configtxgen`、`configtxlator`、`orderer`、`peer`。  
 为了访问它们方便，需要修改PATH参数。编辑`/etc/profile`，在文件的最后添加内容：
 ```
 export PATH=/opt/fabric-samples/bin:$PATH
