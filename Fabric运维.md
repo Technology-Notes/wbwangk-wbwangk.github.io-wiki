@@ -153,7 +153,7 @@ $ configtxgen -channelID foo -outputBlock foo_genesisblock.pb -inspectBlock foo_
 $ configtxlator start
 2017-06-21 18:16:58.248 HKT [configtxlator] startServer -> INFO 001 Serving HTTP requests on 0.0.0.0:7059
 ```
-### Proto翻译
+### Proto转换
 为了扩展性，并且由于某些字段必须被签名，许多proto字段被存储为字节。这使得无法使用`jsonpb`包来完成原生proto到JSON的翻译。作为代替，`configtxlator`暴露了一个REST组件来做更复杂的翻译。
 
 为了将proto转换为人类可读的JSON等价物，只需将二进制proto发布到REST地址`http://$SERVER:$PORT/protolator/decode/<message.Name>`，其中`<message.Name>`是消息的完全限定的proto名称。
