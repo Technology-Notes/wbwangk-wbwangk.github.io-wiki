@@ -98,3 +98,11 @@ https://wiki.hyperledger.org/_media/groups/requirements/hyperledger_-_supply_cha
 
 ### Tutorial: Hyperledger Fabric v1.1 – Create a Development Business Network on zLinux
 https://github.com/CATechnologies/blockchain-tutorials/wiki/Tutorial:-Hyperledger-Fabric-v1.1-%E2%80%93-Create-a-Development-Business-Network-on-zLinux#toc9
+
+### git proxy
+```
+git config --global https.proxy http://127.0.0.1:1080
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+git config --global --unset all.proxy
+```
