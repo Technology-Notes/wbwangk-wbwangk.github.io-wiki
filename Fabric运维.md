@@ -189,9 +189,9 @@ Channel: (version 0)
 4. 对更新元素集中的每个元素，检验针对`ConfigUpdateEnvelope`的签名集，确保符合`mod_policy`。  
 5. 通过将更新集应用到当前配置，计算出配置的一个新完全版本。  
 6. 将新配置写入`ConfigEnvelope`，将`CONFIG_UPDATE`作为`the last_update`字段，并与增长的`sequence`值一起将新配置编码入`config`字段。  
-7. 
+7. 将一个新的`ConfigEnvelope`以类型`CONFIG`写入`Envelope`，最后将这个作为唯一事务写入一个新配置区块。  
 
-
+当新的peer(或任何其他的`Deliver`接收者)接收到这个配置区块，它会校验这个配置，方法是将`last_update`消息应用到当前配置，确保orderer计算出来的`config`字段包含了正确的新配置。  
 
 
 
