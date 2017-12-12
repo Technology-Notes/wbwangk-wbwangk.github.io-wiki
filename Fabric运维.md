@@ -306,7 +306,7 @@ Channel: (version 0)
 注意，每个联盟定义了一组成员，就像排序组织成员一样。每个联盟还定义了一个ChannelCreationPolicy。这个策略用于对通道创建请求进行授权。通常，这个值被设为`ImplicitMetaPolicy`，意思是要求通道的新成员签名以授权频道创建。关于通道创建的更多内容在文章的后面还有。
 
 ### 应用通道配置
-通道的应用配置被设计用于应用类型的事务。它的定义类似于：
+通道的应用配置被设计用于应用类型的事务。它的定义如下：
 ```golang
 &ConfigGroup{
     Groups: map<string, *ConfigGroup> {
@@ -323,10 +323,18 @@ Channel: (version 0)
     },
 }
 ```
+很像`Orderer`部分，每个组织被编码为一个组(group)。然而，不仅仅编码了`MSP`id信息，每个组织附加编码了一个`AnchorPeers`列表。这是一个允许不同组织之间通过peer gossip网络互相联系的peer列表（这个列表中的peer才可以被其他组织的peer“看到”）。
+
+应用通道编码了一个orderer组织的副本，和用于确定变更这些参数的共识选项，所以包含了系统通道配置的`Orderer`部分的相同内容。然而，从应用的观点这可以被大大忽略。  
+
 ### 通道创建
 当排序节点收到一个不存在的通道的`CONFIG_UPDATE`，排序节点就假定这是个通道创建请求，然后执行下列操作：
-1. 排序节点对通道创建请求的合伙人身份进行验证。它通过查看顶层group的`Consortium`值来验证。  
-2. 
+1. orderer确定发出通道创建请求的联盟身份。它通过查看顶层group的`Consortium`值来做到这一点。  
+2. orderer验证包含在`Application`组的组织，确保这些组织是联盟下属(子集)，而且`ApplicationGroup`被设置为`version``1`。  
+3. orderer验证联盟是否有成员，从而新通道会有应用成员(创建没有成员的联盟和通道仅用于测试)。  
+4. orderer通过从排序系统通道中取得`Orderer`组来创建一个模板配置，用新的成员创建一个`Application`组并指定`mod_policy`为联盟配置里的`ChannelCreationPolicy`。需要注意的是策略是在新配置的上下文中被评估的，所以一个需要`ALL`成员的策略仅需要全部新通道成员的签名，而不是联盟的所有成员签名。  
+5. orderer将`CONFIG_UPDATE`作为一个更新应用到这个模板配置。因为这个`CONFIG_UPDATE`应用变更到`Application`组(它的`version`是`1`)，配置代码用`ChannelCreationPolicy`验证这些更新。如果通道创建包含其他变更，如个别组织的锚peer，元素的相应mod policy会被调用。  
+6. 为了排序，含有新通道配置的新`CONFIG`事务会被包装和发送到排序系统通道。排序后，通道就创建了。  
 
 ## 通道配置(configtxgen)
 本文档介绍了`configtxgen`的用法，它是操作Hyperledger Fabric通道配置的实用程序。
