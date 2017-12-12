@@ -193,14 +193,121 @@ Channel: (version 0)
 
 当新的peer(或任何其他的`Deliver`接收者)接收到这个配置区块，它会校验这个配置，方法是将`last_update`消息应用到当前配置，确保orderer计算出来的`config`字段包含了正确的新配置。  
 
+### 允许的配置组(group)和值(value)
+任何有效的配置都是下面配置的子集。这里我们使用符号`peer.<MSG>`来定义一个`ConfigValue`，它的`value`字段是一个名为`<MSG>`的marshaled proto消息（定义在`fabric/protos/peer/configuration.proto`）。符号`common.<MSG>`、`msp.<MSG>`和`orderer.<MSG>`含义类似，只是它们的消息分别定义在`fabric/protos/common/configuration.proto`、`fabric/protos/msp/mspconfig.proto`和`fabric/protos/orderer/configuration.proto`。  
 
+需要注意的是key`{{org_name}}`和`{{consortium_name}}`可以是任意名字，这表明一个元素可以以任何名字重复出现。  
+```golang
+&ConfigGroup{
+    Groups: map<string, *ConfigGroup> {
+        "Application":&ConfigGroup{
+            Groups:map<String, *ConfigGroup> {
+                {{org_name}}:&ConfigGroup{
+                    Values:map<string, *ConfigValue>{
+                        "MSP":msp.MSPConfig,
+                        "AnchorPeers":peer.AnchorPeers,
+                    },
+                },
+            },
+        },
+        "Orderer":&ConfigGroup{
+            Groups:map<String, *ConfigGroup> {
+                {{org_name}}:&ConfigGroup{
+                    Values:map<string, *ConfigValue>{
+                        "MSP":msp.MSPConfig,
+                    },
+                },
+            },
+
+            Values:map<string, *ConfigValue> {
+                "ConsensusType":orderer.ConsensusType,
+                "BatchSize":orderer.BatchSize,
+                "BatchTimeout":orderer.BatchTimeout,
+                "KafkaBrokers":orderer.KafkaBrokers,
+            },
+        },
+        "Consortiums":&ConfigGroup{
+            Groups:map<String, *ConfigGroup> {
+                {{consortium_name}}:&ConfigGroup{
+                    Groups:map<string, *ConfigGroup> {
+                        {{org_name}}:&ConfigGroup{
+                            Values:map<string, *ConfigValue>{
+                                "MSP":msp.MSPConfig,
+                            },
+                        },
+                    },
+                    Values:map<string, *ConfigValue> {
+                        "ChannelCreationPolicy":common.Policy,
+                    }
+                },
+            },
+        },
+    },
+
+    Values: map<string, *ConfigValue> {
+        "HashingAlgorithm":common.HashingAlgorithm,
+        "BlockHashingDataStructure":common.BlockDataHashingStructure,
+        "Consortium":common.Consortium,
+        "OrdererAddresses":common.OrdererAddresses,
+    },
+}
+```
 
 ### 排序系统通道配置
-排序系统通道需要定义排序参数，和创建通道的合伙人。对一个排序服务必须有一个排序系统通道，它是创建的第一个通道（指引导时）。推荐不要在排序系统通道的创世配置中定义应用段，但可以在测试时这样做。注意，对排序系统通道具有读权限的成员可以看到所有通道的创建，所以这个通道的访问权限需要严格控制。  
+排序系统通道需要定义排序参数，和创建通道的联盟。对一个排序服务必须存在一个排序系统通道，它是创建的第一个通道（更准确地说是引导时创建）。建议不要在排序系统通道的创世配置中定义应用部分（的通道），但可以在测试时这样做。注意，对排序系统通道具有读权限的成员可以看到所有通道（系统的和应用的所有通道）的创建，所以这个通道的访问权限需要严格控制。
+
+排序参数用下面配置的子集来定义：
+```golang
+&ConfigGroup{
+    Groups: map<string, *ConfigGroup> {
+        "Orderer":&ConfigGroup{
+            Groups:map<String, *ConfigGroup> {
+                {{org_name}}:&ConfigGroup{
+                    Values:map<string, *ConfigValue>{
+                        "MSP":msp.MSPConfig,
+                    },
+                },
+            },
+
+            Values:map<string, *ConfigValue> {
+                "ConsensusType":orderer.ConsensusType,
+                "BatchSize":orderer.BatchSize,
+                "BatchTimeout":orderer.BatchTimeout,
+                "KafkaBrokers":orderer.KafkaBrokers,
+            },
+        },
+    },
+```
+参与排序的每个组织在`Orderer`组下都有一个组元素。这个组定义一个`MSP`参数，它包含了组织的密钥id信息。`Orderer`组的`Values`确定了排序节点的功能。它们存在于每个通道，所以实例的`orderer.BatchTimeout`可以在不同的通道定义不同的值。
+
+启动时，orderer会面对一个包含了多个通道信息的文件系统。orderer根据联盟组通道定义出系统通道。联盟组具有下面的结构：
+```golang
+&ConfigGroup{
+    Groups: map<string, *ConfigGroup> {
+        "Consortiums":&ConfigGroup{
+            Groups:map<String, *ConfigGroup> {
+                {{consortium_name}}:&ConfigGroup{
+                    Groups:map<string, *ConfigGroup> {
+                        {{org_name}}:&ConfigGroup{
+                            Values:map<string, *ConfigValue>{
+                                "MSP":msp.MSPConfig,
+                            },
+                        },
+                    },
+                    Values:map<string, *ConfigValue> {
+                        "ChannelCreationPolicy":common.Policy,
+                    }
+                },
+            },
+        },
+    },
+},
+```
+注意，每个联盟定义了一组成员，就像排序组织成员一样。每个联盟还定义了一个ChannelCreationPolicy。这个策略用于对通道创建请求进行授权。通常，这个值被设为`ImplicitMetaPolicy`，意思是要求通道的新成员签名以授权频道创建。关于通道创建的更多内容在文章的后面还有。
 
 ### 应用通道配置
-通道的应用配置设计用于应用类型的事务。它的定义类似于：
-```
+通道的应用配置被设计用于应用类型的事务。它的定义类似于：
+```golang
 &ConfigGroup{
     Groups: map<string, *ConfigGroup> {
         "Application":&ConfigGroup{
