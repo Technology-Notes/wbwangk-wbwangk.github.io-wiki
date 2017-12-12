@@ -51,14 +51,149 @@ MSP的默认实现中，需要指定一组参数，用于身份(证书)验证和
 重新配置通道的MSP，包括MSP的CA更新CRL公告，通过MSP的管理员证书之一的所有者创建`config_update`对象来实现。管理员管理的客户端应用会将这个更新广播到MSP出现的通道中。  
 
 ## 通道配置(configtx)
-Hyperledger Fabric区块链网络的共享配置被保存在一个配置事务集合中，每个通道一个计划。每个配置事务通常叫做**configtx**。  
+Hyperledger Fabric区块链网络的共享配置被保存在一个配置事务集合中，每个通道一个。每个配置事务通常叫做*configtx*。  
 通道配置有如下重要属性：
 1. 版本(**Versioned**)：配置的所有元素都有一个关联的版本，每次修改都会更新。此外，每次更新配置都会收到一个顺序号。  
 2. 权限(**Permissioned**)：配置的每个元素有一个关联的策略，用于管理是否允许对该元素进行修改。任何拥有以前configtx副本（并且没有其他信息）的人都可以根据这些策略验证新配置的有效性。
 3. 层次(**Hierarchical**)：根配置组包含子组，每个层次组都有关联的值和策略。这些政策可以利用层次结构从下层策略中推导出一个层次的策略。
 ### 解剖一个配置
 配置被保存在区块的一个类型为`HeaderType_CONFIG`的事务中，该区块中没有其他事务。这些区块被称为**配置区块**，第一个区块被称为**创世区块**(Genesis Block)。  
-配置的原型结构存储在`fabric/protos/common/configtx.proto`。
+配置的proto结构存储在`fabric/protos/common/configtx.proto`。封装类型`HeaderType_CONFIG`编码了一个`ConfigEnvelope`消息，作为`Payload``data`字段。`ConfigEnvelope`的proto定义如下：
+```golang
+message ConfigEnvelope {
+    Config config = 1;
+    Envelope last_update = 2;
+}
+```
+(上面的`1``2`是go语言结构的属性tag)  
+`last_update`字段定义在下面的**Updates to configuration**部分，但仅在验证配置时需要，不会读它。相反，当前提交的配置被存储在`config`字段，其中包含了一个`Config`消息。
+```golang
+message Config {
+    uint64 sequence = 1;
+    ConfigGroup channel_group = 2;
+}
+```
+`sequence`数字在每次配置提交后会增长。`channel_group`字段是包含配置的根组(root group)。。`ConfigGroup`结构是递归定义的，构建了一个组数，它可以包含值和策略。它是如下定义的：
+```golang
+message ConfigGroup {
+    uint64 version = 1;
+    map<string,ConfigGroup> groups = 2;
+    map<string,ConfigValue> values = 3;
+    map<string,ConfigPolicy> policies = 4;
+    string mod_policy = 5;
+}
+```
+因为`ConfigGroup`是个递归结构，它是按层次整理的。下面的例子是用go语言符号表示的。
+```golang
+// Assume the following groups are defined
+var root, child1, child2, grandChild1, grandChild2, grandChild3 *ConfigGroup
+
+// Set the following values
+root.Groups["child1"] = child1
+root.Groups["child2"] = child2
+child1.Groups["grandChild1"] = grandChild1
+child2.Groups["grandChild2"] = grandChild2
+child2.Groups["grandChild3"] = grandChild3
+
+// The resulting config structure of groups looks like:
+// root:
+//     child1:
+//         grandChild1
+//     child2:
+//         grandChild2
+//         grandChild3
+```
+每个组在配置层次上定义了一个级别，每个组都有一组关联的值（由字符串类型的key索引）和策略（也由字符串类型的key索引）。  
+
+Value被下列结构定义：
+```golang
+message ConfigValue {
+    uint64 version = 1;
+    bytes value = 2;
+    string mod_policy = 3;
+}
+```
+Policy由下列结构定义：
+```golang
+message ConfigPolicy {
+    uint64 version = 1;
+    Policy policy = 2;
+    string mod_policy = 3;
+}
+```
+请注意，Value、Policy和Group都有一个`version`和一个`mod_policy`。元素的`version`的值会在元素被修改时递增。`mod_policy`用来管理修改元素所需的签名。
+
+对于Group，修改就是向Value、Policy或Group映射中添加或删除元素（或更改`mod_policy`）。对于Value和Policy，修改就是分别改变Value和Policy字段（或改变`mod_policy`）。
+
+每个元素的`mod_policy`都在当前配置级别的上下文中进行评估。考虑在下面例子的`mod_policy`定义在`Channel.Groups["Application"]`（在这里，我们使用golang映射引用语法，所以`Channel.Groups["Application"].Policies["policy1"]`引用了基础`Channel`组的`Application`组的`Policies`映射的`policy1`策略。）
+
+- `policy1`映射到`Channel.Groups["Application"].Policies["policy1"]`  
+- `Org1/policy2`映射到`Channel.Groups["Application"].Groups["Org1"].Policies["policy2"]`  
+- `/Channel/policy3`映射到`Channel.Policies["policy3"]`  
+
+请注意，如果`mod_policy`引用了一个不存在的策略，则该项目不会被修改。  
+
+### 配置更新
+配置更新会递交一个`HeaderType_CONFIG_UPDAT`类型的`Envelope`消息。事务的`Payload``data`是一个marshaled`ConfigUpdateEnvelope`。` ConfigUpdateEnvelope`的定义如下：
+```golan
+message ConfigUpdateEnvelope {
+    bytes config_update = 1;
+    repeated ConfigSignature signatures = 2;
+}
+```
+签名字段包含了一组授权配置更新的签名。它的消息定义是：
+```golang
+message ConfigSignature {
+    bytes signature_header = 1;
+    bytes signature = 2;
+}
+```
+`signature_header`是标准事务的定义，而`signature`是`signature_header`字节和`ConfigUpdateEnvelope`消息的`config_update`字节串连后的签名。
+
+`ConfigUpdateEnvelope`的`config_update`字节是一个marshaled`ConfigUpdate`消息，该消息定义如下：
+```golang
+message ConfigUpdate {
+    string channel_id = 1;
+    ConfigGroup read_set = 2;
+    ConfigGroup write_set = 3;
+}
+```
+这`channel_id`是更新要绑定的通道ID，这对于限定此重新配置的签名范围是必要的。
+
+在`read_set`指定了现有的配置的一个子集，它暗示了只有`version`字段必须提供的，而且字段是可选则。字段`ConfigValue``value`或 `ConfigPolicy``policy`不允许出现在`read_set`。`ConfigGroup`可以填充它映射字段的子集，以便引用在配置树更深的元素。例如，要`read_set`中包括`Application`组，则它的母元素（该`Channel`组）也必须包含在`read_set`中，但是，该`Channel`组并不需要填充所有的key，如`Orderer``group`key，或任何`values`或`policies`key。
+
+`write_set`定义了配置的被修改部分。由于配置的层次性，对层次结构中深层元素的写入操作也必须在`write_set`从包含其更高层次的元素。但是，对于`write_set`中任何元素，如果也出现在`read_set`中且版本相同，则会被更新忽略（？）。
+
+例如，对于给定配置：
+```
+Channel: (version 0)
+    Orderer (version 0)
+    Appplication (version 3)
+       Org1 (version 2)
+```
+去递交一个改变`Org1`的配置更新，`read_set`会是：
+```
+Channel: (version 0)
+    Application: (version 3)
+```
+而它的`write_set`会是：
+```
+Channel: (version 0)
+    Application: (version 3)
+        Org1 (version 3)
+```
+当收到`CONFIG_UPDATE`，orderer会按下面的步骤计算结果集`CONFIG`：
+1. 检验`channel_id`和`read_set`。所有`read_set`中元素必须存在且版本号相同。  
+2. 通过比较存在于`write_set`中而不存在于`read_set`中且版本号相同的元素，得到更新元素集。  
+3. 检验更新元素集中的元素版本号，确保只增长了1。  
+4. 对更新元素集中的每个元素，检验针对`ConfigUpdateEnvelope`的签名集，确保符合`mod_policy`。  
+5. 通过将更新集应用到当前配置，计算出配置的一个新完全版本。  
+6. 将新配置写入`ConfigEnvelope`，将`CONFIG_UPDATE`作为`the last_update`字段，并与增长的`sequence`值一起将新配置编码入`config`字段。  
+7. 
+
+
+
+
 
 ### 排序系统通道配置
 排序系统通道需要定义排序参数，和创建通道的合伙人。对一个排序服务必须有一个排序系统通道，它是创建的第一个通道（指引导时）。推荐不要在排序系统通道的创世配置中定义应用段，但可以在测试时这样做。注意，对排序系统通道具有读权限的成员可以看到所有通道的创建，所以这个通道的访问权限需要严格控制。  
