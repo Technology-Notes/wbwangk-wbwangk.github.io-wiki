@@ -1,4 +1,5 @@
 ## 成员服务提供者(MSP)
+[原文](http://hyperledger-fabric.readthedocs.io/en/latest/msp.html)  
 本文提供了有关MSP的设置和最佳实践的详细信息。
 
 成员服务提供商（MSP）是一个旨在提供成员维护体系结构抽象的组件。
@@ -108,8 +109,8 @@ MSP的默认实现中，需要指定一组用于身份(证书)验证和签名验
 
 MSP身份的根CA和MSP TLS证书的根CA（和相关的中间CA）需要在不同的文件夹中声明。这是为了避免不同类别证书之间的混淆。不禁止为MSP身份和TLS证书重复使用相同的CA，但是最佳实践建议在生产中避免这种情况。 
 
-
 ## 通道配置(configtx)
+[原文](http://hyperledger-fabric.readthedocs.io/en/latest/configtx.html)  
 Hyperledger Fabric区块链网络的共享配置被保存在一个配置事务集合中，每个通道一个。每个配置事务通常叫做*configtx*。  
 通道配置有如下重要属性：
 1. 版本(**Versioned**)：配置的所有元素都有一个关联的版本，每次修改都会更新。此外，每次更新配置都会收到一个顺序号。  
@@ -673,6 +674,7 @@ $ configtxgen -channelID foo -outputBlock foo_genesisblock.pb -inspectBlock foo_
 上述命令先生成区块，再显示它。  
 
 ## 用configtxlator重新配置
+[原文](http://hyperledger-fabric.readthedocs.io/en/latest/configtxlator.html)  
 ### 概述
 创建`configtxlator`工具的目的是支持不依赖SDK的重新配置。通道配置被当作一个事务存储在通道的配置区块中，可以被直接操作，如在bdd行为测试中。不过，在撰写本文时，SDK本身不支持直接操作配置，因此该configtxlator工具旨在提供API，供任何SDK的使用者与之交互以协助配置更新。
 
@@ -864,6 +866,7 @@ EXPR(E[, E...])
 $ peer chaincode instantiate -C <channelid> -n mycc -P "AND('Org1.member', 'Org2.member')"
 ```
 这个命令部署链码`mycc`，使用的策略是`AND('Org1.member', 'Org2.member')`，即同时需要Org1和Org2的成员签署事务。  
+
 
 # 架构
 ## 架构解释
