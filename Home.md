@@ -106,3 +106,7 @@ git config --global --unset http.proxy
 git config --global --unset https.proxy
 git config --global --unset all.proxy
 ```
+### npm install 对目录没有权限
+```
+$ npm install --unsafe-perm --verbose -g composer-cli
+```
