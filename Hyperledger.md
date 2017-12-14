@@ -199,12 +199,24 @@ $ docker ps
 
 ### 密钥生成器(Crypto Generator)
 我们用`cryptogen`工具为各种的网络实体生成密码学文件(x509证书和签名密钥)。这些证书表达身份，对实体间通信和事务认证进行签名和验证。  
+
+#### 它是如何工作的？
 Cryptogen的配置文件是`crypto-config.yaml`，该文件包括网络拓扑，允许我们为组织以及属于组织的组件生成一系列证书和密钥。执行示范：
 ```
 $ cryptogen generate --config=./crypto-config.yaml
 ```
 运行后会自动创建一个`crypto-config`目录，里面有很多密码学文件。在生成的文件中，每个组织都会分配一个根证书(`ca-cert`)，该证书绑定特殊组件(peer和orderer)到组织。假定每个组织都有一个唯一的CA证书，我们模仿了一个典型的网络，其中每个[成员](http://hyperledger-fabric.readthedocs.io/en/latest/glossary.html#member)拥有自己的CA。在Hyperledger Fabric中，实体使用自己的私钥(`keystore`)对事务和通信进行签名，并用对方的公钥(`signcerts`)验证签名。  
-配置文件中有个`count`变量，我们用它来指定每个组织下的peer数量；在我们示例中，每个组织下有两个peer。我们在本文不会详述[X509证书和PKI](https://en.wikipedia.org/wiki/Public_key_infrastructure)。  
+配置文件中`Template`有个`count`变量，我们用它来指定每个组织下的peer数量；在我们示例中，每个组织下有两个peer。`Users`下也有`count`变量，它表示创建的用户数量。示例如下：
+```yaml
+  - Name: Org2
+    Domain: org2.example.com
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+```
+
+我们在本文不会详述[X509证书和PKI](https://en.wikipedia.org/wiki/Public_key_infrastructure)。  
 在`crypto-config.yaml`文件中，注意`OrdererOrgs`之下的“Name”, “Domain” and “Specs”参数。网络实体的命名约定是：`{{.Hostname}}.{{.Domain}}`。例如，排序节点的名称是`orderer.example.com`，这关联了一个MSP ID `Orderer`，关于MSP的更多细节参考[Membership Service Providers (MSP)](http://hyperledger-fabric.readthedocs.io/en/latest/msp.html)文档。  
  
 ### 配置事务生成器
