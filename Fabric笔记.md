@@ -1,7 +1,7 @@
+
 ## 寻找管理员的证书和私钥
 
 从`/opt/fabric-samples/basic-network`中查找，想找到系统通道的管理员私钥和证书。先说结论：  
-**存在排序服务的管理员，也就是全局的系统通道管理员。每个组织都有一个管理员。**  
 ```
 $ cd /opt/fabric-samples/basic-network
 $ find . -name 'Admin@*' -print
