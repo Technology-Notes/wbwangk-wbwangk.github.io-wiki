@@ -789,7 +789,16 @@ $$ echo $ORDERER_CA && echo $CHANNEL_NAME
 *注意：如果你重启了CLI容器，你需要重启REST服务器和重新导出三个环境变量`CONFIGTXLATOR_URL`、`ORDERER_CA`和`CHANNEL_NAME`。jq的安装会持久化，不用重新安装它。*
 
 ### 形成更新对象和重新配置通道
+现在我们在CLI容器中有了一个运行中的REST服务器，并且我们到处了两个关键环境变量`ORDERER_CA``CHANNEL_NAME`。让我们提取通道`mychannel`最新配置区块。
+```
+$$ peer channel fetch config config_block.pb -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
+```
+上面的命令对生成的二进制protobuf格式通道配置块取了一个名称`config_block.pb`。请注意，你可以修改返回的protobuf和JSON对象的命名约定，但是你应该遵循一种方法，以便于进行简单直观的识别。  
 
+当你发出`peer channel fetch`命令的时候，终端上会显示一些输出。日志中的最后一行很有趣：
+```
+2017-11-07 17:17:57.383 UTC [channelCmd] readBlock -> DEBU 011 Received block: 2
+```
 
 
 
