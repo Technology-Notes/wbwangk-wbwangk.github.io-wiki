@@ -1278,6 +1278,10 @@ $ openssl ca -in <csr-file> -out <cert-signed-file>
 ```
 $ openssl x509 -noout -text -in <cert-file>
 ```
+#### 从证书提取公钥
+```
+$ openssl x509 -pubkey -noout -in cert.pem  > pubkey.pem
+```
 #### 查看服务器的公钥证书
 ```
 $ openssl s_client -connect <host-domain-name>:<port> | tee logfile
@@ -1290,6 +1294,36 @@ $ openssl s_server -accept <port> -cert <server-cert-file> -key <server-key-file
 ```
 $ openssl pkcs12 –export –out <keystore-file> –inkey <private-key-file> –in <cert-file> –certfile <ca-cert-file>
 ```
+### openssl ECDSA
+ECDSA是Hyperledger Fabric默认支持的非对称加密算法。目前Fabric还不支持RSA算法。  
+
+#### 创建ECDSA私钥和公钥
+```
+$ openssl ecparam -genkey -name secp384r1 -noout -out private.pem
+```
+创建公钥:
+```
+$ openssl ec -in private.pem -pubout -out public.pem
+$ cat public.pem
+-----BEGIN PUBLIC KEY-----
+(其他略)
+```
+注意区分公钥和证书。证书中含有公钥，但有附加数据。证书的内容是：
+```
+-----BEGIN CERTIFICATE-----
+(其他略)
+```
+#### 对文件生成签名和验证
+生成签名文件：
+```
+$ openssl dgst -ecdsa-with-SHA1 -sign private.pem test.pdf > signature.bin
+```
+用公钥验证签名：
+```
+$ openssl dgst -ecdsa-with-SHA1 -verify public.pem -signature signature.bin test.pdf
+Verified OK
+```
+
 ### keytool
 [官方文档](http://docs.oracle.com/javase/7/docs/technotes/tools/solaris/keytool.html)  
 #### 显示密钥库中的条目
