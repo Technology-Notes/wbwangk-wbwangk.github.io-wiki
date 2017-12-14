@@ -709,6 +709,86 @@ Response is  {"colour":"Red","make":"Chevy","model":"Volt","owner":"Dave"}
 ```
 本章是[启动首个网络(first-network)](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%90%AF%E5%8A%A8%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)的后续，会演示增加一个新组织`Org3`到自动生成的应用通道`mychannel`。它假定你已经对[BYFN](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%90%AF%E5%8A%A8%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)示范很懂了，包括会使用工具`cryptogen`和`configtxgen`。  
 
+这篇文章仅聚焦于集成一个新组织，然而用同样的方法可以更新其他通道配置（如更新修改规则，改变批大小等）。示范的操作是组织管理员职责，而不是链码或应用开发者职责。
+
+```
+注意：确保已经安装了必要的Fabric镜像和实用程序，并且自动化脚本`byfn.sh`在继续操作前在你的计算机上运行没有报错。即将到来的步骤依赖于生成的网络和工件。如果尚未配置机器，请参阅[Hyperledger Fabric示范](http://hyperledger-fabric.readthedocs.io/en/latest/samples.html)文档。提供的命令还假定Fabric实用程序存在于`fabric-samples`目录下的`bin`根目录中。如果已将这些二进制文件路径导出到了PATH变量中，则可以相应地修改这些命令，而不必传递绝对路径。
+```
+### 配置环境变量
+下面的操作将位于`fabric-samples`的子目录`first-network`中。更换到这个目录。你可以打开自己喜欢的终端窗口，如git-bash。  
+
+首先，使用`byfn.sh`脚本来进行清理工作。这个命令会杀死活动的docker容器和删除之前生成的密钥文件。需要说明的是，为了执行重新配置任务并不一定要停止Fabric网络，然而为了这个教程的目的，我们需要一个已知的初始状态。因此让我们执行下列命令清理之前的环境：
+```
+$ ./byfn.sh -m down
+```
+现在重新生成默认BYFN工件：
+```
+$ ./byfn.sh -m generate
+```
+通过执行CLI容器中脚本启动网络：
+```
+$ ./byfn.sh -m up
+```
+屏幕上会显示很多日志，并锁定标准输入，除非按ctrl_C。在另一个终端窗口中，切换到`org3-artifacts`子目录。
+```
+$ cd org3-artifacts
+```
+当前目录下有兴趣的文件有两个`org3-crypto.yaml`和`configtx.yaml`。首先，为org3生成密钥材料：
+```
+$ ../../bin/cryptogen generate --config=./org3-crypto.yaml
+```
+上述命令会地区新的密钥yaml文件`org3-crypto.yaml`，利用`cryptogen`工具为Org3中间CA生成key和证书，并且有两个peer绑定到这个新组织。与BYFN实现一起，这个密钥材料输出到一个新生成的`crypto-config`目录中。  
+
+现在使用`configtxgen`工具输出JSON格式的Org3相关配置材料。作为开始的命令，告诉工具从当前目录下读取`configtx.yaml`。
+```
+$ export FABRIC_CFG_PATH=$PWD && ../../bin/configtxgen -printOrg Org3MSP > ../channel-artifacts/org3.json
+```
+上面的命令会创建一个JSON文件`org3.json`，并把它输出到`first-network`目录的子目录`channel-artifacts`下面。这个文件包含了为Org3定义的修改策略，以及三个base64格式的重要证书：管理员用户证书、CA根证书和TLS根证书。在下面的步骤中，我们将附加这个JSON对象到通道配置中。  
+
+我们最后一项准备工作是将Orderer组织MSP材料搬移到Org3的`crypto-config`目录中。特别是，我们关注Orderer的TLS根证书，这将允许Org3实体和网络的orderer节点之间的安全通信。
+```
+$ cd ../ && cp -r crypto-config/ordererOrganizations org3-artifacts/crypto-config/
+```
+现在，我们准备好重新配置了。
+
+### 启动configtxlator服务器
+更新过程使用配置转换工具`configtxlator`。这个工具提供了一个纯无状态REST API，不依赖SDK，使Hyperledger Fabric网络的配置工作简单化。这个工具可以很容易地转换不同表现/格式的等价数据。例如，在工具操作的一种模式中，该工具可以将二进制protobuf格式转换到人类可读的JSON文本格式，反之亦然。此外，该工具可以根据两组不同的配置事务之间的差异来计算配置更新。  
+
+首先，用docker exec命令进入CLI容器。回想一下，这个容器已经安装了BYFN`crypto-config`库，使我们能够访问两个原来的peer组织和Orderer组织的MSP材料。引导身份是Org1管理员用户，这意味着我们想要代表Org2行事的任何步骤都需要导出MSP特定的环境变量。
+```
+$ docker exec -it cli bash
+```
+在默认设置下，CLI容器会在10000秒后退出。如果容器退出了，确保在继续前重新启动它。首先，检查你的容器状态：
+```
+$ docker ps -a
+```
+如果必要，重新启动CLI:
+```
+$ docker start cli
+```
+现在在容器中安装`jq`工具。这个工具允许我们与`configtxlator`工具返回的JSON对象进行脚本交互(`$$`表示在容器中的命令行中)：
+```
+$$ apt update && apt install jq
+```
+启动`configtxlator`REST服务器(最后的`&`符号使键盘输入不锁住)：
+```
+$$ configtxlator start &
+```
+设置URL:
+```
+$$ CONFIGTXLATOR_URL=http://127.0.0.1:7059
+```
+导出`ORDERER_CA``CHANNEL_NAME`变量：
+```
+$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem  && export CHANNEL_NAME=mychannel
+```
+检查一下确保环境变量设置正确：
+```
+$$ echo $ORDERER_CA && echo $CHANNEL_NAME
+```
+*注意：如果你重启了CLI容器，你需要重启REST服务器和重新导出三个环境变量`CONFIGTXLATOR_URL`、`ORDERER_CA`和`CHANNEL_NAME`。jq的安装会持久化，不用重新安装它。*
+
+### 形成更新对象和重新配置通道
 
 
 
