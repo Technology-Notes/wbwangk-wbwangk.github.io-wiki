@@ -1323,6 +1323,9 @@ $ openssl dgst -ecdsa-with-SHA1 -sign private.pem test.pdf > signature.bin
 $ openssl dgst -ecdsa-with-SHA1 -verify public.pem -signature signature.bin test.pdf
 Verified OK
 ```
+#### 私钥公钥匹配
+问题：手头有多个私钥和多个公钥，想知道他们之间的匹配关系。
+首先从证书中提取公钥，然后利用怀疑是匹配的那个私钥进行签名。然后用公钥验证签名，如果`Verified OK`，则说明他们是一对匹配的公钥和私钥。
 
 ### keytool
 [官方文档](http://docs.oracle.com/javase/7/docs/technotes/tools/solaris/keytool.html)  
