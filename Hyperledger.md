@@ -703,6 +703,19 @@ Response is  {"colour":"Red","make":"Chevy","model":"Volt","owner":"Dave"}
 ```
 本章主要讲应用开发，后面的章节会讲链码的开发。  
 
+## 重新配置首个网络(First-Network)
+```
+注意：本章的这些步骤在docker镜像`1.1.0-preview`版本(tag)和相关工具中已经验证过。确保你已经下载了适合的镜像版本，或者你是从比Fabric“1.1.0-preview”更新的分支上构建的二进制包。
+```
+本章是[启动首个网络(first-network)](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%90%AF%E5%8A%A8%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)的后续，会演示增加一个新组织`Org3`到自动生成的应用通道`mychannel`。它假定你已经对[BYFN](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%90%AF%E5%8A%A8%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)示范很懂了，包括会使用工具`cryptogen`和`configtxgen`。  
+
+
+
+
+
+
+
+
 ## 链码教程
 [官方原文](http://hyperledger-fabric.readthedocs.io/en/latest/chaincode.html)  
 链码是一个程序，用Go、Node.js编写(未来会支持其他语言，如Java)，实现了一个规定的接口。链码运行在安全的Docker容器中，隔离于背书peer过程。链码通过应用提交的事务来初始化和管理账本状态。  
