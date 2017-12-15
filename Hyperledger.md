@@ -794,7 +794,7 @@ $$ echo $ORDERER_CA && echo $CHANNEL_NAME
 *注释：如果你重启了CLI容器，你需要重启REST服务器和重新导出三个环境变量`CONFIGTXLATOR_URL`、`ORDERER_CA`和`CHANNEL_NAME`。jq的安装会持久化，不用重新安装它。*
 
 ### 形成更新对象和重新配置通道
-现在我们在CLI容器中有了一个运行中的REST服务器，并且我们到处了两个关键环境变量`ORDERER_CA``CHANNEL_NAME`。让我们提取通道`mychannel`最新配置区块。
+现在我们在CLI容器中有了一个运行中的REST服务器，并且我们导出了两个关键环境变量`ORDERER_CA`和`CHANNEL_NAME`。让我们提取通道`mychannel`最新配置区块。
 ```
 $$ peer channel fetch config config_block.pb -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
 ```
@@ -919,8 +919,11 @@ $$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_
 
 发送`peer channel join`命令，并传入创世区块`mychannel.block`：
 ```
+$$ echo $CORE_PEER_TLS_ROOTCERT_FILE && echo $CORE_PEER_ADDRESS
 $$ peer channel join -b mychannel.block
 ```
+由于Org3 CLI容器已经在“烧录”的时候设置了CORE_PEER_ADDRESS的值是`peer0.org3.example.com:7051`，所以上面的`peer channel join`命令将Org3的第一个peer(即peer0)加入了通道。  
+
 如果你想为Org3加入第二个peer，导出TLS和ADDRESS变量和重新发出`peer channel join`命令：
 ```
 $$ export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls/ca.crt && export CORE_PEER_ADDRESS=peer1.org3.example.com:7051
