@@ -805,7 +805,52 @@ $$ peer channel fetch config config_block.pb -o orderer.example.com:7050 -c $CHA
 ```
 $$ curl -X POST --data-binary @config_block.pb "$CONFIGTXLATOR_URL/protolator/decode/common.Block" | jq . > config_block.json
 ```
-我们将编码输出命名为`confg_block.json`。（又一次，）
+我们将编码输出命名为`confg_block.json`。（再次，你可以使用自己的命名习惯来操作此步骤。）如果你在CLI容器发出`ls`命令，你可以看到两个对象：二进制protobuff格式的通道配置文件`config_block.pb`和JSON格式对象`config_block.json`。  
+
+现在我们需要确定`config_block.json`对象的范围，并去掉所有的封装包装。我们不关心标题、元数据、创建者签名等，但关心事务中的配置定义。我们通过`jq`工具实现这一点：
+```
+$$ jq .data.data[0].payload.data.config config_block.json > config.json
+```
+这给了我们一个修整过的JSON对象`config.json`，这是我们修改配置的基础。我们将再次使用`jq`工具将Org3配置定义`org3.json`附加到通道的应用组字段，并命名输出为`updated_config.json`。
+```
+$$ jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {"Org3MSP":.[1]}}}}}' config.json ./channel-artifacts/org3.json >& updated_config.json
+```
+现在，在CLI容器中我们有了两个JSON文件`config.json`和`updated_config.json`。初始文件仅包含Org1和Org2的材料，而“updated config”文件中包含了全部3个组织(Orgs)。此时，只需重新编码这两个JSON文件并计算增量即可。  
+
+首先，编码`config.json`为`config.pb`：
+```
+$$ curl -X POST --data-binary @config.json "$CONFIGTXLATOR_URL/protolator/encode/common.Config" > config.pb
+```
+其次，编码`updated_config.json`为`updated_config.pb`：
+```
+$$ curl -X POST --data-binary @updated_config.json "$CONFIGTXLATOR_URL/protolator/encode/common.Config" > updated_config.pb
+```
+现在，使用`configtxlator`服务器来计算两个配置proto之间的增量。这个命令会输出一个新的protobuf二进制文件`Org3_update.pb`：
+```
+$$ curl -X POST -F channel=$CHANNEL_NAME -F "original=@config.pb" -F "updated=@updated_config.pb" "${CONFIGTXLATOR_URL}/configtxlator/compute/update-from-configs" > org3_update.pb
+```
+这个新proto`org3_update.pb`包含了Org3定义和指向Org1和Org2材料的高级指针。我们能够放弃大量的Org1和Org2的MSP材料和修改策略信息，因为这些数据已经存在于通道的创世区块中。因此，我们只需要两个配置的增量信息。  
+
+在递交通道更新前，我们需要执行几个最后的步骤。首先，让我们解码这个对象到可编辑的JSON格式`org3_update.json`:
+```
+$$ curl -X POST --data-binary @org3_update.pb "$CONFIGTXLATOR_URL/protolator/decode/common.ConfigUpdate" | jq . > org3_update.json
+```
+现在，我们有了一个解码的更新文件`org3_update.json`，这个文件我们需要包装进一个信封消息中。这一步骤给回我们之前剥掉的标题字段。我们命名这个文件为`org3_update_in_envelope.json`：
+```
+$$ echo '{"payload":{"header":{"channel_header":{"channel_id":"mychannel", "type":2}},"data":{"config_update":'$(cat org3_update.json)'}}}' | jq . > org3_update_in_envelope.json
+```
+使用我们正确构建的JSON文件`org3_update_in_envelope.json`，我们将最后一次利用`configtxlator`这个工具，并将这个对象转换为Fabric需要的完全成熟的proto格式。我们将命名我们的最终更新对象为`org3_update_in_envelope.pb`：
+```
+$$ curl -X POST --data-binary @org3_update_in_envelope.json "$CONFIGTXLATOR_URL/protolator/encode/common.Envelope" > org3_update_in_envelope.pb
+```
+几乎完成！我们现在的CLI容器中有了一个protobuf二进制文件`org3_update_in_envelope.pb`，然而在可以成功递交这个更新前，我们需要必要的Admin用户签名。我们通道的更新策略(mod_policy)被设置成默认的“MAJORITY”(多数)，这意味着我们需要来自两个初始组织Org1和Org2的管理员签署这个更新。如果我们没有获得这两个签名，则排序服务会因无法满足策略而拒绝这个事务。首先，我们用Org1的Admin签署这个更新proto。记住CLI容器是用Org1 MSP材料引导的，所以我们只需要简单地发送`peer channel signconfigtx`命令：
+```
+$$ peer channel signconfigtx -f org3_update_in_envelope.pb
+```
+最后一步是切换CLI容器的身份为Org2的Admin用户。我们通过导出对应Org2 MSP的4个环境变量做到这一点。  
+
+*注意：*
+
 
 
 
