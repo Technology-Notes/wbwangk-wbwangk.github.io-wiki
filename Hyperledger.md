@@ -952,7 +952,26 @@ $$ peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_examp
 ```
 $$ peer chaincode upgrade -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 2.0 -c '{"Args":["init","a","90","b","210"]}' -P "OR ('Org1MSP.member','Org2MSP.member','Org3MSP.member')"
 ```
-你可以看到在上面的命令中，我们通过`v`标志指定了新版本。你还可以看到背书策略被更新到`-P "OR ('Org1MSP.member','Org2MSP.member','Org3MSP.member')"`，准确地反映了策略增加了Org3。（上述背书策略的含义是三个组织的任何一个签名都可以。）
+你可以看到在上面的命令中，我们通过`v`标志指定了新版本。你还可以看到背书策略被更新到`-P "OR ('Org1MSP.member','Org2MSP.member','Org3MSP.member')"`，准确地反映了策略增加了Org3。（上述背书策略的含义是三个组织的任何一个签名都可以。）令人感兴趣的最后一项是我们用`c`标志指定的构造函数请求。与实例化调用一样，链式代码升级需要使用`init`方法。如果你的链码需要传参数进`init`方法，那么你需要提供适当的键值对来重新初始化状态。这不是推荐的做法，因为升级提交者可以任意改写世界状态。相反，请考虑编辑源代码以删除参数依赖项，或者从实例化时不需要参数的链码开始。  
+
+升级呼叫将增加一个新的区块（区块6）到通道账本，并允许Org3 peer在背书阶段执行交易。跳回到Org3 CLI容器，并发出一个对`a`值的查询。这将需要一些时间，因为链码镜像需要为目标peer构建，并且容器需要启动：
+```
+$$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+```
+我们会看到一个响应:`Query Result: 90`。  
+
+现在发送一个调用，从`a`移动`10`到`b`：
+```
+$$ peer chaincode invoke -o orderer.example.com:7050  --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
+```
+最后查询一下`a`的值：
+```
+$$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+```
+你会看到一个响应：`Query Result: 80`，这准确反映了这个链码的世界状态的改变。  
+
+### 总结
+重新配置过程的确涉及很多，但是各个步骤都有一个合理的方法。最终目标是形成以protobuf二进制格式表示的增量事务对象，然后收集必要数量的管理员签名，使得重新配置事务处理完成通道的修改策略。`configtxlator`和`jq`工具，与日益增长`peer channel`命令一起，为我们提供了完成这项任务所需的功能。
 
 
 ## 链码教程
