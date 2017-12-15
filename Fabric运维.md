@@ -837,6 +837,7 @@ $ configtxlator start
 $ ORDERER_GENERAL_LOGLEVEL=debug ORDERER_GENERAL_GENESISPROFILE=SampleDevModeSolo orderer
 ```
 增加一个组织的过程与批大小的例子非常类似。然而，不同与设置批大小，一个新组织定义在应用级别。添加一个组织稍微牵扯一点，因为我们必须先创建一个通道，然后修改它的成员组成。  
+关于利用configtxlator增加组织的更多内容参考[重新配置首个网络(First-Network)](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E9%87%8D%E6%96%B0%E9%85%8D%E7%BD%AE%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)。
 
 ## 背书策略
 [原文](http://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html)  
