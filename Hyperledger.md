@@ -873,12 +873,57 @@ $$ peer channel update -f org3_update_in_envelope.pb -c $CHANNEL_NAME -o orderer
 成功的通道更新呼叫返回了一个新的区块，区块5，到通道中的所有peer。区块0-2是初始通道配置，区块3-4是实例化和对链码`mycc`的调用。同样的，区块5作为最新的通道配置将Org3定义到了通道上。  
 
 查看容器`peer0.org1.example.com`的日志：
+```
+$ docker logs -f peer0.org1.example.com
+```
+你看到的详细输出反应了确认检查和对peer状态数据库的更新(关于通道的当前配置)。你还可以看到我们配置事务的提交：
+```
+2017-11-15 15:41:05.000 UTC [kvledger] CommitWithPvtData -> DEBU 774 Channel [mychannel]: Committing block [5] to storage
+```
+遵循后续演示过程来获取和解码新配置区块
+如果您想查看新配置区块的内容，请按照演示过程获取并解码新配置区块。让我们继续...  
 
+### 将Org3加入通道
+在这时，通道配置已经更新到包含了我们的新组织`Org3`，这意味着此成员的peer可以成功加入这个通道。  
 
+首先，让我们启动包含Org3 peer和Org3特定CLI的容器。从`first-network`目录启动Org3 docker compose：
+```
+$ docker-compose -f docker-compose-org3.yaml up -d
+```
+这个新compose文件已经被配置为可以桥接我们的初始网络，因此两个peer和CLI容器可以解析已经存在的peer(指Org1和Org2的)和排序节点。三个新容器运行后，exec进入Org3特定CLI容器：
+```
+$ docker exec -it Org3cli bash
+```
+就像我们在初始CLI容器中做的那样，导出两个关键环境变量`ORDERER_CA``CHANNEL_NAME`：
+```
+$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem && export CHANNEL_NAME=mychannel
+```
+检查一下确保下面的变量已经被良好地设置：
+```
+$$ echo $ORDERER_CA && echo $CHANNEL_NAME
+```
+现在让我们发送呼叫到排序服务，请求`mychannel`的创世区块。由于我们成功的通道更新，订购服务可以验证附加到此呼叫的签名。如果Org3尚未成功添加到通道配置中，则排序服务会拒绝此请求。  
 
+*注释：再次，你会发现这很有用：浏览排序节点的日志查看签名和验证逻辑和策略检查。*  
 
+使用`peer channel fetch`命令获取这个区块：
+```
+$$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
+```
+注意，我们发送了一个`0`来指定我们要获取的通道账本上的第一个区块（即创世区块）。如果我们简单地发送`peer channel fetch config`命令，则我们会接收到区块5，即定义Org3的更新配置。然而，我们不能在一个下游区块开始账本，反而需要加入区块0。  
 
+发送`peer channel join`命令，并传入创世区块`mychannel.block`：
+```
+$$ peer channel join -b mychannel.block
+```
+如果你想为Org3加入第二个peer，导出TLS和ADDRESS变量和重新发出`peer channel join`命令：
+```
+$$ export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer1.org3.example.com/tls/ca.crt && export CORE_PEER_ADDRESS=peer1.org3.example.com:7051
+peer channel join -b mychannel.block
+```
 
+### 升级和调用
+拼图的最后一块是
 
 
 
