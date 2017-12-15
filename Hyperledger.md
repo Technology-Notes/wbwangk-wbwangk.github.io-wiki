@@ -849,7 +849,32 @@ $$ peer channel signconfigtx -f org3_update_in_envelope.pb
 ```
 最后一步是切换CLI容器的身份为Org2的Admin用户。我们通过导出对应Org2 MSP的4个环境变量做到这一点。  
 
-*注意：*
+*注意：下面的演示不能反映真实世界的操作。单个容器永远不应该装载这个网络的密钥材料。相反，更新对象需要安全地通过“带外”传递给Org2管理员进行检查和批准。*  
+
+导出Org2的环境变量：
+```
+$$ export CORE_PEER_LOCALMSPID="Org2MSP"
+$$ export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+$$ export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+$$ export CORE_PEER_ADDRESS=peer0.org2.example.com:7051
+```
+最后我们发出`peer channel update`命令。Org2管理员签名会附加到这个呼叫，所以不需要手工再次签署这个proto：  
+
+*注意：即将到来的对排序服务的呼叫会经历一系列系统签名和策略检查。因此，你会发现浏览和查看排序节点的日志很有用。从另一个终端shell，发送`docker logs -f orderer.example.com`命令来显示它们。*  
+
+发送更新呼叫：
+```
+$$ peer channel update -f org3_update_in_envelope.pb -c $CHANNEL_NAME -o orderer.example.com:7050 --tls --cafile $ORDERER_CA
+```
+如果更新成功，您应该看到类似于以下内容的消息摘要指示：
+```
+2017-11-07 21:50:17.435 UTC [msp/identity] Sign -> DEBU 00f Sign: digest: 3207B24E40DE2FAB87A2E42BC004FEAA1E6FDCA42977CB78C64F05A88E556ABA
+```
+成功的通道更新呼叫返回了一个新的区块，区块5，到通道中的所有peer。区块0-2是初始通道配置，区块3-4是实例化和对链码`mycc`的调用。同样的，区块5作为最新的通道配置将Org3定义到了通道上。  
+
+查看容器`peer0.org1.example.com`的日志：
+
+
 
 
 
