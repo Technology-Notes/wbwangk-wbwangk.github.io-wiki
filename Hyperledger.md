@@ -234,7 +234,7 @@ $ cryptogen generate --config=./crypto-config.yaml
 Configtxgen会根据文件`configtx.yaml`定义的配置运行，文件包含了示范网络的定义。其中有三个成员：一个排序器组织(`OrdererOrg`)和两个Peer组织(`Org1`和`Org2`)，每个Peer组织管理和维护了两个peer节点。这个文件还定义了一个联盟(`SampleConsortium`)，联盟包含了两个peer组织。特别需要注意文件开头的“Profiles”小节。你应该注意到了它有两个唯一的头。一个是排序器创世区块(`TwoOrgsOrdererGenesis`)，另一个是通道(`TwoOrgsChannel`)。  
 
 这些头很重要，当生成工件时，它们将作为参数发送。  
-*注意：我们的`SampleConsortium`联盟定义在系统级profile，然后被通道集profile引用。通道将存在于整个联盟范围。*  
+*注释：我们的`SampleConsortium`联盟定义在系统级profile，然后被通道集profile引用。通道将存在于整个联盟范围。*  
 
 这个文件还包含了两个值得注意的附加内容。首先，为每个peer组织(`peer0.org1.example.com`和`peer0.org2.example.com`)定义了锚点peer。其次，定义了每个成员的MSP目录地址，这让我们在排序器创世区块中保存了每个组织的根证书。这是一个关键概念。现在与排序服务通信的任何网络实体可以被验证其数字签名了。  
 
@@ -410,7 +410,9 @@ Query Response:{"Name":"b","Amount":"210"}
 ```
 ### 理解docker-comopse拓扑
 BYFN范例提供了两种风格的Docker Compose文件，都是从`docker-compose-base.yaml`(位于`base`目录)扩展而来。第一种风格是`docker-compose-cli.yaml`，提供了一个CLI容器,以及一个orderer和4个peer。我们在这个文章中主要使用这个文件。  
-注意：本文剩余部分的内容主要讲一个为了SDK设计的docker-compose文件。更多细节参考[Node SDK库](https://github.com/hyperledger/fabric-sdk-node)。*  
+
+*注释：本文剩余部分的内容主要讲一个为了SDK设计的docker-compose文件。更多细节参考[Node SDK库](https://github.com/hyperledger/fabric-sdk-node)。*
+  
 第二种风格的是`docker-compose-e2e.yaml`，这个用于使用Node.js SDK进行的端到端测试。为了使用SDK，它的主要不同是包含一个运行fabric-ca服务器的容器。因此，我们可以发送REST请求到组织的CA，用来进行用户的登记(registration)和注册(enrollment)。  
 如果你想使用`docker-compose-e2e.yaml`而不运行`byfn.sh`脚本，需要进行4个小修改。我们需要指出组织CA的私钥。你可以指出私钥在crypto-config目录中的位置。例如，Org1的私钥是路径`crypto-config/peerOrganizations/org1.example.com/ca/`。这个私钥的文件名是一个以`_sk`结尾的长哈希值。Org2的私钥路径是`crypto-config/peerOrganizations/org2.example.com/ca/`。  
 在`docker-compose-e2e.yaml`中为ca0和ca1修改`FABRIC_CA_SERVER_TLS_KEYFILE`变量。你还需要修改启动ca服务器的命令路径。你需要为每个CA容器提供同样的私钥两次。  
@@ -421,7 +423,9 @@ BYFN范例提供了两种风格的Docker Compose文件，都是从`docker-compos
 CHANNEL_NAME=$CHANNEL_NAME TIMEOUT=<pick_a_value> docker-compose -f docker-compose-cli.yaml -f docker-compose-couch.yaml up -d
 ```
 下面的链码**chaincode_example02**将使用CouchDB。  
-*注意：如果你选择了将fabric-couchdb容器的端口映射到主机端口，请确保端口的远程访问是安全的。在开发环境下映射端口使CouchDB REST API可用，并使通过CoutchDB web接口(Fauxton)使数据库可见。在生产环境下进行端口映射要慎重，需要限制从外部访问CouchDB容器的端口。*  
+
+*注释：如果你选择了将fabric-couchdb容器的端口映射到主机端口，请确保端口的远程访问是安全的。在开发环境下映射端口使CouchDB REST API可用，并使通过CoutchDB web接口(Fauxton)使数据库可见。在生产环境下进行端口映射要慎重，需要限制从外部访问CouchDB容器的端口。*   
+
 你可以用**chaincode_example02**链码访问CouchDB状态数据库，就像前面讲的那样。但为了执行CouchDB特性的查询，你需要使用数据模型为JSON的链码(如**marbles02**)。你可以在`fabric/examples/chaincode/go`目录找到**marbles02**链码。
 我们可以使用相同的步骤创建和加入通道，就像前面在[创建和加入通道](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#创建和加入通道)一节中讲的那样。一旦将peer加入了通道，使用下面的步骤与**marbles02**链码交互：
 1. 在`peer0.org1.example.com`上安装和实例化链码:  
@@ -443,7 +447,9 @@ $$ peer chaincode invoke -o orderer.example.com:7050 --tls --cafile /opt/gopath/
 http://localhost:5984/_utils
 ```
 你可以看到一个叫`mychannel`的数据库(或你自己定义的通道名称)和里面的文档数据。
-*注意：你需要更新$CHANNEL_NAME为合适的值*  
+
+*注释：你需要更新$CHANNEL_NAME为合适的值*   
+
 你可以通过CLI运行一般查询(如读`marble2`):
 ```
 $$ peer chaincode query -C $CHANNEL_NAME -n marbles -c '{"Args":["readMarble","marble2"]}'
@@ -484,7 +490,8 @@ volumes:
 ```
 ./byfn.sh -m down
 ```
-*注意：如果不删除旧的容器和镜像会报错。*  
+*注释：如果不删除旧的容器和镜像会报错。* 
+ 
 - 如果你看到Docker错误，首先检查docker版本，然后重启docker进程。docker问题往往不好识别。例如，你可能看到的错误是不能找到挂在到容器的密钥文件。  
 如果你想删除镜像重新开始：
 ```
@@ -704,16 +711,14 @@ Response is  {"colour":"Red","make":"Chevy","model":"Volt","owner":"Dave"}
 本章主要讲应用开发，后面的章节会讲链码的开发。  
 
 ## 重新配置首个网络(First-Network)
-```
-注意：本章的这些步骤在docker镜像`1.1.0-preview`版本(tag)和相关工具中已经验证过。确保你已经下载了适合的镜像版本，或者你是从比Fabric“1.1.0-preview”更新的分支上构建的二进制包。
-```
+*注释：本章的这些步骤在docker镜像`1.1.0-preview`版本(tag)和相关工具中已经验证过。确保你已经下载了适合的镜像版本，或者你是从比Fabric“1.1.0-preview”更新的分支上构建的二进制包。*  
+
 本章是[启动首个网络(first-network)](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%90%AF%E5%8A%A8%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)的后续，会演示增加一个新组织`Org3`到自动生成的应用通道`mychannel`。它假定你已经对[BYFN](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E5%90%AF%E5%8A%A8%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)示范很懂了，包括会使用工具`cryptogen`和`configtxgen`。  
 
 这篇文章仅聚焦于集成一个新组织，然而用同样的方法可以更新其他通道配置（如更新修改规则，改变批大小等）。示范的操作是组织管理员职责，而不是链码或应用开发者职责。
 
-```
-注意：确保已经安装了必要的Fabric镜像和实用程序，并且自动化脚本`byfn.sh`在继续操作前在你的计算机上运行没有报错。即将到来的步骤依赖于生成的网络和工件。如果尚未配置机器，请参阅[Hyperledger Fabric示范](http://hyperledger-fabric.readthedocs.io/en/latest/samples.html)文档。提供的命令还假定Fabric实用程序存在于`fabric-samples`目录下的`bin`根目录中。如果已将这些二进制文件路径导出到了PATH变量中，则可以相应地修改这些命令，而不必传递绝对路径。
-```
+*注释：确保已经安装了必要的Fabric镜像和实用程序，并且自动化脚本`byfn.sh`在继续操作前在你的计算机上运行没有报错。即将到来的步骤依赖于生成的网络和工件。如果尚未配置机器，请参阅[Hyperledger Fabric示范](http://hyperledger-fabric.readthedocs.io/en/latest/samples.html)文档。提供的命令还假定Fabric实用程序存在于`fabric-samples`目录下的`bin`根目录中。如果已将这些二进制文件路径导出到了PATH变量中，则可以相应地修改这些命令，而不必传递绝对路径。*  
+
 ### 配置环境变量
 下面的操作将位于`fabric-samples`的子目录`first-network`中。更换到这个目录。你可以打开自己喜欢的终端窗口，如git-bash。  
 
@@ -786,7 +791,7 @@ $$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/o
 ```
 $$ echo $ORDERER_CA && echo $CHANNEL_NAME
 ```
-*注意：如果你重启了CLI容器，你需要重启REST服务器和重新导出三个环境变量`CONFIGTXLATOR_URL`、`ORDERER_CA`和`CHANNEL_NAME`。jq的安装会持久化，不用重新安装它。*
+*注释：如果你重启了CLI容器，你需要重启REST服务器和重新导出三个环境变量`CONFIGTXLATOR_URL`、`ORDERER_CA`和`CHANNEL_NAME`。jq的安装会持久化，不用重新安装它。*
 
 ### 形成更新对象和重新配置通道
 现在我们在CLI容器中有了一个运行中的REST服务器，并且我们到处了两个关键环境变量`ORDERER_CA``CHANNEL_NAME`。让我们提取通道`mychannel`最新配置区块。
@@ -849,7 +854,7 @@ $$ peer channel signconfigtx -f org3_update_in_envelope.pb
 ```
 最后一步是切换CLI容器的身份为Org2的Admin用户。我们通过导出对应Org2 MSP的4个环境变量做到这一点。  
 
-*注意：下面的演示不能反映真实世界的操作。单个容器永远不应该装载这个网络的密钥材料。相反，更新对象需要安全地通过“带外”传递给Org2管理员进行检查和批准。*  
+*注释：下面的演示不能反映真实世界的操作。单个容器永远不应该装载这个网络的密钥材料。相反，更新对象需要安全地通过“带外”传递给Org2管理员进行检查和批准。*  
 
 导出Org2的环境变量：
 ```
@@ -860,7 +865,7 @@ $$ export CORE_PEER_ADDRESS=peer0.org2.example.com:7051
 ```
 最后我们发出`peer channel update`命令。Org2管理员签名会附加到这个呼叫，所以不需要手工再次签署这个proto：  
 
-*注意：即将到来的对排序服务的呼叫会经历一系列系统签名和策略检查。因此，你会发现浏览和查看排序节点的日志很有用。从另一个终端shell，发送`docker logs -f orderer.example.com`命令来显示它们。*  
+*注释：即将到来的对排序服务的呼叫会经历一系列系统签名和策略检查。因此，你会发现浏览和查看排序节点的日志很有用。从另一个终端shell，发送`docker logs -f orderer.example.com`命令来显示它们。*  
 
 发送更新呼叫：
 ```
