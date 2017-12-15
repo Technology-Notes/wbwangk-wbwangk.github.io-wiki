@@ -1109,3 +1109,26 @@ $ docker exec -it cli bash
 $$ peer --help
 ```
 
+## 备忘
+### configtxgen
+#### 生成orderer创世区块
+```
+$ export FABRIC_CFG_PATH=$PWD
+$ configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+```
+#### 创建通道
+```
+$ export CHANNEL_NAME=mychannel  
+$ configtxgen -profile TwoOrgsChannel \
+ -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+```
+#### 创建锚点peer
+```
+$ configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
+./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+```
+#### 获取组织配置材料
+现在使用configtxgen工具输出JSON格式的Org3相关配置材料。作为开始的命令，告诉工具从当前目录下读取configtx.yaml。
+```
+$ export FABRIC_CFG_PATH=$PWD && ../../bin/configtxgen -printOrg Org3MSP > ../channel-artifacts/org3.json
+```
