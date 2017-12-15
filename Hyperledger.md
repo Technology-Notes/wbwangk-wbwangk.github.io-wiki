@@ -799,6 +799,14 @@ $$ peer channel fetch config config_block.pb -o orderer.example.com:7050 -c $CHA
 ```
 2017-11-07 17:17:57.383 UTC [channelCmd] readBlock -> DEBU 011 Received block: 2
 ```
+这是告诉我们`mychannel`的最新配置区块是区块2，不是创世区块。默认情况下，`peer channel fetch config`命令返回目标通道的最新配置区块，在本例中是2号区块。当BYFN场景运行时，内嵌脚本执行了两个对通道的附加配置更新。也就是，通过两个通道更新事务定义了两个组织`Org1`和`Org2`的锚peer。象这样，我们有了如下配置序列：区块0，创世区块；区块1，Org1锚peer更新；区块2，Org2锚peer更新。  
+
+现在我们将使用`configtxlator`服务器将这个通道配置区块解码为人类可以读写的JSON格式。
+```
+$$ curl -X POST --data-binary @config_block.pb "$CONFIGTXLATOR_URL/protolator/decode/common.Block" | jq . > config_block.json
+```
+我们将编码输出命名为`confg_block.json`。（又一次，）
+
 
 
 
