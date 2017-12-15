@@ -923,9 +923,36 @@ peer channel join -b mychannel.block
 ```
 
 ### 升级和调用
-拼图的最后一块是
+拼图的最后一块是增加链码版本和更新背书策略以便包含Org3。留在Org3 CLI容器中并安装链码。由于我们知道升级即将到来，因此我们可以跳过安装链码版本1的徒劳行为。我们只关心Org3将成为背书策略的一部分的新版本，因此我们将直接跳转到版本2：
+```
+$$ peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_example02/go/
+```
+如果你想在Org3的第二个peer上安装链码，修改相应环境变量和重新发送命令。请注意，第二次安装不是强制的，因为您只需要在背书peer或以其他方式与账本接口的peer（即仅查询）上安装链接代码。这种peer上将仍然运行确认逻辑和作为提交者，但没有运行链码的容器。  
 
+现在跳回到原始CLI容器，并在Org1和Org2 peer上安装新版本链码。我们是用Org2管理员身份递交的通道更新呼叫，所以容器仍以`peer0.org2`的身份运行：
+```
+$$ peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_example02/go/
+```
+切换到`peer0.org1`身份：
+```
+$$ export CORE_PEER_LOCALMSPID="Org1MSP"
+$$ export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+$$ export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+$$ export CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+```
+并重新安装：
+```
+$$ peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_example02/go/
+```
+现在，我们准备好升级链码。这里没有修改底层源码，我们只是简单地把Org3加入到通道`mychannel`的链码`mycc`的背书策略。  
 
+*注释：任何满足链码实例化策略的身份都可以发出升级呼叫。在默认情况下，这些身份是通道管理员。*  
+
+发送呼叫：
+```
+$$ peer chaincode upgrade -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 2.0 -c '{"Args":["init","a","90","b","210"]}' -P "OR ('Org1MSP.member','Org2MSP.member','Org3MSP.member')"
+```
+你可以看到在上面的命令中，我们通过`v`标志指定了新版本。你还可以看到背书策略被更新到`-P "OR ('Org1MSP.member','Org2MSP.member','Org3MSP.member')"`，准确地反映了策略增加了Org3。（上述背书策略的含义是三个组织的任何一个签名都可以。）
 
 
 ## 链码教程
