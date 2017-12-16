@@ -110,3 +110,9 @@ git config --global --unset all.proxy
 ```
 $ npm install --unsafe-perm --verbose -g composer-cli
 ```
+### VM proxy
+当VM需要代理才能访问互联网时，在VM内执行：
+```
+$ export http_proxy=<宿主机ip:代理端口号>
+$ export https_proxy=<宿主机ip:代理端口号>
+```
