@@ -231,3 +231,12 @@ root pts/1
 dmtsai pts/1
 root tty1
 ```
+#### vagrant共享目录
+通过`synced_folder`将相对于Vagrantfile目录的某个目录挂载到linux下。
+```
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "bento/ubuntu-16.04"
+  # share folder
+  config.vm.synced_folder "../../../vagrant10/ambari-vagrant/fabric/devenv/images", "/docker_images"
+(略)
+```
