@@ -104,12 +104,17 @@ services:
 ```
 启动：
 ```
-$ docker-compose -f orderer.yaml up -d
+$ CHANNEL_NAME=$CHANNEL_NAME docker-compose -f orderer.yaml up -d
 ```
 需要说明的是，环境变量`ORDERER_GENERAL_TLS_ENABLED=true`指定了orderer只能用TLS协议访问。而sample默认的peer镜像定义中，并没有证书目录映射到容器内。也就是说该peer镜像不是为管理员用的，在里面执行`peer`命令不加`--TLS true`标志访问orderer会失败，查看orderer日志会显示：
 ```
 first record does not look like a TLS handshake
 ```
+而peer容器中报错是：
+```
+172.18.0.3:55136->172.18.0.2:7050: read: connection reset by peer.
+```
+如果不加
 ### peer
 工作目录是`/opt/fabric-samples/first-network`。  
 peer的docker-compose(`peer0.yaml`)文件定义：  
