@@ -69,3 +69,70 @@ $ openssl dgst -ecdsa-with-SHA1 -verify public.pem -signature signature.bin READ
 Verified OK
 ```
 说明假设是成立的，这个文件`./crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/1deeab5433fa6e5f045eb763109d6165268fba153211af1281f00d45f54b1022_sk`是管理员私钥。
+
+## 手工建fabirc集群
+
+### orderer
+工作目录是`/opt/fabric-samples/first-network`。  
+orderer的docker-compose(`orderer.yaml`)文件定义：  
+```yaml
+version: '2'
+services:
+  orderer.example.com:
+    container_name: orderer.example.com
+    image: hyperledger/fabric-orderer
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
+    - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/:/var/hyperledger/orderer/tls
+    ports:
+      - 7050:7050
+```
+启动：
+```
+$ docker-compose -f orderer.yaml up -d
+```
+需要说明的是，环境变量`ORDERER_GENERAL_TLS_ENABLED=true`指定了orderer只能用TLS协议访问。而sample默认的peer镜像定义中，并没有证书目录映射到容器内。也就是说该peer镜像不是为管理员用的，在里面执行`peer`命令不加`--TLS true`标志访问orderer会失败，查看orderer日志会显示：
+```
+first record does not look like a TLS handshake
+```
+### peer
+工作目录是`/opt/fabric-samples/first-network`。  
+peer的docker-compose(`peer0.yaml`)文件定义：  
+```
+version: '2'
+services:
+  peer0.org1.example.com:
+    container_name: peer0.org1.example.com
+    extends:
+      file: ./base/peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org1.example.com
+      - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp:/etc/hyperledger/fabric/msp
+        - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls:/etc/hyperledger/fabric/tls
+#        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+    ports:
+      - 7051:7051
+      - 7053:7053
+```
+需要指出的是，`/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/`这个卷是为了管理员执行`peer`命令而增加的，标准的peer镜像定义没有这个卷，这个卷一般出现在CLI镜像(fabric-tools)的定义中。  
