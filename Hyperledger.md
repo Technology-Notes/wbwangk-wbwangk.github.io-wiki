@@ -331,7 +331,7 @@ $$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
 ./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
 ```
 注意此命令行中的`--cafile`参数，它是一个指向orderer根CA证书的本地路径，用于验证TLS握手。  
-命令会返回一个创世区块(`<channel-ID.block>`)，我们用它加入通道。它里面包含了在`channel.tx`中定义的配置信息，如果你没有改变过通道名称，该命令将返回一个叫`mychannel.block`的原型。在当前目录下可以看到这个`mychannel.block`文件。  
+命令会返回一个创世区块(`<channel-ID.block>`)，我们用它加入通道。它里面包含了在`channel.tx`中定义的配置信息，如果你没有改变过通道名称，该命令将返回一个叫`mychannel.block`的proto。在当前目录下可以看到这个`mychannel.block`文件。  
 现在，让我们把`peer0.org1.example.com`节点加入通道：
 ```
 $$ peer channel join -b mychannel.block
