@@ -251,6 +251,10 @@ org1.example.com
 org2.example.com
 ```
 证书和密钥(即MSP文书)会被输出到`crypto-config`目录（位于`first-network`目录之下）。  
+生成的密钥文件主要是管理员的身份证明文件，其中：
+- 系统管理员:`crypto-config/ordererOrganizations`目录下
+- 组织管理员：org1组织管理员位于`crypto-config/peerOrganizations/org1.example.com`目录下
+- peer管理员：org1的peer0管理员位于`crypto-config/peerOrganizations/org1.example.com/peerspeer0.org1.example.com`目录下
 
 下一步，我们需要告诉`configtxgen`工具到哪里去寻找`configtx.yaml`文件。需要通过下面的环境变量告诉它($PWD表示当前目录)：
 ```
