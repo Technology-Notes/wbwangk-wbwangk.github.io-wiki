@@ -226,6 +226,5 @@ $$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_
 
 下面变更通道定义，将peer0.org1.example.com定义为Org1的锚点peer。
 ```
-$$ peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile 
-$ORDERER_CA
+$$ peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile $ORDERER_CA
 ```
