@@ -222,9 +222,10 @@ $$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/o
 $$ export CHANNEL_NAME=mychannel
 $$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
 ```
-只要有了通道的创世区块，就是用`peer channel jong`命令将peer加入通道了。
+如果peer0的容器重启，则需要重新加入通道。这时只能通过上面的`peer channel fetch 0`命令来获取创世区块。而只要有了通道的创世区块，就是用`peer channel jong`命令将peer加入通道了。  
 
 下面变更通道定义，将peer0.org1.example.com定义为Org1的锚点peer。
 ```
-$$ peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$$ peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile 
+$ORDERER_CA
 ```
