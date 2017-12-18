@@ -116,3 +116,5 @@ $ npm install --unsafe-perm --verbose -g composer-cli
 $ export http_proxy=<宿主机ip:代理端口号>
 $ export https_proxy=<宿主机ip:代理端口号>
 ```
+### fabric 翻译项目
+https://lists.hyperledger.org/pipermail/hyperledger-twg-china/2017-November/000419.html
