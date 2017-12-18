@@ -71,93 +71,99 @@ Verified OK
 说明假设是成立的，这个文件`./crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/1deeab5433fa6e5f045eb763109d6165268fba153211af1281f00d45f54b1022_sk`是管理员私钥。
 
 ## 手工建fabirc集群
+Hyperledger Fabric的`fabric-samples/first-network`是在单机上运行的。本章描述如何将其部署到多台VM上。  
+假设有三台VM：  
+- hostname：u1601 ip:192.168.16.101  
+- hostname：u1602 ip:192.168.16.102  
+- hostname：u1603 ip:192.168.16.103  
+计划将u1603当orderer节点，另两台当peer节点。  
+首先，按[Hyperledger Fabric Samples](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#hyperledger-fabric-samples)的描述，在3台VM上都创建Fabirc运行环境，包括安装必要的二进制包，部署docker引擎和docker-compose，部署golang环境，下载Fabric相关docker镜像等。
 
-### orderer
-工作目录是`/opt/fabric-samples/first-network`。  
-orderer的docker-compose(`orderer.yaml`)文件定义：  
-```yaml
+### 生成密钥文件和引导文件(u1601)
+首先进行环境清理，停止和删除现有docker容器，删除原有密钥文件。方法是：
+```
+$ cd /opt/fabric-samples/first-network
+$ ./byfn.sh -m down
+```
+下面的命令生成密钥文件。密钥文件输出到了`crypto-config`目录下。
+```
+$ ../bin/cryptogen generate --config=./crypto-config.yaml
+```
+下面的命令生成系统通道的创世区块。文件输出到`channel-artifacts`目录下。
+```
+$ export FABRIC_CFG_PATH=$PWD
+$ ../bin/configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+```
+生成创建通道的事务文件：
+```
+$ export CHANNEL_NAME=mychannel  
+$ ../bin/configtxgen -profile TwoOrgsChannel \
+ -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+```
+生成设置Org1的锚点peer的事务文件：
+```
+$ ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
+./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+```
+这里准备工作就完成了。主要是生成了一堆密钥文件(`crypto-config`目录下)、一个创世区块文件(`genesis.block`)和两个事务文件(.tx)。  
+
+### orderer节点的docker-compose文件
+
+打算在u1601上先把orderer的docker-compose文件编辑好，然后再和orderer的密钥文件一起复制到u1603上。  
+```
+$ cp docker-compose-cli.yaml orderer.yaml
+```
+编辑orderer.yaml，删除大部分内容，只留下orderer相关的：
+```
 version: '2'
 services:
   orderer.example.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.example.com
     container_name: orderer.example.com
-    image: hyperledger/fabric-orderer
-    environment:
-      - ORDERER_GENERAL_LOGLEVEL=debug
-      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
-      - ORDERER_GENERAL_GENESISMETHOD=file
-      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
-      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
-      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
-      # enabled TLS
-      - ORDERER_GENERAL_TLS_ENABLED=true
-      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
-    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
-    command: orderer
-    volumes:
-    - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
-    - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/msp:/var/hyperledger/orderer/msp
-    - ./crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/:/var/hyperledger/orderer/tls
-    ports:
-      - 7050:7050
 ```
-启动：
+
+### 启动orderer节点
+
+来到u1603节点，将oderer相关的密钥文件、创世区块文件、事务文件和docker-compose文件等复制过来。
 ```
+$ ssh root@u1603
+$ cd /opt/fabric-samples/first-network
+$ scp root@u1601:/opt/fabric-samples/first-network/channel-artifacts/* ./channel-artifacts/
+$ scp -r root@u1601:/opt/fabric-samples/first-network/crypto-config/* ./crypto-config/
+$ scp root@u1601:/opt/fabric-samples/first-network/orderer.yaml .
 $ docker-compose -f orderer.yaml up -d
 ```
-需要说明的是，环境变量`ORDERER_GENERAL_TLS_ENABLED=true`指定了orderer只能用TLS协议访问。而sample默认的peer镜像定义中，并没有证书目录映射到容器内。也就是说该peer镜像不是为管理员用的，在里面执行`peer`命令不加`--TLS true`标志访问orderer会失败，查看orderer日志会显示：
+需要说明的是，u1603仅充当orderer节点，应该把peer的密钥文件删除：
 ```
-first record does not look like a TLS handshake
+$ rm -rf  crypto-config/peerOrganizations
 ```
-而peer容器中报错是：
+（如果启动orderer时不加`-d`参数，屏幕会一直输出orderer容器的日志。实测中发现一直报告打开u1601的54710端口失败，直到下面的peer0启动就不报错了）
+
+### peer节点的docker-compose文件
+u1601将充当peer节点。上面会运行两个容器，peer0.org1.example.com和cli。前者是peer容器，后者是管理员用的客户端工具。  
 ```
-172.18.0.3:55136->172.18.0.2:7050: read: connection reset by peer.
+$ cp docker-compose-cli.yaml peer0.yaml
 ```
-如果不加
-### peer
-工作目录是`/opt/fabric-samples/first-network`。  
-peer的docker-compose(`peer0.yaml`)文件定义：  
+编辑peer0.yaml，修改成下面的样子：
 ```
 version: '2'
 services:
   peer0.org1.example.com:
     container_name: peer0.org1.example.com
     extends:
-      file: ./base/peer-base.yaml
-      service: peer-base
-    environment:
-      - CORE_PEER_ID=peer0.org1.example.com
-      - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.example.com:7051
-      - CORE_PEER_LOCALMSPID=Org1MSP
-    volumes:
-        - /var/run/:/host/var/run/
-        - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp:/etc/hyperledger/fabric/msp
-        - ./crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls:/etc/hyperledger/fabric/tls
-#        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
-    ports:
-      - 7051:7051
-      - 7053:7053
-```
-需要指出的是，`/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/`这个卷是为了管理员执行`peer`命令而增加的，标准的peer镜像定义没有这个卷，这个卷一般出现在CLI镜像(fabric-tools)的定义中。  
-
-启动peer0：
-```
-$ TIMEOUT=10000 CHANNEL_NAME=$CHANNEL_NAME docker-compose -f peer0.yaml up -d
-```
-
-### cli
-管理员使用cli容器中的命令管理整个区块链网络，包括网络的初始化、建通道、建组织、peer加入通道等。  
-cli的docker-compose配置文件`cli.yaml`:
-```yaml
-version: '2'
-services:
+      file:  base/docker-compose-base.yaml
+      service: peer0.org1.example.com
+#    extra_hosts:
+#     - "orderer.example.com:192.168.16.103"
+#     - "peer1.org1.example.com:192.168.16.102"
   cli:
     container_name: cli
     image: hyperledger/fabric-tools
     tty: true
     environment:
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_default
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_LOGGING_LEVEL=DEBUG
@@ -170,27 +176,55 @@ services:
       - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
       - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-    command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME} ${DELAY} ${LANG}; sleep $TIMEOUT'
+#    command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME} ${DELAY} ${LANG}; sleep $TIMEOUT'
     volumes:
         - /var/run/:/host/var/run/
         - ./../chaincode/:/opt/gopath/src/github.com/chaincode
         - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
         - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
         - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - peer0.org1.example.com
+    extra_hosts:
+     - "orderer.example.com:192.168.16.103"
 ```
-启动容器(`cli.sh`)：
+同原来的`docker-compose-cli.yaml`相比，多了一个`extra_hosts`定义。`extra_hosts`的值会自动加入到容器的`/etc/hosts`文件中，以便根据hostname找到位于其他VM的容器，如找到orderer容器。
+
+启动peer0：
 ```
-$ TIMEOUT=10000 CHANNEL_NAME=mychannel docker-compose -f cli.yaml up -d
+$ TIMEOUT=10000 CHANNEL_NAME=$CHANNEL_NAME docker-compose -f peer0.yaml up -d
 ```
-进入cli容器，并查看4个环境变量：
+用`docker ps`命令可以看到启动了两个容器：`peer0.org1.example.com`和`cli`。  
+
+### 创建通道和将peer0加入通道
+进入cli容器，并查看4个环境变量，这四个变量反应了当前cli正在以peer0的身份运行：
 ```
 $ docker exec -it cli bash
 $$ echo $CORE_PEER_MSPCONFIGPATH && echo $CORE_PEER_ADDRESS && echo $CORE_PEER_LOCALMSPID && echo $CORE_PEER_TLS_ROOTCERT_FILE
 ```
+(根据fabric目前版本的通道权限策略，谁创建谁就是通道管理员。所以`mychannel`的管理员应为peer0的管理员)
 为创建通道，之前需要创建通道需要的其他设置环境变量：
 ```
 $$ export CHANNEL_NAME=mychannel
 $$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 $$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
 ./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
+```
+上面命令会产生了两个文件，`mychannel.block`和` channel-artifacts/channel.tx`。前者是创世区块，后者是通道创建事务。`channel.tx`是前文的[生成密钥文件和引导文件](#生成密钥文件和引导文件(u1601))一节中生成的。  
+
+通道创建成功后，需要将当前peer(即peer0)加入到通道`mychannel`：
+```
+$$ peer channel join -b mychannel.block
+```
+创世区块除了在创建(`peer channel create`)的时候生成，还可以用下列命令获取：
+```
+$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$$ export CHANNEL_NAME=mychannel
+$$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
+```
+只要有了通道的创世区块，就是用`peer channel jong`命令将peer加入通道了。
+
+下面变更通道定义，将peer0.org1.example.com定义为Org1的锚点peer。
+```
+$$ peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 ```
