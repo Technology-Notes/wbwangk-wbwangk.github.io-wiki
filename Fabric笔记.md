@@ -104,7 +104,7 @@ services:
 ```
 启动：
 ```
-$ CHANNEL_NAME=$CHANNEL_NAME docker-compose -f orderer.yaml up -d
+$ docker-compose -f orderer.yaml up -d
 ```
 需要说明的是，环境变量`ORDERER_GENERAL_TLS_ENABLED=true`指定了orderer只能用TLS协议访问。而sample默认的peer镜像定义中，并没有证书目录映射到容器内。也就是说该peer镜像不是为管理员用的，在里面执行`peer`命令不加`--TLS true`标志访问orderer会失败，查看orderer日志会显示：
 ```
@@ -141,3 +141,56 @@ services:
       - 7053:7053
 ```
 需要指出的是，`/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/`这个卷是为了管理员执行`peer`命令而增加的，标准的peer镜像定义没有这个卷，这个卷一般出现在CLI镜像(fabric-tools)的定义中。  
+
+启动peer0：
+```
+$ TIMEOUT=10000 CHANNEL_NAME=$CHANNEL_NAME docker-compose -f peer0.yaml up -d
+```
+
+### cli
+管理员使用cli容器中的命令管理整个区块链网络，包括网络的初始化、建通道、建组织、peer加入通道等。  
+cli的docker-compose配置文件`cli.yaml`:
+```yaml
+version: '2'
+services:
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME} ${DELAY} ${LANG}; sleep $TIMEOUT'
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+```
+启动容器(`cli.sh`)：
+```
+$ TIMEOUT=10000 CHANNEL_NAME=mychannel docker-compose -f cli.yaml up -d
+```
+进入cli容器，并查看4个环境变量：
+```
+$ docker exec -it cli bash
+$$ echo $CORE_PEER_MSPCONFIGPATH && echo $CORE_PEER_ADDRESS && echo $CORE_PEER_LOCALMSPID && echo $CORE_PEER_TLS_ROOTCERT_FILE
+```
+为创建通道，之前需要创建通道需要的其他设置环境变量：
+```
+$$ export CHANNEL_NAME=mychannel
+$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
+./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
+```
