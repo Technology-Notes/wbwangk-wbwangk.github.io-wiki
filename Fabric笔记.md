@@ -341,3 +341,9 @@ services:
 $ TIMEOUT=10000 CHANNEL_NAME=mychannel docker-compose -f cli.yaml up -d
 ```
 #### 将peer1加入通道
+
+$ docker exec -it cli bash
+$$ export CHANNEL_NAME=mychannel
+$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
+$$ peer channel join -b mychannel.block
