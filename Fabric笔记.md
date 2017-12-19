@@ -217,8 +217,7 @@ $$ echo $CORE_PEER_MSPCONFIGPATH && echo $CORE_PEER_ADDRESS && echo $CORE_PEER_L
 (根据fabric目前版本的通道权限策略，谁创建谁就是通道管理员。所以`mychannel`的管理员应为peer0的管理员)
 为创建通道，之前需要创建通道需要的其他设置环境变量：
 ```
-$$ export CHANNEL_NAME=mychannel
-$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$$ export CHANNEL_NAME=mychannel && export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 $$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
 ./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
 ```
