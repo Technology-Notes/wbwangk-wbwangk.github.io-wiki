@@ -291,6 +291,8 @@ $ ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
 $ ls ./channel-artifacts
 channel.tx  genesis.block  Org1MSPanchors.tx  Org2MSPanchors.tx
 ```
+（执行到这里的时候，就相当于执行了`byfn.sh -m generate`）  
+
 ### 启动网络
 我们将使用docker-compose脚本启动我们的网络。docker-compose会使用我们之前下载的docker镜像，用我们之前生成`genesis.block`(创世区块)引导排序器(orderer)。  
 在启动网络前，打开`docker-compose-cli.yaml`文件，注释掉CLI容器的`script.sh`。让你的`docker-compose-cli.yaml`文件变成这样：
@@ -349,7 +351,7 @@ CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypt
 下面的命令是通道变更，他们会广播到通道定义。本质上，我们会在通道创始区块的上面追加配置信息。注意，我们没有改变创始区块，只是向链中添加了定义锚点peer的delta。  
 变更通道定义，将`peer0.org1.example.com`定义为Org1的锚点peer。
 ```
-peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile $ORDERER_CA
+$$ peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile $ORDERER_CA
 ```
 现在，变更通道定义，将`peer0.org2.example.com`定义为Org2的锚点peer。注意命令中的4个环境变量用于覆盖默认的`peer0.org1.example.com`的相关值。
 ```
