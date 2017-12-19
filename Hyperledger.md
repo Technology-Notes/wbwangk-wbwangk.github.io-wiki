@@ -748,7 +748,7 @@ $ cd org3-artifacts
 ```
 $ ../../bin/cryptogen generate --config=./org3-crypto.yaml
 ```
-上述命令会地区新的密钥yaml文件`org3-crypto.yaml`，利用`cryptogen`工具为Org3中间CA生成key和证书，并且有两个peer绑定到这个新组织。与BYFN实现一起，这个密钥材料输出到一个新生成的`crypto-config`目录中。  
+上述命令会读取新的加密yaml文件`org3-crypto.yaml`，利用`cryptogen`工具为Org3中间CA生成key和证书，并且有两个peer绑定到这个新组织。与BYFN实现一起，这个密钥材料输出到一个新生成的`crypto-config`目录中。  
 
 现在使用`configtxgen`工具输出JSON格式的Org3相关配置材料。作为开始的命令，告诉工具从当前目录下读取`configtx.yaml`。
 ```
