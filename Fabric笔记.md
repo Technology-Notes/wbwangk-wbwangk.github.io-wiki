@@ -94,15 +94,15 @@ $ ../bin/cryptogen generate --config=./crypto-config.yaml
 
 按正规要求，排序服务管理员的私钥文件应复制到u1603；org1组织的peer1节点的私钥文件复制到u1602。由于org1组织的peer0节点就是u1601，所以不用复制。因为本章只是验证Fabric-samples分布式部署，所以加密材料只是简单复制到了u1602和u1603，并没有删除应当保密的管理员私钥。
 ```
-$ scp -r ./crypto-config/ root@u1602:/opt/fabric-samples/first-network/
-$ scp -r ./crypto-config/ root@u1603:/opt/fabric-samples/first-network/
+$ scp -r ./crypto-config root@u1602:/opt/fabric-samples/first-network/
+$ scp -r ./crypto-config root@u1603:/opt/fabric-samples/first-network/
 ```
 
 ### 启动排序服务
 
 要启动排序服务，首先要生成系统创世区块，然后编辑排序服务的docker-compose文件并启动。
 ```
-$ ssh u1603
+$ ssh root@u1603
 $ cd /opt/fabric-samples/first-network
 ```
 #### 生成系统通道创世区块
@@ -137,7 +137,11 @@ $ docker-compose -f orderer.yaml up -d
 （如果启动orderer时不加`-d`参数，屏幕会一直输出orderer容器的日志。）
 
 ### 准备peer0节点
-使用u1601充当org1组织的peer0节点。  
+使用u1601充当org1组织的peer0节点。
+```
+$ ssh root@u1601
+$ cd /opt/fabric-samples/basic-network
+```  
 
 #### 生成事务文件
 首先，生成创建应用通道的事务文件：
@@ -286,19 +290,19 @@ Query Result: 90
 ### 建立peer1(u1602)
 在u1602上部署org1的第二个peer节点，即peer1。  
 
-首先，从u1601上将必要的密钥文件、创世区块、事务文件、docker-compose文件等复制过来：
+首先，从u1603（排序服务所在节点）上将加密材料复制过来：
 ```
 $ ssh root@u1602
 $ cd /opt/fabric-samples/first-network
-$ scp root@u1601:/opt/fabric-samples/first-network/channel-artifacts/* ./channel-artifacts/
-$ scp -r root@u1601:/opt/fabric-samples/first-network/crypto-config/* ./crypto-config/
+$ scp -r root@u1603:/opt/fabric-samples/first-network/crypto-config .
 $ scp root@u1601:/opt/fabric-samples/first-network/cli.yaml .
 ```
-对`cli.yaml`进行适当的编辑，成下面的样子(注意peer1的端口号是8051)：
+上面将peer0节点的docker-compose配置文件`cli.yaml`也复制过来了。  
+对`cli.yaml`进行适当的编辑，成下面的样子：
 ```yaml
 version: '2'
 networks:
-  byfn:
+  byfn1:
 
 services:
 
@@ -311,8 +315,7 @@ services:
      - "orderer.example.com:192.168.16.103"
      - "peer0.org1.example.com:192.168.16.101"
     networks:
-      - byfn
-
+      - byfn1
 
   cli:
     container_name: cli
@@ -323,7 +326,7 @@ services:
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
       - CORE_LOGGING_LEVEL=DEBUG
       - CORE_PEER_ID=cli
-      - CORE_PEER_ADDRESS=peer1.org1.example.com:8051
+      - CORE_PEER_ADDRESS=peer1.org1.example.com:7051
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_TLS_ENABLED=true
       - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/server.crt
@@ -343,16 +346,34 @@ services:
     extra_hosts:
      - "orderer.example.com:192.168.16.103"
     networks:
-      - byfn
+      - byfn1
 ```
-启动容器：
+需要说明的是，在`base/docker-compose-base.yaml`中，`peer1.org1.example.com`服务的对外暴露端口号是8051，但`cli`容器是运行在docker虚拟网络内，通过容器内部端口`7051`来访问peer1容器，所以上面的`CORE_PEER_ADDRESS`仍配置为`7051`。  
+为了区分于peer0的docker网络`byfn`，这里定义了网络id是`byfn1`。  
+启动容器：：
 ```
 $ TIMEOUT=10000 CHANNEL_NAME=mychannel docker-compose -f cli.yaml up -d
 ```
 #### 将peer1加入通道
-
+peer1的操作同peer0相比就比较简单了。它不是组织`org1`在通道`mychannel`的锚peer，仅需要加入通道即可。
+```
 $ docker exec -it cli bash
-$$ export CHANNEL_NAME=mychannel
-$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$$ export CHANNEL_NAME=mychannel && export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 $$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
 $$ peer channel join -b mychannel.block
+```
+
+### peer1链码测试
+#### 链码安装
+将`fabric-samples`自带的例子链码安装到peer1(u1602)上：
+```
+$$ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+```
+
+#### 链码实例化
+下面是对将链码在peer1(u1602)上实例化：
+```
+$$ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
+Error: Error endorsing chaincode: rpc error: code = Unknown desc = chaincode error (status: 500, message: chaincode exists mycc)
+```
+难道链码在通道中只能实例化一次？  
