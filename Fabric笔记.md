@@ -115,7 +115,7 @@ $ ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
 $ cp docker-compose-cli.yaml orderer.yaml
 ```
 编辑orderer.yaml，删除大部分内容，只留下orderer相关的：
-```
+```yaml
 version: '2'
 services:
   orderer.example.com:
@@ -149,7 +149,7 @@ u1601将充当peer节点。上面会运行两个容器，peer0.org1.example.com�
 $ cp docker-compose-cli.yaml peer0.yaml
 ```
 编辑peer0.yaml，修改成下面的样子：
-```
+```yaml
 version: '2'
 networks:
   byfn:
@@ -274,3 +274,70 @@ Chaincode invoke successful. result: status:200
 $$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
 Query Result: 90
 ```
+### 建立peer1(u1602)
+在u1602上部署org1的第二个peer节点，即peer1。  
+
+首先，从u1601上将必要的密钥文件、创世区块、事务文件、docker-compose文件等复制过来：
+```
+$ ssh root@u1602
+$ cd /opt/fabric-samples/first-network
+$ scp root@u1601:/opt/fabric-samples/first-network/channel-artifacts/* ./channel-artifacts/
+$ scp -r root@u1601:/opt/fabric-samples/first-network/crypto-config/* ./crypto-config/
+$ scp root@u1601:/opt/fabric-samples/first-network/cli.yaml .
+```
+对`cli.yaml`进行适当的编辑，成下面的样子(注意peer1的端口号是8051)：
+```yaml
+version: '2'
+networks:
+  byfn:
+
+services:
+
+  peer1.org1.example.com:
+    container_name: peer1.org1.example.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.org1.example.com
+    extra_hosts:
+     - "orderer.example.com:192.168.16.103"
+     - "peer0.org1.example.com:192.168.16.101"
+    networks:
+      - byfn
+
+
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer1.org1.example.com:8051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+#    command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME} ${DELAY} ${LANG}; sleep $TIMEOUT'
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - peer1.org1.example.com
+    extra_hosts:
+     - "orderer.example.com:192.168.16.103"
+    networks:
+      - byfn
+```
+启动容器：
+```
+$ TIMEOUT=10000 CHANNEL_NAME=mychannel docker-compose -f cli.yaml up -d
+```
+#### 将peer1加入通道
