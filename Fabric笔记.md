@@ -71,6 +71,7 @@ Verified OK
 说明假设是成立的，这个文件`./crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/1deeab5433fa6e5f045eb763109d6165268fba153211af1281f00d45f54b1022_sk`是管理员私钥。
 
 ## 手工建fabirc集群
+参考了[这篇文章](http://www.cnblogs.com/studyzy/p/7237287.html)，但差异很大。  
 Hyperledger Fabric的`fabric-samples/first-network`是在单机上运行的。本章描述如何将其部署到多台VM上。  
 假设有三台VM：  
 - hostname：u1601 ip:192.168.16.101  
@@ -123,6 +124,7 @@ services:
       service: orderer.example.com
     container_name: orderer.example.com
 ```
+同peer节点的docker-compose配置文件相比，orderer的无疑简单的多。first-network默认部署的SOLO方式的orderer，只是一个单节点服务。orderer不知道其他peer的存在。
 
 ### 启动orderer节点
 
@@ -139,7 +141,7 @@ $ docker-compose -f orderer.yaml up -d
 ```
 $ rm -rf  crypto-config/peerOrganizations
 ```
-（如果启动orderer时不加`-d`参数，屏幕会一直输出orderer容器的日志。实测中发现一直报告打开u1601的54710端口失败，直到下面的peer0启动就不报错了）
+（如果启动orderer时不加`-d`参数，屏幕会一直输出orderer容器的日志。实测中发现一直报告打开u1601的54710端口失败，直到下面的peer0启动就不报错了。估计跟锚节点的定义有关）
 
 ### peer节点的docker-compose文件
 u1601将充当peer节点。上面会运行两个容器，peer0.org1.example.com和cli。前者是peer容器，后者是管理员用的客户端工具。  
@@ -149,15 +151,21 @@ $ cp docker-compose-cli.yaml peer0.yaml
 编辑peer0.yaml，修改成下面的样子：
 ```
 version: '2'
+networks:
+  byfn:
+
 services:
   peer0.org1.example.com:
     container_name: peer0.org1.example.com
     extends:
       file:  base/docker-compose-base.yaml
       service: peer0.org1.example.com
-#    extra_hosts:
-#     - "orderer.example.com:192.168.16.103"
+    extra_hosts:
+     - "orderer.example.com:192.168.16.103"
 #     - "peer1.org1.example.com:192.168.16.102"
+    networks:
+      - byfn
+
   cli:
     container_name: cli
     image: hyperledger/fabric-tools
@@ -187,8 +195,12 @@ services:
       - peer0.org1.example.com
     extra_hosts:
      - "orderer.example.com:192.168.16.103"
+    networks:
+      - byfn
 ```
-同原来的`docker-compose-cli.yaml`相比，多了一个`extra_hosts`定义。`extra_hosts`的值会自动加入到容器的`/etc/hosts`文件中，以便根据hostname找到位于其他VM的容器，如找到orderer容器。
+同原来的`docker-compose-cli.yaml`相比，首先多了一个`extra_hosts`定义。`extra_hosts`的值会自动加入到容器的`/etc/hosts`文件中，以便根据hostname找到位于其他VM的服务，如找到orderer服务。  
+（`byfn`这个docker虚拟网络也是需要的。如果不定义，会导致链码实例化报错。用`docker network ls`命令可以看到`byfn`被自动命名为`net_byfn`。而peer服务是从`base/docker-compose-base.yaml`继承来的，其中有个环境变量的定义`CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_byfn`，在运行时这个环境变量的值应该是`net_byfn`。）  
+（如果`peer0.org1.example.com`服务中不定义orderer的`extra_hosts`，会导致链码无法部署。）  
 
 启动peer0：
 ```
@@ -224,7 +236,41 @@ $$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_
 ```
 如果peer0的容器重启，则需要重新加入通道。这时只能通过上面的`peer channel fetch 0`命令来获取创世区块。而只要有了通道的创世区块，就是用`peer channel jong`命令将peer加入通道了。  
 
+#### 改变锚点peer定义
 下面变更通道定义，将peer0.org1.example.com定义为Org1的锚点peer。
 ```
 $$ peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile $ORDERER_CA
+```
+（实测中上面这个命令无法执行成功，提示` Readset expected key [Groups] /Channel/Application/Org1MSP at version 0, but got version 1`）  
+
+### 链码安装、实例化和使用
+#### 链码安装
+将`fabric-samples`自带的例子链码安装到peer0(u1601)上：
+```
+$$ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+```
+如果不配置peer0对orderer的`extra_hosts`依赖，上面的链码安装会失败。  
+
+#### 链码实例化
+下面是对将链码在peer0(u1601)上实例化：
+```
+$$ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
+```
+在实测中一开始没有定义`byfn`这个网络，导致了链码实例化失败。  
+
+#### 链码使用
+查询：
+```
+$$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+Query Result: 100
+```
+调用(即a减少10，b增加10)：
+```
+$$ peer chaincode invoke -o orderer.example.com:7050  --tls --cafile  $ORDERER_CA  -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
+Chaincode invoke successful. result: status:200
+```
+重新查询一下a的值：
+```
+$$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+Query Result: 90
 ```
