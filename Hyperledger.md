@@ -349,7 +349,7 @@ CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypt
 下面的命令是通道变更，他们会广播到通道定义。本质上，我们会在通道创始区块的上面追加配置信息。注意，我们没有改变创始区块，只是向链中添加了定义锚点peer的delta。  
 变更通道定义，将`peer0.org1.example.com`定义为Org1的锚点peer。
 ```
-peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile $ORDERER_CA
 ```
 现在，变更通道定义，将`peer0.org2.example.com`定义为Org2的锚点peer。注意命令中的4个环境变量用于覆盖默认的`peer0.org1.example.com`的相关值。
 ```
@@ -366,7 +366,7 @@ $$ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_examp
 下一步在通道上实例化链码。这将在通道上初始化链码、为链码设置背书策略和为目标peer启动一个链码容器。注意`-P`参数。这是链码的背书策略，用于对链码事务进行验证。  
 在下面的命令中，你注意到了我们将策略设置为`-P "OR ('Org0MSP.member','Org1MSP.member')"`。这意味着我们需要从Org1或Org2的peer上获得一个背书。如果把`OR`改成`AND`，则表示我们需要两个背书。  
 ```
-$$ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
+$$ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
 ```
 关于背书策略的细节可以看到[背书策略](http://hyperledger-fabric.readthedocs.io/en/latest/endorsement-policies.html)。  
 如果你想更多的peer与账本交互，你需要将它们加入通道，安装同样名字、版本和语言的链码到相应peer的文件系统。一个链码容器被在peer上启动，然后就可以与相应链码交互了。需要知道的是，Node.js镜像的编译相对较慢。  
@@ -380,7 +380,7 @@ Query Result: 100    (其它信息省略)
 #### 调用(Inoke)
 现在让我们把`a`的10个给`b`（即a减少10，b增加10）。这个事务会切割一个新区块并更新状态数据库。调用的语法如下：
 ```
-$ peer chaincode invoke -o orderer.example.com:7050  --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem  -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
+$$ peer chaincode invoke -o orderer.example.com:7050  --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
 ``` 
 然后分别查询一下`a`和`b`的值：
 ```
