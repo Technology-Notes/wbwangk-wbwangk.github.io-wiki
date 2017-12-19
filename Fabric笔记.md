@@ -388,3 +388,139 @@ $$ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_examp
 $$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
 Query Result: 90
 ```
+
+### Org3及其peer加入网络
+在节计划启用一个新的虚拟机u1604。在这个虚拟机中将部署org3的一个peer：`peer0.org3.example.com`。  
+在开始本节前，请先阅读[重新配置首个网络(First-Network)](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E9%87%8D%E6%96%B0%E9%85%8D%E7%BD%AE%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)。本节将遵循这篇文章的步骤，将Org3添加到系统通道，并将Org3的peer0节点加入应用通道`mychannel`中。
+在准备阶段，需要生成Org3的加密材料和事务文件。准备阶段将在u1601上进行，等完成后，再把加密材料和事务文件复制到u1604。  
+
+#### 为Org3准备加密材料和事务文件
+首先，生成加密材料。
+```
+$ ssh root@u1601
+$ cd /opt/fabric-samples/first-network/org3-artifacts
+$ ../../bin/cryptogen generate --config=./org3-crypto.yaml
+$ export FABRIC_CFG_PATH=$PWD && ../../bin/configtxgen -printOrg Org3MSP > ../channel-artifacts/org3.json
+$ cd ../ && cp -r crypto-config/ordererOrganizations org3-artifacts/crypto-config/
+```
+然后进入u1601的cli容器。
+```
+$ docker exec -it cli bash
+$$ apt update && apt install jq
+$$ configtxlator start &
+$$ CONFIGTXLATOR_URL=http://127.0.0.1:7059
+$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem  && export CHANNEL_NAME=mychannel
+$$ peer channel fetch config config_block.pb -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
+$$ curl -X POST --data-binary @config_block.pb "$CONFIGTXLATOR_URL/protolator/decode/common.Block" | jq . > config_block.json
+$$ jq .data.data[0].payload.data.config config_block.json > config.json
+$$ jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {"Org3MSP":.[1]}}}}}' config.json ./channel-artifacts/org3.json >& updated_config.json
+$$ curl -X POST --data-binary @config.json "$CONFIGTXLATOR_URL/protolator/encode/common.Config" > config.pb
+$$ curl -X POST --data-binary @updated_config.json "$CONFIGTXLATOR_URL/protolator/encode/common.Config" > updated_config.pb
+$$ curl -X POST -F channel=$CHANNEL_NAME -F "original=@config.pb" -F "updated=@updated_config.pb" "${CONFIGTXLATOR_URL}/configtxlator/compute/update-from-configs" > org3_update.pb
+$$ curl -X POST --data-binary @org3_update.pb "$CONFIGTXLATOR_URL/protolator/decode/common.ConfigUpdate" | jq . > org3_update.json
+$$ echo '{"payload":{"header":{"channel_header":{"channel_id":"mychannel", "type":2}},"data":{"config_update":'$(cat org3_update.json)'}}}' | jq . > org3_update_in_envelope.json
+$$ curl -X POST --data-binary @org3_update_in_envelope.json "$CONFIGTXLATOR_URL/protolator/encode/common.Envelope" > org3_update_in_envelope.pb
+$$ peer channel signconfigtx -f org3_update_in_envelope.pb
+$$ peer channel update -f org3_update_in_envelope.pb -c $CHANNEL_NAME -o orderer.example.com:7050 --tls --cafile $ORDERER_CA
+```
+关于上述操作的解释，请参阅[重新配置首个网络(First-Network)](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#%E9%87%8D%E6%96%B0%E9%85%8D%E7%BD%AE%E9%A6%96%E4%B8%AA%E7%BD%91%E7%BB%9Cfirst-network)。  
+这时，Org3的配置信息已经进入了系统通道的配置中。  
+下面该到u1604虚拟机去启动Org3的peer了。  
+
+#### 为Org3准备docker-compose配置
+
+从u1601将Org3的加密材料复制到u1604：
+```
+$ ssh root@u1604
+$ cd /opt/fabric-samples/first-network
+$ scp -r root@u1601:/opt/fabric-samples/first-network/org3-artifacts .
+```
+编辑BYFN自带的Org3的docker-compose配置文件`docker-compose-org3.yaml`为以下内容：
+```yaml
+version: '2'
+networks:
+  byfn:
+services:
+  peer0.org3.example.com:
+    container_name: peer0.org3.example.com
+    extends:
+      file: base/peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.org3.example.com
+      - CORE_PEER_ADDRESS=peer0.org3.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org3.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org3MSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./org3-artifacts/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/msp:/etc/hyperledger/fabric/msp
+        - ./org3-artifacts/crypto-config/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 7051:7051
+      - 7053:7053
+    extra_hosts:
+     - "peer0.org1.example.com:192.168.16.101"
+     - "peer1.org1.example.com:192.168.16.102"
+     - "orderer.example.com:192.168.16.103"
+    networks:
+      - byfn
+
+  Org3cli:
+    container_name: Org3cli
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=Org3cli
+      - CORE_PEER_ADDRESS=peer0.org3.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/users/Admin@org3.example.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash -c 'sleep 10000'
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./org3-artifacts/crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+    depends_on:
+      - peer0.org3.example.com
+#      - peer1.org3.example.com
+    extra_hosts:
+     - "orderer.example.com:192.168.16.103"
+    networks:
+      - byfn
+```
+启动Org3的容器：
+```
+$ docker-compose -f docker-compose-org3.yaml up -d
+```
+进入Org3cli容器：
+```
+$ docker exec -it Org3cli bash
+```
+下面的操作分别是设置环境变量、获取`mychannel`的创世区块、将当前peer(`peer0.org3.example.com`)加入到`mychannel`：
+```
+$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem && export CHANNEL_NAME=mychannel
+$$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
+$$ peer channel join -b mychannel.block
+```
+
+#### 安装链码和升级背书策略
+在`peer0.org3.example.com`(u1604)上安装链码`mycc`，指定版本号为2.0是为了升级背书策略。
+```
+$$ peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_example02/go/
+```
+回到u1601。由于通道`mychannel`是u1601上的peer0创建的，peer0的管理员就是通道的管理员，所以升级链码的操作应在u1601上进行。
+```
+$ ssh root@u1601
+$ docker exec -it cli bash
+$$ peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_example02/go/
+$$ peer chaincode upgrade -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 2.0 -c '{"Args":["init","a","90","b","210"]}' -P "OR ('Org1MSP.member','Org3MSP.member')"
+```
+在u1601的cli容器中升级链码时，注意export上面的环境变量(如`$ORDERER_CA`)。
