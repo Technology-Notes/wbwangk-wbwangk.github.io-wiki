@@ -221,7 +221,7 @@ $$ export CHANNEL_NAME=mychannel && export ORDERER_CA=/opt/gopath/src/github.com
 $$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
 ./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
 ```
-上面命令会产生了两个文件，`mychannel.block`和` channel-artifacts/channel.tx`。前者是创世区块，后者是通道创建事务。`channel.tx`是前文的[生成密钥文件和引导文件](#生成密钥文件和引导文件(u1601))一节中生成的。  
+上面命令将包含在`channel-artifacts/channel.tx`中的配置信息发送给orderer，并生成新通道的创世区块文件`mychannel.block`。`channel.tx`是前文的[生成密钥文件和引导文件](#生成密钥文件和引导文件(u1601))一节中生成的。  
 
 通道创建成功后，需要将当前peer(即peer0)加入到通道`mychannel`：
 ```
