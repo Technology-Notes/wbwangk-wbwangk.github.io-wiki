@@ -78,7 +78,12 @@ Hyperledger Fabric的`fabric-samples/first-network`是在单机上运行的。�
 - hostname：u1602 ip:192.168.16.102  
 - hostname：u1603 ip:192.168.16.103  
 计划将u1603当orderer节点，另两台当peer节点。  
-首先，按[Hyperledger Fabric Samples](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#hyperledger-fabric-samples)的描述，在3台VM上都创建Fabirc运行环境，包括安装必要的二进制包，部署docker引擎和docker-compose，部署golang环境，下载Fabric相关docker镜像等。
+首先，按[Hyperledger Fabric Samples](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#hyperledger-fabric-samples)的描述，在3台VM上都创建Fabirc运行环境，包括安装必要的二进制包，部署docker引擎和docker-compose，部署golang环境，下载Fabric相关docker镜像等。  
+
+提示一个常用的docker命令，用于将所有容器删除，可用于peer或orderer的重启：
+```
+$ docker rm -f $(docker ps -aq)
+```
 
 ### 生成密钥文件并复制(u1601)
 登录u1601。首先进行环境清理，停止和删除现有docker容器，删除原有密钥文件。方法是：
