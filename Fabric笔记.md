@@ -80,8 +80,8 @@ Hyperledger Fabric的`fabric-samples/first-network`是在单机上运行的。�
 计划将u1603当orderer节点，另两台当peer节点。  
 首先，按[Hyperledger Fabric Samples](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#hyperledger-fabric-samples)的描述，在3台VM上都创建Fabirc运行环境，包括安装必要的二进制包，部署docker引擎和docker-compose，部署golang环境，下载Fabric相关docker镜像等。
 
-### 生成密钥文件和引导文件(u1601)
-首先进行环境清理，停止和删除现有docker容器，删除原有密钥文件。方法是：
+### 生成密钥文件并复制(u1601)
+登录u1601。首先进行环境清理，停止和删除现有docker容器，删除原有密钥文件。方法是：
 ```
 $ cd /opt/fabric-samples/first-network
 $ ./byfn.sh -m down
@@ -90,27 +90,31 @@ $ ./byfn.sh -m down
 ```
 $ ../bin/cryptogen generate --config=./crypto-config.yaml
 ```
+生成的密钥文件分别属于排序服务管理员(实际上是全局管理员)、两个组织管理员、4个peer管理员以及每个peer各一个的一般用户([参考](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E7%AC%94%E8%AE%B0#%E5%AF%BB%E6%89%BE%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84%E8%AF%81%E4%B9%A6%E5%92%8C%E7%A7%81%E9%92%A5))。  
+
+按正规要求，排序服务管理员的私钥文件应复制到u1603；org1组织的peer1节点的私钥文件复制到u1602。由于org1组织的peer0节点就是u1601，所以不用复制。因为本章只是验证Fabric-samples分布式部署，所以加密材料只是简单复制到了u1602和u1603，并没有删除应当保密的管理员私钥。
+```
+$ scp -r ./crypto-config/ root@u1602:/opt/fabric-samples/first-network/
+$ scp -r ./crypto-config/ root@u1603:/opt/fabric-samples/first-network/
+```
+
+### 启动排序服务
+
+要启动排序服务，首先要生成系统创世区块，然后编辑排序服务的docker-compose文件并启动。
+```
+$ ssh u1603
+$ cd /opt/fabric-samples/first-network
+```
+#### 生成系统通道创世区块
 下面的命令生成系统通道的创世区块。文件输出到`channel-artifacts`目录下。
 ```
 $ export FABRIC_CFG_PATH=$PWD
 $ ../bin/configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
 ```
-生成创建通道的事务文件：
-```
-$ export CHANNEL_NAME=mychannel  
-$ ../bin/configtxgen -profile TwoOrgsChannel \
- -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
-```
-生成设置Org1的锚点peer的事务文件：
-```
-$ ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
-./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
-```
-这里准备工作就完成了。主要是生成了一堆密钥文件(`crypto-config`目录下)、一个创世区块文件(`genesis.block`)和两个事务文件(.tx)。  
 
-### orderer节点的docker-compose文件
+#### 编辑docker-compose配置文件
 
-打算在u1601上先把orderer的docker-compose文件编辑好，然后再和orderer的密钥文件一起复制到u1603上。  
+排序服务的docker-compose配置文件可以在原生`docker-compose-cli.yaml`上修改。
 ```
 $ cp docker-compose-cli.yaml orderer.yaml
 ```
@@ -124,31 +128,37 @@ services:
       service: orderer.example.com
     container_name: orderer.example.com
 ```
-同peer节点的docker-compose配置文件相比，orderer的无疑简单的多。first-network默认部署的SOLO方式的orderer，只是一个单节点服务。orderer不知道其他peer的存在。
+同原生定义的排序服务docker-compose配置文件相比，仅仅删除了`byfn`网络。这意味着，排序服务容器与其他容器的通信不再走docker的虚拟网络，而是通过宿主机网络（至于是bridge还是host模式，不清楚）。
 
-### 启动orderer节点
-
-来到u1603节点，将oderer相关的密钥文件、创世区块文件、事务文件和docker-compose文件等复制过来。
+#### 启动orderer节点
 ```
-$ ssh root@u1603
-$ cd /opt/fabric-samples/first-network
-$ scp root@u1601:/opt/fabric-samples/first-network/channel-artifacts/* ./channel-artifacts/
-$ scp -r root@u1601:/opt/fabric-samples/first-network/crypto-config/* ./crypto-config/
-$ scp root@u1601:/opt/fabric-samples/first-network/orderer.yaml .
 $ docker-compose -f orderer.yaml up -d
 ```
-需要说明的是，u1603仅充当orderer节点，应该把peer的密钥文件删除：
-```
-$ rm -rf  crypto-config/peerOrganizations
-```
-（如果启动orderer时不加`-d`参数，屏幕会一直输出orderer容器的日志。实测中发现一直报告打开u1601的54710端口失败，直到下面的peer0启动就不报错了。估计跟锚节点的定义有关）
+（如果启动orderer时不加`-d`参数，屏幕会一直输出orderer容器的日志。）
 
-### peer节点的docker-compose文件
-u1601将充当peer节点。上面会运行两个容器，peer0.org1.example.com和cli。前者是peer容器，后者是管理员用的客户端工具。  
+### 准备peer0节点
+使用u1601充当org1组织的peer0节点。  
+
+#### 生成事务文件
+首先，生成创建应用通道的事务文件：
 ```
-$ cp docker-compose-cli.yaml peer0.yaml
+$ export CHANNEL_NAME=mychannel  
+$ ../bin/configtxgen -profile TwoOrgsChannel \
+ -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
 ```
-编辑peer0.yaml，修改成下面的样子：
+然后，生成“将peer0设置Org1的锚点peer”的事务文件：
+```
+$ ../bin/configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
+./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+```
+
+#### 编辑docker-compose配置文件
+
+计划在u1601上运行两个容器，peer0.org1.example.com和cli。前者是peer容器，后者是管理员用的客户端工具。在原生`docker-compose-cli.yaml`配置文件的基础上修改。  
+```
+$ cp docker-compose-cli.yaml cli.yaml
+```
+编辑cli.yaml，修改成下面的样子：
 ```yaml
 version: '2'
 networks:
@@ -198,17 +208,20 @@ services:
     networks:
       - byfn
 ```
-同原来的`docker-compose-cli.yaml`相比，首先多了一个`extra_hosts`定义。`extra_hosts`的值会自动加入到容器的`/etc/hosts`文件中，以便根据hostname找到位于其他VM的服务，如找到orderer服务。  
+同原来的`docker-compose-cli.yaml`相比，首先多了一个`extra_hosts`定义。`extra_hosts`的值会自动加入到容器的`/etc/hosts`文件中，以便根据hostname找到位于其他VM的服务，如找到排序服务(orderer)。  
 （`byfn`这个docker虚拟网络也是需要的。如果不定义，会导致链码实例化报错。用`docker network ls`命令可以看到`byfn`被自动命名为`net_byfn`。而peer服务是从`base/docker-compose-base.yaml`继承来的，其中有个环境变量的定义`CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_byfn`，在运行时这个环境变量的值应该是`net_byfn`。）  
 （如果`peer0.org1.example.com`服务中不定义orderer的`extra_hosts`，会导致链码无法部署。）  
 
-启动peer0：
+### 启动peer容器并初始化
+使用`cli.yaml`启动peer0：
 ```
-$ TIMEOUT=10000 CHANNEL_NAME=$CHANNEL_NAME docker-compose -f peer0.yaml up -d
+$ TIMEOUT=10000 CHANNEL_NAME=$CHANNEL_NAME docker-compose -f cli.yaml up -d
 ```
 用`docker ps`命令可以看到启动了两个容器：`peer0.org1.example.com`和`cli`。  
 
-### 创建通道和将peer0加入通道
+#### 创建通道和将peer0加入通道
+还记得之前生成的两个事务文件`channel.tx`和`Org1MSPanchors.tx`吗？下面利用这两个事务文件对Fabric进行初始化。
+
 进入cli容器，并查看4个环境变量，这四个变量反应了当前cli正在以peer0的身份运行：
 ```
 $ docker exec -it cli bash
@@ -221,25 +234,23 @@ $$ export CHANNEL_NAME=mychannel && export ORDERER_CA=/opt/gopath/src/github.com
 $$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
 ./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
 ```
-上面命令将包含在`channel-artifacts/channel.tx`中的配置信息发送给orderer，并生成新通道的创世区块文件`mychannel.block`。`channel.tx`是前文的[生成密钥文件和引导文件](#生成密钥文件和引导文件(u1601))一节中生成的。  
+上面命令将包含在`channel-artifacts/channel.tx`中的配置信息发送给orderer，并在当前目录下生成新通道(`mychannel`)的创世区块文件`mychannel.block`。
 
 通道创建成功后，需要将当前peer(即peer0)加入到通道`mychannel`：
 ```
 $$ peer channel join -b mychannel.block
 ```
-（orderer重启后所有通道消失，需要重新创建。）  
-创世区块除了在创建(`peer channel create`)的时候生成，还可以用下列命令获取：
+如果你弄丢了`mychannel.block`（例如你重启了peer0容器），还可以用下列命令重新获取：
 ```
 $$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
 ```
-如果peer0的容器重启，则需要重新加入通道。这时只能通过上面的`peer channel fetch 0`命令来获取创世区块。而只要有了通道的创世区块，就是用`peer channel jong`命令将peer加入通道了。  
 
 #### 改变锚点peer定义
-下面变更通道定义，将peer0.org1.example.com定义为Org1的锚点peer。
+回忆一下，工件`Org1MSPanchors.tx`是之前生成的。下面利用这个`Org1MSPanchors.tx`对通道定义进行变更，将peer0.org1.example.com定义为Org1的锚点peer。
 ```
 $$ peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls --cafile $ORDERER_CA
 ```
-（实测中上面这个命令无法执行成功，提示` Readset expected key [Groups] /Channel/Application/Org1MSP at version 0, but got version 1`）  
+（当初犯过一个错误，现在明白了：工件属于peer，与orderer无关。工件可以视为peer对配置进行修改的一个参数。）  
 
 ### 链码安装、实例化和使用
 #### 链码安装
