@@ -218,7 +218,7 @@ $ cryptogen generate --config=./crypto-config.yaml
 
 我们在本文不会详述[X509证书和PKI](https://en.wikipedia.org/wiki/Public_key_infrastructure)。  
 在`crypto-config.yaml`文件中，注意`OrdererOrgs`之下的“Name”, “Domain” and “Specs”参数。网络实体的命名约定是：`{{.Hostname}}.{{.Domain}}`。例如，排序节点的名称是`orderer.example.com`，这关联了一个MSP ID `Orderer`，关于MSP的更多细节参考[成员服务提供者(MSP)](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E8%BF%90%E7%BB%B4#%E6%88%90%E5%91%98%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85msp)文档。  
-在`cryptogen`生成的文件中密钥文件中有管理员的，这里有篇文章[寻找管理员的证书和私钥](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E7%AC%94%E8%AE%B0#%E5%AF%BB%E6%89%BE%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84%E8%AF%81%E4%B9%A6%E5%92%8C%E7%A7%81%E9%92%A5)，专门研究了`cryptogen`生成的管理员的密钥文件。  
+在`cryptogen`生成的加密材料中有管理员的，这里有篇文章[寻找管理员的证书和私钥](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E7%AC%94%E8%AE%B0#%E5%AF%BB%E6%89%BE%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84%E8%AF%81%E4%B9%A6%E5%92%8C%E7%A7%81%E9%92%A5)，专门研究了`cryptogen`生成的管理员的加密材料。  
  
 ### 配置事务生成器
 工具`configtxgen`用于生成四个配置工件：
@@ -251,7 +251,7 @@ org1.example.com
 org2.example.com
 ```
 证书和密钥(即MSP文书)会被输出到`crypto-config`目录（位于`first-network`目录之下）。  
-生成的密钥文件主要是管理员的身份证明文件，其中：
+生成的加密材料主要是管理员的身份证明文件，其中：
 - 系统管理员:`crypto-config/ordererOrganizations`目录下
 - 组织管理员：org1组织管理员位于`crypto-config/peerOrganizations/org1.example.com`目录下
 - peer管理员：org1的peer0管理员位于`crypto-config/peerOrganizations/org1.example.com/peerspeer0.org1.example.com`目录下
@@ -498,7 +498,7 @@ volumes:
 ```
 *注释：如果不删除旧的容器和镜像会报错。* 
  
-- 如果你看到Docker错误，首先检查docker版本，然后重启docker进程。docker问题往往不好识别。例如，你可能看到的错误是不能找到挂在到容器的密钥文件。  
+- 如果你看到Docker错误，首先检查docker版本，然后重启docker进程。docker问题往往不好识别。例如，你可能看到的错误是不能找到挂在到容器的加密材料。  
 如果你想删除镜像重新开始：
 ```
 $ docker rm -f $(docker ps -aq)
@@ -728,7 +728,7 @@ Response is  {"colour":"Red","make":"Chevy","model":"Volt","owner":"Dave"}
 ### 配置环境变量
 下面的操作将位于`fabric-samples`的子目录`first-network`中。更换到这个目录。你可以打开自己喜欢的终端窗口，如git-bash。  
 
-首先，使用`byfn.sh`脚本来进行清理工作。这个命令会杀死活动的docker容器和删除之前生成的密钥文件。需要说明的是，为了执行重新配置任务并不一定要停止Fabric网络，然而为了这个教程的目的，我们需要一个已知的初始状态。因此让我们执行下列命令清理之前的环境：
+首先，使用`byfn.sh`脚本来进行清理工作。这个命令会杀死活动的docker容器和删除之前生成的加密材料。需要说明的是，为了执行重新配置任务并不一定要停止Fabric网络，然而为了这个教程的目的，我们需要一个已知的初始状态。因此让我们执行下列命令清理之前的环境：
 ```
 $ ./byfn.sh -m down
 ```
