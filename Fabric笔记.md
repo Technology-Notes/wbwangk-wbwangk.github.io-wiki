@@ -228,10 +228,9 @@ $$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
 ```
 $$ peer channel join -b mychannel.block
 ```
+（orderer重启后所有通道消失，需要重新创建。）  
 创世区块除了在创建(`peer channel create`)的时候生成，还可以用下列命令获取：
 ```
-$$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-$$ export CHANNEL_NAME=mychannel
 $$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
 ```
 如果peer0的容器重启，则需要重新加入通道。这时只能通过上面的`peer channel fetch 0`命令来获取创世区块。而只要有了通道的创世区块，就是用`peer channel jong`命令将peer加入通道了。  
