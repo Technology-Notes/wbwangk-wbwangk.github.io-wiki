@@ -307,7 +307,7 @@ $ scp root@u1601:/opt/fabric-samples/first-network/cli.yaml .
 ```yaml
 version: '2'
 networks:
-  byfn1:
+  byfn:
 
 services:
 
@@ -320,7 +320,7 @@ services:
      - "orderer.example.com:192.168.16.103"
      - "peer0.org1.example.com:192.168.16.101"
     networks:
-      - byfn1
+      - byfn
 
   cli:
     container_name: cli
@@ -351,10 +351,17 @@ services:
     extra_hosts:
      - "orderer.example.com:192.168.16.103"
     networks:
-      - byfn1
+      - byfn
 ```
-需要说明的是，在`base/docker-compose-base.yaml`中，`peer1.org1.example.com`服务的对外暴露端口号是8051，但`cli`容器是运行在docker虚拟网络内，通过容器内部端口`7051`来访问peer1容器，所以上面的`CORE_PEER_ADDRESS`仍配置为`7051`。  
-为了区分于peer0的docker网络`byfn`，这里定义了网络id是`byfn1`。  
+另外还需要修改u1602节点的`first-network/base/docker-compose-base.yaml`文件，原来peer1的暴露端口是8051，现在改成7051：
+```
+  peer1.org1.example.com:
+(略)
+    ports:
+      - 7051:7051
+      - 7053:7053
+```
+(`extra_hosts: - "peer0.org1.example.com:192.168.16.101"`这一条必须要，否则会报错)
 启动容器：：
 ```
 $ TIMEOUT=10000 CHANNEL_NAME=mychannel docker-compose -f cli.yaml up -d
@@ -375,10 +382,9 @@ $$ peer channel join -b mychannel.block
 $$ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
 ```
 
-#### 链码实例化
-下面是对将链码在peer1(u1602)上实例化：
+#### 链码查询
+对于通道中的同一组织的新peer，链码不用实例化直接调用（原理不明）：
 ```
-$$ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
-Error: Error endorsing chaincode: rpc error: code = Unknown desc = chaincode error (status: 500, message: chaincode exists mycc)
+$$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+Query Result: 90
 ```
-难道链码在通道中只能实例化一次？  
