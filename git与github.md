@@ -55,3 +55,13 @@ machine open.inspur.com
        password <password>
 ```
 然后再执行克隆命令就不再提示输入用户名口令了。
+
+## git入门
+[原文](https://git-scm.com/book/zh/v2/)  
+git工作区中文件可处于两种状态：tracked 或 untracked。跟踪状态又可细分为：unmodified, modified, or staged(暂存)。  
+![](https://git-scm.com/book/en/v2/images/lifecycle.png)  
+
+git add导致文件被暂存。（暂存后的文件再修改就又有了一个modified版本，同一个文件的两个版本出现在两个状态中）
+git pull 通常会从最初克隆的服务器上抓取数据并自动尝试合并到当前所在的分支。  
+git checkout testing 切换分支
+git checkout -b testing 创建并切换到分支
