@@ -118,6 +118,7 @@ $ export https_proxy=<宿主机ip:代理端口号>
 ```
 ### fabric 翻译项目
 https://lists.hyperledger.org/pipermail/hyperledger-twg-china/2017-November/000419.html
+https://wiki.hyperledger.org/groups/twgc/team_ie
 
 ### mkdoc
 https://github.com/HyperledgerCN/hyperledgerDocs/blob/master/docs/index.md  
@@ -130,4 +131,5 @@ cd hyperledgerDocs
 mkdocs build
 mkdocs serve  --dev-addr 192.168.16.103:8000
 ```
-用浏览器访问192.168.16.103:8000即可。build时曾发现缺了mdx_math扩展，安装python-markdown-math后解决。
+用浏览器访问192.168.16.103:8000即可。build时曾发现缺了mdx_math扩展，安装python-markdown-math后解决。  
+
