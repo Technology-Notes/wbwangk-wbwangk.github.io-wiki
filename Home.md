@@ -135,3 +135,6 @@ mkdocs serve  --dev-addr 192.168.16.103:8000
 
 ### hyperledger wiki
 https://wiki.hyperledger.org/projects/fabric
+
+### Deploying to a multi-organization Hyperledger Fabric
+https://hyperledger.github.io/composer/unstable/tutorials/deploy-to-fabric-multi-org.html
