@@ -560,3 +560,11 @@ composer network ping -c bob@tutorial-network
 
 ### ================结论================
 在这个教程中你已经看到了怎样使用所有必要信息配置Hyperledger Composer去连接到跨组织的Hyperledger Fabric网络，以及在一个跨组织的Hyperledger Fabric网络中怎样部署一个区块链商业网络。
+
+## 实践
+
+export INSERT_ORG1_CA_CERT_FILE_PATH=crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+root@ubuntu-xenial:/opt/fabric-samples/first-network# export INSERT_ORG2_CA_CERT_FILE_PATH=crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+root@ubuntu-xenial:/opt/fabric-samples/first-network# export INSERT_ORDERER_CA_CERT_FILE_PATH=crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt
+
+将docker-compose-cli.yaml中的cli容器定义添加到docker-compose-e2e2.yaml
