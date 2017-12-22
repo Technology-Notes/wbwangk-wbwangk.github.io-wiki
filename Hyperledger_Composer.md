@@ -855,5 +855,65 @@ composer card delete -n admin@tutorial-network
 简单的Hyperledger Fabric网络由一个叫做`Org1`的组织构成。该组织使用域名`org1.example.com`。此外，该组织的成员服务提供商(MSP)被称为`Org1MSP`。在本教程中，你将部署只有组织`Org1`才能与之交互的区块链商业网络。
 
 #### 网络组件
-Hyperledger Fabric网络由多个组件组成：
-- 
+Hyperledger Fabric网络由多个组件组成：  
+- 一个Org1的peer节点，名叫peer0.org1.example.com  
+  - 请求端口是7051  
+  - 事件hub端口是7053  
+- 一个Org1的CA(Certificate Authority)，名叫ca.org1.example.com  
+  - CA端口是7054  
+- 一个排序节点，名叫orderer.example.com  
+  - 排序端口是7050  
+
+Hyperledger Fabric网络组件在Docker容器中运行。在Docker容器中运行Hyperledger Composer时，可以使用上面的名称（例如，`peer0.org1.example.com`）与Hyperledger Fabric网络进行交互。
+
+本教程将在Docker主机上运行Hyperledger Composer命令，而不是在Docker网络内运行。这意味着Hyperledger Composer命令必须使用`localhost`主机名和暴露的容器端口与Hyperledger Fabric网络进行交互。
+
+#### 用户
+组织`Org1`使用名为`Admin@org1.example.com`的用户进行配置。此用户是管理员。组织的管理员有权将区块链商业网络的代码安装到其组织的peer，并且还可以具有启动区块链商业网络的权限，具体取决于配置。在本教程中，你将以`Admin@org1.example.com`用户身份部署区块链商业网络。
+
+用户`Admin@org1.example.com`有一组存储在下列目录中的证书和私钥文件：
+```
+~/fabric-tools/fabric-scripts/hlfv11/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+```
+你稍后将使用其中一些文件与Hyperledger Fabric网络进行交互。
+
+除了管理员之外，`Org1`的CA（证书颁发机构）使用一个默认用户进行配置。此默认用户登记ID是`admin`，登记密码是`adminpw`。但是，这个用户无权部署区块链商业网络。
+
+#### 信道
+最后，创建了一个名为`channel`的信道。peer节点`peer0.org1.example.com`已加入此通道。你只能将Hyperledger Composer区块链商业网络部署到已存在的信道，但您可以按照Hyperledger Fabric文档创建其他信道。
+
+### 步骤三：建立连接profile
+连接profile指定了定位和连接Hyperledger Fabric网络所需的所有信息，例如所有Hyperledger Fabric网络组件的主机名和端口。在此步骤中，你将为Hyperledger Composer创建一个连接profile，用于连接到Hyperledger Fabric网络。
+
+ 1. 创建一个名为的`connection.json`的连接profile。
+
+ 2. 通过将以下三行添加到`connection.json`顶部来提供连接profile的`name`和`type`属性：
+```json
+{
+  "name": "fabric-network",
+  "type": "hlfv1",
+```
+连接profile中的`name`属性给出Hyperledger Fabric网络的名称，所以稍后可以引用它。在刚创建的连接profile，名称是`fabric-network`。你可以使用Hyperledger Fabric网络的任何名称。
+
+Hyperledger Composer被设计为兼容不同类型的区块链网络。目前，仅支持Hyperledger Fabric v1.0，但您必须指定要使用的区块链网络的类型。Hyperledger Fabric v1.0的类型是hlfv1。
+
+必须指定用于连接到Hyperledger Fabric网络的MSP的名称：
+
+复制
+"mspID": "Org1MSP",
+我们正在连接Org1，并Org1称为MSP Org1MSP。
+
+我们必须指定我们要连接的Hyperledger Fabric网络中所有对等节点的主机名和端口。
+
+复制
+"peers": [
+    {
+        "requestURL": "grpc://localhost:7051",
+        "eventURL": "grpc://localhost:7053"
+    }
+],
+在这里，我们已经指定了我们的单个对等节点peer0.org1.example.com（使用主机名localhost），请求端口7051和事件集线器端口7053。
+
+该peers阵列可以包含多个对等节点。如果您有多个对等节点，则应将其全部添加到peers阵列中，以便Hyperledger Composer可以与它们进行交互。
+
+区块链业务网络将部署到所有指定的对等节点。一旦区块链业务网络部署完毕，指定的对等节点将用于查询区块链业务网络，批准交易和订阅事件。
