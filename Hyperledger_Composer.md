@@ -561,10 +561,244 @@ composer network ping -c bob@tutorial-network
 ### ================结论================
 在这个教程中你已经看到了怎样使用所有必要信息配置Hyperledger Composer去连接到跨组织的Hyperledger Fabric网络，以及在一个跨组织的Hyperledger Fabric网络中怎样部署一个区块链商业网络。
 
-## 实践
+## 实践：部署Hyperledger Composer网络到多组织Fabric
+```bash
+cd /opt/fabric-samples/first-network
+cp COMPOSE_FILE=docker-compose-e2e.yaml COMPOSE_FILE=docker-compose-e2e2.yaml
+cp byfn.sh byfn2.sh
+```
+编辑byfn2.sh:
+```bash
+export ORG1_ADMIN_KEY=crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/*_sk
+export ORG2_ADMIN_KEY=crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/*_sk
+export ORG1_ADMIN_CRT=crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
+export ORG2_ADMIN_CRT=crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem
+(略)
+#COMPOSE_FILE=docker-compose-cli.yaml
+COMPOSE_FILE=docker-compose-e2e2.yaml
+(略)
+```
+编辑docker-compose-e2e2.yaml：
+```yaml
+ca0:
+    container_name: ca.org1.example.com
+ca1:
+    container_name: ca.org2.example.com
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME} ${DELAY} ${LANG}; sleep $TIMEOUT'
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.example.com
+      - peer0.org1.example.com
+      - peer1.org1.example.com
+      - peer0.org2.example.com
+      - peer1.org2.example.com
+    networks:
+      - byfn
+```
+清理docker容器：
+```bash
+docker rm -f $(docker ps -aq)
+./byfn2.sh
+```
+connection-org1.json:
+```json
+{
+    "name": "byfn-network-org1",
+    "type": "hlfv1",
+    "mspID": "Org1MSP",
+    "peers": [
+        {
+            "requestURL": "grpcs://localhost:7051",
+            "eventURL": "grpcs://localhost:7053",
+            "cert": "crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+            "hostnameOverride": "peer0.org1.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:8051",
+            "eventURL": "grpcs://localhost:8053",
+            "cert": "crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+            "hostnameOverride": "peer1.org1.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:9051",
+            "cert": "crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
+            "hostnameOverride": "peer0.org2.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:10051",
+            "cert": "crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
+            "hostnameOverride": "peer1.org2.example.com"
+        }
+    ],
+    "ca": {
+        "url": "https://localhost:7054",
+        "name": "ca-org1",
+        "cert": "crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+        "hostnameOverride": "ca.org1.example.com"
+    },
+    "orderers": [
+        {
+            "url" : "grpcs://localhost:7050",
+            "cert": "crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt",
+            "hostnameOverride": "orderer.example.com"
+        }
+    ],
+    "channel": "mychannel",
+    "timeout": 300
+}
+```
+connection-org1-only.json:
+```json
+{
+    "name": "byfn-network-org1-only",
+    "type": "hlfv1",
+    "mspID": "Org1MSP",
+    "peers": [
+        {
+            "requestURL": "grpcs://localhost:7051",
+            "eventURL": "grpcs://localhost:7053",
+            "cert": "crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+            "hostnameOverride": "peer0.org1.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:8051",
+            "eventURL": "grpcs://localhost:8053",
+            "cert": "crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+            "hostnameOverride": "peer1.org1.example.com"
+        }
+    ],
+    "ca": {
+        "url": "https://localhost:7054",
+        "name": "ca-org1",
+        "cert": "crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+        "hostnameOverride": "ca.org1.example.com"
+    },
+    "orderers": [
+        {
+            "url" : "grpcs://localhost:7050",
+            "cert": "crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt",
+            "hostnameOverride": "orderer.example.com"
+        }
+    ],
+    "channel": "mychannel",
+    "timeout": 300
+}
+```
+connection-org2.json:
+```json
+{
+    "name": "byfn-network-org2",
+    "type": "hlfv1",
+    "mspID": "Org2MSP",
+    "peers": [
+        {
+            "requestURL": "grpcs://localhost:9051",
+            "eventURL": "grpcs://localhost:9053",
+            "cert": "crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
+            "hostnameOverride": "peer0.org2.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:10051",
+            "eventURL": "grpcs://localhost:10053",
+            "cert": "crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
+            "hostnameOverride": "peer1.org2.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:7051",
+            "cert": "crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+            "hostnameOverride": "peer0.org1.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:8051",
+            "cert": "crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt",
+            "hostnameOverride": "peer1.org1.example.com"
+        }
+    ],
+    "ca": {
+        "url": "https://localhost:8054",
+        "name": "ca-org2",
+        "cert": "crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
+        "hostnameOverride": "ca.org2.example.com"
+    },
+    "orderers": [
+        {
+            "url" : "grpcs://localhost:7050",
+            "cert": "crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt",
+            "hostnameOverride": "orderer.example.com"
+        }
+    ],
+    "channel": "mychannel",
+    "timeout": 300
+}
+```
+connection-org2-only.json:
+```json
+{
+    "name": "byfn-network-org2-only",
+    "type": "hlfv1",
+    "mspID": "Org2MSP",
+    "peers": [
+        {
+            "requestURL": "grpcs://localhost:9051",
+            "eventURL": "grpcs://localhost:9053",
+            "cert": "crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
+            "hostnameOverride": "peer0.org2.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:10051",
+            "eventURL": "grpcs://localhost:10053",
+            "cert": "crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
+            "hostnameOverride": "peer1.org2.example.com"
+        }
+    ],
+    "ca": {
+        "url": "https://localhost:8054",
+        "name": "ca-org2",
+        "cert": "crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt",
+        "hostnameOverride": "ca.org2.example.com"
+    },
+    "orderers": [
+        {
+            "url" : "grpcs://localhost:7050",
+            "cert": "crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt",
+            "hostnameOverride": "orderer.example.com"
+        }
+    ],
+    "channel": "mychannel",
+    "timeout": 300
+}
+```
+第七步和第八步：
+```bash
+sudo composer card create -p connection-org1-only.json -u PeerAdmin -c $ORG1_ADMIN_CRT -k $ORG1_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
+sudo composer card create -p connection-org1.json -u PeerAdmin -c $ORG1_ADMIN_CRT -k $ORG1_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
+sudo composer card create -p connection-org2-only.json -u PeerAdmin -c $ORG2_ADMIN_CRT -k $ORG2_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
+sudo composer card create -p connection-org2.json -u PeerAdmin -c $ORG2_ADMIN_CRT -k $ORG2_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
+```
+### 问题
+Error: Failed to load connector module "composer-connector-hlfv1" for connection type "hlfv1". Cannot find module '/usr/local/lib/node_modules/composer-cli/node_modules/grpc/src/node/extension_binary/node-v57-linux-x64/grpc_node.node'  
+解决办法：  
+ubuntu@ubuntu-xenial:/usr/local/lib/node_modules/composer-cli$ npm rebuild --unsafe-perm  
 
-export INSERT_ORG1_CA_CERT_FILE_PATH=crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-root@ubuntu-xenial:/opt/fabric-samples/first-network# export INSERT_ORG2_CA_CERT_FILE_PATH=crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
-root@ubuntu-xenial:/opt/fabric-samples/first-network# export INSERT_ORDERER_CA_CERT_FILE_PATH=crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt
-
-将docker-compose-cli.yaml中的cli容器定义添加到docker-compose-e2e2.yaml
