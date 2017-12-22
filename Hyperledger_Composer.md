@@ -981,10 +981,10 @@ Hyperledger Composer被设计为兼容不同类型的区块链网络。目前，
 要将区块链商业网络部署到Hyperledger Fabric网络，我们必须将自己标识为具有执行此操作权限的管理员。在这一步骤中，你可以定位证明自己为管理员需要的文件。
 
 我们的Hyperledger Fabric网络的管理员是一名叫`Admin@org1.example.com`的用户。该用户的证书和私钥文件存储在以下目录中：
-
-
+```
 ~/fabric-tools/fabric-scripts/hlfv11/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-您必须首先找到该用户的证书文件。证书是身份的公共部分。证书文件可以在signcerts子目录中找到并命名Admin@org1.example.com-cert.pem。如果你看这个文件的内容，那么你会发现一个类似于下面的PEM编码证书：
+```
+你必须首先定位该用户的证书文件。证书是身份的公共部分。证书文件可以在signcerts子目录中找到并命名Admin@org1.example.com-cert.pem。如果你看这个文件的内容，那么你会发现一个类似于下面的PEM编码证书：
 
 
 -----BEGIN CERTIFICATE-----
