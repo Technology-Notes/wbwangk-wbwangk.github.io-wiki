@@ -11,7 +11,7 @@
 *================示例步骤：一个Org1和Org2都执行的步骤================*  
 
 表示组织`Org1`执行的步骤的样子:  
-*----------------示例步骤：一个Org1执行的步骤----------------  
+*----------------示例步骤：一个Org1执行的步骤----------------*  
 
 表示组织`Org2`执行的步骤的样子：  
 *________________示例步骤：一个Org2执行的步骤________________*  
@@ -90,3 +90,264 @@ Hyperledger Fabric网络由下面几个组件组成：
    - CA端口是7054  
  - 一个排序节点，叫orderer.example.com  
    - 排序端口是7050  
+
+这些组件运行在Docker容器中。当在一个Docker容器中运行Hyperledger Composer，与Hyperledger Fabric网络交互可以使用上面的名字(如`peer0.org1.example.com`)。
+
+这个教程会在Docker宿主机中运行Hyperledger Composer命令，而不是在Docker网络中。这意味着Hyperledger Composer命令与Hyperledger Fabric网络交互使用`localhost`作为主机名和容器暴露的端口。
+
+所有这些网络组件使用TLS加密通信来确保安全。为了连接到这些网络组件，你会使用它们的CA(Certificate Authority)证书。CA证书所在目录可以在byfn.sh脚本中找到。
+
+排序(orderer)节点的CA证书：
+```
+crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt
+```
+`Org1`的CA证书：
+```
+crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+```
+`Org2`的CA证书：
+```
+crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+```
+之后你会使用这些文件与Hyperledger Fabric网络交互。
+
+#### 用户
+组织`Org1`配置了一个叫`Admin@org1.example.com`的用户。这个用户是一个管理员。
+
+用户`Admin@org1.example.com`有一组证书和私钥文件保存在这个目录：
+```
+crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+```
+组织`Org2`配置了一个叫`Admin@org2.example.com`的用户。这个用户是一个管理员。
+
+用户`Admin@org2.example.com`有一组证书和私钥文件保存在这个目录：
+```
+crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+```
+之后你会使用这些文件与Hyperledger Fabric网络交互。
+
+除了管理员，`Org1`和`Org2`的CA(Certificate Authority)还配置了一个默认用户。这个默认用户有一个叫`admin`的登记ID和为`adminpw`的登记密码。然而，这个用户没有部署区块链商业网络的权限。
+
+#### 信道
+创建了一个叫`mychannel`的信道。所有四个节点`peer0.org1.example.com`、`peer1.org1.example.com`、`peer0.org2.example.com`和`peer1.org2.example.com`已经加入了这个信道。
+
+### ----------------步骤三：创建Org1的连接profile----------------
+`Org1`需要两个连接profile。一个连接profile仅包含属于`Org1`的peer节点，另一个连接profile包含属于`Org1`和`Org2`的peer节点。
+
+创建一个叫`connection-org1-only.json`的连接profile，包含下列内容并保存到磁盘。这个连接profile仅包含属于`Org1`的peer节点。你会在后续步骤中使用这个文件，所以记住存放位置！
+```json
+{
+    "name": "byfn-network-org1-only",
+    "type": "hlfv1",
+    "mspID": "Org1MSP",
+    "peers": [
+        {
+            "requestURL": "grpcs://localhost:7051",
+            "eventURL": "grpcs://localhost:7053",
+            "cert": "INSERT_ORG1_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer0.org1.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:8051",
+            "eventURL": "grpcs://localhost:8053",
+            "cert": "INSERT_ORG1_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer1.org1.example.com"
+        }
+    ],
+    "ca": {
+        "url": "https://localhost:7054",
+        "name": "ca-org1",
+        "cert": "INSERT_ORG1_CA_CERT_FILE_PATH",
+        "hostnameOverride": "ca.org1.example.com"
+    },
+    "orderers": [
+        {
+            "url" : "grpcs://localhost:7050",
+            "cert": "INSERT_ORDERER_CA_CERT_FILE_PATH",
+            "hostnameOverride": "orderer.example.com"
+        }
+    ],
+    "channel": "mychannel",
+    "timeout": 300
+}
+```
+用指向`Org1`peer节点的CA证书文件的全路径名覆盖所有的`INSERT_ORG1_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+```
+用指向排序节点的CA证书文件的全路径名覆盖所有的`INSERT_ORDERER_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt
+```
+
+创建一个叫`connection-org1.json`的连接profile，包含下列内容并保存到磁盘。这个连接profiled包含属于`Org1`和`Org2`的peer节点。你会在后续步骤中使用这个文件，所以记住存放位置！
+```json
+{
+    "name": "byfn-network-org1",
+    "type": "hlfv1",
+    "mspID": "Org1MSP",
+    "peers": [
+        {
+            "requestURL": "grpcs://localhost:7051",
+            "eventURL": "grpcs://localhost:7053",
+            "cert": "INSERT_ORG1_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer0.org1.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:8051",
+            "eventURL": "grpcs://localhost:8053",
+            "cert": "INSERT_ORG1_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer1.org1.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:9051",
+            "cert": "INSERT_ORG2_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer0.org2.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:10051",
+            "cert": "INSERT_ORG2_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer1.org2.example.com"
+        }
+    ],
+    "ca": {
+        "url": "https://localhost:7054",
+        "name": "ca-org1",
+        "cert": "INSERT_ORG1_CA_CERT_FILE_PATH",
+        "hostnameOverride": "ca.org1.example.com"
+    },
+    "orderers": [
+        {
+            "url" : "grpcs://localhost:7050",
+            "cert": "INSERT_ORDERER_CA_CERT_FILE_PATH",
+            "hostnameOverride": "orderer.example.com"
+        }
+    ],
+    "channel": "mychannel",
+    "timeout": 300
+}
+```
+用指向`Org1`peer节点的CA证书文件的全路径名覆盖所有的`INSERT_ORG1_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+```
+用指向`Org2`peer节点的CA证书文件的全路径名覆盖所有的`INSERT_ORG2_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+```
+用指向排序节点的CA证书文件的全路径名覆盖所有的`INSERT_ORDERER_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt
+```
+注意，这个连接profile包含了`Org2`peer节点的明细，它仅包含了请求端口，而没有包含事件hub端口。这是因为一个组织不能访问另一个组织的事件hub端口。
+
+### ________________步骤四：创建Org2的连接profile________________
+`Org2`需要两个连接profile。一个连接profile仅包含属于`Org2`的peer节点，另一个连接profile包含属于`Org2`和`Org1`的peer节点。
+
+创建一个叫`connection-org2-only.json`的连接profile，包含下列内容并保存到磁盘。这个连接profile仅包含属于`Org2`的peer节点。你会在后续步骤中使用这个文件，所以记住存放位置！
+```json
+{
+    "name": "byfn-network-org2-only",
+    "type": "hlfv1",
+    "mspID": "Org2MSP",
+    "peers": [
+        {
+            "requestURL": "grpcs://localhost:9051",
+            "eventURL": "grpcs://localhost:9053",
+            "cert": "INSERT_ORG2_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer0.org2.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:10051",
+            "eventURL": "grpcs://localhost:10053",
+            "cert": "INSERT_ORG2_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer1.org2.example.com"
+        }
+    ],
+    "ca": {
+        "url": "https://localhost:8054",
+        "name": "ca-org2",
+        "cert": "INSERT_ORG2_CA_CERT_FILE_PATH",
+        "hostnameOverride": "ca.org2.example.com"
+    },
+    "orderers": [
+        {
+            "url" : "grpcs://localhost:7050",
+            "cert": "INSERT_ORDERER_CA_CERT_FILE_PATH",
+            "hostnameOverride": "orderer.example.com"
+        }
+    ],
+    "channel": "mychannel",
+    "timeout": 300
+}
+```
+用指向`Org2`peer节点的CA证书文件的全路径名覆盖所有的`INSERT_ORG2_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+```
+用指向排序节点的CA证书文件的全路径名覆盖所有的`INSERT_ORDERER_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt
+```
+创建一个叫`connection-org2.json`的连接profile，包含下列内容并保存到磁盘。这个连接profile包含属于`Org2`和`Org1`的peer节点。你会在后续步骤中使用这个文件，所以记住存放位置！
+```json
+{
+    "name": "byfn-network-org2",
+    "type": "hlfv1",
+    "mspID": "Org2MSP",
+    "peers": [
+        {
+            "requestURL": "grpcs://localhost:9051",
+            "eventURL": "grpcs://localhost:9053",
+            "cert": "INSERT_ORG2_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer0.org2.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:10051",
+            "eventURL": "grpcs://localhost:10053",
+            "cert": "INSERT_ORG2_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer1.org2.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:7051",
+            "cert": "INSERT_ORG1_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer0.org1.example.com"
+        },
+        {
+            "requestURL": "grpcs://localhost:8051",
+            "cert": "INSERT_ORG1_CA_CERT_FILE_PATH",
+            "hostnameOverride": "peer1.org1.example.com"
+        }
+    ],
+    "ca": {
+        "url": "https://localhost:8054",
+        "name": "ca-org2",
+        "cert": "INSERT_ORG2_CA_CERT_FILE_PATH",
+        "hostnameOverride": "ca.org2.example.com"
+    },
+    "orderers": [
+        {
+            "url" : "grpcs://localhost:7050",
+            "cert": "INSERT_ORDERER_CA_CERT_FILE_PATH",
+            "hostnameOverride": "orderer.example.com"
+        }
+    ],
+    "channel": "mychannel",
+    "timeout": 300
+}
+```
+用指向`Org2`peer节点的CA证书文件的全路径名覆盖所有的`INSERT_ORG2_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+```
+用指向`Org1`peer节点的CA证书文件的全路径名覆盖所有的`INSERT_ORG1_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+```
+用指向排序节点的CA证书文件的全路径名覆盖所有的`INSERT_ORDERER_CA_CERT_FILE_PATH`文本：
+```
+crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt
+```
+注意，这个连接profile包含了`Org1`peer节点的明细，它仅包含了请求端口，而没有包含事件hub端口。这是因为一个组织不能访问另一个组织的事件hub端口。
+
+### ----------------步骤五：一个Org1执行的步骤----------------
