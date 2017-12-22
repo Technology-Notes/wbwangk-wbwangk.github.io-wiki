@@ -486,6 +486,77 @@ composer runtime install -c PeerAdmin@byfn-network-org2-only -n tutorial-network
     }
 }
 ```
-你刚创建的背书策略指出，在商业网络中，交易在提交到区块链之前必须同时得到`Org1`和`Org2`的背书。如果`Org1`或`Org2`没有对交易背书
+你刚创建的背书策略指出，在商业网络中，交易在提交到区块链之前必须同时得到`Org1`和`Org2`的背书。如果`Org1`或`Org2`没有对交易背书，或不同意交易结果，那么交易会被商业网络拒绝。
 
+### ================步骤十四：理解和选择商业网络管理员================
 
+当一个商业网络启动时，商业网络必须配置一组初始参与者。这些参与者负责商业网络的引导和加载其他参与者进入商业网络。在Hyperledger Composer中，我们叫这些初始参与者为商业网络管理员。
+
+在我们的商业网络中，组织`Org1`和`Org2`具有相同权限。每个组织都为商业网络提供了一个商业网络管理员，这些商业网络管理员会加载他们组织中的其他参与者进入商业网络。`Org1`的商业网络管理员是Alice，而`Org2`的商业网络管理员是Bob。
+
+当商业网络启动时，所有商业网络管理员的证书(身份的公开部分)都必须传送到组织，来执行启动商业网络的命令。当商业网络启动后，所有的商业网络管理员可以使用他们的身份与商业网络进行交互。
+
+你可以在[部署商业网络](https://hyperledger.github.io/composer/unstable/business-network/bnd-deploy.html)中找到更多关于商业网络管理员的信息。
+
+### ----------------步骤十五：为Org1获取商业网络管理员证书----------------
+
+运行`composer identity request`命令获取Alice的证书，以便`Org1`作为商业网络管理员使用：
+```bash
+composer identity request -c PeerAdmin@byfn-network-org1-only -u admin -s adminpw -d alice
+```
+这个命令的`-u admin`和`-s adminpw`选项需要与Hyperledger Fabric CA (Certificate Authority)注册的默认用户一致。
+
+这个证书会被保存到当前目录的`alice`子目录中。创建了三个证书文件，但只有两个重要。它们是`admin-pub.pem`，证书(包括公钥)，和`admin-priv.pem`，私钥。只有文件`admin-pub.pem`适合与其他组织共享。文件`admin-priv.pem`必须秘密保存，它可以代表组织签署交易。
+
+### ________________步骤十六：为Org2获取商业网络管理员证书________________
+
+运行`composer identity request`命令获取Bob的证书，以便`Org2`作为商业网络管理员使用：
+```bash
+composer identity request -c PeerAdmin@byfn-network-org2-only -u admin -s adminpw -d bob
+```
+这个命令的`-u admin`和`-s adminpw`选项需要与Hyperledger Fabric CA (Certificate Authority)注册的默认用户一致。
+
+这个证书会被保存到当前目录的`bob`子目录中。创建了三个证书文件，但只有两个重要。它们是`admin-pub.pem`，证书(包括公钥)，和`admin-priv.pem`，私钥。只有文件`admin-pub.pem`适合与其他组织共享。文件`admin-priv.pem`必须秘密保存，它可以代表组织签署交易。
+
+### ----------------步骤十七：启动商业网络----------------
+
+运行`composer network start`命令启动商业网络。只有`Org`需要执行这个操作。这个命令使用步骤十三创建的`endorsement-policy.json`文件，以及步骤十五(Alice)和步骤十六(Bob)创建的`admin-pub.pem`文件，你必须确保这个命令能访问这些文件：
+```bash
+composer network start -c PeerAdmin@byfn-network-org1 -a tutorial-network@0.0.1.bna -o endorsementPolicyFile=endorsement-policy.json -A alice -C alice/admin-pub.pem -A bob -C bob/admin-pub.pem
+```
+当这个命令一结束，商业网络就启动了。Alice和Bob就可以访问商业网络，开始建立商业网络，并从各自的组织中加载其他参与者。然而，无论Alice还是Bob都必须先使用前面步骤创建的证书来创建商业网络卡片，之后才能访问商业网络。
+
+### ----------------步骤十八：为了Org1访问商业网络而创建商业网络卡片----------------
+
+为了`Org1`的商业网络管理员Alice访问商业网络，运行`composer card create`命令创建一个商业网络卡片：
+```bash
+composer card create -p connection-org1.json -u alice -n tutorial-network -c alice/admin-pub.pem -k alice/admin-priv.pem
+```
+运行`composer card import`命令导入你刚创建的商业网络卡片：
+```bash
+composer card import -f alice@tutorial-network.card
+```
+运行`composer network ping`命令测试到区块链商业网络的连接：
+```bash
+composer network ping -c alice@tutorial-network
+```
+如果名称执行成功，你可以在命令输出中看到完全限定参与者身份`org.hyperledger.composer.system.NetworkAdmin#alice`。你现在可以使用这个商业网络卡片去与区块链商业网络交互，并加载你组织中的其他参与者。
+
+### ________________步骤十九：为了Org1访问商业网络而创建商业网络卡片________________
+
+为了`Org2`的商业网络管理员Bob访问商业网络，运行`composer card create`命令创建一个商业网络卡片：
+```bash
+composer card create -p connection-org2.json -u bob -n tutorial-network -c bob/admin-pub.pem -k bob/admin-priv.pem
+```
+运行`composer card import`命令导入你刚创建的商业网络卡片：
+```bash
+composer card import -f bob@tutorial-network.card
+```
+运行`composer network ping`命令测试到区块链商业网络的连接：
+```bash
+composer network ping -c bob@tutorial-network
+```
+如果名称执行成功，你可以在命令输出中看到完全限定参与者身份`org.hyperledger.composer.system.NetworkAdmin#bob`。你现在可以使用这个商业网络卡片去与区块链商业网络交互，并加载你组织中的其他参与者。
+
+### ================结论================
+在这个教程中你已经看到了怎样使用所有必要信息配置Hyperledger Composer去连接到跨组织的Hyperledger Fabric网络，以及在一个跨组织的Hyperledger Fabric网络中怎样部署一个区块链商业网络。
