@@ -447,5 +447,45 @@ composer runtime install -c PeerAdmin@byfn-network-org1-only -n tutorial-network
 composer runtime install -c PeerAdmin@byfn-network-org2-only -n tutorial-network
 ```
 
-### ================示例步骤：一个Org1和Org2都执行的步骤================
+### ================步骤十三：为商业网络定义背书策略================
+
+一个运行中的商业网络具有一个背书策略，它定义交易在提交到区块链之前那些组织必须对交易进行背书的规则。默认情况下，商业网络部署的背书策略是，一个交易被提交到区块链之前只有一个组织背书即可。
+
+在现实世界的区块链商业网络中，多个组织会在交易提交到区块链之前对交易背书，所以默认背书策略不适合。相反，当启动一个商业网络时，你可以指定一个定制的背书策略。
+
+你可以在Hyperledger Fabric文档，[背书策略](https://hyperledgercn.github.io/hyperledgerDocs/endorsement-policies_zh/)中，找到更多关于背书策略的信息。
+
+*请注意，用于商业网络的背书策略必须是Hyperledger Fabric Node.js SDK使用的JSON格式。这是与Hyperledger Fabric CLI使用的简单背书策略不同的一种格式，你可以在Hyperledger Fabric文档中看到。*
+
+创建一个叫`endorsement-policy.json`的背书策略，包含下列内容并保存到磁盘。你会在后续步骤中使用这个文件，所以记住存放位置！
+```json
+{
+    "identities": [
+        {
+            "role": {
+                "name": "member",
+                "mspId": "Org1MSP"
+            }
+        },
+        {
+            "role": {
+                "name": "member",
+                "mspId": "Org2MSP"
+            }
+        }
+    ],
+    "policy": {
+        "2-of": [
+            {
+                "signed-by": 0
+            },
+            {
+                "signed-by": 1
+            }
+        ]
+    }
+}
+```
+你刚创建的背书策略指出，在商业网络中，交易在提交到区块链之前必须同时得到`Org1`和`Org2`的背书。如果`Org1`或`Org2`没有对交易背书
+
 
