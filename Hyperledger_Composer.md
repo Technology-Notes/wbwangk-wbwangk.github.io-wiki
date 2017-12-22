@@ -14,7 +14,7 @@
 **----------------示例步骤：一个Org1执行的步骤----------------**  
 
 表示组织`Org2`执行的步骤的样子：  
-**________________示例步骤：一个Org2执行的步骤________________**  
+**....................示例步骤：一个Org2执行的步骤....................**  
 
 你可以自己执行这些步骤，或者与朋友或同事一起执行这些步骤。  
 让我们开始！  
@@ -241,7 +241,7 @@ crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/
 ```
 注意，这个连接profile包含了`Org2`peer节点的明细，它仅包含了请求端口，而没有包含事件hub端口。这是因为一个组织不能访问另一个组织的事件hub端口。
 
-### ________________步骤四：创建Org2的连接profile________________
+### ....................步骤四：创建Org2的连接profile....................
 `Org2`需要两个连接profile。一个连接profile仅包含属于`Org2`的peer节点，另一个连接profile包含属于`Org2`和`Org1`的peer节点。
 
 创建一个叫`connection-org2-only.json`的连接profile，包含下列内容并保存到磁盘。这个连接profile仅包含属于`Org2`的peer节点。你会在后续步骤中使用这个文件，所以记住存放位置！
@@ -361,7 +361,7 @@ crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/ms
 
 记住这些文件的路径，或者将它们复制到步骤三中创建的连接pfile文件`connection-org1.json`所在的目录。
 
-### ________________步骤六：定位Org2的Hyperledger Fabric管理员的证书和私钥________________
+### ....................步骤六：定位Org2的Hyperledger Fabric管理员的证书和私钥....................
 
 我们Hyperledger Fabric网络的管理员是一个叫`Admin@org2.example.com`的用户。这个用户的证书和私钥存放在这个目录：
 ```
@@ -389,7 +389,7 @@ composer card create -p connection-org1.json -u PeerAdmin -c Admin@org1.example.
 ```
 如果命令执行成功，一个叫`PeerAdmin@byfn-network-org1.card`的商业网络卡片会被写入到当前目录。
 
-### ________________步骤八：为Org2的Hyperledger Fabric管理员创建商业网络卡片________________
+### ....................步骤八：为Org2的Hyperledger Fabric管理员创建商业网络卡片....................
 
 在这个步骤中你会为管理员创建商业网络卡片，用于将区块链商业网络部署到 Hyperledger Fabric网络。
 
@@ -419,7 +419,7 @@ composer card import -f PeerAdmin@byfn-network-org1.card
 ```
 如果命令执行成功，一个叫`PeerAdmin@byfn-network-org1`的商业网络卡片会被导入进钱包。
 
-### ________________步骤十：为Org2的Hyperledger Fabric管理员导入商业网络卡片________________
+### ....................步骤十：为Org2的Hyperledger Fabric管理员导入商业网络卡片....................
 
 运行`composer card import`命令将包含`Org2`peer的商业网络卡片导入进钱包：
 ```bash
@@ -440,7 +440,7 @@ composer card import -f PeerAdmin@byfn-network-org2.card
 composer runtime install -c PeerAdmin@byfn-network-org1-only -n tutorial-network
 ```
 
-### ________________步骤十二：为Org2的Hyperledger Fabric peer节点安装Hyperledger Composer运行时________________
+### ....................步骤十二：为Org2的Hyperledger Fabric peer节点安装Hyperledger Composer运行时....................
 
 使用你在步骤四中创建的连接profle，运行`composer runtime install`命令为所有的`Org2`peer节点安装Hyperledger Composer运行时：
 ```bash
@@ -508,7 +508,7 @@ composer identity request -c PeerAdmin@byfn-network-org1-only -u admin -s adminp
 
 这个证书会被保存到当前目录的`alice`子目录中。创建了三个证书文件，但只有两个重要。它们是`admin-pub.pem`，证书(包括公钥)，和`admin-priv.pem`，私钥。只有文件`admin-pub.pem`适合与其他组织共享。文件`admin-priv.pem`必须秘密保存，它可以代表组织签署交易。
 
-### ________________步骤十六：为Org2获取商业网络管理员证书________________
+### ....................步骤十六：为Org2获取商业网络管理员证书....................
 
 运行`composer identity request`命令获取Bob的证书，以便`Org2`作为商业网络管理员使用：
 ```bash
@@ -542,7 +542,7 @@ composer network ping -c alice@tutorial-network
 ```
 如果名称执行成功，你可以在命令输出中看到完全限定参与者身份`org.hyperledger.composer.system.NetworkAdmin#alice`。你现在可以使用这个商业网络卡片去与区块链商业网络交互，并加载你组织中的其他参与者。
 
-### ________________步骤十九：为了Org1访问商业网络而创建商业网络卡片________________
+### ....................步骤十九：为了Org1访问商业网络而创建商业网络卡片....................
 
 为了`Org2`的商业网络管理员Bob访问商业网络，运行`composer card create`命令创建一个商业网络卡片：
 ```bash
