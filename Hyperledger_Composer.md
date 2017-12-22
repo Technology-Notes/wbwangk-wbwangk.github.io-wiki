@@ -893,27 +893,231 @@ Hyperledger Fabric网络组件在Docker容器中运行。在Docker容器中运�
   "name": "fabric-network",
   "type": "hlfv1",
 ```
-连接profile中的`name`属性给出Hyperledger Fabric网络的名称，所以稍后可以引用它。在刚创建的连接profile，名称是`fabric-network`。你可以使用Hyperledger Fabric网络的任何名称。
+连接profile中的`name`属性给出Hyperledger Fabric网络的名称，所以稍后可以引用它。在刚创建的连接profile，名称是`fabric-network`。你可以使用喜欢的名字为Hyperledger Fabric网络命名。
 
-Hyperledger Composer被设计为兼容不同类型的区块链网络。目前，仅支持Hyperledger Fabric v1.0，但您必须指定要使用的区块链网络的类型。Hyperledger Fabric v1.0的类型是hlfv1。
+Hyperledger Composer被设计为兼容不同类型的区块链网络。目前，仅支持Hyperledger Fabric v1.0，但你必须指定要使用的区块链网络的类型。Hyperledger Fabric v1.0的类型是`hlfv1`。
 
-必须指定用于连接到Hyperledger Fabric网络的MSP的名称：
-
-复制
+ 3. 必须指定用于连接到Hyperledger Fabric网络的MSP的名称：
+```json
 "mspID": "Org1MSP",
-我们正在连接Org1，并Org1称为MSP Org1MSP。
+```
+我们正在以`Org1`连接，`Org1`的MSP被称为`Org1MSP`。
 
-我们必须指定我们要连接的Hyperledger Fabric网络中所有对等节点的主机名和端口。
-
-复制
+我们必须指定要连接的Hyperledger Fabric网络中所有peer节点的主机名和端口。
+```json
 "peers": [
     {
         "requestURL": "grpc://localhost:7051",
         "eventURL": "grpc://localhost:7053"
     }
 ],
-在这里，我们已经指定了我们的单个对等节点peer0.org1.example.com（使用主机名localhost），请求端口7051和事件集线器端口7053。
+```
+在这里，我们已经指定了单个peer节点`peer0.org1.example.com`（使用主机名`localhost`），请求端口7051和事件hub端口7053。
 
-该peers阵列可以包含多个对等节点。如果您有多个对等节点，则应将其全部添加到peers阵列中，以便Hyperledger Composer可以与它们进行交互。
+`peers`数组可以包含多个peer节点。如果您有多个peer节点，则应将其全部添加到peers数组中，以便Hyperledger Composer可以与它们进行交互。
 
-区块链业务网络将部署到所有指定的对等节点。一旦区块链业务网络部署完毕，指定的对等节点将用于查询区块链业务网络，批准交易和订阅事件。
+区块链商业网络将部署到所有指定的peer节点。一旦区块链商业网络部署完毕，指定的peer节点将用于查询区块链商业网络、为交易背书和订阅事件。
+
+ 5. 我们必须在Hyperledger Fabric网络中指定证书颁发机构（CA）的主机名和端口，用于登记现有用户和注册新用户。
+```json
+"ca": {
+    "url": "http://localhost:7054",
+    "name": "ca.org1.example.com"
+},
+```
+这里我们指定了一个CA`ca.or1.example.com`（使用主机名`localhost`）和CA端口7054。
+
+ 6. 我们必须指定要连接的Hyperledger Fabric中所有排序节点的主机名和端口。
+```json
+"orderers": [
+    {
+        "url" : "grpc://localhost:7050"
+    }
+],
+```
+在这里，我们已经指定了一个排序节点`orderer.example.com`（使用主机名`localhost`）和排序端口7050。
+
+该`orderers`数组可以包含多个排序节点。如果你有多个排序节点，则应将其全部添加到`orderers`数组中，以便Hyperledger Composer可以与其进行交互。
+
+ 7. 我们必须指定一个现有信道的名称。我们会把区块链商业网络部署到信道`composerchannel`中。
+```json
+"channel": "composerchannel",
+```
+ 8. 最后，我们可以选择指定与区块链商业网络进行交互时，对交易背书的超时时间。
+```json
+  "timeout": 300
+}
+```
+在这里，我们已经指定了300秒的超时时间。如果一个交易需要超过300秒的时间来背书，那么将会抛出一个超时错误。
+
+ 9. 保存你的更改到`connection.json`。完成的连接profile应该如下所示：
+```json
+{
+  "name": "fabric-network",
+  "type": "hlfv1",
+  "mspID": "Org1MSP",
+  "peers": [
+      {
+          "requestURL": "grpc://localhost:7051",
+          "eventURL": "grpc://localhost:7053"
+      }
+  ],
+  "ca": {
+      "url": "http://localhost:7054",
+      "name": "ca.org1.example.com"
+  },
+  "orderers": [
+      {
+          "url" : "grpc://localhost:7050"
+      }
+  ],
+  "channel": "composerchannel",
+  "timeout": 300
+}
+```
+
+### 步骤四：定位Hyperledger Fabric管理员的证书和私钥
+
+要将区块链商业网络部署到Hyperledger Fabric网络，我们必须将自己标识为具有执行此操作权限的管理员。在这一步骤中，你可以定位证明自己为管理员需要的文件。
+
+我们的Hyperledger Fabric网络的管理员是一名叫`Admin@org1.example.com`的用户。该用户的证书和私钥文件存储在以下目录中：
+
+
+~/fabric-tools/fabric-scripts/hlfv11/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+您必须首先找到该用户的证书文件。证书是身份的公共部分。证书文件可以在signcerts子目录中找到并命名Admin@org1.example.com-cert.pem。如果你看这个文件的内容，那么你会发现一个类似于下面的PEM编码证书：
+
+
+-----BEGIN CERTIFICATE-----
+MIICGjCCAcCgAwIBAgIRANuOnVN+yd/BGyoX7ioEklQwCgYIKoZIzj0EAwIwczEL
+MAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG
+cmFuY2lzY28xGTAXBgNVBAoTEG9yZzEuZXhhbXBsZS5jb20xHDAaBgNVBAMTE2Nh
+Lm9yZzEuZXhhbXBsZS5jb20wHhcNMTcwNjI2MTI0OTI2WhcNMjcwNjI0MTI0OTI2
+WjBbMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMN
+U2FuIEZyYW5jaXNjbzEfMB0GA1UEAwwWQWRtaW5Ab3JnMS5leGFtcGxlLmNvbTBZ
+MBMGByqGSM49AgEGCCqGSM49AwEHA0IABGu8KxBQ1GkxSTMVoLv7NXiYKWj5t6Dh
+WRTJBHnLkWV7lRUfYaKAKFadSii5M7Z7ZpwD8NS7IsMdPR6Z4EyGgwKjTTBLMA4G
+A1UdDwEB/wQEAwIHgDAMBgNVHRMBAf8EAjAAMCsGA1UdIwQkMCKAIBmrZau7BIB9
+rRLkwKmqpmSecIaOOr0CF6Mi2J5H4aauMAoGCCqGSM49BAMCA0gAMEUCIQC4sKQ6
+CEgqbTYe48az95W9/hnZ+7DI5eSnWUwV9vCd/gIgS5K6omNJydoFoEpaEIwM97uS
+XVMHPa0iyC497vdNURA=
+-----END CERTIFICATE-----
+接下来，您必须找到该用户的私钥文件。私钥用于以这种身份对交易进行签名。私钥文件可以在keystore子目录中找到。私钥文件的名称是一个很长的十六进制字符串，_sk例如后缀为114aab0e76bf0c78308f89efc4b8c9423e31568da0c340ca187a9b17aa9a4457_sk。每次生成配置名称都会更改。如果你看看这个文件的内容，那么你会发现一个PEM编码的私钥类似于以下内容：
+
+
+-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg00IwLLBKoi/9ikb6
+ZOAV0S1XeNGWllvlFDeczRKQn2uhRANCAARrvCsQUNRpMUkzFaC7+zV4mClo+beg
+4VkUyQR5y5Fle5UVH2GigChWnUoouTO2e2acA/DUuyLDHT0emeBMhoMC
+-----END PRIVATE KEY-----
+记住这两个文件的路径，或将它们到与connection.json上一步创建的连接配置文件相同的目录中。您将在下一步中需要这些文件。
+
+第五步：为Hyperledger Fabric管理员创建一张商业网卡
+商业网卡包含连接区块链商业网络和底层Hyperledger Fabric网络所需的全部信息。此信息包括步骤三中创建的连接配置文件，以及步骤四中的管理员的证书和专用密钥。
+
+在这一步中，您将创建一个商业网卡供管理员用来将区块链商业网络部署到Hyperledger Fabric网络。
+
+运行该composer card create命令创建一个商业网卡。您必须指定您在以前的步骤中创建或找到的所有三个文件的路径：
+
+
+composer card create -p connection.json -u PeerAdmin -c Admin@org1.example.com-cert.pem -k 114aab0e76bf0c78308f89efc4b8c9423e31568da0c340ca187a9b17aa9a4457_sk -r PeerAdmin -r ChannelAdmin
+被调用的商业网卡文件PeerAdmin@fabric-network.card将被写入当前目录。我们来探讨一下我们传递给composer card create命令的选项。
+
+
+-p connection.json
+这是我们在第三步创建的连接配置文件的路径。
+
+
+-u PeerAdmin
+这是我们用来引用管理员用户的名字。而不是Admin@org1.example.com到处使用，这是相当长的类型，我们给了一个名字，PeerAdmin所以我们可以很容易地引用这个用户。
+
+
+-c Admin@org1.example.com-cert.pem
+这是Admin@org1.example.com我们在第四步找到的用户证书文件的路径。
+
+
+-k 114aab0e76bf0c78308f89efc4b8c9423e31568da0c340ca187a9b17aa9a4457_sk
+这是Admin@org1.example.com我们在第四步找到的用户的私钥文件的路径。
+
+
+-r PeerAdmin -r ChannelAdmin
+在这里，我们指定用户拥有哪些角色。此信息是必需的，以便Hyperledger Composer知道哪些用户能够执行哪些操作。用户Admin@org1.example.com是Hyperledger Fabric网络的管理员，具有角色PeerAdmin（能够安装链式代码）和ChannelAdmin（实例化链式代码的能力）。
+
+第六步：为Hyperledger Fabric管理员导入商业网卡
+Hyperledger Composer只能使用放置在钱包中的商业网卡。钱包是包含商业网卡的文件系统上的目录。在这一步中，您将将步骤五中创建的商业网卡导入到钱包中，以便您可以在后续步骤中使用商业网卡。
+
+运行composer card import命令将商业网卡导入钱包：
+
+
+composer card import -f PeerAdmin@fabric-network.card
+我们来探讨一下我们传递给composer card import命令的选项。
+
+
+-f PeerAdmin@fabric-network.card
+这是我们在第五步创建的商业网卡文件的路径。
+
+您现在可以通过指定名称来使用此商业网卡PeerAdmin@fabric-network。您现在已经准备好将区块链商业网络部署到Hyperledger Fabric网络。
+
+我们将部署tutorial-network按照开发者教程创建的区块链商业网络。
+
+第七步：将Hyperledger Composer运行时安装到Hyperledger Fabric对等节点上
+Hyperledger Composer包含一个名为Hyperledger Composer运行时的组件，该组件提供用于托管和支持商业网络归档的所有功能，例如数据验证，错误处理，事务处理函数执行和访问控制。在Hyperledger Fabric术语中，Hyperledger Composer运行时是一个标准的链式代码。
+
+在这一步中，您将在所有Hyperledger Fabric对等节点上安装Hyperledger Composer运行时。在Hyperledger Fabric中，这是一个chaincode安装操作。
+
+运行以下composer runtime install命令将Hyperledger Composer运行时安装到您在步骤三中创建的连接配置文件中指定的所有Hyperledger Fabric对等节点上：
+
+
+composer runtime install -c PeerAdmin@fabric-network -n tutorial-network
+我们来探讨一下我们传递给composer runtime install命令的选项。
+
+
+-c PeerAdmin@fabric-network
+这是我们在步骤6中导入到钱包中的商业网卡的名称。
+
+
+-n tutorial-network
+您必须为每个区块链商业网络安装Hyperledger Composer运行时的副本，并指定区块链商业网络的名称。在这里，我们指定我们正在部署的区块链商业网络的名称tutorial-network。
+
+第八步：启动区块链商业网络
+在这一步中，您将启动区块链商业网络。在Hyperledger Fabric术语中，这是链式代码实例化操作。
+
+运行composer network start命令启动区块链商业网络：
+
+
+composer network start -c PeerAdmin@fabric-network -a tutorial-network.bna -A admin -S adminpw
+我们来探讨一下我们传递给composer network start命令的选项。
+
+
+-c PeerAdmin@fabric-network
+这是我们在步骤6中导入到钱包中的商业网卡的名称。
+
+
+-a tutorial-network.bna
+这是包含我们区块链商业网络的商业网络定义的商业网络存档的路径tutorial-network。
+
+
+-A admin
+在部署区块链商业网络时，您必须创建至少一个将成为区块链商业网络管理员的参与者。此参与者负责将其他参与者加入区块链商业网络。在这里，我们正在指定我们要创建一个叫做的区块链商业网络管理员admin。
+
+
+-S adminpw
+这指定我们的区块链商业网络管理员admin将使用注册adminpw密钥从CA（证书颁发机构）请求证书和私钥。指定此选项时，为商业网络管理员指定的名称必须是已经向CA注册的用户的现有注册ID。
+
+现在我们的区块链商业网络已经启动，我们可以使用admin@tutorial-network.card创建的商业网卡文件与它进行交互。
+
+第九步：为商业网络管理员导入商业网卡
+运行composer card import命令将商业网卡导入钱包：
+
+
+composer card import -f admin@tutorial-network.card
+您现在可以通过指定名称来使用此商业网卡admin@tutorial-network。现在您已经准备好与正在运行的区块链商业网络进行交互了！
+
+第十步：测试与区块链商业网络的连接
+运行composer network ping命令测试与区块链商业网络的连接：
+
+
+composer network ping -c admin@tutorial-network
+结论
+在本教程中，您已经了解了如何配置Hyperledger Composer以及连接到Hyperledger Fabric网络所需的所有信息，以及如何将区块链商业网络部署到该Hyperledger Fabric网络。
+
+如果您使用了开发环境中提供的简单的Hyperledger Fabric网络，那么为什么不尝试按照Hyperledger Fabric文档构建自己的Hyperledger Fabric网络，并查看是否可以成功部署区块链商业网络？
