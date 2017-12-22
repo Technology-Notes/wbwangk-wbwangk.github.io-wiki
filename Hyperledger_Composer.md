@@ -834,3 +834,26 @@ export FABRIC_VERSION=hlfv11
 composer card delete -n PeerAdmin@fabric-network
 composer card delete -n admin@tutorial-network
 ```
+
+### 步骤二：探索Hyperledger Fabric网络
+这一步将探索刚刚启动的Hyperledger Fabric网络，以便了解它是如何配置的，以及它由哪些组件组成。在后续步骤中配置Hyperledger Composer时，你将使用本节中的所有信息。
+
+#### 配置文件
+在开发环境中提供的简单Hyperledger Fabric网络，已经使用Hyperledger Fabric配置工具`cryptogen`和`configtxgen`来配置。
+
+`cryptogen`的配置存储在下面的文件中：
+```
+~/fabric-tools/fabric-scripts/hlfv11/composer/crypto-config.yaml
+```
+`configtxgen`的配置存储在下面的文件中：
+```
+~/fabric-tools/fabric-scripts/hlfv11/composer/configtx.yaml
+```
+你可以通过阅读Hyperledger Fabric文档来找到有关这些配置工具的更多信息，它们做什么和如何使用它们。
+
+#### 组织
+简单的Hyperledger Fabric网络由一个叫做`Org1`的组织构成。该组织使用域名`org1.example.com`。此外，该组织的成员服务提供商(MSP)被称为`Org1MSP`。在本教程中，你将部署只有组织`Org1`才能与之交互的区块链商业网络。
+
+#### 网络组件
+Hyperledger Fabric网络由多个组件组成：
+- 
