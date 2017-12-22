@@ -797,8 +797,40 @@ sudo composer card create -p connection-org1.json -u PeerAdmin -c $ORG1_ADMIN_CR
 sudo composer card create -p connection-org2-only.json -u PeerAdmin -c $ORG2_ADMIN_CRT -k $ORG2_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
 sudo composer card create -p connection-org2.json -u PeerAdmin -c $ORG2_ADMIN_CRT -k $ORG2_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
 ```
+剩下的9到16步按完全按原教程操作就可以。执行到17步的时候，提示`tutorial-network@0.0.1.bna`不存在，执行不下去了。
+
 ### 问题
 Error: Failed to load connector module "composer-connector-hlfv1" for connection type "hlfv1". Cannot find module '/usr/local/lib/node_modules/composer-cli/node_modules/grpc/src/node/extension_binary/node-v57-linux-x64/grpc_node.node'  
 解决办法：  
 ubuntu@ubuntu-xenial:/usr/local/lib/node_modules/composer-cli$ npm rebuild --unsafe-perm  
 
+
+## 为单个组织部署Hyperledger Composer区块链网络到Hyperledger Fabric
+[原文](https://hyperledger.github.io/composer/unstable/tutorials/deploy-to-fabric-single-org)
+
+在[开发环境](https://hyperledger.github.io/composer/unstable/installing/development-tools.html)中，为你创建了一个简单Hyperledger Fabric网络(`fabric-dev-servers`)，以及为部署区块链商业网络所需的所有Hyperledger Composer配置。
+
+本教程将演示为单个组织将区块链商业网络部署到的Hyperledger Fabric实例，管理员需要执行的步骤，包括如何生成必需的Hyperledger Composer配置。随后的教程将演示如何将区块链商业网络部署到多个组织的Hyperledger Fabric实例。
+
+### 先决条件
+ 1. 在你继续前，确保你已经完成了[安装一个开发环境](https://hyperledger.github.io/composer/unstable/installing/development-tools.html)中步骤。  
+
+### 步骤一：启动Hyperledger Fabric网络
+为了遵循本教程，必须必须启动Hyperledger Fabric网络。你可以使用开发环境中提供的简单Hyperledger Fabric网络，也可以使用你根据Hyperledger Fabric文档构建的自己的Hyperledger Fabric网络。
+
+本教程将假设你使用开发环境中提供的简单Hyperledger Fabric网络。如果你使用自己的Hyperledger Fabric网络，则必须在下面详细介绍的配置和你自己的配置之间进行映射。
+
+ 1. 通过运行以下命令启动一个干净的Hyperledger Fabric：
+```bash
+cd ~/fabric-tools
+./stopFabric.sh
+./teardownFabric.sh
+./downloadFabric.sh
+export FABRIC_VERSION=hlfv11        
+./startFabric.sh
+```
+ 2. 删除你的钱包中的所有商业网络卡片。忽略无法找到商业网络卡片的错误，这是安全的：
+```
+composer card delete -n PeerAdmin@fabric-network
+composer card delete -n admin@tutorial-network
+```
