@@ -1060,64 +1060,64 @@ composer card import -f PeerAdmin@fabric-network.card
 我们将部署区块链商业网络`tutorial-network`，这是按照[开发者教程](https://hyperledger.github.io/composer/unstable/tutorials/developer-tutorial.html)创建的。
 
 ### 步骤七：将Hyperledger Composer运行时安装到Hyperledger Fabric peer节点上
-Hyperledger Composer包含一个名为“Hyperledger Composer运行时”的组件，该组件提供用于托管和支持商业网络归档的所有功能，例如数据验证，错误处理，事务处理函数执行和访问控制。在Hyperledger Fabric术语中，Hyperledger Composer运行时是一个标准的链式代码。
+Hyperledger Composer包含一个名为“Hyperledger Composer运行时”的组件，该组件提供用于托管和支持商业网络存档的所有功能，例如数据验证、错误处理、事务处理函数执行和访问控制。在Hyperledger Fabric术语中，Hyperledger Composer运行时是一个标准的链码。
 
-在这一步中，您将在所有Hyperledger Fabric对等节点上安装Hyperledger Composer运行时。在Hyperledger Fabric中，这是一个chaincode安装操作。
+在这一步中，你将在所有Hyperledger Fabric peer节点上安装Hyperledger Composer运行时。在Hyperledger Fabric中，这是一个链码安装操作。
 
-运行以下composer runtime install命令将Hyperledger Composer运行时安装到您在步骤三中创建的连接配置文件中指定的所有Hyperledger Fabric对等节点上：
-
-
+运行以下`composer runtime install`命令将Hyperledger Composer运行时安装到你在步骤三中创建的连接profile中指定的所有Hyperledger Fabric peer节点上：
+```bash
 composer runtime install -c PeerAdmin@fabric-network -n tutorial-network
-我们来探讨一下我们传递给composer runtime install命令的选项。
-
-
+```
+我们来探索一下传递给`composer runtime install`命令的选项。
+```
 -c PeerAdmin@fabric-network
-这是我们在步骤6中导入到钱包中的商业网卡的名称。
-
-
+```
+这是我们在步骤六中导入到钱包中的商业网络卡片的名称。
+```
 -n tutorial-network
-您必须为每个区块链商业网络安装Hyperledger Composer运行时的副本，并指定区块链商业网络的名称。在这里，我们指定我们正在部署的区块链商业网络的名称tutorial-network。
+```
+你必须为每个区块链商业网络安装Hyperledger Composer运行时的副本，并指定区块链商业网络的名称。在这里，我们指定正在部署的区块链商业网络的名称`tutorial-network`。
 
-第八步：启动区块链商业网络
-在这一步中，您将启动区块链商业网络。在Hyperledger Fabric术语中，这是链式代码实例化操作。
+### 步骤八：启动区块链商业网络
+在这一步中，你将启动区块链商业网络。在Hyperledger Fabric术语中，这是链码实例化操作。
 
-运行composer network start命令启动区块链商业网络：
-
-
+运行`composer network start`命令启动区块链商业网络：
+```bash
 composer network start -c PeerAdmin@fabric-network -a tutorial-network.bna -A admin -S adminpw
-我们来探讨一下我们传递给composer network start命令的选项。
-
-
+```
+我们来探索一下传递给`composer network start`命令的选项。
+```
 -c PeerAdmin@fabric-network
-这是我们在步骤6中导入到钱包中的商业网卡的名称。
-
-
+```
+这是我们在步骤六中导入到钱包中的商业网络卡片的名称。
+```
 -a tutorial-network.bna
-这是包含我们区块链商业网络的商业网络定义的商业网络存档的路径tutorial-network。
-
-
+```
+这是指向商业网络存档的路径，其中包含了我们名为`tutorial-network`的区块链商业网络的商业网络定义。
+```
 -A admin
-在部署区块链商业网络时，您必须创建至少一个将成为区块链商业网络管理员的参与者。此参与者负责将其他参与者加入区块链商业网络。在这里，我们正在指定我们要创建一个叫做的区块链商业网络管理员admin。
-
-
+```
+在部署区块链商业网络时，你必须创建至少一个将成为区块链商业网络管理员的参与者。此参与者负责将其他参与者加入区块链商业网络。在这里，我们正在指定要创建一个叫做`admin`的区块链商业网络管理员。
+```
 -S adminpw
-这指定我们的区块链商业网络管理员admin将使用注册adminpw密钥从CA（证书颁发机构）请求证书和私钥。指定此选项时，为商业网络管理员指定的名称必须是已经向CA注册的用户的现有注册ID。
+```
+这指定我们的区块链商业网络管理员`admin`将使用登记密码`adminpw`从CA（证书颁发机构）请求证书和私钥。指定此选项时，为商业网络管理员指定的用户名称必须是一个已登记的ID(已经向CA注册)。
 
-现在我们的区块链商业网络已经启动，我们可以使用admin@tutorial-network.card创建的商业网卡文件与它进行交互。
+现在我们的区块链商业网络已经启动，我们可以使用已创建的商业网络卡片文件`admin@tutorial-network.card`与它进行交互。
 
-第九步：为商业网络管理员导入商业网卡
-运行composer card import命令将商业网卡导入钱包：
-
-
+### 步骤九：为商业网络管理员导入商业网络卡片
+运行`composer card import`命令将商业网络卡片导入钱包：
+```bash
 composer card import -f admin@tutorial-network.card
-您现在可以通过指定名称来使用此商业网卡admin@tutorial-network。现在您已经准备好与正在运行的区块链商业网络进行交互了！
+```
+你现在可以通过指定名称`admin@tutorial-network`来使用此商业网络卡片。现在你已经准备好与正在运行的区块链商业网络进行交互了！
 
-第十步：测试与区块链商业网络的连接
-运行composer network ping命令测试与区块链商业网络的连接：
-
-
+### 步骤十：测试与区块链商业网络的连接
+运行`composer network ping`命令测试与区块链商业网络的连接：
+```bash
 composer network ping -c admin@tutorial-network
-结论
-在本教程中，您已经了解了如何配置Hyperledger Composer以及连接到Hyperledger Fabric网络所需的所有信息，以及如何将区块链商业网络部署到该Hyperledger Fabric网络。
+```
+### 结论
+在本教程中，你已经了解了如何配置Hyperledger Composer以及连接到Hyperledger Fabric网络所需的所有信息，以及如何将区块链商业网络部署到Hyperledger Fabric网络。
 
-如果您使用了开发环境中提供的简单的Hyperledger Fabric网络，那么为什么不尝试按照Hyperledger Fabric文档构建自己的Hyperledger Fabric网络，并查看是否可以成功部署区块链商业网络？
+如果你使用了开发环境中提供的简单Hyperledger Fabric网络，那么为什么不尝试按照Hyperledger Fabric文档构建自己的Hyperledger Fabric网络，并查看是否可以成功部署区块链商业网络？
