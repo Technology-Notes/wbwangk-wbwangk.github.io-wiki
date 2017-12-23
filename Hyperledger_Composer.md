@@ -174,6 +174,51 @@ composer-rest-server
 
 生成的API连接到部署的区块链和商业网络。
 
+## 使用Composer查询语言和REST API的查询教程
+
+在本教程中，我们将在[开发者教程](https://hyperledger.github.io/composer/tutorials/developer-tutorial.html)的基础上进行扩展，以展示查询。原生查询语言可以使用条件过滤返回的结果，并可以在交易中被调用以执行操作，例如更新或删除结果集上的资产。
+
+查询在查询文件（`.qry`）中定义，文件位于商业网络定义的父目录中的。查询包含一个WHERE子句，它定义了选择资产或参与者的过滤条件。
+
+本教程使用`tutorial-network`商业网络，该网络[开发者教程](https://hyperledger.github.io/composer/tutorials/developer-tutorial.html)中被开发和部署。
+
+### 先决条件
+
+开始本教程之前：
+
+- 完成[开发环境的安装](https://hyperledger.github.io/composer/installing/development-tools.html)。
+- 完成[开发者教程](https://hyperledger.github.io/composer/tutorials/developer-tutorial.html)。
+
+### 第一步：更新商业网络
+
+开发者教程中创建的商业网络必须更新。更新的商业网络包含两个事件和一个额外的交易。
+
+#### 更新模型文件
+
+模型文件必须更新以包含事件和新交易。
+
+1. 打开商业网络`tutorial-network`的模型（`.cto`）文件。
+
+2. 将以下事件和交易添加到模型中：
+
+   ```
+   event TradeNotification {
+       --> Commodity commodity
+   }
+
+   transaction RemoveHighQuantityCommodities {
+   }
+
+   event RemoveNotification {
+       --> Commodity commodity
+   }
+   ```
+
+3. 将更改保存到模型中。
+
+#### 更新交易逻辑以使用查询和事件
+
+
 ## 部署Hyperledger Composer网络到多组织Fabric
 [原文：Deploying a Hyperledger Composer blockchain business network to Hyperledger Fabric (multiple organizations)](https://hyperledger.github.io/composer/unstable/tutorials/deploy-to-fabric-multi-org.html)   
 
