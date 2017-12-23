@@ -443,20 +443,20 @@ composer-rest-server
 
 现在我们有了一些资产和参与者，我们可以使用生成的Query REST操作来测试一些查询。
 
-#### 执行一个简单的REST查询
+#### 执行一个简单REST查询
 
-现在我们有资产和参与者，我们可以尝试一些疑问。
+现在我们有资产和参与者，我们可以尝试一些查询。
 
-我们可以首先尝试的最简单的REST查询是我们的命名查询`selectCommodities`。
+我们可以首先尝试的最简单的REST查询是我们的命令查询`selectCommodities`。
 
-展开“查询”REST端点，你将看到我们在模型中定义的命名查询。
+展开“Query”REST端点，你将看到我们在模型中定义的命名查询。
 
-这些查询现在作为REST查询公开，并为其生成一个/ GET操作。请注意，查询（我们在模型定义中定义的）的描述显示在右侧。
+这些查询现在暴露为REST查询，并为每个生成一个/GET操作。请注意，查询的描述（我们在模型定义中定义的）显示在右侧。
 
 ![商品：REST端点](https://hyperledger.github.io/composer/assets/img/tutorials/query/commodity-rest-endpointhdr.png)
 
 1. 展开`selectCommodities`查询。
-2. 点击“试用”按钮。
+2. 点击“Try it Out”按钮。
 
 ![设置REST查询：选择所有商品](https://hyperledger.github.io/composer/assets/img/tutorials/query/query-select-commodities.png)
 
@@ -464,61 +464,61 @@ composer-rest-server
 
 ![查询结果：所有商品](https://hyperledger.github.io/composer/assets/img/tutorials/query/query-commodity-results.png)
 
-### 执行筛选的REST查询
+### 执行过滤的REST查询
 
-让我们通过他们的交易所选择所有的商品 - 例如“EURONEXT”的主要交易所。
+让我们通过他们的交易所选择商品 - 例如“EURONEXT”的主交易所。
 
-1. 展开查询端点“selectCommoditiesByExchange”并滚动到“参数”部分。
+1. 展开查询端点“selectCommoditiesByExchange”并滚动到“Parameters”部分。
 2. 在“Exchange”参数中输入“EURONEXT”。
-3. 点击“试用”。
+3. 点击“Try it Out”。
 
 ![由Exchange安装REST查询](https://hyperledger.github.io/composer/assets/img/tutorials/query/query-selectby-exchange.png)
 
-结果显示，只有那些与“EURONEXT”交换的商品才会显示在回复正文中
+结果显示，只有那些与“EURONEXT”交易所的商品才会显示在响应正文中
 
 ![查询结果：商品交换](https://hyperledger.github.io/composer/assets/img/tutorials/query/queryresults-selectby-exchange.png)
 
-### 使用命名查询的结果执行交易更新
+### 使用命名查询的结果执行交易修改
 
-最后，你会记得我们已经定义了一个简单的查询，用于在我们的查询文件中筛选数量大于60的商品。查询功能非常强大，在交易功能中使用时，查询允许交易逻辑设置一组资产或参与者来执行更新或创建删除操作。
+最后，你会记得我们已经定义了一个简单的查询，用于在我们的查询文件中筛选数量大于60的商品。在交易函数中使用时查询非常强大，如查询允许交易逻辑设置一组资产，或参与者来执行更新，或创建删除操作。
 
 ![重新搜索查询定义](https://hyperledger.github.io/composer/assets/img/tutorials/query/querydef-recall-high-qty-commodities.png)
 
-我们`selectCommoditiesWithHighQuantity`在`removeHighQuantityCommodities`交易中使用查询。如果你在REST资源管理器中执行此/ GET操作，你将看到它仅选择数量大于60的资产。
+我们在交易`removeHighQuantityCommodities`中使用`selectCommoditiesWithHighQuantity`查询。如果你在REST浏览器中执行这个/GET操作，你将看到它仅选择数量大于60的资产。
 
 ![使用查询重新记录交易逻辑](https://hyperledger.github.io/composer/assets/img/tutorials/query/functiondef-recall-high-qty-commodities.png)
 
-现在，让我们使用查询来执行大批量商品的删除。
+现在，让我们使用查询来执行一个针对大批量商品的删除。
 
-首先检查自己有多少商品（使用'商品'/ GET操作），你应该看到至少两个商品，其中一个商品（可可）的数量> 60。
+首先检查自己有多少商品（使用'Commodity'/GET操作），你应该看到至少两个商品，其中一个商品（Cocoa）的数量大于60。
 
 ![商品REST端点](https://hyperledger.github.io/composer/assets/img/tutorials/query/commodity-rest-endpointhdr.png)![“删除交易”调用之前的结果](https://hyperledger.github.io/composer/assets/img/tutorials/query/txn-query-commodity-pre-rm.png)
 
-让我们看看实际的查询，通过点击REST Endpoint `/selectCommoditiesWithHighQuantity`然后点击/ GET，然后向下滚动到“试用” - 应该有一个符合条件的商品。
+让我们看看实际的查询，通过点击REST Endpoint `/selectCommoditiesWithHighQuantity`然后点击/GET，然后向下滚动到“Try it Out” - 应该有一个符合条件的商品。
 
 ![查询大量商品](https://hyperledger.github.io/composer/assets/img/tutorials/query/query-selectby-comm-high-qty.png)
 
-好。现在让我们执行一个REST交易，它使用我们的“高数量”查询定义来决定删除哪些商品。
+好。现在让我们执行一个REST交易，它使用我们的“大数量”查询定义来决定删除哪些商品。
 
-单击RemoveHighQuantityCommodities REST Endpoint以显示相同的/ POST操作。
+单击RemoveHighQuantityCommodities REST端点以显示相同的/POST操作。
 
 ![显示RemoveHighQuantityCommodities端点](https://hyperledger.github.io/composer/assets/img/tutorials/query/txn-show-rm-comm-high-qty.png)
 
-点击POST，向下滚动到参数部分，并点击“试一试外” -请注意：你*不是*必须在“数据”部分输入任何数据。
+点击POST，向下滚动到参数部分，并点击“Try it Out” -请注意：你*不是*必须在“数据”部分输入数据。
 
-向下滚动，你应该看到一个transactionId，它代表交易处理函数中的“remove”调用（本身就是一个区块链交易），它将更新世界状态 - 响应代码应该是200
+向下滚动，你应该看到一个transactionId，它代表交易处理器函数中的“remove”调用（本身就是一个区块链交易），它将更新世界状态 - 响应码应该是200
 
 ![进行“高数量”清除交易](https://hyperledger.github.io/composer/assets/img/tutorials/query/txn-exec-rm-comm-high-qty.png)
 
-最后，让我们来验证我们的商品状态。返回到“商品”REST操作并再次执行/ GET操作....“试用”。
+最后，让我们来验证我们的商品状态。返回到“Commodity”REST操作并再次执行/GET操作....“Try it Out”。
 
-结果应该显示，商品资产“可可”已经消失，即只有数量<= 60的商品资产仍然存在，即我们的例子中的资产“玉米”。指定的查询提交交易更新（以删除大量商品），并在商业逻辑中执行。
+结果应该显示，商品资产“Cocoa”已经消失，即只有数量<= 60的商品资产仍然存在，即我们的例子中的资产“Corn”。命名查询提交交易更新（以删除大数量商品），并在业务逻辑中执行。
 
 ![查询驱动的交易函数的最终结果](https://hyperledger.github.io/composer/assets/img/tutorials/query/txn-query-commodities-post-rm.png)
 
 # 恭喜！
 
-干得好，现在你已经完成了这个教程，我们希望你现在对Composer中查询的能力有了更好的理解。你可以开始创建/构建你自己的查询（或修改现有查询并将相关数据添加到此商业网络 - 请注意：你需要重新部署任何查询更改）才能试用！
+干得好，现在你已经完成了这个教程，我们希望你现在对Composer中查询的能力有了更好的理解。你可以开始创建/构建你自己的查询（或修改现有查询并将相关数据添加到此商业网络 - 请注意：任何查询更改都需要重新部署）才能试用！
 
 
 ## 部署Hyperledger Composer网络到多组织Fabric
