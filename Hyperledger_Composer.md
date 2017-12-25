@@ -480,7 +480,7 @@ composer-rest-server
 
 ### 使用命名查询的结果执行交易修改
 
-最后，你会记得我们已经定义了一个简单的查询，用于在我们的查询文件中筛选数量大于60的商品。在交易函数中使用时查询非常强大，如查询允许交易逻辑设置一组资产，或参与者来执行更新，或创建删除操作。
+最后，你会记得我们已经定义了一个简单的查询，用于在我们的查询文件中筛选数量大于60的商品。在交易函数中使用时查询非常强大，例如允许交易逻辑查询出一组资产或参与者来执行更新或删除操作。
 
 ![重新搜索查询定义](https://hyperledger.github.io/composer/assets/img/tutorials/query/querydef-recall-high-qty-commodities.png)
 
@@ -488,7 +488,7 @@ composer-rest-server
 
 ![使用查询重新记录交易逻辑](https://hyperledger.github.io/composer/assets/img/tutorials/query/functiondef-recall-high-qty-commodities.png)
 
-现在，让我们使用查询来执行一个针对大批量商品的删除。
+现在，让我们使用查询来执行一个针对大数量商品的删除。
 
 首先检查自己有多少商品（使用'Commodity'/GET操作），你应该看到至少两个商品，其中一个商品（Cocoa）的数量大于60。
 
@@ -512,7 +512,7 @@ composer-rest-server
 
 最后，让我们来验证我们的商品状态。返回到“Commodity”REST操作并再次执行/GET操作....“Try it Out”。
 
-结果应该显示，商品资产“Cocoa”已经消失，即只有数量<= 60的商品资产仍然存在，即我们的例子中的资产“Corn”。命名查询提交交易更新（以删除大数量商品），并在业务逻辑中执行。
+结果应该显示，商品资产“Cocoa”已经消失，即只有数量<= 60的商品资产仍然存在，即我们的例子中的资产“Corn”。命名查询为交易更新提供了输入（以删除大数量商品），并在业务逻辑中执行。
 
 ![查询驱动的交易函数的最终结果](https://hyperledger.github.io/composer/assets/img/tutorials/query/txn-query-commodities-post-rm.png)
 
