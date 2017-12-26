@@ -130,6 +130,19 @@ $ git commit -m "{mkdocs commit}"
 $ git push
 (按提示输入github的用户名和口令)
 ```
+#### 提交到github(补充)
+后发现mkdocs可以直接发布到github pages。
+```
+$ mkdocs build
+$ mkdocs gh-deploy
+INFO    -  Cleaning site directory
+INFO    -  Building documentation to directory: /opt/ComposerDocs/site
+INFO    -  Copying '/opt/ComposerDocs/site' to 'gh-pages' branch and pushing to GitHub.
+Username for 'https://github.com': wbwangk
+Password for 'https://wbwangk@github.com':
+INFO    -  Your documentation should shortly be available at: https://wbwangk.github.io/ComposerDocs/
+```
+也就是直接把site目录发布到了同一个库的gh-pages分支。太方便了。
 #### 查看结果
 首先，到`https://github.com/wbwangk/hyperledgerDocs/tree/gh-pages`查看提交的结果。  
 然后到 https://wbwangk.github.io/hyperledgerDocs/ 去查看github pages解析后的结果。
