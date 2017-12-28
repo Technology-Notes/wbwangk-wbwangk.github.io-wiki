@@ -45,21 +45,33 @@ composer runtime install -c PeerAdmin@fabric-network -n tutorial-network
 业务网络名称`tutorial-network`在安装运行时指定，后面会引用。  
 可以尝试创建`tutorial-network2`。可以把**业务网络视为通道的细分？**  
 启动业务网络：
-```
+```bash
 composer network start -c PeerAdmin@fabric-network -a tutorial-network.bna -A admin -S adminpw
 ```
-`-A`和`-S`参数引起了`admin@tutorial-network.card`的创建，这是业务网络管理员。  
+`-A`和`-S`参数引起了文件`admin@tutorial-network.card`的创建，这是业务网络管理员。  
 导入业务网络管理员卡片：
-```
+```bash
 composer card import -f admin@tutorial-network.card
 ```
 
 ### 部署Hyperledger Composer网络到多组织Fabric
 [部署Hyperledger Composer网络到多组织Fabric](https://wbwangk.github.io/ComposerDocs/tutorials_deploy-to-fabric-multi-org/)  
 
-安装Composer
-
-
+安装Composer运行时后，导出的业务网络管理员（而不是单组织的在启动业务网络时生成）：
+```
+composer identity request -c PeerAdmin@byfn-network-org1-only -u admin -s adminpw -d alice
+```
+然后，又导出了org2的业务网络管理员bob。  
+启动业务网络：
+```bash
+composer network start -c PeerAdmin@byfn-network-org1 -a tutorial-network@0.0.1.bna -o endorsementPolicyFile=endorsement-policy.json -A alice -C alice/admin-pub.pem -A bob -C bob/admin-pub.pem
+```
+两个组织的业务网络，启动一次就可以了。也是由于只能启动一次，不能在启动时同时为两个组织的业务网络管理员创建卡片了。    
+然后是，创建业务网络管理员卡片：
+```
+composer card create -p connection-org1.json -u alice -n tutorial-network -c alice/admin-pub.pem -k alice/admin-priv.pem
+```
+之后是导入卡片和ping业务网络了。  
 
 
 
