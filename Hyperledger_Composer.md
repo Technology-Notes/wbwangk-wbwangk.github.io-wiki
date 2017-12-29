@@ -73,8 +73,40 @@ composer card create -p connection-org1.json -u alice -n tutorial-network -c ali
 ```
 之后是导入卡片和ping业务网络了。  
 
+## Hyperledger Composer Playground
+[本地安装文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)、[本地环境](E:\vagrant10\ambari-vagrant\fabric\devenv)  
+```
+curl -sSL https://hyperledger.github.io/composer/install-hlfv1.sh | bash
+```
+以上脚本会下载1.0.4本版的Fabric Docker镜像、启动Fabric、拉取Playground镜像并启动。看上去该脚本与fabric-tools的功能类似，启动了一个单组织单节点的Fabric，只是多了一个`hyperledger/composer-playground`的容器。  
+由于VM已经做了8080端口的NAT映射，可以直接在windows下用浏览器通过地址`http://localhost:8080`打开本地Playground的Web界面。  
+安装Composer运行时：
+```bash
+cd :~/composer/tutorial-network
+composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName tutorial-network
+```
+部署业务网络：
+```
+composer network start --card PeerAdmin@hlfv1 --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile tutorial-network@0.0.1.bna --file networkadmin.card
+```
+导入业务网络管理员时报告该身份已经存在：
+```
+composer card import --file networkadmin.card
+Error: Card already exists: admin@tutorial-network
+```
+ping一下业务网络，确保网络已经正确运行：
+```
+composer network ping --card admin@tutorial-network
+```
+当前目录下`networkadmin.card`是一个业务网络管理员卡片，需要导入到Playground，然后Playground才能联上Fabric实例。  
+由于本VM是用vagrant搭建的，`/vagrant`目录是个windows共享目录，直接把`networkadmin.card`复制到`/vagrant`目录，就可以在windows访问这个文件了，然后再导入到playground。  
 
-
+在本地Playground环境的`http://localhost:8080/login`网页上点击`Import Business Network Card`按钮把上面的`.card`文件导入。
+点击新建的业务网络`tutorial-network`的"Connect now"按钮，提示：
+```
+[Error: connect ECONNREFUSED 127.0.0.1:7054]
+```
+这是因为Fabric的一些端口没有映射到windows。在windows下编辑Vagrantfile，添加端口映射：7050,7051,7053,7054
 
 
 # 实践：部署Hyperledger Composer网络到多组织Fabric
@@ -314,6 +346,7 @@ sudo composer card create -p connection-org2-only.json -u PeerAdmin -c $ORG2_ADM
 sudo composer card create -p connection-org2.json -u PeerAdmin -c $ORG2_ADMIN_CRT -k $ORG2_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
 ```
 剩下的9到16步按完全按原教程操作就可以。执行到17步的时候，提示`tutorial-network@0.0.1.bna`不存在，执行不下去了。
+
 
 ### 问题
 Error: Failed to load connector module "composer-connector-hlfv1" for connection type "hlfv1". Cannot find module '/usr/local/lib/node_modules/composer-cli/node_modules/grpc/src/node/extension_binary/node-v57-linux-x64/grpc_node.node'  
