@@ -382,6 +382,77 @@ sudo composer card create -p connection-org2.json -u PeerAdmin -c $ORG2_ADMIN_CR
 ```
 剩下的9到16步按完全按原教程操作就可以。执行到17步的时候，提示`tutorial-network@0.0.1.bna`不存在，执行不下去了。
 
+## Hyperledger环境部署的整理
+Hyperledger涉及多个组件，有时本地安装有时又跑在容器中，尤其当其部署在同一个VM上时，如果不整理清楚容易引起混乱。
+
+### playground
+[部署文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)  
+部署脚本：
+```bash
+curl -sSL https://hyperledger.github.io/composer/install-hlfv1.sh | bash
+```
+导致的结果是启动了多个容器，相对Composer的部署，多了一个composer容器，该容器暴露localhost:8080端口，是Playground的web界面。  
+由于composer跑在容器中，所以连接配置文件中定义的fabric地址不是localhost，而是类似`ca.org1.example.com`。
+
+### Hyperledger Composer开发环境
+[部署文档](https://wbwangk.github.io/ComposerDocs/installing_development-tools/)  
+利用npm安装composer相关包，如安装和运行playground：
+```
+npm install -g composer-playground
+composer-playground
+```
+所以这里的playground是本地安装，而不是跑在容器中，它连接Fabric的连接配置文件中使用的Fabric地址是localhost。
+
+composer自带的Fabric安装脚本是：
+```
+mkdir ~/fabric-tools && cd ~/fabric-tools
+curl -O https://raw.githubusercontent.com/hyperledger/composer-tools/master/packages/fabric-dev-servers/fabric-dev-servers.zip
+unzip fabric-dev-servers.zip
+```
+一般启动Fabric脚本：
+```
+cd ~/fabric-tools
+./downloadFabric.sh
+./startFabric.sh
+./createPeerAdminCard.sh
+```
+### Composer开发教程
+[教程文档](https://wbwangk.github.io/ComposerDocs/tutorials_developer-tutorial/)  
+由于要演示Yeoman生成代码，它有自己的目录。当执行：
+```
+yo hyperledger-composer:businessnetwork
+```
+输入业务网络名称`tutorial-network`，它会自动创建目录tutorial-network，之后的操作都是在这个目录中进行了。  
+之后还会启动`composer-rest-server`，也是在这个目录中。  
+再后的“[查询教程](https://wbwangk.github.io/ComposerDocs/tutorials_queries/)”也是在这个tutorial-network目录中。  
+
+### 为单组织部署Fabric
+[文档地址](https://wbwangk.github.io/ComposerDocs/tutorials_deploy-to-fabric-single-org/)  
+使用的`~/fabric-tools`目录。
+
+### 为多组织部署Fabric
+[文档地址](https://wbwangk.github.io/ComposerDocs/tutorials_deploy-to-fabric-multi-org/)  
+从安装方式可以看出它使用的目录：
+```
+git clone -b issue-6978 https://github.com/sstone1/fabric-samples.git
+```
+它是在FYBN(first-network)脚本的基础上进行了个性化修改。所以默认目录就是`fabric-samples`
+
+### Fabric
+安装过程在[快速入门](https://hyperledgercn.github.io/hyperledgerDocs/getting_started/)文档中，但多数学习时间是花在[第一个Fabric网络](https://hyperledgercn.github.io/hyperledgerDocs/build_network_zh/)文档中。  
+安装快速开始：
+```
+git clone https://github.com/hyperledger/fabric.git
+```
+安装fabric-samples：
+```
+git clone https://github.com/hyperledger/fabric-samples
+```
+进入BYFN目录则是：
+```
+cd fabric-samples/first-network
+```
+first-network会启动多个容器，主要特点是包括了两个组织共四个peer。
 
 ### 问题
 Error: Failed to load connector module "composer-connector-hlfv1" for connection type "hlfv1". Cannot find module '/usr/local/lib/node_modules/composer-cli/node_modules/grpc/src/node/extension_binary/node-v57-linux-x64/grpc_node.node'  
