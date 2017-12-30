@@ -237,6 +237,37 @@ composer-playground
 ```
 屏幕会锁定为日志输出。当前VM是fabric官方提供的vagrant VM，已经提前8080映射到了宿主机，所以用windows浏览器打开`localhost:8080`就可以进入playground。而且playground会在屏幕上显示所有刚刚创建的那8个卡片，但只有`admin@tutorial-network`卡片对应的`Connect now`按钮是可用的，因为我们刚刚启动了用`./startFabric.sh`脚本启动了这个卡片对应的Fabric实例。  
 
+点击`Connect now`进入业务网络`tutorial-network`，但提示链码`tutorial-network`不存在。（在Composer中，业务网络貌似就是链码）
+执行下面的步骤安装Composer运行时并启动业务网络（分别对应安装链码和链码实例化）：
+```
+sudo composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName tutorial-network
+sudo composer network start --card PeerAdmin@hlfv1 --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile tutorial-network@0.0.1.bna --file networkadmin.card
+```
+至于为啥要加上`sudo`，可能是之前的Fabric环境是用root安装的，导致一些文件权限不正常。  
+现在playground终于连接上本地的Fabric环境了。
+
+#### playground连接BYFN
+启动BYFN:
+```
+cd /opt/fabric-samples/first-network
+docker rm -f $(docker ps -aq)
+sudo ./byfn -m up
+```
+用另外的终端shell继续操作：
+```
+cd /opt/fabric-samples/first-network
+sudo composer runtime install --card PeerAdmin@byfn-network-org1-only --businessNetworkName tutorial-network
+cp ~/composer/tutorial-network/tutorial-network@0.0.1.bna .
+sudo composer network start --card PeerAdmin@byfn-network-org1-only --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile tutorial-network@0.0.2.bna --file networkadmin.card
+```
+上面的`composer runtime install`就是安装composer运行时。安装运行时的时候会用到网络卡片中指定的证书，而BYFN的证书是相对于`fabric-samples/first-network`目录的。如果在其他目录安装运行时，会提示：
+```
+Error: ENOENT: no such file or directory, open 'crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt'
+```
+`cp`是把业务网络档案复制到当前目录。`composer network start`命令本质上是将业务网络档案中定义的链码程序用docker容器实例化。
+
+
+
 
 
 
