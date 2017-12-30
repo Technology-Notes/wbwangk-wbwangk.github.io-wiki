@@ -34,6 +34,7 @@ composer card import --file /tmp/PeerAdmin@hlfv1.card
 ```
 这个脚本，创建了连接配置文件`connection.json`，用定位了Fabric组织管理员`Admin@org1.example.com`证书和私钥，利用公私钥创建了一个网页网络卡片`PeerAdmin@hlfv1.card`，并导入到网络中。
 
+
 ### 为单个组织部署Hyperledger Composer区块链网络到Hyperledger Fabric
 [为单个组织部署Hyperledger Composer区块链网络到Hyperledger Fabric](https://wbwangk.github.io/ComposerDocs/tutorials_deploy-to-fabric-single-org/)  
 
@@ -140,6 +141,101 @@ composer card create -u admin -s adminpw -n tutorial-network -p connection2.json
 ```
 导入到playground后提示身份admin已经存在了。
 
+到这里才终于明白按[官方文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)部署的playground是和composer一起跑在容器中的。而容器中缺乏必要的调试工具，而且其连接Fabric使用的是example.com域名(而不是localhost)，这使得playground连接之前的fabric环境（如BYFN）变得很困难。  
+所以决定采用本地部署的playground重新调试，而不是使用容器中的。
+
+## Hyperledger Composer Playground(新)
+准备Fabric环境：
+```bash
+cd ~/fabric-tools
+docker rm -f $(docker ps -aq)
+./startFabric.sh
+sudo ./createPeerAdminCard.sh
+```
+首先删除了所有容器，然后启动Fabric网络，最后创建了一些Composer业务网络卡片。由于使用的不是root，所以不加sudo会报告没有权限访问/tmp。
+执行创建卡片后的屏幕提示：
+```
+Development only script for Hyperledger Fabric control
+Running 'createPeerAdminCard.sh'
+FABRIC_VERSION is unset, assuming hlfv1
+FABRIC_START_TIMEOUT is unset, assuming 15 (seconds)
+
+Using composer-cli at v0.16.2
+Deleted Business Network Card: PeerAdmin@hlfv1
+Command succeeded
+
+Successfully created business network card file to
+        Output file: /tmp/PeerAdmin@hlfv1.card
+Command succeeded
+
+Successfully imported business network card
+        Card file: /tmp/PeerAdmin@hlfv1.card
+        Card name: PeerAdmin@hlfv1
+Command succeeded
+
+Hyperledger Composer PeerAdmin card has been imported
+The following Business Network Cards are available:
+
+Connection Profile: byfn-network-org1
+┌─────────────────────────────┬───────────┬──────────────────┐
+│ Card Name                   │ UserId    │ Business Network │
+├─────────────────────────────┼───────────┼──────────────────┤
+│ PeerAdmin@byfn-network-org1 │ PeerAdmin │                  │
+└─────────────────────────────┴───────────┴──────────────────┘
+
+Connection Profile: byfn-network-org1-only
+┌──────────────────────────────────┬───────────┬──────────────────┐
+│ Card Name                        │ UserId    │ Business Network │
+├──────────────────────────────────┼───────────┼──────────────────┤
+│ PeerAdmin@byfn-network-org1-only │ PeerAdmin │                  │
+└──────────────────────────────────┴───────────┴──────────────────┘
+
+Connection Profile: byfn-network-org2
+┌─────────────────────────────┬───────────┬──────────────────┐
+│ Card Name                   │ UserId    │ Business Network │
+├─────────────────────────────┼───────────┼──────────────────┤
+│ PeerAdmin@byfn-network-org2 │ PeerAdmin │                  │
+└─────────────────────────────┴───────────┴──────────────────┘
+
+Connection Profile: byfn-network-org2-only
+┌──────────────────────────────────┬───────────┬──────────────────┐
+│ Card Name                        │ UserId    │ Business Network │
+├──────────────────────────────────┼───────────┼──────────────────┤
+│ PeerAdmin@byfn-network-org2-only │ PeerAdmin │                  │
+└──────────────────────────────────┴───────────┴──────────────────┘
+
+Connection Profile: first-network
+┌─────────────────────┬────────┬──────────────────┐
+│ Card Name           │ UserId │ Business Network │
+├─────────────────────┼────────┼──────────────────┤
+│ admin@first-network │ admin  │                  │
+└─────────────────────┴────────┴──────────────────┘
+
+Connection Profile: hlfv1
+┌────────────────────────┬───────────┬──────────────────┐
+│ Card Name              │ UserId    │ Business Network │
+├────────────────────────┼───────────┼──────────────────┤
+│ admin@tutorial-network │ admin     │ tutorial-network │
+├────────────────────────┼───────────┼──────────────────┤
+│ PeerAdmin@hlfv1        │ PeerAdmin │                  │
+└────────────────────────┴───────────┴──────────────────┘
+
+Issue composer card list --name <Card Name> to get details a specific card
+Command succeeded
+```
+然后再执行` composer card list`可以重新列出上面的卡片清单。  
+创建的卡片实际上在下面的目录中：
+```bash
+ls ~/.composer/cards
+admin@first-network     PeerAdmin@byfn-network-org1       PeerAdmin@byfn-network-org2-only
+admin@tutorial-network  PeerAdmin@byfn-network-org1-only  PeerAdmin@hlfv1
+composer-logs           PeerAdmin@byfn-network-org2
+```
+启动playground：
+```
+composer-playground
+```
+屏幕会锁定为日志输出。当前VM是fabric官方提供的vagrant VM，已经提前8080映射到了宿主机，所以用windows浏览器打开`localhost:8080`就可以进入playground。而且playground会在屏幕上显示所有刚刚创建的那8个卡片，但只有`admin@tutorial-network`卡片对应的`Connect now`按钮是可用的，因为我们刚刚启动了用`./startFabric.sh`脚本启动了这个卡片对应的Fabric实例。  
 
 
 
