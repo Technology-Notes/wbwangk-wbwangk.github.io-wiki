@@ -106,7 +106,42 @@ composer network ping --card admin@tutorial-network
 ```
 [Error: connect ECONNREFUSED 127.0.0.1:7054]
 ```
-这是因为Fabric的一些端口没有映射到windows。在windows下编辑Vagrantfile，添加端口映射：7050,7051,7053,7054
+这是因为playground运行在容器里，其访问fabric使用的域名，如ca.org1.example.com。这一点可以进入composer playground容器(容器名是composer)，`telnet 127.0.0.1 7054`，会发现不通，但`telnet ca.org1.example.com 7054`是通的。  
+
+之前运行composer命令行是在容器的宿主机中，所以连接配置文件的地址都是127.0.0.1。导入到playground中的card地址不对。
+制作一个`connection2.json`，把域名改成下面的样子:
+```json
+{
+  "name": "fabric-network",
+  "type": "hlfv1",
+  "mspID": "Org1MSP",
+  "peers": [
+      {
+          "requestURL": "grpc://peer0.org1.example.com:7051",
+          "eventURL": "grpc://peer0.org1.example.com:7053"
+      }
+  ],
+  "ca": {
+      "url": "http://ca.org1.example.com:7054",
+      "name": "ca.org1.example.com"
+  },
+  "orderers": [
+      {
+          "url" : "grpc://orderer.example.com:7050"
+      }
+  ],
+  "channel": "composerchannel",
+  "timeout": 300
+}
+```
+运行命令创建新的业务网络卡片：
+```
+composer card create -u admin -s adminpw -n tutorial-network -p connection2.json -f admin@tutorial-network.card
+```
+导入到playground后提示身份admin已经存在了。
+
+
+
 
 
 # 实践：部署Hyperledger Composer网络到多组织Fabric
