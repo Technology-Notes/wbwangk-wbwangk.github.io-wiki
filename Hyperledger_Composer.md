@@ -258,7 +258,7 @@ sudo ./byfn -m up
 cd /opt/fabric-samples/first-network
 sudo composer runtime install --card PeerAdmin@byfn-network-org1-only --businessNetworkName tutorial-network
 cp ~/composer/tutorial-network/tutorial-network@0.0.1.bna .
-sudo composer network start --card PeerAdmin@byfn-network-org1-only --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile tutorial-network@0.0.2.bna --file networkadmin.card
+sudo composer network start --card PeerAdmin@byfn-network-org1-only --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile tutorial-network@0.0.1.bna --file networkadmin.card
 ```
 上面的`composer runtime install`就是安装composer运行时。安装运行时的时候会用到网络卡片中指定的证书，而BYFN的证书是相对于`fabric-samples/first-network`目录的。如果在其他目录安装运行时，会提示：
 ```
