@@ -266,8 +266,29 @@ Error: ENOENT: no such file or directory, open 'crypto-config/ordererOrganizatio
 ```
 `cp`是把业务网络档案复制到当前目录。`composer network start`命令本质上是将业务网络档案中定义的链码程序用docker容器实例化。
 
+下面将业务网卡卡片导入到业务网络：
+```
+composer network ping --card admin@tutorial-network
+```
+这时报错了，说127.0.0.1:7054的服务不可用。这是因为BYFN并没有启动CA容器。
+幸好[为多个组织部署Hyperledger Composer](https://wbwangk.github.io/ComposerDocs/tutorials_deploy-to-fabric-multi-org/)中启动了一个改良的带CA的一组容器。删除原来的BYFN的容器，重新启动新的带CA的Fabric实例：
+```
+docker rm -f $(docker ps -aq)
+sodu ./byfn2.sh -m up
+```
+这个脚本是我自己改的，功能与“为多个组织部署Hyperledger Composer”中的脚本一样，可以用那个代替。
+这时再运行ping就可以了:
+```
+composer network ping --card admin@tutorial-network
+```
+如果你纳闷为啥ping要用到CA服务。可以打开下列目录看看：
+```
+ls -l  ~/.composer/cards/admin@tutorial-network/credentials
+```
+你可以看到目录是空的，所以Composer需要CA服务来获取证书和私钥。
 
-
+容易犯的一个错误：  
+业务网络档案中有个package.json文件，里面确定了业务网络的名称。当运行`composer runtime install`时有个参数指定业务网络名称，这个名称必须与档案中的一致，否则当业务网络启动（即链码实例化）时会报错。  
 
 
 
