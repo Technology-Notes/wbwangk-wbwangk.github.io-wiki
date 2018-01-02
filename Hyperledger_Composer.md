@@ -44,7 +44,7 @@ composer card import --file /tmp/PeerAdmin@hlfv1.card
 composer runtime install -c PeerAdmin@fabric-network -n tutorial-network
 ```
 业务网络名称`tutorial-network`在安装运行时指定，后面会引用。  
-可以尝试创建`tutorial-network2`。可以把**业务网络视为通道的细分？**  
+可以尝试创建`tutorial-network2`。如果以`-n tutorial-network2`的方式安装Composer运行时，可以成功。但之后如何启动网络时，如果`.bna`档案中定义的业务网络名称不是`tutorial-network2`会报错。   
 启动业务网络：
 ```bash
 composer network start -c PeerAdmin@fabric-network -a tutorial-network.bna -A admin -S adminpw
