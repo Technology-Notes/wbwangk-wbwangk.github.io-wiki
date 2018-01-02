@@ -74,7 +74,7 @@ composer card create -p connection-org1.json -u alice -n tutorial-network -c ali
 ```
 之后是导入卡片和ping业务网络了。  
 
-## Hyperledger Composer Playground
+## Hyperledger Composer Playground(容器方式)
 [本地安装文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)、[本地环境](E:\vagrant10\ambari-vagrant\fabric\devenv)  
 ```
 curl -sSL https://hyperledger.github.io/composer/install-hlfv1.sh | bash
@@ -144,7 +144,7 @@ composer card create -u admin -s adminpw -n tutorial-network -p connection2.json
 到这里才终于明白按[官方文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)部署的playground是和composer一起跑在容器中的。而容器中缺乏必要的调试工具，而且其连接Fabric使用的是example.com域名(而不是localhost)，这使得playground连接之前的fabric环境（如BYFN）变得很困难。  
 所以决定采用本地部署的playground重新调试，而不是使用容器中的。
 
-## Hyperledger Composer Playground(新)
+## Hyperledger Composer Playground(容器外)
 准备Fabric环境：
 ```bash
 cd ~/fabric-tools
@@ -243,7 +243,7 @@ composer-playground
 sudo composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName tutorial-network
 sudo composer network start --card PeerAdmin@hlfv1 --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile tutorial-network@0.0.1.bna --file networkadmin.card
 ```
-至于为啥要加上`sudo`，可能是之前的Fabric环境是用root安装的，导致一些文件权限不正常。  
+至于为啥要加上`sudo`？可能是之前的Fabric环境是用root安装的，导致一些文件权限不正常。  
 现在playground终于连接上本地的Fabric环境了。
 
 #### playground连接BYFN
@@ -276,7 +276,7 @@ composer network ping --card admin@tutorial-network
 docker rm -f $(docker ps -aq)
 sodu ./byfn2.sh -m up
 ```
-这个脚本是我自己改的，功能与“为多个组织部署Hyperledger Composer”中的脚本一样，可以用那个代替。
+这个脚本是我自己改的，功能与文章“为多个组织部署Hyperledger Composer”中的脚本一样，可以用那个代替（有一点不用：我定义的byfn2.sh启动的CA容器名称是ca.org1.example.com，而那篇文章启动的CA容器名称是ca_peerOrg1，这个容器名称实际上与文章中讲的不符）。
 这时再运行ping就可以了:
 ```
 composer network ping --card admin@tutorial-network
