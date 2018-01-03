@@ -602,6 +602,62 @@ cd fabric-samples/first-network
 ```
 first-network会启动多个容器，主要特点是包括了两个组织共四个peer。
 
+## BYFN改进(增加CA)
+```
+./byfn.sh -m up -s couchdb
+```
+增加了一个CA的docker-compose配置文件：
+```yaml
+version: '2'
+
+networks:
+  net_byfn:
+    external: true
+
+services:
+  ca0:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org1
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.org1.example.com
+    networks:
+      - net_byfn
+
+  ca1:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org2
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/a64893a739c00b45aeda0422d3fe7dd0de39e9738cbcc7fce2b220ab84c875f3_sk
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/a64893a739c00b45aeda0422d3fe7dd0de39e9738cbcc7fce2b220ab84c875f3_sk -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.org2.example.com
+    networks:
+      - net_byfn
+```
+当使用byfn.sh启动后，会自动创建一个叫`net_byfn`的docker网络（不知道为啥会自动加上`net_`）。为了让CA的容器可以与其他的Fabric容器通信，需要定义一个外部网络。
+
+启动CA容器：
+```
+docker-compose -f docker-compose-ca.yaml up -d
+```
+
+
+
 ### 问题
 Error: Failed to load connector module "composer-connector-hlfv1" for connection type "hlfv1". Cannot find module '/usr/local/lib/node_modules/composer-cli/node_modules/grpc/src/node/extension_binary/node-v57-linux-x64/grpc_node.node'  
 解决办法：  
