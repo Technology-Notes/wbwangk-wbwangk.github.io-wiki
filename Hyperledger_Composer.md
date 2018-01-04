@@ -586,6 +586,29 @@ composer network ping -c bob@tutorial-network
 ```
 到这里就成功了。
 
+### 用playground连接BYFN
+启动composer-playground：
+```
+cd /opt/fabric-samples/first-network
+composer-playground
+```
+注意：一定要在上述目录下启动playground，否则会提示找不到`crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt`。  
+playgrouand监听8080端口。virtualbox已经将8080端口用NAT映射到了windows，所以在windows下用浏览器打开地址[127.0.0.1:8080](127.0.0.1:8080)就可以进入playground界面。
+
+页面上会显示多个业务网络卡片，其中“连接可用”的卡片是`alice@tutorial-network`和`bob@tutorial-network`。
+
+### 用compser-rest-server连接到BYFN
+```
+cd /opt/fabric-samples/first-network
+composer-rest-server
+? Enter the name of the business network card to use: alice@tutorial-network
+? Specify if you want namespaces in the generated REST API: never use namespaces
+? Specify if you want to enable authentication for the REST API using Passport: No
+? Specify if you want to enable event publication over WebSockets: Yes
+? Specify if you want to enable TLS security for the REST API: No
+```
+composer-rest-server会监听3000端口，virtualbox已经用NAT将3000端口映射到了windows（如果没有就自己配置）。在windows用浏览器打开[http://localhost:3000](http://localhost:3000)端口查看所有REST API。
+
 ## Hyperledger环境部署的整理
 Hyperledger涉及多个组件，有时本地安装有时又跑在容器中，尤其当其部署在同一个VM上时，如果不整理清楚容易引起混乱。
 
@@ -597,6 +620,7 @@ curl -sSL https://hyperledger.github.io/composer/install-hlfv1.sh | bash
 ```
 导致的结果是启动了多个容器，相对Composer的部署，多了一个composer容器，该容器暴露localhost:8080端口，是Playground的web界面。  
 由于composer跑在容器中，所以连接配置文件中定义的fabric地址不是localhost，而是类似`ca.org1.example.com`。
+
 
 ### Hyperledger Composer开发环境
 [部署文档](https://wbwangk.github.io/ComposerDocs/installing_development-tools/)  
