@@ -338,7 +338,7 @@ Composer的运行需要CA容器的支持，原BYFN没有启动CA。所以要修�
 
 `docker-compose-cli.yaml`被增加以上内容后，再用byfn.sh启动BYFN会多启动两个CA容器：`ca.org1.example.com`、`ca.org2.example.com`。
 
-然后root身份启动BYFN:
+最好用非root用户（与启动Composer用同一个用户）来克隆`fabric-samples`和启动`first-network`，否则会面临一系列的文件系统权限问题：
 ```
 cd /opt/fabric-samples/first-network
 ./byfn.sh -m up -s couchdb
@@ -538,16 +538,15 @@ composer card import -f PeerAdmin@byfn-network-org1.card
 composer card import -f PeerAdmin@byfn-network-org2-only.card
 composer card import -f PeerAdmin@byfn-network-org2.card
 ```
-如果提示卡片重复，可以用类似下面的命令删除：
-```
-rm -f ~/.composer/cards
-```
+注意：如果提示卡片重复，可以用`rm -f ~/.composer/cards`命令删除已经导入的重名卡片。  
+
+
 ### 安装Composer运行时
 ```bash
 composer runtime install -c PeerAdmin@byfn-network-org1-only -n tutorial-network
 composer runtime install -c PeerAdmin@byfn-network-org2-only -n tutorial-network
 ```
-在这里多次碰到错误提示：
+我在这里多次碰到错误提示：
 ```
 because of "x509: ECDSA verification failure" while trying to verify candidate authority certificate "ca.org1.example.com"
 ```
@@ -562,9 +561,30 @@ composer identity request -c PeerAdmin@byfn-network-org1-only -u admin -s adminp
 
 这个证书会被保存到当前目录的alice子目录中。创建了三个证书文件，其中`admin-pub.pem`是证书(包括公钥)，`admin-priv.pem`是私钥。
 
+### 步骤十五到十七：获取业务管理员证书、启动业务网络
+```
+sudo composer identity request -c PeerAdmin@byfn-network-org1-only -u admin -s adminpw -d alice
+sudo composer identity request -c PeerAdmin@byfn-network-org2-only -u admin -s adminpw -d bob
+```
+命令会新建目录alice和bob，里面存放了获取到的证书和私钥。  
 
+启动业务网络：
+```
+composer network start -c PeerAdmin@byfn-network-org1 -a tutorial-network@0.0.2.bna -o endorsementPolicyFile=endorsement-policy.json -A alice -C alice/admin-pub.pem -A bob -C bob/admin-pub.pem
+```
+这里能够启动网络成功，但事件通知经常超时。
 
-
+### 剩余步骤
+创建业务网络卡片、导入Composer、用ping连接业务网络进行测试：
+```
+sudo composer card create -p connection-org1.json -u alice -n tutorial-network -c alice/admin-pub.pem -k alice/admin-priv.pem
+composer card import -f alice@tutorial-network.card
+composer network ping -c alice@tutorial-network
+sudo composer card create -p connection-org2.json -u bob -n tutorial-network -c bob/admin-pub.pem -k bob/admin-priv.pem
+composer card import -f bob@tutorial-network.card
+composer network ping -c bob@tutorial-network
+```
+到这里就成功了。
 
 ## Hyperledger环境部署的整理
 Hyperledger涉及多个组件，有时本地安装有时又跑在容器中，尤其当其部署在同一个VM上时，如果不整理清楚容易引起混乱。
