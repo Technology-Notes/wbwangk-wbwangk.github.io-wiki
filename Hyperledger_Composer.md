@@ -334,7 +334,7 @@ Composer的运行需要CA容器的支持，原BYFN没有启动CA。所以要修�
       - byfn
 ```
 注意：上面的TLS私钥（如`1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk`）需要修改成你自己环境的文件名。不要轻易执行`byfn.sh -m down`，因为会导致私钥的文件名改变。  
-注意：在[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E7%AC%94%E8%AE%B0#4%E5%BD%A2%E6%88%90%E5%8F%AF%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC)文档中定义了一个脚本certv.sh，可以用来检测证书和私钥是否匹配。在实测中发现当CA容器起来时会修改cryptogen生成的证书，具体的是`./crypto-config/peerOrganizations/org1.example.com/ca`和`./crypto-config/peerOrganizations/org2.example.com/ca`目录中的pem文件。建议用`chmod -w`命令将证书文件改成不允许修改，以编码麻烦。（CA容器修改证书，也可能是因为私钥文件设错了）
+注意：在[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E7%AC%94%E8%AE%B0#4%E5%BD%A2%E6%88%90%E5%8F%AF%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC)文档中定义了一个脚本certv.sh，可以用来检测证书和私钥是否匹配。在实测中发现当CA容器起来时会修改cryptogen生成的证书，具体的是`./crypto-config/peerOrganizations/org1.example.com/ca`和`./crypto-config/peerOrganizations/org2.example.com/ca`目录中的pem文件。建议用`chmod -w`命令将证书文件改成不允许修改，以避免麻烦。（CA容器修改证书，也可能是因为私钥文件设错了）
 
 `docker-compose-cli.yaml`被增加以上内容后，再用byfn.sh启动BYFN会多启动两个CA容器：`ca.org1.example.com`、`ca.org2.example.com`。
 
