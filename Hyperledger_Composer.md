@@ -293,66 +293,59 @@ ls -l  ~/.composer/cards/admin@tutorial-network/credentials
 
 
 # 实践：部署Hyperledger Composer网络到多组织Fabric
-```bash
-cd /opt/fabric-samples/first-network
-cp COMPOSE_FILE=docker-compose-e2e.yaml COMPOSE_FILE=docker-compose-e2e2.yaml
-cp byfn.sh byfn2.sh
-```
-编辑byfn2.sh:
-```bash
-export ORG1_ADMIN_KEY=crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/*_sk
-export ORG2_ADMIN_KEY=crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/*_sk
-export ORG1_ADMIN_CRT=crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
-export ORG2_ADMIN_CRT=crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem
-(略)
-#COMPOSE_FILE=docker-compose-cli.yaml
-COMPOSE_FILE=docker-compose-e2e2.yaml
-(略)
-```
-编辑docker-compose-e2e2.yaml：
+[原文](https://wbwangk.github.io/ComposerDocs/tutorials_deploy-to-fabric-multi-org)  
+
+### Fabric环境准备
+原文是重新克隆了一个改良的BYFN。其实可以直接在官方BYFN上自己改造出一个适合Composer的BYFN。  
+Composer的运行需要CA容器的支持，原BYFN没有启动CA。所以要修改`docker-compose-cli.yaml`，在配置文件的最后增加以下内容：
 ```yaml
-ca0:
-    container_name: ca.org1.example.com
-ca1:
-    container_name: ca.org2.example.com
-  cli:
-    container_name: cli
-    image: hyperledger/fabric-tools
-    tty: true
+  ca0:
+    image: hyperledger/fabric-ca
     environment:
-      - GOPATH=/opt/gopath
-      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      - CORE_LOGGING_LEVEL=DEBUG
-      - CORE_PEER_ID=cli
-      - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
-      - CORE_PEER_LOCALMSPID=Org1MSP
-      - CORE_PEER_TLS_ENABLED=true
-      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
-      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
-      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
-      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
-    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-    command: /bin/bash -c './scripts/script.sh ${CHANNEL_NAME} ${DELAY} ${LANG}; sleep $TIMEOUT'
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org1
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk -b admin:adminpw -d'
     volumes:
-        - /var/run/:/host/var/run/
-        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
-        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
-        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
-        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
-    depends_on:
-      - orderer.example.com
-      - peer0.org1.example.com
-      - peer1.org1.example.com
-      - peer0.org2.example.com
-      - peer1.org2.example.com
+      - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.org1.example.com
+    networks:
+      - byfn
+
+  ca1:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-org2
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/a64893a739c00b45aeda0422d3fe7dd0de39e9738cbcc7fce2b220ab84c875f3_sk
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/a64893a739c00b45aeda0422d3fe7dd0de39e9738cbcc7fce2b220ab84c875f3_sk -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca.org2.example.com
     networks:
       - byfn
 ```
-清理docker容器：
-```bash
-docker rm -f $(docker ps -aq)
-./byfn2.sh
+`docker-compose-cli.yaml`被增加以上内容后，再用byfn.sh启动BYFN会多启动两个CA容器：`ca.org1.example.com`、`ca.org2.example.com`。
+
+然后root身份启动BYFN:
 ```
+cd /opt/fabric-samples/first-network
+./byfn.sh -m up -s couchdb
+```
+注意：加上`-s`参数为了启动couchdb作为全局状态数据库。Composer的查询需要依赖couchdb的能力，如果不测试Composer的查询，也可以不启动couchdb。
+
+注意：不要随便随便执行`byfn.sh -m down`，因为会删除所有密码文件而导致导入的Composer卡片失效。如果想重启BYFN，可以使用命令`docker rm -f $(docker ps -aq)`删除所有容器，然后再执行`byfn.sh -m up`。
+
+### 步骤三和四
+
 connection-org1.json:
 ```json
 {
@@ -521,14 +514,47 @@ connection-org2-only.json:
     "timeout": 300
 }
 ```
-第七步和第八步：
+### 步骤七到十(创建和导入卡片、安装运行时)
+#### 创建业务网络卡片
 ```bash
+export ORG1_ADMIN_KEY=crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/*_sk
+export ORG2_ADMIN_KEY=crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/*_sk
+export ORG1_ADMIN_CRT=crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
+export ORG2_ADMIN_CRT=crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem
 sudo composer card create -p connection-org1-only.json -u PeerAdmin -c $ORG1_ADMIN_CRT -k $ORG1_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
 sudo composer card create -p connection-org1.json -u PeerAdmin -c $ORG1_ADMIN_CRT -k $ORG1_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
 sudo composer card create -p connection-org2-only.json -u PeerAdmin -c $ORG2_ADMIN_CRT -k $ORG2_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
 sudo composer card create -p connection-org2.json -u PeerAdmin -c $ORG2_ADMIN_CRT -k $ORG2_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
 ```
-剩下的9到16步按完全按原教程操作就可以。执行到17步的时候，提示`tutorial-network@0.0.1.bna`不存在，执行不下去了。
+
+#### 将卡片导入Composer
+```bash
+composer card import -f PeerAdmin@byfn-network-org1-only.card
+composer card import -f PeerAdmin@byfn-network-org1.card
+composer card import -f PeerAdmin@byfn-network-org2-only.card
+composer card import -f PeerAdmin@byfn-network-org2.card
+```
+如果提示卡片重复，可以用类似下面的命令删除：
+```
+rm -f ~/.composer/cards
+```
+### 安装Composer运行时
+```bash
+composer runtime install -c PeerAdmin@byfn-network-org1-only -n tutorial-network
+composer runtime install -c PeerAdmin@byfn-network-org2-only -n tutorial-network
+```
+在这里多次碰到错误提示：
+```
+because of "x509: ECDSA verification failure" while trying to verify candidate authority certificate "ca.org1.example.com"
+```
+这是因为执行`byfn.sh -m down`删除了所有证书和私钥，执行`byfn.sh -m up`重新生成了证书和私钥。而老的私钥和证书已经作为卡片导入到了Composer中，导致Fabric环境中的证书与Composer中的不符合。
+
+### 步骤十五（）
+composer identity request -c PeerAdmin@byfn-network-org1-only -u admin -s adminpw -d alice
+
+
+
+
 
 ## Hyperledger环境部署的整理
 Hyperledger涉及多个组件，有时本地安装有时又跑在容器中，尤其当其部署在同一个VM上时，如果不整理清楚容易引起混乱。
