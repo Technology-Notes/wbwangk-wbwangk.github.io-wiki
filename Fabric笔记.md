@@ -61,7 +61,7 @@ $ openssl x509 -pubkey -noout -in /opt/fabric-samples/basic-network/crypto-confi
 ```
 #### 2. 用私钥对某文件签名
 ```
-$ openssl dgst -ecdsa-with-SHA1 -sign ./crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/1deeab5433fa6e5f045eb763109d6165268fba153211af1281f00d45f54b1022_sk README.md > signature.bin
+$ openssl dgst -ecdsa-with-SHA1 -sign ./crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/d63585d99627643f933630796832e55954da88911208ae54e0d69d51a1ff9981_sk README.md > signature.bin
 ```
 #### 3. 用公钥验证签名
 ```
@@ -69,6 +69,22 @@ $ openssl dgst -ecdsa-with-SHA1 -verify public.pem -signature signature.bin READ
 Verified OK
 ```
 说明假设是成立的，这个文件`./crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore/1deeab5433fa6e5f045eb763109d6165268fba153211af1281f00d45f54b1022_sk`是管理员私钥。
+
+#### 4.形成可执行脚本
+```
+cat << EOF > certv.sh
+echo "this is a file" > t.t
+openssl x509 -pubkey -noout -in \$1  > public.pem
+openssl dgst -ecdsa-with-SHA1 -sign \$2 t.t > signature.bin
+openssl dgst -ecdsa-with-SHA1 -verify public.pem -signature signature.bin t.t
+EOF
+chmod +x certv.sh
+```
+使用时第一个参数是证书，第二个参数是私钥。如：
+```
+./certv.sh org1.pem org1.key
+```
+
 
 ## 手工建fabirc集群
 参考了[这篇文章](http://www.cnblogs.com/studyzy/p/7237287.html)，但差异很大。  
