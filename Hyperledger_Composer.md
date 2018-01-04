@@ -333,7 +333,9 @@ Composer的运行需要CA容器的支持，原BYFN没有启动CA。所以要修�
     networks:
       - byfn
 ```
-注意：上面的TLS私钥（如`1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk`）需要修改成你自己环境的文件名。不要轻易执行`byfn.sh -m down`，因为会导致私钥的文件名改变。
+注意：上面的TLS私钥（如`1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk`）需要修改成你自己环境的文件名。不要轻易执行`byfn.sh -m down`，因为会导致私钥的文件名改变。  
+注意：在[这个](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E7%AC%94%E8%AE%B0#4%E5%BD%A2%E6%88%90%E5%8F%AF%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC)文档中定义了一个脚本certv.sh，可以用来检测证书和私钥是否匹配。在实测中发现当CA容器起来时会修改cryptogen生成的证书，具体的是`./crypto-config/peerOrganizations/org1.example.com/ca`和`./crypto-config/peerOrganizations/org2.example.com/ca`目录中的pem文件。建议用`chmod -w`命令将证书文件改成不允许修改，以编码麻烦。（CA容器修改证书，也可能是因为私钥文件设错了）
+
 `docker-compose-cli.yaml`被增加以上内容后，再用byfn.sh启动BYFN会多启动两个CA容器：`ca.org1.example.com`、`ca.org2.example.com`。
 
 然后root身份启动BYFN:
@@ -517,9 +519,10 @@ connection-org2-only.json:
 ```
 ### 步骤七到十(创建和导入卡片、安装运行时)
 #### 创建业务网络卡片
+下面的命令一定不要在root下执行，而是执行Composer的某个非root用户。
 ```bash
-export ORG1_ADMIN_KEY=crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/*_sk
-export ORG2_ADMIN_KEY=crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/*_sk
+export ORG1_ADMIN_KEY=crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/b9571fc3d7bcfbc86015afa70a16f10c711b6c495bae8d49d5648b219b384b92_sk
+export ORG2_ADMIN_KEY=crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore/c0f793317984083079f7ff65b593c7e11e87f07f2da303a0c3e69734d601e19a_sk
 export ORG1_ADMIN_CRT=crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem
 export ORG2_ADMIN_CRT=crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts/Admin@org2.example.com-cert.pem
 sudo composer card create -p connection-org1-only.json -u PeerAdmin -c $ORG1_ADMIN_CRT -k $ORG1_ADMIN_KEY -r PeerAdmin -r ChannelAdmin
