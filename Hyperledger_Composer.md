@@ -306,10 +306,10 @@ Composer的运行需要CA容器的支持，原BYFN没有启动CA。所以要修�
       - FABRIC_CA_SERVER_CA_NAME=ca-org1
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/8f4cd492a4eb564930b9f0f30831adeaae5fa0504251a62aa572729ff2b3b8ec_sk
     ports:
       - "7054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/8f4cd492a4eb564930b9f0f30831adeaae5fa0504251a62aa572729ff2b3b8ec_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca.org1.example.com
@@ -323,16 +323,17 @@ Composer的运行需要CA容器的支持，原BYFN没有启动CA。所以要修�
       - FABRIC_CA_SERVER_CA_NAME=ca-org2
       - FABRIC_CA_SERVER_TLS_ENABLED=true
       - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/a64893a739c00b45aeda0422d3fe7dd0de39e9738cbcc7fce2b220ab84c875f3_sk
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/2b1061a9f600848e25ac3ca2e2fd0f0ebdc0cec03dffd17f3dc54b3f78c2bc67_sk
     ports:
       - "8054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/a64893a739c00b45aeda0422d3fe7dd0de39e9738cbcc7fce2b220ab84c875f3_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2.example.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/2b1061a9f600848e25ac3ca2e2fd0f0ebdc0cec03dffd17f3dc54b3f78c2bc67_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca.org2.example.com
     networks:
       - byfn
 ```
+注意：上面的TLS私钥（如`1b90792dab005fbc00417d52f075d5ebe725b2acbd3b83a594e30c58ea998155_sk`）需要修改成你自己环境的文件名。不要轻易执行`byfn.sh -m down`，因为会导致私钥的文件名改变。
 `docker-compose-cli.yaml`被增加以上内容后，再用byfn.sh启动BYFN会多启动两个CA容器：`ca.org1.example.com`、`ca.org2.example.com`。
 
 然后root身份启动BYFN:
@@ -549,8 +550,14 @@ because of "x509: ECDSA verification failure" while trying to verify candidate a
 ```
 这是因为执行`byfn.sh -m down`删除了所有证书和私钥，执行`byfn.sh -m up`重新生成了证书和私钥。而老的私钥和证书已经作为卡片导入到了Composer中，导致Fabric环境中的证书与Composer中的不符合。
 
-### 步骤十五（）
+### 步骤十五（创建业务网络管理员）
+下面命令的目的是根据已知的登记id和登记密码获取私钥和证书，复用了原卡片中的连接配置文件定义。
+```
 composer identity request -c PeerAdmin@byfn-network-org1-only -u admin -s adminpw -d alice
+```
+这个命令的`-u admin`和`-s adminpw`选项需要与Hyperledger Fabric CA (Certificate Authority)注册的默认用户一致。
+
+这个证书会被保存到当前目录的alice子目录中。创建了三个证书文件，其中`admin-pub.pem`是证书(包括公钥)，`admin-priv.pem`是私钥。
 
 
 
