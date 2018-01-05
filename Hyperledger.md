@@ -1686,6 +1686,34 @@ Hyperledger Fabric客户端SDK是为了方便开发者编写和测试链码应�
 答：请使用[StackOverflow](https://stackoverflow.com/questions/tagged/hyperledger)。
 
 
+## Hyperledger项目介绍
+#### 
+[Quilt](https://github.com/hyperledger/quilt)Hyperledger Quilt - An implementation of the Interledger Protocol [https://interledger.org](https://interledger.org/)  
+[一个Quilt的PPT](https://chicagopaymentssymposium.org/wp-content/uploads/2016/10/101216-visions-interoperability-thomas.pdf)   
+Quit遵循了[ISO 20022](http://wiki.mbalib.com/wiki/ISO20022)。  
+[stackoverflow上的相关回答](https://stackoverflow.com/questions/46203765/interledger-connector-for-hyperledger)   
+
+### Hyperledger Burrow
+[Hyperledger Burrow](https://github.com/hyperledger/burrow)是一个可授权的智能合约机器；在2017年4月成为Hyperledger旗下的第四个分布式账本平台。它最初是由Monax开发并提供给Hyperledger的。
+
+Burrow提供了一个模块化区块链客户端，它带有一个根据以太坊虚拟机（EVM）规范构建的可授权的智能合约解释器。Burrow为Hyperledger的全面工作提供了一个非常决定性的、聚焦于智能合同的区块链设计。Burrow的用户可以通过使用智能合约和基于“原生安全”的权限层来获得一个访问控制层。
+
+Burrow的主要组成如下：
+
+- 共识引擎，负责维护节点之间的网络堆栈，和供应用引擎使用的交易排序服务。
+
+- 应用区块链接口（“ABCI”）为共识引擎和应用引擎提供了连接的接口规范。
+
+- 智能合约应用引擎为应用程序构建者提供强大的确定性智能合约引擎，用于运行复杂的工业流程。
+
+- 网关为系统集成和用户界面提供编程接口。
+
+### Hyperledger Indy
+Hyperledger Indy是一个专门用于分布式账本去中心身份。它提供工具、库和可重复使用的组件，用于创建和使用以区块链或其他分布式账本为基础的独立数字身份，以便跨管理域、应用程序和任何其他“孤岛”进行互操作。
+
+由于分布式账在事后不能进行修改，基于账本的身份用例需要仔细考虑基本组件，包括性能、规模、信任模型和隐私。特别是，Privacy by Design和隐私保护技术对于全球范围内可以进行关联的公共身份识别账户至关重要。
+
+出于所有这些原因，Hyperledger Indy开发了去中心身份的规范、术语和设计模式，并为这些概念提供了一个实现，可供在Hyperledger联盟内部和外部使用。
 
 
 
