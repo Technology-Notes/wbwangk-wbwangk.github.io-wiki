@@ -138,3 +138,6 @@ https://wiki.hyperledger.org/projects/fabric
 
 ### Deploying to a multi-organization Hyperledger Fabric
 https://hyperledger.github.io/composer/unstable/tutorials/deploy-to-fabric-multi-org.html
+
+### 跨链
+[quilt](https://github.com/hyperledger/quilt)Hyperledger Quilt - An implementation of the Interledger Protocol  
