@@ -147,3 +147,4 @@ Everledger：钻石追溯
 Ascribe：艺术品、论文等版权保护
 mediachain：创意保护
 monegraph：编辑、博客等内容所有者保护作品
+Chronicled.com: 供应链追溯
