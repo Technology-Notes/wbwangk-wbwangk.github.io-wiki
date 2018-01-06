@@ -141,3 +141,7 @@ https://hyperledger.github.io/composer/unstable/tutorials/deploy-to-fabric-multi
 
 ### 跨链
 [quilt](https://github.com/hyperledger/quilt)Hyperledger Quilt - An implementation of the Interledger Protocol  
+
+### 区块链案例
+Everledger：钻石追溯
+Ascribe：艺术品、论文等版权保护
