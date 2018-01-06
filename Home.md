@@ -145,3 +145,5 @@ https://hyperledger.github.io/composer/unstable/tutorials/deploy-to-fabric-multi
 ### 区块链案例
 Everledger：钻石追溯
 Ascribe：艺术品、论文等版权保护
+mediachain：创意保护
+monegraph：编辑、博客等内容所有者保护作品
