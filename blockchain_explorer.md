@@ -64,3 +64,17 @@ npm install
 config.vm.network :forwarded_port, guest: 8081, host: 8081, id: "blockchain-explorer", host_ip: "localhost", auto_correct: true # blockchain-explorer
 ```
 修改了vagrant配置后需要重新启动虚拟机新端口映射才能生效。然后，重新启动BYFN和blockchain-explorer。然后在浏览器中访问地址`127.0.0.1:8081`就是看到blockchain-explorer界面了。
+
+#### 停止blockchain-explorer
+从start.sh中看到，blockchain-explorer是通过执行`node main.js`的方式启动的。那么查看一下node相关进程：
+```
+$ ps -ef | grep node
+root      7718     1  3 Jan08 pts/2    01:13:26 node main.js
+root     10620 10602  3 00:32 ?        00:20:58 peer node start --peer-defaultchain=false
+ubuntu   12652  2099  0 07:32 pts/0    00:00:36 node /usr/local/bin/composer-playground
+root     15036 14825  0 11:39 pts/3    00:00:00 grep --color=auto node
+```
+第一个进程就是blockchain-explorer的进程，则：
+```
+kill 7718
+```
