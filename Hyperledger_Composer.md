@@ -736,8 +736,14 @@ services:
 docker-compose -f docker-compose-ca.yaml up -d
 ```
 
+## 讲解Composer
+[Composer架构图](https://wbwangk.github.io/ComposerDocs/introduction_solution-architecture/)  
+[安装Composer和启动Fabric](https://wbwangk.github.io/ComposerDocs/installing_development-tools/)  
+[开发者教程](https://wbwangk.github.io/ComposerDocs/tutorials_developer-tutorial/)  
+[查询教程](https://wbwangk.github.io/ComposerDocs/tutorials_queries/)  
+[Playground教程](https://wbwangk.github.io/ComposerDocs/tutorials_playground-tutorial/)  
 
-
+[建模语言](https://wbwangk.github.io/ComposerDocs/reference_cto_language/)  
 ### 问题
 Error: Failed to load connector module "composer-connector-hlfv1" for connection type "hlfv1". Cannot find module '/usr/local/lib/node_modules/composer-cli/node_modules/grpc/src/node/extension_binary/node-v57-linux-x64/grpc_node.node'  
 解决办法：  
