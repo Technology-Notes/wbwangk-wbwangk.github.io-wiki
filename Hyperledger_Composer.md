@@ -34,6 +34,49 @@ composer card import --file /tmp/PeerAdmin@hlfv1.card
 ```
 这个脚本，创建了连接配置文件`connection.json`，用定位了Fabric组织管理员`Admin@org1.example.com`证书和私钥，利用公私钥创建了一个网页网络卡片`PeerAdmin@hlfv1.card`，并导入到网络中。
 
+可以用下面的方式查看导入的卡片：
+```
+ls -l ~/.composer/cards
+drwxr-x--- 3 ubuntu ubuntu 4096 Jan 10 02:18 PeerAdmin@hlfv1
+```
+#### 两种选择：composer-cli或composer-playground
+如果用composer-cli方式创建业务网络就按照[开发者教程](https://wbwangk.github.io/ComposerDocs/tutorials_developer-tutorial/)的步骤逐步完成，直到用ping命令测试业务网络是否正常。  
+这时如果检查一下composer卡片可以看到的内容类似下面：
+```
+ls -l ~/.composer/cards
+drwxr-x--- 3 ubuntu ubuntu 4096 Jan 10 02:30 admin@tutorial-network
+drwxr-x--- 3 ubuntu ubuntu 4096 Jan 10 02:18 PeerAdmin@hlfv1
+```
+
+下面讲第二种选择，就是用composer-playground来创建、部署业务网络。Composer官方文档中，虽然在[Playground教程](https://wbwangk.github.io/ComposerDocs/tutorials_playground-tutorial/)讲到了，但那讲解的是在线Playground。下面讲解的是利用本地Playground创建和部署业务网络，这样可以与comopser-cli方式进行对比，以便更好地理解Composer的功能。 
+
+启动composer-playground：
+```
+composer-playground
+```
+屏幕playground监听8080端口。利用vagrant已经把8080端口映射到了windows下，利用windows下的浏览器访问地址`localhost:8080`就可以进入playground界面。
+
+首先进入的界面是My Business Networks(url：`localhost:8080/login`)。在这个网页上，可以看到两个连接：hlfv1和Web Browser。前者是本地的Fabric运行时，后者是浏览器内执行的Composer web运行时。
+
+在hlfv1连接下有两个卡片：PeerAdmin@hlfv1和admin@tutorial-network。前者是`createPeerAdminCard.sh`脚本导入到Composer中的，后者是前面的composer-cli（即开发者教程）创建的。而且后者的Connect now按钮是“亮”的，点进去可以看到该业务网络的内容。
+
+#### 用playground创建业务网络
+点击连接hlfv1的“Deploy a new business network”（空白卡片的位置）就进入了新建基于Fabric运行时的业务网络新建业务（别点击Web Browser连接的）。
+
+在“Give your new Business Network a name:”输入框中输入业务网络名称，如`tutorial-network2`;
+
+在“Give the network admin card that will be created a name”输入框中输入业务网络管理员的id，如`admin@tutorial-network2`;
+
+在“Choose a Business Network Definition to start with:”选项中可以选择默认的basic-sample-network；
+
+在“CREDENTIALS FOR NETWORK ADMINISTRATOR”中的单选框选择ID and Secret，然后输入An Enrollment ID and Secret。对于Fabric来说，一般默认ID是`admin`，密码是`adminpw`。这应是CA的管理员用户和密码，Composer需要这个权限来来新建身份。  
+
+最后，点击“Deploy”按钮。
+
+之后进入的内容就跟[Playground教程](https://wbwangk.github.io/ComposerDocs/tutorials_playground-tutorial/)中一样了，也很用composer-cli创建业务网络类似。
+
+
+
 
 ### 为单个组织部署Hyperledger Composer区块链网络到Hyperledger Fabric
 [为单个组织部署Hyperledger Composer区块链网络到Hyperledger Fabric](https://wbwangk.github.io/ComposerDocs/tutorials_deploy-to-fabric-single-org/)  
@@ -54,6 +97,8 @@ composer network start -c PeerAdmin@fabric-network -a tutorial-network.bna -A ad
 ```bash
 composer card import -f admin@tutorial-network.card
 ```
+
+
 
 ### 部署Hyperledger Composer网络到多组织Fabric
 [部署Hyperledger Composer网络到多组织Fabric](https://wbwangk.github.io/ComposerDocs/tutorials_deploy-to-fabric-multi-org/)  
