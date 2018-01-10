@@ -152,3 +152,7 @@ Chronicled.com: 供应链追溯
 ### 共识机制，可编程的“利益”转移规则
 [一本书](http://bitcoin-on-nodejs.ebookchain.org/1-%E4%BA%86%E8%A7%A3%E5%8A%A0%E5%AF%86%E8%B4%A7%E5%B8%81/7-%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6%EF%BC%8C%E5%8F%AF%E7%BC%96%E7%A8%8B%E7%9A%84%E2%80%9C%E5%88%A9%E7%9B%8A%E2%80%9D%E8%BD%AC%E7%A7%BB%E8%A7%84%E5%88%99.html)
 POW,POS,DPOS
+
+
+### composer-rest-server认证数据持久化
+[链接](https://github.com/hyperledger/composer/blob/master/packages/composer-website/jekylldocs/integrating/deploying-the-rest-server.md)  
