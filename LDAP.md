@@ -664,3 +664,7 @@ $ sudo ldapadd -x -D cn=admin,dc=ambari,dc=apache,dc=org -W -f users2.ldif
 ## LDAP工具
 JXplorer是一个开源的LDAP浏览器，支持多种操作系统。官网：[jxplorer.org](http://www.jxplorer.org/)  
 [Ldap Admin](http://www.ldapadmin.org/download/ldapadmin.html)是一个免费的windows客户端和管理员工具。  
+
+## 相关博文
+[LDAP入门](https://imaidata.github.io/blog/ldap/)  
+[LDAP进阶](https://imaidata.github.io/blog/ldap2/)  
