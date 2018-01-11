@@ -156,3 +156,25 @@ POW,POS,DPOS
 
 ### composer-rest-server认证数据持久化
 [链接](https://github.com/hyperledger/composer/blob/master/packages/composer-website/jekylldocs/integrating/deploying-the-rest-server.md)  
+
+### passport-ldap
+[1](https://stackoverflow.com/questions/45734046/using-passport-http-on-hyperledger-composer-rest-api)  
+```
+  export COMPOSER_PROVIDERS='{
+  "basic": {
+    "provider": "basic",
+    "module": "passport-http",
+    "clientID": "REPLACE_WITH_CLIENT_ID",
+    "clientSecret": "REPLACE_WITH_CLIENT_SECRET",
+    "authPath": "/auth/local",
+    "callbackURL": "/auth/local/callback",
+    "successRedirect": "/",
+    "failureRedirect": "/login" 
+     }
+    }'
+```
+[2](https://github.com/hyperledger/composer/issues/2065)  
+这个网页讲到调用的URL。  
+```
+export COMPOSER_PROVIDERS='{ "ldap": { "provider": "ldap", "authScheme": "ldap", "module": "passport-ldapauth", "authPath": "/auth/ldap", "successRedirect": "/", "failureRedirect": "/failure", "session": false, "json": true, "profileAttributesFromLDAP": { "login": "uid", "username": "uid", "displayName": "givenName", "email": "mail", "externalId": "uid" }, "server": { "url": "ldap://ldap.xxx.com:389", "bindDn": "uid=aldred,ou=Users,o=xxx,dc=xxx,dc=com", "bindCredentials": "caveman", "searchBase": "ou=Users,o=xxx,dc=xxx,dc=com", "searchFilter": "(uid={{username}})" } } }'
+```
