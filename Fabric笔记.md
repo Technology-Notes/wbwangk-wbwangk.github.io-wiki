@@ -558,4 +558,8 @@ $ cd fabric/devenv
 
 由于GWF的存在，golang官方被封，需要翻墙。而且翻墙后一些CURL管道不管用。解决办法[在这里](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#vm%E7%BF%BB%E5%A2%99%E9%97%AE%E9%A2%98)。
 
-
+包括下面的这个命令也需要设置http_proxy:
+```
+cd $GOPATH/src/github.com/hyperledger/fabric
+make clean gotools
+```
