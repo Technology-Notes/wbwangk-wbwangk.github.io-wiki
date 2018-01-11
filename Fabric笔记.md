@@ -540,3 +540,22 @@ $$ peer chaincode install -n mycc -v 2.0 -p github.com/chaincode/chaincode_examp
 $$ peer chaincode upgrade -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 2.0 -c '{"Args":["init","a","90","b","210"]}' -P "OR ('Org1MSP.member','Org3MSP.member')"
 ```
 在u1601的cli容器中升级链码时，注意export上面的环境变量(如`$ORDERER_CA`)。
+
+## Fabric环境重装
+
+Fabric自带的VM空间太小，改用box`bento/ubuntu-16.4`重建。  
+```
+$ cd /e/vagrant9/ambari-vagrant
+$ git clone https://github.com/hyperledger/fabric.git
+$ cd fabric/devenv
+```
+值修改Vagrantfile使用空间为40G的新box：
+```
+#  config.vm.box = "ubuntu/xenial64"
+  config.vm.box = "bento/ubuntu-16.04"
+```
+新box的默认用户不再是ubuntu，而是vagrant。导致devenv/setup.sh需要改，将脚本中ubuntu用户改成vagrant。这个文件在VM中映射为了`/hyperledger/devenv/setup.sh`。
+
+由于GWF的存在，golang官方被封，需要翻墙。而且翻墙后一些CURL管道不管用。解决办法[在这里](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger#vm%E7%BF%BB%E5%A2%99%E9%97%AE%E9%A2%98)。
+
+
