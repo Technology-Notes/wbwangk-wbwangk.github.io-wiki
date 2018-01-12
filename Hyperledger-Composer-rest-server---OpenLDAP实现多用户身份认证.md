@@ -52,10 +52,22 @@ Enter LDAP Password:  (输入安装OpenLDAP过程中创建的密码)
 ## Composer-rest-server配置
 执行以下命令，设置composer-rest-server环境变量：
 ```
-# export COMPOSER_AUTHENTICATION=true  # 启用身份验证
-# export COMPOSER_MULTIUSER=true  # 启用多用户
-# export COMPOSER_NAMESPACES=never # 是否使用命名空间
-# export COMPOSER_PROVIDERS={
+$ export COMPOSER_AUTHENTICATION=true  # 启用身份验证
+$ export COMPOSER_MULTIUSER=true  # 启用多用户
+$ export COMPOSER_NAMESPACES=never # 是否使用命名空间
+$ export COMPOSER_DATASOURCES={
+    "db": {
+        "name": "db",
+        "connector": "couchdb",
+        "host": "192.168.100.103",
+        "port": "5984",
+        "username": "admin",
+        "password": "123456a?",
+        "database": "db",
+        "debug": "true"
+    }
+}
+$ export COMPOSER_PROVIDERS={
             "ldap": {
                 "provider": "ldap",
                 "module": "passport-ldapauth",
@@ -129,7 +141,9 @@ $ composer card create -p connection-org1.json -u sara -n tn -c sara/admin-pub.p
 2. 用户登录
 
 使用ldap作为composer-reset-server的身份认证时，认证请求类型为POST请求；
-地址栏输入：http://192.168.100.101:3000/auth/ldap，请求类型选择POST，在请求的Body选项卡选择raw(JSON格式)，输入参数:
+地址栏输入：http://192.168.100.101:3000/auth/ldap，
+
+请求类型选择POST，在请求的Body选项卡选择raw(JSON格式)，输入参数:
 ```
 {
 	"username": "sara",
@@ -138,7 +152,9 @@ $ composer card create -p connection-org1.json -u sara -n tn -c sara/admin-pub.p
 ```
 username为用户名，password为密码；点击Send发送请求，登录成功后，响应中会生成三个cookie：connect.sid、access_token、userId。
 3. 用户连接业务网络
-地址栏输入：http://192.168.100.101:3000/api/system/ping，请求类型选择GET，点击Send发送请求，该请求会携带用户登录后的cookie信息，查看响应：
+地址栏输入：http://192.168.100.101:3000/api/system/ping，
+
+请求类型选择GET，点击Send发送请求，该请求会携带用户登录后的cookie信息，查看响应：
 ```
 {
     "version": "0.16.2",
