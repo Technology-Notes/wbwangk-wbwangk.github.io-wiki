@@ -55,7 +55,7 @@ Enter LDAP Password:  (输入安装OpenLDAP过程中创建的密码)
 $ export COMPOSER_AUTHENTICATION=true  # 启用身份验证
 $ export COMPOSER_MULTIUSER=true  # 启用多用户
 $ export COMPOSER_NAMESPACES=never # 是否使用命名空间
-$ export COMPOSER_DATASOURCES={
+$ export COMPOSER_DATASOURCES='{
     "db": {
         "name": "db",
         "connector": "couchdb",
@@ -66,8 +66,8 @@ $ export COMPOSER_DATASOURCES={
         "database": "db",
         "debug": "true"
     }
-}
-$ export COMPOSER_PROVIDERS={
+}'
+$ export COMPOSER_PROVIDERS='{
             "ldap": {
                 "provider": "ldap",
                 "module": "passport-ldapauth",
@@ -84,7 +84,7 @@ $ export COMPOSER_PROVIDERS={
                     "searchFilter": "(uid={{username}})"
                 }
             }
-        }
+        }'
 ```
 
 > COMPOSER_PROVIDERS：
