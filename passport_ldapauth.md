@@ -50,6 +50,14 @@ Enter LDAP Password:  (输入安装OpenLDAP过程中创建的密码)
 ```
 
 ## Composer-rest-server配置
+
+#### 安装passport-ldapauth
+```
+npm install -g passport-ldapauth
+```
+
+#### 启动composer-rest-server
+
 执行以下命令，设置composer-rest-server环境变量：
 ```
 $ export COMPOSER_AUTHENTICATION=true  # 启用身份验证
