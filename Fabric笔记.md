@@ -584,6 +584,15 @@ curl -O https://hyperledger.github.io/composer/prereqs-ubuntu.sh
 chmod u+x prereqs-ubuntu.sh
 ./prereqs-ubuntu.sh
 ```
-安装composer-cli等二进制包。由于需要在`/usr/local/bin`下建composer的符号链接，导致报告没有权限，只好sudo安装。  
+安装composer-cli等二进制包。由于需要在`/usr/local/bin`下建composer的符号链接，导致报告没有权限，解决办法：
+```
+$ npm install --unsafe-perm --verbose -g composer-cli
+```  
+安装composer-rest-server需要sudo权限，加上`--unsafe-perm`也不行，yo也是这样。
 
-安装fabric-tools，即composer自带的fabric环境，特点是带CA和couchdb镜像。
+安装fabric-tools，即composer自带的fabric环境，特点是带CA和couchdb镜像。  
+执行`./downloadFabric.sh`和`./startFabric.sh`时发现需要sudo权限。解决办法是把当前用户vagrant加入到docker组：  
+```
+sudo gpasswd -a ${USER} docker
+sudo service docker restart
+```
