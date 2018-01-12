@@ -1,7 +1,108 @@
-## OpenLDAP
-### 安装OpenLDAP
-[安装部署OpenLDAP服务](https://github.com/fogray/fogray/blob/gh-pages/pages/openldap.MD)
+## 测试一：仅认证
+测试使用的LDAP服务器是[这篇](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)文章中搭建的。地址是u1601.ambari.apache.org。LDAP服务器启动后在Composer所在的主机测试一下：
+```
+$ ldapsearch -x -LLL -H ldap://u1601.ambari.apache.org:389 -b dc=ambari,dc=apache,dc=org 'uid=john' cn gidNumber
+dn: uid=john,ou=People,dc=ambari,dc=apache,dc=org
+cn: John Doe
+gidNumber: 5000
+```
+测试使用的业务网络档案是food-supply.bna，来自[这个库](https://github.com/wbwangk/BlockchainPublicRegulationFabric-Food)。并提前使用[这个文章](https://wbwangk.github.io/ComposerDocs/tutorials_developer-tutorial/#_9)讲到的部署好。  
 
+#### composer-rest-server的相关环境变量设置
+```
+export COMPOSER_PROVIDERS='{
+                "ldap": {
+                    "provider": "ldap",
+                    "module": "passport-ldapauth",
+                    "authPath": "/auth/ldap",
+                    "callbackURL": "/auth/ldap/callback",
+                    "successRedirect": "/?success=true",
+                    "failureRedirect": "/?failure=true",
+                    "authScheme": "ldap",
+                    "server": {
+                        "url": "ldap://u1601.ambari.apache.org:389",
+                        "bindDN": "cn=admin,dc=ambari,dc=apache,dc=org",
+                        "bindCredentials": "1",
+                        "searchBase": "dc=ambari,dc=apache,dc=org",
+                        "searchFilter": "(uid={{username}})"
+                    }
+                }
+            }'
+```
+#### 安装passport-ldapauth
+passport-ldapauth的github官方库[地址](https://github.com/vesse/passport-ldapauth)。  
+```
+npm install -g passport-ldapauth
+```
+碰到错误可以加上`--unsafe-perm`参数试试。  
+
+#### 启动composer-rest-server
+用交互式启动不容易出错：
+```
+$ composer-rest-server
+? Enter the name of the business network card to use: admin@food-supply
+? Specify if you want namespaces in the generated REST API: never use namespaces
+? Specify if you want to enable authentication for the REST API using Passport: Yes
+? Specify if you want to enable multiple user and identity management using wallets: No
+? Specify if you want to enable event publication over WebSockets: Yes
+? Specify if you want to enable TLS security for the REST API: No
+
+To restart the REST server using the same options, issue the following command:
+   composer-rest-server -c admin@food-supply -n never -a true -w true
+...
+```
+#### 测试启用认证后的composer-rest-server
+在windows下用浏览器，页面能出来，但如果选择某个资产（如Supplier）后点`GET`来查询供应商清单，会报401错误。说明启用认证管用了。
+下面用curl发送登录请求：
+```
+$ curl -i -r -X POST http://localhost:3000/auth/ldap -H "Content-Type:application/json" -d '{"username": "john", "password":"johnldap"}
+{"error":{"statusCode":500,"message":"email is missing from the user profile"}}
+```
+john用户没有mail属性，所以要重新建一个带mail属性的用户。  
+创建用户`add_user.ldif`文件：
+```
+dn: uid=sara,ou=People,dc=ambari,dc=apache,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: sara
+sn: yang
+givenName: Sara
+mail: sara@126.com
+cn: sara yang
+displayName: Sara Yang
+uidNumber: 10001
+gidNumber: 5001
+userPassword: sara
+gecos: Sara geo
+loginShell: /bin/bash
+homeDirectory: /home/sara
+```
+执行ldapadd命令，添加用户：
+```
+# ldapadd -x -D cn=admin,dc=ambari,dc=apache,dc=org -W -f add_user.ldif
+Enter LDAP Password: 1 (输入安装OpenLDAP过程中创建的密码)
+```
+重新用curl发出登录请求：
+```bash
+$ curl -i -r -X POST http://localhost:3000/auth/ldap -H "Content-Type:application/json" -d '{"username": "sara", "password":"sara"}
+...
+set-cookie: access_token=s%3AUC0DCiT11RHjSp1eQGzlNNZgCtF27GTCu3b7mQsdHOhAmZopvZYWdaaUj06NNnpE.KSh6JKT7VTapL4vrm%2BjSgftlDTdxqCFS9TYhd9quwr0; Max-Age=1209600; Path=/; Expires=Thu, 25 Jan 2018 20:23:50 GMT
+...
+```
+passport-ldapauth用cookie的形式返回了令牌。  
+如果你的Chrome装了EditThisCookies插件，可以把上面的access_token编辑到localhost域的cookie中，然后再访问链接`localhost:3000/api/Supplier`将可以通过认证返回供应商清单了。  
+
+也可以用curl直接带上cookie发送请求：
+```
+$ curl --cookie "access_token=s%3AUC0DCiT11RHjSp1eQGzlNNZgCtF27GTCu3b7mQsdHOhAmZopvZYWdaaUj06NNnpE.KSh6JKT7VTapL4vrm%2BjSgftlDTdxqCFS9TYhd9quwr0" http://localhost:3000/api/Supplier
+[{"$class":"composer.food.supply.Supplier","supplierId":"string","countryId":"string","orgId":"string","firstName":"string","lastName":"string","middleName":"string","contactDetails":{"$class":"composer.base.ContactDetails","email":"string","mobilePhone":"string","office":"string","address":{"$class":"composer.base.Address","city":"string","country":"string","locality":"string","region":"string","street":"string","street2":"string","street3":"string","postalCode":"string","postOfficeBoxNumber":"string"}}}]
+```
+
+## 测试二：同时启用认证和多用户模式
+### 安装OpenLDAP
+[安装部署OpenLDAP服务](https://github.com/fogray/fogray/blob/gh-pages/pages/openldap.MD)  
+[LDAP入门](https://imaidata.github.io/blog/ldap/)  
 注：
 
 1. 修改OpenLDAP的域名为：
@@ -33,7 +134,7 @@ objectClass: shadowAccount
 uid: sara
 sn: yang
 givenName: Sara
-mail: sara@126.com   # mail属性为composer必须
+mail: sara@126.com
 cn: sara yang
 displayName: Sara Yang
 uidNumber: 10001
@@ -46,17 +147,10 @@ homeDirectory: /home/sara
 执行ldapadd命令，添加用户：
 ```
 # ldapadd -x -D cn=admin,dc=example,dc=com -W -f add_user.ldif
-Enter LDAP Password:  (输入安装OpenLDAP过程中创建的密码)
+Enter LDAP Password: 123456a? (输入安装OpenLDAP过程中创建的密码)
 ```
 
 ## Composer-rest-server配置
-
-#### 安装passport-ldapauth
-```
-npm install -g passport-ldapauth
-```
-
-#### 启动composer-rest-server
 
 执行以下命令，设置composer-rest-server环境变量：
 ```
