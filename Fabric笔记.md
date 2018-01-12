@@ -576,3 +576,14 @@ $ curl -sSL https://goo.gl/6wtTN5 | bash
 docker save hyperledger/fabric-javaenv:x86_64-1.0.4 > /vagrant/fabric-javaenv-1.0.4
 docker load < /vagrant/fabric-javaenv-1.0.4
 ```
+#### 安装composer
+[1](https://wbwangk.github.io/ComposerDocs/installing_development-tools/)
+使用用户vagrant，需要翻墙和设置http_proxy。
+```
+curl -O https://hyperledger.github.io/composer/prereqs-ubuntu.sh
+chmod u+x prereqs-ubuntu.sh
+./prereqs-ubuntu.sh
+```
+安装composer-cli等二进制包。由于需要在`/usr/local/bin`下建composer的符号链接，导致报告没有权限，只好sudo安装。  
+
+安装fabric-tools，即composer自带的fabric环境，特点是带CA和couchdb镜像。
