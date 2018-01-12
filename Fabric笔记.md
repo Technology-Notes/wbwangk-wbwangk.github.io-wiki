@@ -563,3 +563,16 @@ $ cd fabric/devenv
 cd $GOPATH/src/github.com/hyperledger/fabric
 make clean gotools
 ```
+#### 安装fabric-samples库
+```
+$ cd /opt
+$ git clone -b master https://github.com/hyperledger/fabric-samples.git
+$ cd fabric-samples
+$ curl -sSL https://goo.gl/6wtTN5 | bash 
+（$ curl -sSL https://goo.gl/6wtTN5 | bash -s 1.1.0-preview）
+```
+为了加快安装速度，可以用docker save/load命令从其他环境中导出fabric的相关docker镜像：
+```
+docker save hyperledger/fabric-javaenv:x86_64-1.0.4 > /vagrant/fabric-javaenv-1.0.4
+docker load < /vagrant/fabric-javaenv-1.0.4
+```
