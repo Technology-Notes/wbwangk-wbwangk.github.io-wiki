@@ -151,6 +151,7 @@ $ composer card create -p connection-org1.json -u sara -n tn -c sara/admin-pub.p
 username为用户名，password为密码；点击Send发送请求，登录成功后，响应中会生成三个cookie：connect.sid、access_token、userId。
 
 3. 用户连接业务网络
+
 地址栏输入：http://192.168.100.101:3000/api/system/ping，<br>请求类型选择GET，点击Send发送请求，该请求会携带用户登录后的cookie信息，查看响应：
 ```
 {
