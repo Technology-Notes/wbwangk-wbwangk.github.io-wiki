@@ -136,14 +136,12 @@ $ composer card create -p connection-org1.json -u sara -n tn -c sara/admin-pub.p
 测试步骤：
 1. 客户端导入用户身份卡片
 
-地址栏输入：http://192.168.100.101:3000/api/wallet/import，请求类型选择POST，在请求的Body选项卡选择form-data，输入参数name和card，name为业务网络名称，card为用户身份卡片文件；点击Send发送请求，导入成功后，进行下一步。
+地址栏输入：http://192.168.100.101:3000/api/wallet/import，<br>请求类型选择POST，在请求的Body选项卡选择form-data，输入参数name和card，name为业务网络名称，card为用户身份卡片文件；点击Send发送请求，导入成功后，进行下一步。
     
 2. 用户登录
 
 使用ldap作为composer-reset-server的身份认证时，认证请求类型为POST请求；
-地址栏输入：http://192.168.100.101:3000/auth/ldap，
-
-请求类型选择POST，在请求的Body选项卡选择raw(JSON格式)，输入参数:
+地址栏输入：http://192.168.100.101:3000/auth/ldap，<br>请求类型选择POST，在请求的Body选项卡选择raw(JSON格式)，输入参数:
 ```
 {
 	"username": "sara",
@@ -151,10 +149,9 @@ $ composer card create -p connection-org1.json -u sara -n tn -c sara/admin-pub.p
 }
 ```
 username为用户名，password为密码；点击Send发送请求，登录成功后，响应中会生成三个cookie：connect.sid、access_token、userId。
-3. 用户连接业务网络
-地址栏输入：http://192.168.100.101:3000/api/system/ping，
 
-请求类型选择GET，点击Send发送请求，该请求会携带用户登录后的cookie信息，查看响应：
+3. 用户连接业务网络
+地址栏输入：http://192.168.100.101:3000/api/system/ping，<br>请求类型选择GET，点击Send发送请求，该请求会携带用户登录后的cookie信息，查看响应：
 ```
 {
     "version": "0.16.2",
