@@ -19,7 +19,7 @@ cd blockchain-explorer
 mysql -u root -p < db/fabricexplorer.sql
 ```
 #### 连接BYFN的配置文件
-explorer安装目录是`/opt/blockchain-explorer`，BYFN安装目录是`/opt/fabirc-samples/first-network`。  
+blockchain-explorer安装目录是`~/blockchain-explorer`，blockchain-explorer自带了一个BYFN(first-network目录下)。
 配置config.json:
 ```json
 {
@@ -31,11 +31,11 @@ explorer安装目录是`/opt/blockchain-explorer`，BYFN安装目录是`/opt/fab
                                 "requests": "grpcs://127.0.0.1:7051",
                                 "events": "grpcs://127.0.0.1:7053",
                                 "server-hostname": "peer0.org1.example.com",
-                                "tls_cacerts": "../fabric-samples/first-network/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+                                "tls_cacerts": "./first-network/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
                         },
                         "admin": {
-                                "key": "../fabric-samples/first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore",
-                                "cert": "../fabric-samples/first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+                                "key": "./first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore",
+                                "cert": "./first-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
                         }
                 }
         },
@@ -68,11 +68,11 @@ config.json:
                                 "requests": "grpcs://127.0.0.1:7051",
                                 "events": "grpcs://127.0.0.1:7053",
                                 "server-hostname": "peer0.org1.example.com",
-                                "tls_cacerts": "~/fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+                                "tls_cacerts": "../fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
                         },
                         "admin": {
-                                "key": "~/fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore",
-                                "cert": "~/fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+                                "key": "../fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore",
+                                "cert": "../fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
                         }
                 }
         },
