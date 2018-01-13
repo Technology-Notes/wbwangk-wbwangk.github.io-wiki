@@ -65,8 +65,8 @@ config.json:
                         "name": "peerOrg1",
                         "mspid": "Org1MSP",
                         "peer1": {
-                                "requests": "grpcs://127.0.0.1:7051",
-                                "events": "grpcs://127.0.0.1:7053",
+                                "requests": "grpc://127.0.0.1:7051",
+                                "events": "grpc://127.0.0.1:7053",
                                 "server-hostname": "peer0.org1.example.com",
                                 "tls_cacerts": "../fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
                         },
@@ -78,7 +78,7 @@ config.json:
         },
    "host":"localhost",
    "port":"8081",
-   "channel": "mychannel",
+   "channel": "composerchannel",
    "GOPATH":"../artifacts",
    "keyValueStore":"/tmp/fabric-client-kvs",
    "eventWaitTime":"30000",
@@ -91,6 +91,12 @@ config.json:
    }
 }
 ```
+曾经发现报告错误（原因是`grpc://`写成了`grpcs://`）：
+```
+E0113 02:41:26.907444268   29526 ssl_transport_security.cc:976] Handshake failed with fatal error SSL_ERROR_SSL: error:1408F10B:SSL routines:SSL3_GET_RECORD:wrong version number.
+```
+
+注意`fabric-tools`与`first-network`的差异。前者使用`grpc`，后者使用`grpcs`；前者通道名是`composerchannel`，后者通道名是`mychannel`。
 
 #### 构建、启动blockchain-explorer
 ```bash
