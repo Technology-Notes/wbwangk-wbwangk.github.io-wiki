@@ -596,3 +596,14 @@ $ npm install --unsafe-perm --verbose -g composer-cli
 sudo gpasswd -a ${USER} docker
 sudo service docker restart
 ```
+#### 第二天composer出错
+```
+$ composer network ping --card admin@food-supply
+Error: Failed to load connector module "composer-connector-hlfv1" for connection type "hlfv1". Cannot find module '/usr/local/lib/node_modules/composer-cli/node_modules/grpc/src/node/extension_binary/node-v57-linux-x64/grpc_node.node'
+```
+解决办法[1](https://github.com/hyperledger/composer/issues/1531)：
+```
+cd /usr/local/lib/node_modules/composer-cli
+npm rebuild --unsafe-perm
+```
+问题解决。
