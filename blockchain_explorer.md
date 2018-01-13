@@ -18,8 +18,10 @@ cd blockchain-explorer
 ```bash
 mysql -u root -p < db/fabricexplorer.sql
 ```
+#### 连接BYFN的配置文件
+explorer安装目录是`/opt/blockchain-explorer`，BYFN安装目录是`/opt/fabirc-samples/first-network`。  
 配置config.json:
-```
+```json
 {
     "network-config": {
                 "org1": {
@@ -52,9 +54,45 @@ mysql -u root -p < db/fabricexplorer.sql
    }
 }
 ```
-explorer安装目录是`/opt/blockchain-explorer`，BYFN安装目录是`/opt/fabirc-samples/first-network`。
 
-构建、启动：
+#### 连接Composer开发环境(fabric-tools)的配置文件
+fabric-tools的安装目录是`~/fabric-tools`，blockchain-explorer的安装目录是`~/blockchain-explorer`。  
+config.json:
+```json
+{
+    "network-config": {
+                "org1": {
+                        "name": "peerOrg1",
+                        "mspid": "Org1MSP",
+                        "peer1": {
+                                "requests": "grpcs://127.0.0.1:7051",
+                                "events": "grpcs://127.0.0.1:7053",
+                                "server-hostname": "peer0.org1.example.com",
+                                "tls_cacerts": "~/fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+                        },
+                        "admin": {
+                                "key": "~/fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore",
+                                "cert": "~/fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+                        }
+                }
+        },
+   "host":"localhost",
+   "port":"8081",
+   "channel": "mychannel",
+   "GOPATH":"../artifacts",
+   "keyValueStore":"/tmp/fabric-client-kvs",
+   "eventWaitTime":"30000",
+   "mysql":{
+      "host":"127.0.0.1",
+      "port":"3306",
+      "database":"fabricexplorer",
+      "username":"root",
+      "passwd":"1"
+   }
+}
+```
+
+#### 构建、启动blockchain-explorer
 ```bash
 npm install
 ./start.sh
