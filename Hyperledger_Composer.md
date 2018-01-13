@@ -75,7 +75,19 @@ composer-playground
 
 之后进入的内容就跟[Playground教程](https://wbwangk.github.io/ComposerDocs/tutorials_playground-tutorial/)中一样了，也很用composer-cli创建业务网络类似。
 
-
+### Fabric环境重启后建Composer业务网络
+当Fabric环境(如fabric-tools)重启后，发现业务网络卡片还在，但业务网络已经提示不存在了：
+```
+$ composer network ping --card admin@tutorial-network
+ Error trying to query business network. Error: could not find chaincode with name 'tutorial-network' 
+```
+重新安装业务网络，并用ping测试：
+```
+composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName tutorial-network
+composer network start --card PeerAdmin@hlfv1 --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile tutorial-network@0.0.1.bna
+composer network ping --card admin@tutorial-network
+```
+需要说明的是，Fabric环境重启后，业务网络卡片已经导入到了本地Composer（~/.composer/cards目录下）。所以，同[官方教程](https://wbwangk.github.io/ComposerDocs/tutorials_developer-tutorial/#_9)中的提示相比，不用生成 `networkadmin.card`，也不用再倒入业务网络卡片了。
 
 
 ### 为单个组织部署Hyperledger Composer区块链网络到Hyperledger Fabric
