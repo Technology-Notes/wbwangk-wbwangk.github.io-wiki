@@ -193,92 +193,6 @@ $ docker exec -it cli bash
 $$ peer --help
 ```
 
-## 备忘
-### configtxgen
-#### 生成orderer创世区块
-```
-$ export FABRIC_CFG_PATH=$PWD
-$ configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
-```
-#### 创建通道
-```
-$ export CHANNEL_NAME=mychannel  
-$ configtxgen -profile TwoOrgsChannel \
- -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
-```
-#### 创建锚点peer
-```
-$ configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
-./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
-```
-#### 获取组织配置材料
-现在使用configtxgen工具输出JSON格式的Org3相关配置材料。作为开始的命令，告诉工具从当前目录下读取configtx.yaml。
-```
-$ export FABRIC_CFG_PATH=$PWD && ../../bin/configtxgen -printOrg Org3MSP > ../channel-artifacts/org3.json
-```
-
-### peer命令
-#### 创建通道配置交易
-```
-$ export CHANNEL_NAME=mychannel
-$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
-./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
-```
-#### peer加入通道
-```
-$ CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
-$ CORE_PEER_ADDRESS=peer0.org2.example.com:7051
-$ CORE_PEER_LOCALMSPID="Org2MSP" $ CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
-$ peer channel join -b mychannel.block
-```
-#### 创建链码包
-```
-$ peer chaincode package -n mycc -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02 -v 0 -s -S -i "AND('OrgA.admin')" ccpack.out
-```
-#### 对链码包签名
-```
-$ peer chaincode signpackage ccpack.out signedccpack.out
-```
-#### 安装链码
-```
-$ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
-```
-#### 实例化链码
-```
-$ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
-```
-#### 用链码查询
-```
-$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
-```
-#### 用链码调用
-```
-$ peer chaincode invoke -o orderer.example.com:7050  --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem  -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
-```
-#### 链码升级
-```
-$ peer chaincode upgrade -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 2.0 -c '{"Args":["init","a","90","b","210"]}' -P "OR ('Org1MSP.member','Org2MSP.member','Org3MSP.member')"
-```
-#### 取配置区块
-```
-$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
-$ export CHANNEL_NAME=mychannel
-$ peer channel fetch config config_block.pb -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
-$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
-```
-`0`表示获取创世区块。无参数表示获取最新区块。
-#### 对交易签名
-需要提前配置好4个环境变量，以便知道以哪个Admin的身份签名。
-```
-$ peer channel signconfigtx -f org3_update_in_envelope.pb
-```
-#### 更新呼叫
-管理员签名会附加到这个呼叫上，所以不需要手工再次签署这个proto。
-```
-$ peer channel update -f org3_update_in_envelope.pb -c $CHANNEL_NAME -o orderer.example.com:7050 --tls --cafile $ORDERER_CA
-```
-
 ### 共识过程(视频截图)
 [出处](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#12034)   
 - Committing Peer  
@@ -534,3 +448,89 @@ FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
 命令帮助信息：[Server Command Line](http://hyperledger-fabric-ca.readthedocs.io/en/latest/servercli.html)、[Client Command Line](http://hyperledger-fabric-ca.readthedocs.io/en/latest/clientcli.html)  
 
 
+
+## 备忘
+### configtxgen
+#### 生成orderer创世区块
+```
+$ export FABRIC_CFG_PATH=$PWD
+$ configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./channel-artifacts/genesis.block
+```
+#### 创建通道
+```
+$ export CHANNEL_NAME=mychannel  
+$ configtxgen -profile TwoOrgsChannel \
+ -outputCreateChannelTx ./channel-artifacts/channel.tx -channelID $CHANNEL_NAME
+```
+#### 创建锚点peer
+```
+$ configtxgen -profile TwoOrgsChannel -outputAnchorPeersUpdate \
+./channel-artifacts/Org1MSPanchors.tx -channelID $CHANNEL_NAME -asOrg Org1MSP
+```
+#### 获取组织配置材料
+现在使用configtxgen工具输出JSON格式的Org3相关配置材料。作为开始的命令，告诉工具从当前目录下读取configtx.yaml。
+```
+$ export FABRIC_CFG_PATH=$PWD && ../../bin/configtxgen -printOrg Org3MSP > ../channel-artifacts/org3.json
+```
+
+### peer命令
+#### 创建通道配置交易
+```
+$ export CHANNEL_NAME=mychannel
+$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$ peer channel create -o orderer.example.com:7050 -c $CHANNEL_NAME -f \
+./channel-artifacts/channel.tx --tls --cafile $ORDERER_CA
+```
+#### peer加入通道
+```
+$ CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+$ CORE_PEER_ADDRESS=peer0.org2.example.com:7051
+$ CORE_PEER_LOCALMSPID="Org2MSP" $ CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+$ peer channel join -b mychannel.block
+```
+#### 创建链码包
+```
+$ peer chaincode package -n mycc -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02 -v 0 -s -S -i "AND('OrgA.admin')" ccpack.out
+```
+#### 对链码包签名
+```
+$ peer chaincode signpackage ccpack.out signedccpack.out
+```
+#### 安装链码
+```
+$ peer chaincode install -n mycc -v 1.0 -p github.com/chaincode/chaincode_example02/go/
+```
+#### 实例化链码
+```
+$ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C $CHANNEL_NAME -n mycc -v 1.0 -c '{"Args":["init","a", "100", "b","200"]}' -P "OR ('Org1MSP.member','Org2MSP.member')"
+```
+#### 用链码查询
+```
+$ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
+```
+#### 用链码调用
+```
+$ peer chaincode invoke -o orderer.example.com:7050  --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem  -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
+```
+#### 链码升级
+```
+$ peer chaincode upgrade -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA -C $CHANNEL_NAME -n mycc -v 2.0 -c '{"Args":["init","a","90","b","210"]}' -P "OR ('Org1MSP.member','Org2MSP.member','Org3MSP.member')"
+```
+#### 取配置区块
+```
+$ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+$ export CHANNEL_NAME=mychannel
+$ peer channel fetch config config_block.pb -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
+$ peer channel fetch 0 mychannel.block -o orderer.example.com:7050 -c $CHANNEL_NAME --tls --cafile $ORDERER_CA
+```
+`0`表示获取创世区块。无参数表示获取最新区块。
+#### 对交易签名
+需要提前配置好4个环境变量，以便知道以哪个Admin的身份签名。
+```
+$ peer channel signconfigtx -f org3_update_in_envelope.pb
+```
+#### 更新呼叫
+管理员签名会附加到这个呼叫上，所以不需要手工再次签署这个proto。
+```
+$ peer channel update -f org3_update_in_envelope.pb -c $CHANNEL_NAME -o orderer.example.com:7050 --tls --cafile $ORDERER_CA
+```
