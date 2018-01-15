@@ -352,3 +352,65 @@ compare: {header: 'content-type', expected: 'application/json'}
 $ pyresttest http://webdav.imaicloud.com webdav.yaml
 Test Group Default SUCCEEDED: : 5/5 Tests Passed!
 ```
+
+### 基准测试
+下面这个配置文件用于对composer-rest-server进行基准测试：
+```yaml
+---
+- config:
+    - testset: "Benchmark tests using Retails"
+    - timeout: 100  # Increase timeout from the default 10 seconds
+    - generators:
+        # Generator named 'id' that counts up from 10
+        - 'id': {type: 'number_sequence', start: 100}
+- benchmark:
+    - name: "Post Retailers"
+    - url: "/api/Retailer"
+    - generator_binds: {retailerId: id}
+    - warmup_runs: 0
+    - benchmark_runs: '10'
+    - method: 'POST'
+    - headers: {'Accept': 'application/json'}
+    - headers: {'Content-Type': 'application/json'}
+    - body: {template: '{
+   "$class": "composer.food.supply.Retailer",
+   "retailerId": "$retailerId",
+   "products": [
+     {
+       "$class": "composer.food.supply.Product",
+       "productId": "string",
+       "quantity": "string",
+       "countryId": "string",
+       "id": "string"
+     }
+   ],
+   "firstName": "string",
+   "lastName": "string",
+   "middleName": "string",
+   "contactDetails": {
+     "$class": "composer.base.ContactDetails",
+     "email": "string",
+     "mobilePhone": "string",
+     "office": "string",
+     "address": {
+       "$class": "composer.base.Address",
+       "city": "string",
+       "country": "string",
+       "locality": "string",
+       "region": "string",
+       "street": "string",
+       "street2": "string",
+       "street3": "string",
+       "postalCode": "string",
+       "postOfficeBoxNumber": "string",
+       "id": "string"
+     },
+     "id": "string"
+   }
+ }' }
+    - output_format: csv
+    - output_file: 'food-supply-benchmark.csv'
+    - metrics:
+        - total_time: total
+        - total_time: mean
+```
