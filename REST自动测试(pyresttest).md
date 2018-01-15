@@ -414,3 +414,12 @@ Test Group Default SUCCEEDED: : 5/5 Tests Passed!
         - total_time: total
         - total_time: mean
 ```
+测试报告(food-supply-benchmark.csv):
+```
+Benchmark,Post Retailers
+Benchmark Group,Default
+Failures,0
+Aggregates,
+total_time,total,30.886773999999996
+total_time,mean,3.0886773999999995
+```
