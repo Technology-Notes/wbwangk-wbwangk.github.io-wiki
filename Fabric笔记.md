@@ -607,3 +607,44 @@ cd /usr/local/lib/node_modules/composer-cli
 npm rebuild --unsafe-perm
 ```
 问题解决。
+
+### 完整启动过程
+#### 启动Fabric(fabric-tools)
+```
+cd ~/fabric-tools
+./startFabric.sh
+```
+
+#### 启动业务网络
+```
+cd ~/BlockchainPublicRegulationFabric-Food
+composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName food-supply
+composer network start --card PeerAdmin@hlfv1 --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile dist/food-supply.bna
+composer network ping --card admin@food-supply
+```
+
+#### 启动composer-playground
+```
+composer-playground
+```
+然后用浏览器访问`localhost:8080`。然后连接到food-supply业务网络。
+
+#### 启动composer-rest-server
+```
+composer-rest-server
+```
+业务网络卡片输入admin@food-supply，不用命名空间，不启用认证，启用事件广播，不用TLS。  
+用浏览器访问`localhost:3000`可以进入它自带的Swagger-UI。  
+
+#### 启动blockchain-explorer
+```
+cd ~/blockchain-explorer
+./start.sh
+```
+用浏览器进入`http://localhost:8081/`就可以看到blockchain-explorer的界面。
+
+#### 用pyresttest进行功能或基准测试
+```
+cd ~/pyresttest
+pyresttest http://localhost:3000 test.yaml
+```
