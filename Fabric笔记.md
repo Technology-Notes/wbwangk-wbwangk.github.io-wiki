@@ -664,3 +664,91 @@ INFO 003 composerchannel
 $ peer channel fetch newest 1.block -o localhost:7050 -c composerchannel
 ```
 后一个命令获取通道composerchannel的最新区块保存到1.block文件中。
+
+## 使用fabric-tools开发
+在教程[编写第一个应用](https://wbwangk.github.io/hyperledgerDocs/write_first_app_zh/)中，自带了一个fabric环境，现在改造成使用fabric-tools，以便与composer保持一致并读取fabric-tools环境中的信息。
+
+fabcar自带环境的CA域名是ca.example.com，而fabric-tools的CA域名是ca.org1.example.com。所以要修改enrollAdmin.js:
+```javascript
+ fabric_ca_client = new Fabric_CA_Client('http://localhost:7054', tlsOptions , 'ca.org1.example.com', crypto_suite);
+```
+然后执行`node enrollAdmin.js`，脚本会创建`hfc-key-store`目录，并在里面存放admin的共私钥。
+
+执行`node registerUser.js`时碰到错误，说缺乏identity type，解决办法[在这里](https://stackoverflow.com/questions/47175691/unable-to-registeruser-for-hyperledger-fabric-fabcar-sample-project)  
+
+下面执行query.js，之前也需要做简单修改：
+```
+var channel = fabric_client.newChannel('composerchannel');
+```
+
+### 向fabric-tools安装链码fabcar
+#### 向fabric-tools中增加cli容器
+fabric-tools没有带cli容器，根据fabcar自带的容器环境的配置文件为原型，改造fabric-tools的docker-compose配置文件。该配置文件是`/home/vagrant/fabric-tools/fabric-scripts/hlfv1/composer/docker-compose.yml`，增加下列内容：
+```yaml
+ cli:
+    container_name: cli
+    image: hyperledger/fabric-tools
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+      - CORE_PEER_LOCALMSPID=Org1MSP
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - /opt/fabric-samples/chaincode/:/opt/gopath/src/github.com/
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+```
+然后重启整个fabric-tools环境：
+```
+cd ~/fabric-tools && ./stopFabric.sh
+./startFabric.sh
+```
+#### 安装fabcar链码
+fabcar环境是依靠`/opt/fabric-samples/fabcar/startFabric.sh`启动的。该脚本中有安装fabcar链码的命令，现在改造这个脚本：
+```
+cd /opt/fabric-samples/fabcar
+cp startFabric.sh startFabric2.sh
+vi startFabric2.sh
+```
+将startFabric2.sh修改成下列的内容：
+```bash
+LANGUAGE=${1:-"golang"}
+CC_SRC_PATH=github.com/fabcar/go
+if [ "$LANGUAGE" = "node" -o "$LANGUAGE" = "NODE" ]; then
+        CC_SRC_PATH=/opt/gopath/src/github.com/fabcar/node
+fi
+
+docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp" cli peer chaincode install -n fabcar -v 1.0 -p "$CC_SRC_PATH" -l "$LANGUAGE"
+docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp" cli peer chaincode instantiate -o orderer.example.com:7050 -C composerchannel -n fabcar -l "$LANGUAGE" -v 1.0 -c '{"Args":[""]}' -P "OR ('Org1MSP.member')"
+sleep 10
+docker exec -e "CORE_PEER_LOCALMSPID=Org1MSP" -e "CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp" cli peer chaincode invoke -o orderer.example.com:7050 -C composerchannel -n fabcar -c '{"function":"initLedger","Args":[""]}'
+```
+主要变化一是通道名原来是`mychannel`，现在是`composerchannel`；背书策略原来有`Org2MSP.member`，现在只剩下了Org1MSP.member。
+
+执行刚刚创建的脚本来安装链码并测试：
+```
+./startFabric2.sh
+docker ps
+```
+用`docker ps`命令可以看到刚刚实例化的`fabcar`链码。
+
+### 继续执行query.js
+原来的query.js中的通道名称是`mychannel`需要改成`composerchannel`：
+```
+var channel = fabric_client.newChannel('composerchannel');
+```
+执行链码查询：
+```
+node query.js
+Store path:/opt/fabric-samples/fabcar/hfc-key-store
+Successfully loaded user1 from persistence
+Query has completed, checking results
+Response is  [{"Key":"CAR0", "Record":{"colour":"blue","make":"Toyota","model":"Prius","owner":"Tomoko"}},{"Key":"CAR1", "Record":{"colour":"red","make":"Ford","model":"Mustang","owner":"Brad"}},{"Key":"CAR2", "Record":{"colour":"green","make":"Hyundai","model":"Tucson","owner":"Jin Soo"}},{"Key":"CAR3", "Record":{"colour":"yellow","make":"Volkswagen","model":"Passat","owner":"Max"}},{"Key":"CAR4", "Record":{"colour":"black","make":"Tesla","model":"S","owner":"Adriana"}},{"Key":"CAR5", "Record":{"colour":"purple","make":"Peugeot","model":"205","owner":"Michel"}},{"Key":"CAR6", "Record":{"colour":"white","make":"Chery","model":"S22L","owner":"Aarav"}},{"Key":"CAR7", "Record":{"colour":"violet","make":"Fiat","model":"Punto","owner":"Pari"}},{"Key":"CAR8", "Record":{"colour":"indigo","make":"Tata","model":"Nano","owner":"Valeria"}},{"Key":"CAR9", "Record":{"colour":"brown","make":"Holden","model":"Barina","owner":"Shotaro"}}]
+```
