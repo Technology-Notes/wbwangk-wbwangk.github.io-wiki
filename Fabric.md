@@ -509,6 +509,12 @@ $ peer chaincode instantiate -o orderer.example.com:7050 --tls --cafile /opt/gop
 ```
 $ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
 ```
+用系统链码查询：
+```
+An example GetBlockByNumber query with block number 1 on channel mychannel using QSCC is given below:
+$ peer chaincode query -C "" -n qscc -c '{"Args":["GetBlockByNumber","mychannel","1"]}'
+```
+根据区块高度在通道mychannel上查询系统链码QSCC。返回是的该区块的内容。
 #### 用链码调用
 ```
 $ peer chaincode invoke -o orderer.example.com:7050  --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem  -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
@@ -534,4 +540,8 @@ $ peer channel signconfigtx -f org3_update_in_envelope.pb
 管理员签名会附加到这个呼叫上，所以不需要手工再次签署这个proto。
 ```
 $ peer channel update -f org3_update_in_envelope.pb -c $CHANNEL_NAME -o orderer.example.com:7050 --tls --cafile $ORDERER_CA
+```
+#### 取最新区块到文件
+```
+$ peer channel fetch newest 1.block -o localhost:7050 -c composerchannel
 ```
