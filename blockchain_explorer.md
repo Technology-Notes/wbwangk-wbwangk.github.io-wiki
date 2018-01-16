@@ -122,3 +122,10 @@ root     15036 14825  0 11:39 pts/3    00:00:00 grep --color=auto node
 ```
 kill 7718
 ```
+
+#### 重启blockchain-explorer
+当fabric重启后，原来的区块可能删除了。这时需要重新初始化blockchain-explorer：
+```
+mysql -u root -p < db/fabricexplorer.sql
+```
+然后发现blockchain-explorer就可以显示最新的区块信息了。
