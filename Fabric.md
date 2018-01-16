@@ -514,7 +514,7 @@ $ peer chaincode query -C $CHANNEL_NAME -n mycc -c '{"Args":["query","a"]}'
 An example GetBlockByNumber query with block number 1 on channel mychannel using QSCC is given below:
 $ peer chaincode query -C "" -n qscc -c '{"Args":["GetBlockByNumber","mychannel","1"]}'
 ```
-根据区块高度在通道mychannel上查询系统链码QSCC。返回是的该区块的内容。
+根据区块高度在通道mychannel上查询系统链码QSCC。返回是的该区块的内容[1](https://blockchain-fabric.blogspot.jp/2017/09/three-component-maintained-by-ledger-in.html)。
 #### 用链码调用
 ```
 $ peer chaincode invoke -o orderer.example.com:7050  --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem  -C $CHANNEL_NAME -n mycc -c '{"Args":["invoke","a","b","10"]}'
