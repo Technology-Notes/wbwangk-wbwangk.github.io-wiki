@@ -648,3 +648,19 @@ cd ~/blockchain-explorer
 cd ~/pyresttest
 pyresttest http://localhost:3000 test.yaml
 ```
+
+#### peer命令查看一些信息
+这个fabric环境未启用TLS。设置环境变量:
+```
+export CORE_PEER_MSPCONFIGPATH=/home/vagrant/fabric-tools/fabric-scripts/hlfv1/composer/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/msp
+export CORE_PEER_ADDRESS=localhost:7051
+export CORE_PEER_LOCALMSPID="Org1MSP"
+```
+执行peer命令:
+```
+$ peer channel list
+...
+INFO 003 composerchannel
+$ peer channel fetch newest 1.block -o localhost:7050 -c composerchannel
+```
+后一个命令获取通道composerchannel的最新区块保存到1.block文件中。
