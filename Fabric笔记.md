@@ -754,3 +754,89 @@ Successfully loaded user1 from persistence
 Query has completed, checking results
 Response is  [{"Key":"CAR0", "Record":{"colour":"blue","make":"Toyota","model":"Prius","owner":"Tomoko"}},{"Key":"CAR1", "Record":{"colour":"red","make":"Ford","model":"Mustang","owner":"Brad"}},{"Key":"CAR2", "Record":{"colour":"green","make":"Hyundai","model":"Tucson","owner":"Jin Soo"}},{"Key":"CAR3", "Record":{"colour":"yellow","make":"Volkswagen","model":"Passat","owner":"Max"}},{"Key":"CAR4", "Record":{"colour":"black","make":"Tesla","model":"S","owner":"Adriana"}},{"Key":"CAR5", "Record":{"colour":"purple","make":"Peugeot","model":"205","owner":"Michel"}},{"Key":"CAR6", "Record":{"colour":"white","make":"Chery","model":"S22L","owner":"Aarav"}},{"Key":"CAR7", "Record":{"colour":"violet","make":"Fiat","model":"Punto","owner":"Pari"}},{"Key":"CAR8", "Record":{"colour":"indigo","make":"Tata","model":"Nano","owner":"Valeria"}},{"Key":"CAR9", "Record":{"colour":"brown","make":"Holden","model":"Barina","owner":"Shotaro"}}]
 ```
+
+### fabric-sdk-rest
+项目地址：`https://github.com/hyperledger/fabric-sdk-rest`  
+这个项目可以把Fabric SDK封装为REST API。
+
+下载项目：
+```
+cd /opt
+git clone https://github.com/hyperledger/fabric-sdk-rest.git
+cd fabric-sdk-rest
+```
+利用npm进行一些依赖包的下载、构建等：
+```
+cd packages/loopback-connector-fabric && npm link && cd -
+cd packages/fabric-rest && npm link loopback-connector-fabric && npm install && cd -
+npm install
+```
+下面使用`fabric-samples/fabcar`[1](https://wbwangk.github.io/hyperledgerDocs/write_first_app_zh/)的**basic-network**环境进行测试。   
+首先，利用项目自带脚本配置`datasources.json`:
+```
+setup.sh -f /opt/fabric-samples/basic-network/ -ukat
+cat packages/fabric-rest/server/datasources.json
+```
+
+然后启动**basic-network**环境：
+```
+cd /opt/fabric-samples/fabcar
+./startFabric.sh
+node enrollAdmin.js
+node registerUser.js
+node query.js
+```
+最后的query.js可以测试出Fabric网络是否好用。如果之前曾经执行过用户注册，可以跳过前面两个js。  
+
+最后启动REST服务：
+```
+cd packages/fabric-rest
+./fabric-rest-server -p 3000
+```
+VM的3000端口已经用NAT映射到了宿主机windows下，所以用浏览器可以打开地址localhost:3000来测试该REST服务。
+
+启动blockchain-explorer服务。启动blockchain-explorer服务的目的是为了查询事务id，然后再用事务id访问fabric-sdk-rest。  
+需要说明的是，blockchain-explorer的配置文件config.json需要修改，以便连接到**basic-network**环境。config.json的配置：
+```
+{
+    "network-config": {
+                "org1": {
+                        "name": "peerOrg1",
+                        "mspid": "Org1MSP",
+                        "peer1": {
+                                "requests": "grpc://127.0.0.1:7051",
+                                "events": "grpc://127.0.0.1:7053",
+                                "server-hostname": "peer0.org1.example.com",
+                                "tls_cacerts": "./basic-network/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+                        },
+                        "admin": {
+                                "key": "./basic-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore",
+                                "cert": "./basic-network/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+                        }
+                }
+        },
+   "host":"localhost",
+   "port":"8081",
+   "channel": "mychannel",
+   "GOPATH":"../artifacts",
+   "keyValueStore":"/tmp/fabric-client-kvs",
+   "eventWaitTime":"30000",
+   "mysql":{
+      "host":"127.0.0.1",
+      "port":"3306",
+      "database":"fabricexplorer",
+      "username":"root",
+      "passwd":"1"
+   }
+}
+```
+目前的**blockchain-explorer**还处于开发阶段，不太完善，只能访问相对它自己根路径的证书文件，所以只好把**basic-network**使用的Fabric证书文件复制过来：
+```
+cd /opt/fabric-samples
+cp basic-network/ ~/blockchain-explorer/ -R
+```
+启动**blockchain-explorer**:
+```
+cd ~/blockchain-explorer && ./start.sh
+```
+宿主windows下浏览器访问localhost:8081，可以看到**basic-network**的基本区块链信息，包括某个块的事务id，如：`	d6e4713ba3e5c7dc54d5d1d8f93f0b78d97291fd4f1f7120259630140e0e4eff`。
