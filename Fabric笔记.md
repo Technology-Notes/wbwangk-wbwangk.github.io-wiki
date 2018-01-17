@@ -759,6 +759,7 @@ Response is  [{"Key":"CAR0", "Record":{"colour":"blue","make":"Toyota","model":"
 项目地址：`https://github.com/hyperledger/fabric-sdk-rest`  
 这个项目可以把Fabric SDK封装为REST API。
 
+#### 下载和配置fabric-sdk-rest
 下载项目：
 ```
 cd /opt
@@ -777,8 +778,7 @@ npm install
 setup.sh -f /opt/fabric-samples/basic-network/ -ukat
 cat packages/fabric-rest/server/datasources.json
 ```
-
-然后启动**basic-network**环境：
+#### 启动basic-network
 ```
 cd /opt/fabric-samples/fabcar
 ./startFabric.sh
@@ -795,8 +795,10 @@ cd packages/fabric-rest
 ```
 VM的3000端口已经用NAT映射到了宿主机windows下，所以用浏览器可以打开地址localhost:3000来测试该REST服务。
 
-启动blockchain-explorer服务。启动blockchain-explorer服务的目的是为了查询事务id，然后再用事务id访问fabric-sdk-rest。  
-需要说明的是，blockchain-explorer的配置文件config.json需要修改，以便连接到**basic-network**环境。config.json的配置：
+#### 启动blockchain-explorer
+启动blockchain-explorer服务的目的是为了与fabric-sdk-rest的查询结果进行对比，当然可以跳过这个部分。  
+
+blockchain-explorer的配置文件config.json需要修改，以便连接到**basic-network**环境。config.json的配置：
 ```
 {
     "network-config": {
@@ -840,3 +842,11 @@ cp basic-network/ ~/blockchain-explorer/ -R
 cd ~/blockchain-explorer && ./start.sh
 ```
 宿主windows下浏览器访问localhost:8081，可以看到**basic-network**的基本区块链信息，包括某个块的事务id，如：`	d6e4713ba3e5c7dc54d5d1d8f93f0b78d97291fd4f1f7120259630140e0e4eff`。
+
+#### 使用fabric-sdk-rest
+用浏览器打开地址localhost:3000，进入fabric-sdk-rest的Swagger-UI页面。  
+点击链接`GET /fabric/1_0/channels/{channelName}/transactions/{transactionID}`，在channelName域中输入`mychannel`，在transactionId域中输入(粘贴)`d6e4713ba3e5c7dc54d5d1d8f93f0b78d97291fd4f1f7120259630140e0e4eff`，点`Try it out!`按钮可以看到响应中的json串。可以到[这里](https://github.com/wbwangk/wbwangk.github.io/tree/master/tmp)查看输出结果。  
+
+还可以点击链接`GET /fabric/1_0/channels/{channelName}/blocks`，然后在BlockId域中输入`4`(或其他正确的值)，blockHash留空，然后点击Try it out!`按钮，查询4号区块的信息。响应的json串包含了这个区块的信息和交易信息。可以参考这个[区块结构图](https://blockchain-fabric.blogspot.jp/2017/04/hyperledger-fabric-v10-block-structure.html)来查看区块数据和交易数据。
+
+
