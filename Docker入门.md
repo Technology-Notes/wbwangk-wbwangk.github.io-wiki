@@ -125,3 +125,30 @@ TCP and UDP port 4789 for overlay network traffic
 [3](https://github.com/docker/docker/blob/master/docs/swarm/ingress.md)  
 Port 7946 TCP/UDP for container network discovery.  
 Port 4789 UDP for the container ingress network.
+
+#### 远程访问docker引擎
+[官方文档](https://success.docker.com/article/Using_systemd_to_control_the_Docker_daemon)  [一个博文](http://blog.csdn.net/csde12/article/details/70240721)  
+下面的配置方式仅针对ubuntu16，其他版本慎用。  
+
+处于安全的原因，docker引擎只能被本机访问。如果想远程访问docker引擎，需要修改服务的启动参数。首先查看一下当前的启动参数：
+```
+sudo systemctl cat docker | grep ExecStart
+ExecStart=/usr/bin/docker daemon -H fd://
+```
+修改配置：
+```
+sudo systemctl edit docker
+```
+然后输入以下的内容：
+```
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H fd://
+```
+ctrl+O是保存，然后按回车创建一个文件。
+
+重启docker服务：
+```
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
