@@ -687,7 +687,7 @@ var channel = fabric_client.newChannel('composerchannel');
 #### 向fabric-tools中增加cli容器
 fabric-tools没有带cli容器，根据fabcar自带的容器环境的配置文件为原型，改造fabric-tools的docker-compose配置文件。该配置文件是`/home/vagrant/fabric-tools/fabric-scripts/hlfv1/composer/docker-compose.yml`，增加下列内容：
 ```yaml
- cli:
+  cli:
     container_name: cli
     image: hyperledger/fabric-tools
     tty: true
