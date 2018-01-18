@@ -165,3 +165,6 @@ ubuntu16内置了rsyslog。在ubuntu下（其他linux貌似相同）要将docker
 ```
 tail /var/log/syslog -n 100
 ```
+
+#### docker清理
+参考[这个文档](https://hub.docker.com/r/martin/docker-cleanup-volumes/)  
