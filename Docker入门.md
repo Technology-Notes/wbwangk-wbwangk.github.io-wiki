@@ -152,3 +152,16 @@ ctrl+O是保存，然后按回车创建一个文件。
 sudo systemctl daemon-reload
 sudo systemctl restart docker
 ```
+
+#### 将docker日志写入syslog
+参考[docker相关官方文档](https://docs.docker.com/engine/admin/logging/overview/#configure-the-default-logging-driver)  
+ubuntu16内置了rsyslog。在ubuntu下（其他linux貌似相同）要将docker日志写入syslog，需要在目录`/etc/docker`创建一个叫`daemon.json`的文件：
+```
+{
+  "log-driver": "syslog"
+}
+```
+重启docker服务后，去看syslog：
+```
+tail /var/log/syslog -n 100
+```
