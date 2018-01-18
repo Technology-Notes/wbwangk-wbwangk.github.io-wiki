@@ -178,3 +178,9 @@ POW,POS,DPOS
 ```
 export COMPOSER_PROVIDERS='{ "ldap": { "provider": "ldap", "authScheme": "ldap", "module": "passport-ldapauth", "authPath": "/auth/ldap", "successRedirect": "/", "failureRedirect": "/failure", "session": false, "json": true, "profileAttributesFromLDAP": { "login": "uid", "username": "uid", "displayName": "givenName", "email": "mail", "externalId": "uid" }, "server": { "url": "ldap://ldap.xxx.com:389", "bindDn": "uid=aldred,ou=Users,o=xxx,dc=xxx,dc=com", "bindCredentials": "caveman", "searchBase": "ou=Users,o=xxx,dc=xxx,dc=com", "searchFilter": "(uid={{username}})" } } }'
 ```
+
+### docker.sock permission denied
+```
+sudo usermod -a -G docker $USER
+```
+当前用户需要重新登录，然后执行docker ps就正常了。
