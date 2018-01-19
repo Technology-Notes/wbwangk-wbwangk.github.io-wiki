@@ -38,6 +38,10 @@ Daemon is ready
 ```
 之所以执行ipfs config，是因为本地默认的8080端口被占用了。
 
+另一个常见的可设置端口是Addresses.API:
+```
+ipfs config Addresses.API /ip4/0.0.0.0/tcp/5002
+```
 #### 远程访问本地文件
 `QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5o`是之前hello.txt的哈希值。下面在浏览器中访问这个文件：
 ```
