@@ -2,13 +2,20 @@
 
 就网络监控(嗅探)来说，tcpdump最流行，但不好掌握。最终选择了[httpry](https://github.com/jbittel/httpry)和[justniffer](http://justniffer.sourceforge.net/)。两者貌似都师从tcpdump，参数都有点像。
 
-在unbuntu16下两个软件的安装都容易：
+在unbuntu14及之前版本的安装方式：
 ```
 # apt-get install add-apt-repository
 # add-apt-repository ppa:oreste-notelli/ppa    （安装justniffer）
 $ apt-get update
 $ apt-get install justniffer
 ```
+ubuntu16的安装：
+首先到[Ubuntu file repository](https://launchpad.net/~oreste-notelli/+archive/ppa/+packages)下载deb包，然后：
+```
+$ sudo apt-get install gdebi-core 
+$ sudo gdebi justniffer-x.x.deb
+```
+
 centos下的安装参加[这个](http://justniffer.sourceforge.net/#!/install)。本人在centos7上装justniffer没成功，各种依赖包缺失。
 
 两个软件都监控网卡的tcp流。
