@@ -184,3 +184,6 @@ export COMPOSER_PROVIDERS='{ "ldap": { "provider": "ldap", "authScheme": "ldap",
 sudo usermod -a -G docker $USER
 ```
 当前用户需要重新登录，然后执行docker ps就正常了。
+
+#### p2p ssh
+https://github.com/nobonobo/ssh-p2p
