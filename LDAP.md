@@ -172,6 +172,11 @@ $ ldapsearch -x -LLL -H ldap://u1401.ambari.apache.org -b dc=ambari,dc=apache,dc
 uid=john：一个查找用户john的“过滤器”；  
 cn gidNumber：请求和显示特定属性（默认是显示全部属性）。   
 
+#### 删除john用户
+```
+ldapdelete -x -D cn=admin,dc=ambari,dc=apache,dc=org -W "uid=john,ou=People,dc=ambari,dc=apache,dc=org"
+```
+
 ### 修改slapd配置数据库
 RDN为```cn=config```的目录成为slapd-config DIT，是slapd的配置数据库。  
 (一). 使用*ldapmodify*增加一个"索引"(DbIndex属性)到*{1}hdb,cn=config*数据库。创建一个叫uid_index.ldif的文件，包括以下内容：
