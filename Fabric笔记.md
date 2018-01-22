@@ -761,11 +761,27 @@ fabcar是个fabric链码，现在创建一个composer链码(composer叫业务网
 composer-playground
 ```
 用浏览器访问localhost:8080，点击新建一个业务网络。  
-使用空白模板，业务网络名称是tutorial-network，业务网络管理员卡片是admin@tutorial-network，网络管理员凭据选择ID and Secret，默认管理员和密码是`admin:adminpw`。  
+使用空白模板，业务网络名称是tn(tutorial-network)，业务网络管理员卡片是admin@tn，网络管理员凭据选择ID and Secret，默认管理员和密码是`admin:adminpw`。  
 
 安装教程添加模型、交易处理函数、基础数据等。使用的命名空间是`org.acme.mynetwork`。执行教程的所有操作，直到把资产ABC的拥有者改成TRADER2。  
 
+### composer-rest-server  
+安装openldap[1](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)。DIT后缀是`dc=example,dc=com`。添加一个叫john的用户，密码是johnldap。这个用户需要一个mail的属性[2](https://github.com/wbwangk/wbwangk.github.io/wiki/passport_ldapauth)。  
+
+设置环境变量`COMPOSER_PROVIDERS`并启动composer-rest-server，选项是启用认证。  
+获取令牌并请求商品`ABC`:
+```
+$ curl -i -X POST http://localhost:3000/auth/ldap -H "Content-Type:application/json" -d '{"username": "john", "password":"johnldap"}
+set-cookie: access_token=(略); Max-Age=1209600; Path=/; Expires=Mon, 05 Feb 2018 06:35:24 GMT
+$ curl -X GET --cookie "access_token=(略)" --header 'Accept: application/json' 'http://localhost:3000/api/Commodity/ABC'
+{"$class":"org.acme.mynetwork.Commodity","tradingSymbol":"ABC","description":"Test commodity","mainExchange":"Euronext","quantity":72.297,"owner":"resource:org.acme.mynetwork.Trader#TRADER2"}v
+```
+上述获取商品的API是用浏览器通过localhost:3000查询到的。
+
   
+
+
+
 
 
 
