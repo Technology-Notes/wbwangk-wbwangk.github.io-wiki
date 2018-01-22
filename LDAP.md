@@ -250,11 +250,11 @@ john@u1410:/$
 john这个用户是之前的测试添加到LDAP数据库中的。由于在当前操作系统下没有/home/john目录，所以提示john用户的HOME目录变成了根目录。
 
 ### ldap工具ldapscritps
-先在u1401上安装一个需要用到的软件包*ldapscritps*([[1]](https://github.com/martymac/ldapscripts))：
+先在u1401上安装一个需要用到的软件包*ldapscritps*([[1](https://github.com/martymac/ldapscripts)])：
 ```
 $ sudo apt install ldapscripts
 ```
-centos7.3下安装*ldapscritps*([1](http://rpmfind.net/linux/rpm2html/search.php?query=ldapscripts))：
+centos7.3下安装*ldapscritps*([[1](http://rpmfind.net/linux/rpm2html/search.php?query=ldapscripts)])：
 ```
 $ wget ftp://rpmfind.net/linux/Mandriva/devel/cooker/x86_64/media/contrib/release/ldapscripts-1.10.0-1-mdv2011.0.noarch.rpm
 $ yum install ldapscripts-1.10.0-1-mdv2011.0.noarch.rpm 
