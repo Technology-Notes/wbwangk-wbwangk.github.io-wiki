@@ -754,6 +754,20 @@ Successfully loaded user1 from persistence
 Query has completed, checking results
 Response is  [{"Key":"CAR0", "Record":{"colour":"blue","make":"Toyota","model":"Prius","owner":"Tomoko"}},{"Key":"CAR1", "Record":{"colour":"red","make":"Ford","model":"Mustang","owner":"Brad"}},{"Key":"CAR2", "Record":{"colour":"green","make":"Hyundai","model":"Tucson","owner":"Jin Soo"}},{"Key":"CAR3", "Record":{"colour":"yellow","make":"Volkswagen","model":"Passat","owner":"Max"}},{"Key":"CAR4", "Record":{"colour":"black","make":"Tesla","model":"S","owner":"Adriana"}},{"Key":"CAR5", "Record":{"colour":"purple","make":"Peugeot","model":"205","owner":"Michel"}},{"Key":"CAR6", "Record":{"colour":"white","make":"Chery","model":"S22L","owner":"Aarav"}},{"Key":"CAR7", "Record":{"colour":"violet","make":"Fiat","model":"Punto","owner":"Pari"}},{"Key":"CAR8", "Record":{"colour":"indigo","make":"Tata","model":"Nano","owner":"Valeria"}},{"Key":"CAR9", "Record":{"colour":"brown","make":"Holden","model":"Barina","owner":"Shotaro"}}]
 ```
+### 用playground创建tutorial-network
+fabcar是个fabric链码，现在创建一个composer链码(composer叫业务网络)，叫做`tutorial-network`。创建tutorial-network的过程可以参考composer官方文档[Playground教程](https://wbwangk.github.io/ComposerDocs/tutorials_playground-tutorial/)。  
+启动Composer Playground：
+```
+composer-playground
+```
+用浏览器访问localhost:8080，点击新建一个业务网络。  
+使用空白模板，业务网络名称是tutorial-network，业务网络管理员卡片是admin@tutorial-network，网络管理员凭据选择ID and Secret，默认管理员和密码是`admin:adminpw`。  
+
+安装教程添加模型、交易处理函数、基础数据等。使用的命名空间是`org.acme.mynetwork`。执行教程的所有操作，直到把资产ABC的拥有者改成TRADER2。  
+
+  
+
+
 
 ## fabric-sdk-rest
 项目地址：`https://github.com/hyperledger/fabric-sdk-rest`  
