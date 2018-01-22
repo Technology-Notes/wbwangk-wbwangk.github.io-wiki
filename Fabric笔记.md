@@ -577,7 +577,7 @@ docker save hyperledger/fabric-javaenv:x86_64-1.0.4 > /vagrant/fabric-javaenv-1.
 docker load < /vagrant/fabric-javaenv-1.0.4
 ```
 #### 安装composer
-[1](https://wbwangk.github.io/ComposerDocs/installing_development-tools/)
+[[1](https://wbwangk.github.io/ComposerDocs/installing_development-tools/)]  
 使用用户vagrant，需要翻墙和设置http_proxy。
 ```
 curl -O https://hyperledger.github.io/composer/prereqs-ubuntu.sh
@@ -601,7 +601,7 @@ sudo service docker restart
 $ composer network ping --card admin@food-supply
 Error: Failed to load connector module "composer-connector-hlfv1" for connection type "hlfv1". Cannot find module '/usr/local/lib/node_modules/composer-cli/node_modules/grpc/src/node/extension_binary/node-v57-linux-x64/grpc_node.node'
 ```
-解决办法[1](https://github.com/hyperledger/composer/issues/1531)：
+解决办法[[1](https://github.com/hyperledger/composer/issues/1531)]：
 ```
 cd /usr/local/lib/node_modules/composer-cli
 npm rebuild --unsafe-perm
@@ -766,7 +766,7 @@ composer-playground
 安装教程添加模型、交易处理函数、基础数据等。使用的命名空间是`org.acme.mynetwork`。执行教程的所有操作，直到把资产ABC的拥有者改成TRADER2。  
 
 ### composer-rest-server  
-安装openldap[1](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)。DIT后缀是`dc=example,dc=com`。添加一个叫john的用户，密码是johnldap。这个用户需要一个mail的属性[2](https://github.com/wbwangk/wbwangk.github.io/wiki/passport_ldapauth)。  
+安装openldap[[1](https://github.com/wbwangk/wbwangk.github.io/wiki/LDAP)]。DIT后缀是`dc=example,dc=com`。添加一个叫john的用户，密码是johnldap。这个用户需要一个mail的属性[[2](https://github.com/wbwangk/wbwangk.github.io/wiki/passport_ldapauth)]。  
 
 设置环境变量`COMPOSER_PROVIDERS`并启动composer-rest-server，选项是启用认证。  
 获取令牌并请求商品`ABC`:
@@ -802,7 +802,7 @@ cd packages/loopback-connector-fabric && npm link && cd -
 cd packages/fabric-rest && npm link loopback-connector-fabric && npm install && cd -
 npm install
 ```
-下面使用`fabric-samples/fabcar`[1](https://wbwangk.github.io/hyperledgerDocs/write_first_app_zh/)的**basic-network**环境进行测试。   
+下面使用`fabric-samples/fabcar`[[1](https://wbwangk.github.io/hyperledgerDocs/write_first_app_zh/)]的**basic-network**环境进行测试。   
 首先，利用项目自带脚本配置`datasources.json`:
 ```
 setup.sh -f /opt/fabric-samples/basic-network/ -ukat
