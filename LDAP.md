@@ -63,6 +63,12 @@ $ service slapd status
 $ netstat -anp | grep 389
 tcp        0      0 0.0.0.0:389             0.0.0.0:*               LISTEN      5860/slapd
 ```
+如果想重新配置openldap的DIT后缀，可以运行：
+```
+sudo dpkg-reconfigure slapd
+```
+
+
 ldapsearch是ldap搜索命令(搜索cn=config目录下的条目)：
 ```
 $ sudo ldapsearch -Q -LLL -Y EXTERNAL -H ldapi:/// -b cn=config dn
