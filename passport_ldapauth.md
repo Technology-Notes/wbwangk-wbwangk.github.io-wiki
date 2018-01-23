@@ -287,6 +287,7 @@ username为用户名，password为密码；点击Send发送请求，登录成功
 
 注意：本测试中的参与者拥有两个身份文件（身份由CA维护）。如参与者importerA有`importer`和`importer0`两个身份，前者导入了composer中用于playground，后者导入composer-rest-server，用于通过REST访问composer。ldap中的用户(如importer0)用于客户端登录到REST服务器。
 
+### 环境准备
 #### 准备REST用户
 将下列用户数据导入到openldap中。从而在ldap中建立了四个用户：进口商importer0、供应商supplier0、零售商retailer0、监管机构regulator0(为了省事直接放在了People这个OU下)：
 ```
@@ -421,4 +422,49 @@ Response Code
 下面上传身份卡片supplier0.card并与将卡片与ldap用户supplier0进行绑定。这种绑定是隐含的，因为cookie中是supplier0的令牌，所以上传的卡片就和它绑定了。  
 点击`POST /wallet/import`，点击`选择文件`按钮，选择之前导出的`supplier0.card`。点击`Try it out!`上传并绑定。显示204状态码表示成功。
 
-#### 
+### 业务测试
+这个业务过程如下(括号中是绑定的身份卡片id)：
+
+1. 供应商A(supplier0)创建产品列表，然后将产品列表移交给进口商A(importer0)
+
+2. 进口商A(importer0)对产品执行豁免检查，然后将产品移交给零售商A(retailer0)
+
+3. 零售商A(retailer0)查看自己名下的商品
+
+为了模拟上述过程，需要用访问`auth/ldap`三次，分别获取三个用户的令牌，并三次使用EditThisCookie写入cookie，分别三次上传身份卡片。
+
+这个测试过程使用的数据仍是[BlockchainPublicRegulationFabric-Food](https://github.com/wbwangk/BlockchainPublicRegulationFabric-Food/blob/master/README.md)文档中的数据。只是现在是通过REST发出交易。
+
+#### 创建产品列表
+通过在cookie中写入访问令牌并绑定身份卡片，当前用户可以通过REST访问Composer业务网络了。
+
+在浏览器中点击`POST /createProductListing`来新建`createProductListing`交易。在data参数中输入下列数据：
+```json
+{
+  "$class": "composer.food.supply.createProductListing",
+  "products": ["prodA,5","prodB,2"],
+  "user": "resource:composer.food.supply.Supplier#supplierA"
+}
+```
+如果正常将返回200状态码。这时到playground的测试屏幕上点最左侧`All Transactions`选项卡可以看到刚刚提交的这个交易。
+产品列表id是程序自动生成的，要执行后续操作需要取得上面交易的ProductListingContractID。方法是通过API`GET /ProductListingContract`，这个API可以返回：
+```
+[
+  {
+    "$class": "composer.food.supply.ProductListingContract",
+    "listingtId": "rtlh64cd2k",
+(略)
+```
+`rtlh64cd2k`就是composer模型中的ProductListingContract.listingtId。
+
+#### 产品列表移交给进口商
+
+在浏览器点击API`POST /transferListing`，输入下列数据后点`Try it out!`按钮：
+```json
+{
+  "$class": "composer.food.supply.transferListing",
+  "ownerType": "supplier",
+  "newOwner": "resource:composer.food.supply.Importer#importerA",
+  "productListing": "resource:composer.food.supply.ProductListingContract#rtlh64cd2k"
+}
+```
