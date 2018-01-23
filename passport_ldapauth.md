@@ -281,7 +281,10 @@ username为用户名，password为密码；点击Send发送请求，登录成功
 
 7. 启动composer-rest-server，启用身份认证和多用户
 
-8. 
+8. 以ldap中的4个用户通过curl登录REST服务器并把访问令牌依次写入浏览器cookie，上传对应的业务网络卡片到REST服务器
+
+9. 在浏览器中切换4个用户的cookie，测试其读写权限
+
 #### 准备REST用户
 将下列用户数据导入到openldap中。从而在ldap中建立了四个用户：进口商importer0、供应商supplier0、零售商retailer0、监管机构regulator0：
 ```
@@ -353,4 +356,8 @@ gecos: supplier0
 loginShell: /bin/bash
 homeDirectory: /home/supplier0
 ```
-导入方式：
+导入ldap和测试：
+```
+ldapadd -x -D dc=example,dc=com -W -f food.ldif
+ldapsearch -x -LLL -H ldap:/// -b dc=example,dc=com dn
+```
