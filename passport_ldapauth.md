@@ -262,3 +262,79 @@ username为用户名，password为密码；点击Send发送请求，登录成功
 }
 ```
 测试成功
+
+## 测试三：多用户+ACL
+仍使用默认的LoopBack数据源(内存)保存用户数据（导入的卡片仅保存在内存中，即rest服务器重启后卡片会自动删除）。业务网络使用IBM提供的[一个食品工业的公共监管Fabric例子](https://github.com/wbwangk/BlockchainPublicRegulationFabric-Food)。  
+
+#### 准备REST用户
+将下列用户数据导入到openldap中。从而在ldap中建立了四个用户：进口商importer0、供应商supplier0、零售商retailer0、监管机构regulator0：
+```
+dn: uid=importer0,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: importer0
+sn: Doe
+givenName: importer0
+mail: importer0@example.com
+cn: importer0
+displayName: importer0
+uidNumber: 10001
+gidNumber: 5001
+userPassword: 1
+gecos: importer0
+loginShell: /bin/bash
+homeDirectory: /home/importer0
+
+dn: uid=regulator0,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: regulator0
+sn: regulator0
+givenName: regulator0
+mail: regulator0@example.com
+cn: regulator0
+displayName: regulator0
+uidNumber: 10001
+gidNumber: 5001
+userPassword: 1
+gecos: regulator0
+loginShell: /bin/bash
+homeDirectory: /home/regulator0
+
+dn: uid=retailer0,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: retailer0
+sn: retailer0
+givenName: retailer0
+mail: retailer0@example.com
+cn: retailer0
+displayName: retailer0
+uidNumber: 10001
+gidNumber: 5001
+userPassword: 1
+gecos: retailer0
+loginShell: /bin/bash
+homeDirectory: /home/retailer0
+
+dn: uid=supplier0,ou=People,dc=example,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: supplier0
+sn: supplier0
+givenName: supplier0
+mail: supplier0@example.com
+cn: supplier0
+displayName: supplier0
+uidNumber: 10001
+gidNumber: 5001
+userPassword: 1
+gecos: supplier0
+loginShell: /bin/bash
+homeDirectory: /home/supplier0
+```
+导入方式：
