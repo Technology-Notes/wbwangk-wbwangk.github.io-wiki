@@ -285,6 +285,8 @@ username为用户名，password为密码；点击Send发送请求，登录成功
 
 9. 在浏览器中切换4个用户的cookie，测试其读写权限
 
+注意：本测试中的参与者拥有两个身份文件（身份由CA维护）。如参与者importerA有`importer`和`importer0`两个身份，前者导入了composer中用于playground，后者导入composer-rest-server，用于通过REST访问composer。ldap中的用户(如importer0)用于客户端登录到REST服务器。
+
 #### 准备REST用户
 将下列用户数据导入到openldap中。从而在ldap中建立了四个用户：进口商importer0、供应商supplier0、零售商retailer0、监管机构regulator0：
 ```
