@@ -288,7 +288,7 @@ username为用户名，password为密码；点击Send发送请求，登录成功
 注意：本测试中的参与者拥有两个身份文件（身份由CA维护）。如参与者importerA有`importer`和`importer0`两个身份，前者导入了composer中用于playground，后者导入composer-rest-server，用于通过REST访问composer。ldap中的用户(如importer0)用于客户端登录到REST服务器。
 
 #### 准备REST用户
-将下列用户数据导入到openldap中。从而在ldap中建立了四个用户：进口商importer0、供应商supplier0、零售商retailer0、监管机构regulator0：
+将下列用户数据导入到openldap中。从而在ldap中建立了四个用户：进口商importer0、供应商supplier0、零售商retailer0、监管机构regulator0(为了省事直接放在了People这个OU下)：
 ```
 dn: uid=importer0,ou=People,dc=example,dc=com
 objectClass: inetOrgPerson
@@ -363,3 +363,62 @@ homeDirectory: /home/supplier0
 ldapadd -x -D dc=example,dc=com -W -f food.ldif
 ldapsearch -x -LLL -H ldap:/// -b dc=example,dc=com dn
 ```
+
+#### 从playground创建和导出身份卡片
+在playground右上角下拉菜单中点击`admin`(当前用户)进入身份管理页面。点击Issue New ID按钮颁发新的身份。参与者类型输入框有下拉提示。身份卡不导入到钱包，而是导出为文件。最后屏幕的样子：  
+[(No Title)](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/export-card.png)
+
+#### 以多用户模式启动REST服务器
+通过设置环境变量来告诉REST服务器使用LDAP作为认证服务：
+```
+export COMPOSER_PROVIDERS='{
+                "ldap": {
+                    "provider": "ldap",
+                    "module": "passport-ldapauth",
+                    "authPath": "/auth/ldap",
+                    "callbackURL": "/auth/ldap/callback",
+                    "successRedirect": "/?success=true",
+                    "failureRedirect": "/?failure=true",
+                    "authScheme": "ldap",
+                    "server": {
+                        "url": "ldap://ldap.example.com:389",
+                        "bindDN": "cn=admin,dc=example,dc=com",
+                        "bindCredentials": "1",
+                        "searchBase": "ou=People,dc=example,dc=com",
+                        "searchFilter": "(uid={{username}})"
+                    }
+                }
+            }'
+```
+```
+composer-rest-server
+```
+业务网络卡片输入`admin@food-supply`(这是playground部署的)、不用命名空间、启用认证、启用多用户、启用事件、不用TLS。  
+
+#### 模拟登录和写入cookie
+composer-rest-server默认会监听3000端口，3000端口已经被NAT映射到了windows，用浏览器访问localhost:3000端口可以查看food-supply的各种REST API。
+
+由于启用了认证，随便点一个API，如[Get /Supplier](http://localhost:3000/explorer/#!/Supplier/Supplier_find)，都会提示401错误。屏幕上会提示用curl访问同一个API的方式，如：
+```
+curl -X GET --header 'Accept: application/json' 'http://localhost:3000/api/Supplier'
+```
+如果这样用curl访问上述API(相当于playground的Test页面中点最左边的Supplier选项卡)也会报告401错误。下面改造这个请求，加上supplier0的凭据信息来获取访问令牌：
+```
+curl -i -X POST http://localhost:3000/auth/ldap -H "Content-Type:application/json" -d '{"username": "supplier0", "password":"1"}'
+set-cookie: access_token=s%3AhkrH3pn3ho5ZK9D6Lswpd1BeSFl0BYZwhfcAKTBbI9XBCjauEaFrwxSSl0m4wuAe.CDWuE%2FW0xBj93s3N9enWh84l3gswmqPvpM03r9oyhUA; Max-Age=1209600; Path=/; Expires=Tue, 06 Feb 2018 02:37:57 GMT
+```
+利用chrome的EditThisCookie插件将上述access_token添加到当前域(localhost)中。如下图：  
+[(No Title)](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/access_token_editthiscookie.png)  
+
+#### 导入身份卡片
+access_token写入cookie后就可以访问钱包API了。在浏览器中点击最下面的`GET /wallet`和`Try it out!`按钮，之前会报告401错误，现在显示一个空的钱包：
+```
+Response Body
+[]
+Response Code
+200
+```
+下面上传身份卡片supplier0.card并与将卡片与ldap用户supplier0进行绑定。这种绑定是隐含的，因为cookie中是supplier0的令牌，所以上传的卡片就和它绑定了。  
+点击`POST /wallet/import`，点击`选择文件`按钮，选择之前导出的`supplier0.card`。点击`Try it out!`上传并绑定。显示204状态码表示成功。
+
+#### 
