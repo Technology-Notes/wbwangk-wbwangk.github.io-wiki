@@ -468,3 +468,12 @@ Response Code
   "productListing": "resource:composer.food.supply.ProductListingContract#rtlh64cd2k"
 }
 ```
+上述交易执行后，可以通过API`GET /ProductListingContract`(即`http://localhost:3000/api/ProductListingContract`)来查询产品列表`rtlh64cd2k`目前的状态和所有者：
+```
+...
+    "listingtId": "rtlh64cd2k",
+    "status": "EXEMPTCHECKREQ",
+...
+ "owner": "resource:composer.food.supply.Importer#importerA",
+...
+```
