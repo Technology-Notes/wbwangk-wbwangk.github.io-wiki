@@ -477,3 +477,97 @@ Response Code
  "owner": "resource:composer.food.supply.Importer#importerA",
 ...
 ```
+
+
+#### 产品检验
+
+现在产品的所有权在进口商手里。进口商需要将产品交付给监管机构进行豁免检查。切换当前用户到进口商：
+```
+curl -i -X POST http://localhost:3000/auth/ldap -H "Content-Type:application/json" -d '{"username": "importer0", "password":"1"}'
+set-cookie: access_token=s%3AZwG4EPy5oTBpfU3kxrTh5Kr9a3z8lCSgPgX35g0TjAFQde48l19Qs3TVSEDg2LGf.4bKTV07rNeaFvUSFSfcdmFOq%2FIYM3y8oEIV%2FhbBAzZc; Max-Age=1209600; Path=/; Expires=Tue, 06 Feb 2018 05:42:32 GMT
+```
+将访问令牌用EditThisCookie写入浏览器的cookie。用浏览器点击`POST /wallet/import`，点击`选择文件`按钮，选择之前导出的`importer0.card`。点击`Try it out!`上传并绑定。显示204状态码表示成功。
+
+点击API`POST /checkProducts`，输入下列数据进行商品检验：
+```
+{
+  "$class": "composer.food.supply.checkProducts",
+  "regulator": "resource:composer.food.supply.Regulator#regulatorA",
+  "productListing": "resource:composer.food.supply.ProductListingContract#rtlh64cd2k"
+}
+```
+交易完成后，可以通过API`GET /ProductListingContract`查看产品列表信息，会看到下列内容：
+```
+[
+  {
+    "$class": "composer.food.supply.ProductListingContract",
+    "listingtId": "rtlh64cd2k",
+    "status": "CHECKCOMPLETED",
+    "products": [
+      {
+        "$class": "composer.food.supply.Product",
+        "productId": "prodA",
+        "quantity": "5",
+        "countryId": "UK"
+      },
+      {
+        "$class": "composer.food.supply.Product",
+        "productId": "prodB",
+        "quantity": "2",
+        "countryId": "UK"
+      }
+    ],
+    "owner": "resource:composer.food.supply.Importer#importerA",
+    "supplier": "resource:composer.food.supply.Supplier#supplierA"
+  }
+]
+```
+这显示产品列表已经是检验完成状态，所有权在importerA手中。
+
+#### 移交给零售商
+当前用户仍是进口商(importer0)。现在访问API`POST /transferListing`，输入参数data是下面的内容：
+```json
+{
+  "$class": "composer.food.supply.transferListing",
+  "ownerType": "importer",
+  "newOwner": "resource:composer.food.supply.Retailer#retailerA",
+  "productListing": "resource:composer.food.supply.ProductListingContract#rtlh64cd2k"
+}
+```
+提交后产品列表就移交到零售商A手中。
+
+#### 零售商查看产品清单
+参与者`retailerA`的身份ID和ldap用户都是`retailer0`。现在切换用户到该零售商。
+```
+curl -i -X POST http://localhost:3000/auth/ldap -H "Content-Type:application/json" -d '{"username": "retailer0", "password":"1"}'
+```
+把返回的access_token(`s%3ARReruFVC0JxD14O3l6b7XKbnUIvn4JwKZ6h2CG6VbIQEQi48nkQMmQVRAElJuRyz.LGInnJk1YvQ50SJRYXHTpofU8awyRoCXgklT3SdqUnc`)写入浏览器cookie。通过API[POST /wallet/import](http://localhost:3000/explorer/#!/Wallet/Card_importCard)导入`retailer0.card`。
+
+下面通过API [GET /Retailer](http://localhost:3000/explorer/#!/Retailer/Retailer_find)来查看其名下的产品清单，返回的响应如下：
+```
+[
+  {
+    "$class": "composer.food.supply.Retailer",
+    "retailerId": "retailerA",
+    "products": [
+      {
+        "$class": "composer.food.supply.Product",
+        "productId": "prodA",
+        "quantity": "5",
+        "countryId": "UK"
+      },
+      {
+        "$class": "composer.food.supply.Product",
+        "productId": "prodB",
+        "quantity": "2",
+        "countryId": "UK"
+      }
+    ]
+  }
+]
+```
+上面的两个产品就是通过之前的一系列交易交到零售商A手中的。
+
+#### 权限测试
+
+将cookie中的access_token修改成进口商A(importer0)的，即`s%3AZwG4EPy5oTBpfU3kxrTh5Kr9a3z8lCSgPgX35g0TjAFQde48l19Qs3TVSEDg2LGf.4bKTV07rNeaFvUSFSfcdmFOq%2FIYM3y8oEIV%2FhbBAzZc`，然后再访问[GET /Retailer](http://localhost:3000/explorer/#!/Retailer/Retailer_find)
