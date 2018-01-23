@@ -569,5 +569,24 @@ curl -i -X POST http://localhost:3000/auth/ldap -H "Content-Type:application/jso
 上面的两个产品就是通过之前的一系列交易交到零售商A手中的。
 
 #### 权限测试
-
-将cookie中的access_token修改成进口商A(importer0)的，即`s%3AZwG4EPy5oTBpfU3kxrTh5Kr9a3z8lCSgPgX35g0TjAFQde48l19Qs3TVSEDg2LGf.4bKTV07rNeaFvUSFSfcdmFOq%2FIYM3y8oEIV%2FhbBAzZc`，然后再访问[GET /Retailer](http://localhost:3000/explorer/#!/Retailer/Retailer_find)
+项目[BlockchainPublicRegulationFabric-Food](https://github.com/wbwangk/BlockchainPublicRegulationFabric-Food)的ACL设置比较“宽泛”，现在通过composer-playground关闭默认权限，即注释`permissions.acl`的下面的内容：
+```
+/*
+rule Default {
+    description: "Allow all participants access to all resources"
+    participant: "ANY"
+    operation: ALL
+    resource: "composer.food.supply.*"
+    action: ALLOW
+}
+*/
+```
+然后将用户切换为进口商。将cookie中的access_token修改成进口商A(importer0)的，即`s%3AZwG4EPy5oTBpfU3kxrTh5Kr9a3z8lCSgPgX35g0TjAFQde48l19Qs3TVSEDg2LGf.4bKTV07rNeaFvUSFSfcdmFOq%2FIYM3y8oEIV%2FhbBAzZc`，然后尝试以进口商的身份创建“产品列表”（这本来是供应商的权限），即用浏览器访问API`POST /createProductListing`，输入数据是：
+```
+{
+  "$class": "composer.food.supply.createProductListing",
+  "products": ["prodA,55","prodB,22"],
+  "user": "resource:composer.food.supply.Supplier#supplierA"
+}
+```
+系统会报500错误。编辑cookie中的access_token为供应商A的`s%3AhkrH3pn3ho5ZK9D6Lswpd1BeSFl0BYZwhfcAKTBbI9XBCjauEaFrwxSSl0m4wuAe.CDWuE%2FW0xBj93s3N9enWh84l3gswmqPvpM03r9oyhUA`，重发上面的创建产品列表的请求，发现成功了。
