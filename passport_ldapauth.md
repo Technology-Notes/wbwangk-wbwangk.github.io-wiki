@@ -266,6 +266,22 @@ username为用户名，password为密码；点击Send发送请求，登录成功
 ## 测试三：多用户+ACL
 仍使用默认的LoopBack数据源(内存)保存用户数据（导入的卡片仅保存在内存中，即rest服务器重启后卡片会自动删除）。业务网络使用IBM提供的[一个食品工业的公共监管Fabric例子](https://github.com/wbwangk/BlockchainPublicRegulationFabric-Food)。  
 
+#### 测试过程
+1. 启动fabric-tools（自己添加了一个cli容器）
+
+2. 在BlockchainPublicRegulationFabric-Food中构建形成food-supply.bna
+
+3. 启动composer-playground，导入food-supply.bna
+
+4. 根据BlockchainPublicRegulationFabric-Food的[README](https://github.com/wbwangk/BlockchainPublicRegulationFabric-Food)初始化数据，并执行基本测试
+
+5. 在ldap中创建4个开发者用户(importer0等)
+
+6. 在playground中新建4个身份(也叫importer0等)，并导出4个业务网络卡片
+
+7. 启动composer-rest-server，启用身份认证和多用户
+
+8. 
 #### 准备REST用户
 将下列用户数据导入到openldap中。从而在ldap中建立了四个用户：进口商importer0、供应商supplier0、零售商retailer0、监管机构regulator0：
 ```
