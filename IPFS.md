@@ -11,6 +11,7 @@ wget https://dist.ipfs.io/go-ipfs/v0.4.13/go-ipfs_v0.4.13_linux-amd64.tar.gz
 tar xzvf go-ipfs_v0.4.13_linux-amd64.tar.gz && rm go-ipfs_v0.4.13_linux-amd64.tar.gz && cd go-ipfs
 ```
 
+### 快速开始
 #### 初始化
 ```
 sudo ./install.sh
@@ -51,3 +52,28 @@ hello world
 我还特意找了一个VM安装ipfs，并添加同样内容（"hello world"）的文件到ipfs，发现hash是一样的。相信全球大量的人员在测试ipfs时都可能会使用"hello world"作为文件内容。  
 所以当访问地址`https://ipfs.io/ipfs/QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5o`时，访问的不见得是你自己的电脑上的这个hello.txt文件，除非这个文件的内容独特到全球只有你的电脑上有。  
 文档`https://ipfs.io/ipfs/QmXZXP8QRMG7xB4LDdKeRL5ZyZGZdhxkkLUSqoJDV1WRAp`的内容比较独特，恐怕只有我自己的电脑上有，如果我不开机并启动ipfs进程，估计别人访问不了。
+
+### API
+注意：要使用IPFS HTTP API，必须先启动ipfs daemon。
+IPFS的CLI与HTTP API是一一对应的。
+
+例如，命令行`ipfs swarm peers`对应的HTTP API是：
+```
+curl http://127.0.0.1:5001/api/v0/swarm/peers
+```
+#### 参数
+下面的命令行与HTTP API是一样的效果
+```
+ipfs swarm disconnect /ip4/54.93.113.247/tcp/48131/ipfs/QmUDS3nsBD1X4XK5Jo836fed7SErTyTuQzRqWaiQAyBYMP
+curl "http://127.0.0.1:5001/api/v0/swarm/disconnect?arg=/ip4/54.93.113.247/tcp/48131/ipfs/QmUDS3nsBD1X4XK5Jo836fed7SErTyTuQzRqWaiQAyBYMP"
+{
+  "Strings": [
+    "disconnect QmUDS3nsBD1X4XK5Jo836fed7SErTyTuQzRqWaiQAyBYMP success",
+  ]
+}
+```
+#### 标志(Flag)
+命令行的标志（选项）通过查询参数的形式添加。如标志`--encoding=json`用查询参数`&encoding=json`：
+```
+curl "http://127.0.0.1:5001/api/v0/object/get?arg=QmaaqrHyAQm7gALkRW8DcfGX3u8q9rWKnxEMmf7m9z515w&encoding=json"
+```
