@@ -1,5 +1,13 @@
+[官网](https://fabiolb.net/)  
 fabio是什么？A fast, modern, zero-conf load balancing HTTP(S) router for deploying microservices managed by consul.  
-Consul是一个流行的服务发现和配置共享的服务软件。fabio要依赖consul，或者说fabio增强了consul，使注册在consul的服务有了统一路由服务。 
+
+Fabio是一个HTTP和TCP反向代理，它使用来自[Consul](https://consul.io/)的数据进行自我配置 。
+
+传统的负载均衡器和反向代理需要配置一个配置文件。该配置包含代理向上游服务转发的主机名和路径。这个过程可以使用像[consul-template](https://github.com/hashicorp/consul-template)这样的工具来自动 生成配置文件并触发重新加载。
+
+Fabio的工作原理是不同的，因为一旦发生变化，无需重新启动或重新加载，Fabio就直接从存储在Consul中的数据更新其路由表。
+
+当你在Consul注册一个服务时，你需要添加一个标签来宣布上游服务接受的路径，例如，`urlprefix-/user`或者`urlprefix-/order`，fabio将完成剩下的工作。 
 
 ### consul启动
 consul的安装参考[consul测试](consul测试)。  
