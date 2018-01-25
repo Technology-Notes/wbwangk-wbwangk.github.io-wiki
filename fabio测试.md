@@ -79,6 +79,14 @@ $ ln -s fabio-1.3.7-go1.7.4-linux_amd64 /usr/local/bin/fabio
 $ fabio
 ```
 会提示consul: connection to "localhost:8500" in datacenter "dc1"。这表明fabio已经找到了本地的consul服务。
+
+#### 以docker方式安装和运行fabio
+consul已经安装在宿主机，并监听了8500端口。运行fabio：
+```
+docker run --net="host" fabiolb/fabio
+```
+之所以使用docker的host网络模式启动fabio，是因为fabio依赖宿主机的consul服务（端口8500）。
+
 ### 测试fabio路由
 现在consul、fabio-excample、fabio各占了一个终端，现在打开第4个终端，执行：
 ```
