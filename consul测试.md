@@ -65,3 +65,108 @@ block2  10.10.11.86:8301  alive   client  0.7.2  2         dc1
 ```
 看到节点block1的状态是failed。  
 重新启动节点1的consul agent，然后再执行consul members，两个节点都显示为alive状态，consul集群回复正常。  
+
+### 服务定义
+[官方原文](https://www.consul.io/intro/getting-started/services.html)  
+想consul注册服务可以通过提供一个[服务定义](https://www.consul.io/docs/agent/services.html)，或通过调用[HTTP API](https://www.consul.io/api/index.html)。
+
+#### 通过服务定义注册服务
+首先，为Consul配置创建一个目录。Consul从配置目录中加载所有配置文件，一般惯例使用的配置目录是`/etc/consul.d`：
+```
+$ sudo mkdir /etc/consul.d
+```
+下面，我们要编写一个服务定义配置文件。假设我们有一个叫"wbb"的服务运行在80端口。在定义中，我们设置了一个标签用于查询：
+```
+$ echo '{"service": {"name": "web", "tags": ["rails"], "port": 80}}' \
+    | sudo tee /etc/consul.d/web.json
+```
+现在，重启consul代理，在参数中指定配置目录：
+```
+$ consul agent -dev -config-dir=/etc/consul.d
+==> Starting Consul agent...
+...
+    [INFO] agent: Synced service 'web'
+...
+```
+你注意到了在输出中显示consul “synced” 了这个web服务。这意味着consul代理加载了配置文件中的服务定义，并成功将它注册到了服务目录中。
+
+如果你想定义多个服务，你可以在Consul配置目录中创建多个服务定义文件。
+
+### 查询服务
+当consul代理启动和服务被同步后，我们就可以使用DNS或HTTP API来查询服务。
+
+#### DNS API
+让我们首先使用DNS API查询服务。对于DNS API，服务的DNS名称是`NAME.service.consul`。默认情况下，所有DNS名称总是在`consul`命名空间中，但这是可以配置的。`service`子域名告诉consul我们正在查询服务，而`NAME`是服务的名称。
+
+对于我们注册的web服务，这些惯例和设置产生了一个全限定域名`web.service.consul`：
+```
+$ dig @127.0.0.1 -p 8600 web.service.consul
+...
+
+;; QUESTION SECTION:
+;web.service.consul.        IN  A
+
+;; ANSWER SECTION:
+web.service.consul. 0   IN  A   172.20.20.11
+```
+就像你看到的，返回了一个A记录，里面是服务所在节点的IP地址。A记录只能包含IP地址。
+
+你也可以使用DNS API以一个SRV记录的方式获取一对完整的地址和端口：
+```
+$ dig @127.0.0.1 -p 8600 web.service.consul SRV
+...
+
+;; QUESTION SECTION:
+;web.service.consul.        IN  SRV
+
+;; ANSWER SECTION:
+web.service.consul. 0   IN  SRV 1 1 80 vagrant.node.dc1.consul.
+
+;; ADDITIONAL SECTION:
+vagrant.node.dc1.consul. 0      IN      A       127.0.0.1
+vagrant.node.dc1.consul. 0      IN      TXT     "consul-network-segment="
+```
+SRV记录告诉我们，web服务运行在端口80，运行的节点是`vagrant.node.dc1.consul.`。DNS还通过附加部分返回了这个节点的A记录。
+
+最后，我们还可以使用DNS API来通过标签过滤服务。基于标签的服务查询的格式是`TAG.NAME.service.consul`。在下面的例子中，我们向Consul查询所有"rails"标签的服务。我们得到了一个成功的响应，因为之前注册服务时指定了这个标签：
+```
+$ dig @127.0.0.1 -p 8600 rails.web.service.consul
+...
+
+;; QUESTION SECTION:
+;rails.web.service.consul.      IN  A
+
+;; ANSWER SECTION:
+rails.web.service.consul.   0   IN  A   172.20.20.11
+```
+#### HTTP API
+除了使用DNS API，还可以使用HTTP API来查询服务：
+```
+$ curl http://localhost:8500/v1/catalog/service/web
+[
+    {
+        "ID": "0755b91c-a3d9-bb41-a163-ce5c88d86af7",
+        "Node": "vagrant",
+        "Address": "127.0.0.1",
+        "Datacenter": "dc1",
+        "TaggedAddresses": {
+            "lan": "127.0.0.1",
+            "wan": "127.0.0.1"
+        },
+        "NodeMeta": {
+            "consul-network-segment": ""
+        },
+        "ServiceID": "web",
+        "ServiceName": "web",
+        "ServiceTags": [
+            "rails"
+        ],
+        "ServiceAddress": "",
+        "ServicePort": 80,
+        "ServiceEnableTagOverride": false,
+        "CreateIndex": 6,
+        "ModifyIndex": 6
+    }
+]
+```
+catalog API给出了托管一个指定服务的所有节点。
