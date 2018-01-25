@@ -171,4 +171,37 @@ $ curl http://localhost:8500/v1/catalog/service/web
 ```
 catalog API给出了托管一个指定服务的所有节点。
 
-### 
+### 健康检查
+consul支持对服务进行健康检查。consul支持的健康检查方法有5种：
+
+- 脚本+时间间隔
+
+- HTTP +时间间隔
+
+- TCP +时间间隔
+
+- 生存时间（TTL）
+
+- Docker + Interval
+
+一个含有健康检查的consul服务定义文件`/etc/consul.d/playground.json`：
+```
+{
+  "service": {
+    "name": "playground",
+    "tags": [
+      "urlprefix-/playground"
+    ],
+    "address": "localhost",
+    "port": 8080,
+    "check": {
+      "id": "api",
+      "name": "playground health check",
+      "http": "http://localhost:8080/config.json",
+      "method": "GET",
+      "interval": "10s",
+      "timeout": "2s"
+    }
+  }
+}
+```
