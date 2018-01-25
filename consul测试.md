@@ -92,6 +92,59 @@ $ consul agent -dev -config-dir=/etc/consul.d
 
 如果你想定义多个服务，你可以在Consul配置目录中创建多个服务定义文件。
 
+#### 通过HTTP API定义服务
+[原文](https://www.consul.io/api/catalog.html)
+通过HTTP API创建服务需要的参数比较多：
+```
+$ curl -X PUT http://127.0.0.1:8500/v1/catalog/register \
+-d '{
+  "Datacenter": "dc1",
+  "ID": "40e4a748-2192-161a-0510-9bf59fe950b5",
+  "Node": "foobar",
+  "Address": "192.168.10.10",
+  "TaggedAddresses": {
+    "lan": "192.168.10.10",
+    "wan": "10.0.10.10"
+  },
+  "NodeMeta": {
+    "somekey": "somevalue"
+  },
+  "Service": {
+    "ID": "redis1",
+    "Service": "redis",
+    "Tags": [
+      "primary",
+      "v1"
+    ],
+    "Address": "127.0.0.1",
+    "Port": 8000
+  },
+  "Check": {
+    "Node": "foobar",
+    "CheckID": "service:redis1",
+    "Name": "Redis health check",
+    "Notes": "Script based health check",
+    "Status": "passing",
+    "ServiceID": "redis1",
+    "Definition": {
+      "TCP": "localhost:8888",
+      "Interval": "5s",
+      "Timeout": "1s",
+      "DeregisterCriticalServiceAfter": "30s"
+    }
+  },
+  "SkipNodeUpdate": false
+}'
+```
+执行完上述命令后，重新查看节点目录，发现多了一个`foobar`：
+```
+curl localhost:8500/v1/catalog/nodes
+```
+查看具体某节点的服务目录：
+```
+curl localhost:8500/v1/catalog/node/foobar
+```
+
 ### 查询服务
 当consul代理启动和服务被同步后，我们就可以使用DNS或HTTP API来查询服务。
 
@@ -189,6 +242,7 @@ consul支持对服务进行健康检查。consul支持的健康检查方法有5�
 {
   "service": {
     "name": "playground",
+    "node": "vagrant",
     "tags": [
       "urlprefix-/playground"
     ],
@@ -205,3 +259,4 @@ consul支持对服务进行健康检查。consul支持的健康检查方法有5�
   }
 }
 ```
+
