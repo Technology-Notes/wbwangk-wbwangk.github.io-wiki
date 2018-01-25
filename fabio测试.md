@@ -94,3 +94,41 @@ $ curl localhost:9999/foo
 Serving /foo from svc-a on 127.0.0.1:5000
 ```
 9999端口是fabio的代理(proxy)端口。fabio将9999端口收到的/foo路径下的请求，根据路由策略(tag:urlprefix-/foo)发往127.0.0.1:5000端口的svc-a服务。
+
+### 自制测试
+在本机的8080端口上运行着一个composer-playground服务。在该服务上随便找一个URL充当健康检查URL(貌似只要响应状态码是200即可):
+```
+curl localhost:8080/config.json
+```
+为了将该服务注册到consul，定义了一个consul配置文件`/etc/consul.d/playground.json`：
+```
+{
+  "service": {
+    "name": "playground",
+    "tags": [
+      "urlprefix-/playground"
+    ],
+    "address": "localhost",
+    "port": 8080,
+    "check": {
+      "id": "api",
+      "name": "playground health check",
+      "http": "http://localhost:8080/config.json",
+      "method": "GET",
+      "interval": "10s",
+      "timeout": "2s"
+    }
+  }
+}
+```
+注意：向Fabio注册的服务必须在consul中定义健康检查，而且必须是PASSING状态，否则Fabio会拒绝反向代理该服务。
+重启consul代理和Fabio：
+```
+consul agent -dev -config-dir=/etc/consul.d
+fabio
+```
+测试Fabio的反向代理：
+```
+curl localhost:9999/playground
+```
+如果Fabio工作正常，会返回composer-playground的首页。
