@@ -675,7 +675,9 @@ Hyperledger涉及多个组件，有时本地安装有时又跑在容器中，尤
 ```bash
 curl -sSL https://hyperledger.github.io/composer/install-hlfv1.sh | bash
 ```
-导致的结果是启动了多个容器，相对Composer的部署，多了一个composer容器，该容器暴露localhost:8080端口，是Playground的web界面。  
+上述脚本会在当前目录下创建一个`composer-data`的目录，里面有docker-compopse配置文件`docker-compose-playground.yml`和一个类似于fabric-tools的composer环境。
+
+上述脚本的执行结果是启动了多个容器，相对Composer的部署，多了一个composer容器，该容器暴露localhost:8080端口，是Playground的web界面。  
 由于composer跑在容器中，所以连接配置文件中定义的fabric地址不是localhost，而是类似`ca.org1.example.com`。
 
 
