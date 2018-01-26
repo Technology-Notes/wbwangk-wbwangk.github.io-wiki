@@ -1,6 +1,6 @@
 Composer中文文档移到了[这里](https://wbwangk.github.io/ComposerDocs)  
 
-# 笔记
+## 教程笔记
 ### 安装开发环境
 [安装开发环境](https://wbwangk.github.io/ComposerDocs/installing_development-tools/)  
 
@@ -131,75 +131,15 @@ composer card create -p connection-org1.json -u alice -n tutorial-network -c ali
 ```
 之后是导入卡片和ping业务网络了。  
 
-## Hyperledger Composer Playground(容器方式)
-[本地安装文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)、[本地环境](E:\vagrant10\ambari-vagrant\fabric\devenv)  
+## 以容器方式集成Playground与fabric-tools
+fabirc-tools指Fabric的开发环境，第一个应用Fabcar就是利用这个环境调试的。
+
+在[Composer官方文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)中，利用脚本以容器方式部署composer-playground：
 ```
 curl -sSL https://hyperledger.github.io/composer/install-hlfv1.sh | bash
 ```
 以上脚本会下载1.0.4本版的Fabric Docker镜像、启动Fabric、拉取Playground镜像并启动。看上去该脚本与fabric-tools的功能类似，启动了一个单组织单节点的Fabric，只是多了一个`hyperledger/composer-playground`的容器。  
 由于VM已经做了8080端口的NAT映射，可以直接在windows下用浏览器通过地址`http://localhost:8080`打开本地Playground的Web界面。  
-安装Composer运行时：
-```bash
-cd :~/composer/tutorial-network
-composer runtime install --card PeerAdmin@hlfv1 --businessNetworkName tutorial-network
-```
-部署业务网络：
-```
-composer network start --card PeerAdmin@hlfv1 --networkAdmin admin --networkAdminEnrollSecret adminpw --archiveFile tutorial-network@0.0.1.bna --file networkadmin.card
-```
-导入业务网络管理员时报告该身份已经存在：
-```
-composer card import --file networkadmin.card
-Error: Card already exists: admin@tutorial-network
-```
-ping一下业务网络，确保网络已经正确运行：
-```
-composer network ping --card admin@tutorial-network
-```
-当前目录下`networkadmin.card`是一个业务网络管理员卡片，需要导入到Playground，然后Playground才能联上Fabric实例。  
-由于本VM是用vagrant搭建的，`/vagrant`目录是个windows共享目录，直接把`networkadmin.card`复制到`/vagrant`目录，就可以在windows访问这个文件了，然后再导入到playground。  
-
-在本地Playground环境的`http://localhost:8080/login`网页上点击`Import Business Network Card`按钮把上面的`.card`文件导入。
-点击新建的业务网络`tutorial-network`的"Connect now"按钮，提示：
-```
-[Error: connect ECONNREFUSED 127.0.0.1:7054]
-```
-这是因为playground运行在容器里，其访问fabric使用的域名，如ca.org1.example.com。这一点可以进入composer playground容器(容器名是composer)，`telnet 127.0.0.1 7054`，会发现不通，但`telnet ca.org1.example.com 7054`是通的。  
-
-之前运行composer命令行是在容器的宿主机中，所以连接配置文件的地址都是127.0.0.1。导入到playground中的card地址不对。
-制作一个`connection2.json`，把域名改成下面的样子:
-```json
-{
-  "name": "fabric-network",
-  "type": "hlfv1",
-  "mspID": "Org1MSP",
-  "peers": [
-      {
-          "requestURL": "grpc://peer0.org1.example.com:7051",
-          "eventURL": "grpc://peer0.org1.example.com:7053"
-      }
-  ],
-  "ca": {
-      "url": "http://ca.org1.example.com:7054",
-      "name": "ca.org1.example.com"
-  },
-  "orderers": [
-      {
-          "url" : "grpc://orderer.example.com:7050"
-      }
-  ],
-  "channel": "composerchannel",
-  "timeout": 300
-}
-```
-运行命令创建新的业务网络卡片：
-```
-composer card create -u admin -s adminpw -n tutorial-network -p connection2.json -f admin@tutorial-network.card
-```
-导入到playground后提示身份admin已经存在了。
-
-到这里才终于明白按[官方文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)部署的playground是和composer一起跑在容器中的。而容器中缺乏必要的调试工具，而且其连接Fabric使用的是example.com域名(而不是localhost)，这使得playground连接之前的fabric环境（如BYFN）变得很困难。  
-所以决定采用本地部署的playground重新调试，而不是使用容器中的。
 
 ### 以容器方式启动playground的原理
 在Composer的官方文档中，使用下列脚本启动composer容器：
@@ -252,8 +192,15 @@ tar -cv * | docker exec -i composer tar x -C /home/composer/.composer
 ```
 是把多个文件利用tar形成一个压缩的匿名文件，通过管道传入容器，再在容器内用tar解压缩到composer用户的`./composer`目录下（即模仿导入后的业务网络卡片）。
 
-### 让playground容器与Fabric-tools环境一起工作
-先启动Fabric-tools中的多个容器，可以包括之前仿照BYFN改造后增加的cli容器。然后用下面的docker-compose-playground.yml文件启动compser-playground容器：
+### 启动Fabric-tools和playground容器
+启动Fabric-tools：
+```
+docker rm -f $(docker ps -aq)
+cd ~/fabric-tools  && ./startFabric.sh
+```
+我的这个fabric-tools是按[这个文档](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E7%AC%94%E8%AE%B0#%E5%90%91fabric-tools%E4%B8%AD%E5%A2%9E%E5%8A%A0cli%E5%AE%B9%E5%99%A8)改造过的，增加的一个cli容器。
+
+在当前目录下创建一个`docker-compose-playground.yml`文件，并启动compser-playground容器：
 ```
 version: '2'
 
@@ -273,10 +220,52 @@ networks:
 ```
 docker-compose -p composer -f docker-compose-playground.yml up -d
 ```
-#### 将fabric-tools的连接和身份文件传入容器
-模仿composer[官方文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)中不用docker卷的方式，创建一个`tarComposer.sh`脚本文件：
-```bash
+注意：这个容器中的composer中并没有fabric-tools的连接配置文件和身份文件，这会在下面的步骤中“注入”。
 
+### 将连接配置文件和密码材料写入playground容器
+模仿composer[官方文档](https://wbwangk.github.io/ComposerDocs/installing_using-playground-locally/)中不用docker卷的方式，创建一个`startComposer.sh`脚本文件。在该脚本与fabirc-tools的启动脚本放在同一个目录。在该脚本中创建连接配置文件并复制利用管道写入playground容器：
+```bash
+# manually create the card store
+docker exec composer mkdir /home/composer/.composer
+
+# build the card store locally first
+rm -fr /tmp/onelinecard
+mkdir /tmp/onelinecard
+mkdir /tmp/onelinecard/cards
+mkdir /tmp/onelinecard/client-data
+mkdir /tmp/onelinecard/cards/PeerAdmin@hlfv1
+mkdir /tmp/onelinecard/client-data/PeerAdmin@hlfv1
+mkdir /tmp/onelinecard/cards/PeerAdmin@hlfv1/credentials
+
+# copy the various material into the local card store
+cd fabric-scripts/hlfv1/composer
+cp creds/* /tmp/onelinecard/client-data/PeerAdmin@hlfv1
+cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem /tmp/onelinecard/cards/PeerAdmin@hlfv1/credentials/certificate
+cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/114aab0e76bf0c78308f89efc4b8c9423e31568da0c340ca187a9b17aa9a4457_sk /tmp/onelinecard/cards/PeerAdmin@hlfv1/credentials/privateKey
+echo '{"version":1,"userName":"PeerAdmin","roles":["PeerAdmin", "ChannelAdmin"]}' > /tmp/onelinecard/cards/PeerAdmin@hlfv1/metadata.json
+echo '{
+    "type": "hlfv1",
+    "name": "hlfv1",
+    "orderers": [
+       { "url" : "grpc://orderer.example.com:7050" }
+    ],
+    "ca": { "url": "http://ca.org1.example.com:7054",
+            "name": "ca.org1.example.com"
+    },
+    "peers": [
+        {
+            "requestURL": "grpc://peer0.org1.example.com:7051",
+            "eventURL": "grpc://peer0.org1.example.com:7053"
+        }
+    ],
+    "channel": "composerchannel",
+    "mspID": "Org1MSP",
+    "timeout": 300
+}' > /tmp/onelinecard/cards/PeerAdmin@hlfv1/connection.json
+
+# transfer the local card store into the container
+cd /tmp/onelinecard
+tar -cv * | docker exec -i composer tar x -C /home/composer/.composer
 ```
 
 ## Hyperledger Composer Playground(容器外)
