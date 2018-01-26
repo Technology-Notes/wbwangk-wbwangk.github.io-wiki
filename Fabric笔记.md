@@ -86,7 +86,7 @@ chmod +x certv.sh
 ```
 
 
-## 手工建fabirc集群
+## 创建多节点fabirc集群
 参考了[这篇文章](http://www.cnblogs.com/studyzy/p/7237287.html)，但差异很大。  
 Hyperledger Fabric的`fabric-samples/first-network`是在单机上运行的。本章描述如何将其部署到多台VM上。  
 假设有三台VM：  
