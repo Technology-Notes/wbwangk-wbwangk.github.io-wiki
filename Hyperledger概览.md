@@ -110,6 +110,15 @@ Hyperledger Indy是一个专门用于分布式账本去中心身份。它提供�
 [Hyperledger Composer](https://hyperledger.org/projects/composer)  
 [Hyperledger Composer教程](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#11982)，含composer的安装。  
 [另一个官方文档](http://fabrictestdocs.readthedocs.io/en/latest/glossary.html)  
+
+在学习超级账本(Hyperlegder)过程中，还编写了另外三个相关wiki文档：
+
+- [Hyperledger_Composer](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger_Composer)
+
+- [Fabric](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric)
+
+- [Fabric笔记](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric%E7%AC%94%E8%AE%B0)
+
 ### 问题
 #### VM翻墙问题
 ```
