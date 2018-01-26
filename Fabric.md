@@ -1,6 +1,9 @@
 [中文文档](https://wbwangk.github.io/hyperledgerDocs)  
 
-## 开发环境(vagrant)
+## Fabric快速开始
+本章《Fabric快速开始》的主要内容是按[中文文档](https://wbwangk.github.io/hyperledgerDocs)的流程搭建区块链环境，完成BYFN(first-network)的过程。
+
+### 开发环境搭建(vagrant)
 (宿主机：/e/vagrant9/ambari-agrant/fabric/devenv)   
 fabric官方库提供了一个Vagrantfile，是个ubuntu16的环境，供开发调试用。可参考[Fabri Getting Started](http://hyperledger-fabric.readthedocs.io/en/latest/getting_started.html)。   
   
@@ -38,7 +41,7 @@ $ source /etc/profile
 $ go version
 go version go1.9.2 linux/amd64
 ```
-### Hyperledger Fabric Samples
+#### Hyperledger Fabric Samples
 [Hyperledger官方GETTING STARTED](https://hyperledger-fabric.readthedocs.io/en/latest/samples.html)  
 ```
 $ cd /opt && git clone -b master https://github.com/hyperledger/fabric-samples.git
@@ -48,7 +51,7 @@ $ cd fabric-samples && curl -sSL https://goo.gl/6wtTN5 | bash -s 1.1.0-preview
 
 脚本还下载了几个工具到`/opt/fabric-samples/bin`目录下，它们是`cryptogen`、`configtxgen`、`configtxlator`、`orderer`、`peer`。  
 
-## MSP配置(cryptogen)
+### MSP配置(cryptogen)
 cryptogen工具根据配置文件`crypto-config.yaml`中配置，生成整个区块链所有成员的密码材料文件。
 ```
 $ cd /opt/fabric-samples/first-network
@@ -91,7 +94,9 @@ PeerOrgs:
 
 要搭建一个Fabric网络，首先应建立Orderer节点。而Orderer节点存在着一个系统区块链，上面保存了整个Fabric网络的基础信息。要创建一个区块链，先用`cryptogen`工具生成MSP密码文件，再用`configtxgen`工具生成创世区块。更具体的，应先生成Orderer节点的创世区块。  
 
-## 生成创世区块(configtxgen)
+### 生成初始区块(configtxgen)
+有时把初始区块翻译成创世区块。
+
 `configtxgen`运行时需要查找配置文件`configtx.yaml`，这个配置文件的位置是靠环境变量来指定的：
 ```
 $ export FABRIC_CFG_PATH=/opt/fabric-samples/first-network
@@ -149,7 +154,7 @@ MSPDir: crypto-config/ordererOrganizations/example.com/msp
 ```
 这个目录中密码文件由`cryptogen`生成。如果之前没有用`cryptogen`生成这些文件，`configtxgen`执行时会提示这些上述目录不存在。
 
-### 用configtxgen查看区块信息
+#### 用configtxgen查看区块信息
 ```
 $ export FABRIC_CFG_PATH=/opt/bcnet
 $ configtxgen -profile TwoOrgsOrdererGenesis -inspectBlock ./channel-artifacts/genesis.block
@@ -158,20 +163,20 @@ $ configtxgen -profile TwoOrgsOrdererGenesis -inspectBlock ./channel-artifacts/g
 
 有的创世区块可以不加`-profile`参数就能正常显示，原因不明。  
 
-## 生成通道(configtxgen)
+#### 生成通道(configtxgen)
 ```
 $ export FABRIC_CFG_PATH=/opt/fabric-samples/first-network
 $ configtxgen -profile TwoOrgChannel -outputCreateChannelTx ./channel-artifacts/channel1.tx -channelID channel1
 ```
 
-## peer加入通道(peer)
+### peer加入通道(peer)
 peer直接在宿主机上直接运行会报错，一般进入`cli`容器内执行:
 ```
 $ docker exec -it cli bash
 $$ peer --help
 ```
 
-### 共识过程(视频截图)
+### 参考：共识过程(视频截图)
 [出处](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#12034)   
 - Committing Peer  
   Maintains Ledger and state. Commits Transactions. May hold smart contract(chaincode).  
