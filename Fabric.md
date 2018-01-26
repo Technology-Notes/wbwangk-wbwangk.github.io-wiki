@@ -1,23 +1,19 @@
 [中文文档](https://wbwangk.github.io/hyperledgerDocs)  
 
 ## 开发环境(vagrant)
-(/e/vagrant10/ambari-agrant/fabric/devenv)   
-fabric官方库提供了一个Vagrantfile，是个ubuntu16的环境，供开发调试用。如何想在一个空linux下手工安装，可以参考[Fabri Getting Started](http://hyperledger-fabric.readthedocs.io/en/latest/getting_started.html)。   
+(宿主机：/e/vagrant9/ambari-agrant/fabric/devenv)   
+fabric官方库提供了一个Vagrantfile，是个ubuntu16的环境，供开发调试用。可参考[Fabri Getting Started](http://hyperledger-fabric.readthedocs.io/en/latest/getting_started.html)。   
   
-在windows下启动git bash，然后克隆fabric库：
+在宿主机下启动fabric开发环境VM：
 ```
-$ cd /e/vagrant10/ambari-vagrant
 $ git clone https://github.com/hyperledger/fabric.git
-$ cd fabric/devenv
-$ vagrant up
-$ vagrant ssh
+$ cd fabric/devenv && vagrant up && vagrant ssh
 ```
 虚拟机启动过程中会自动执行一个`setup.sh`脚本进行初始化。有时会半途执行失败。可以进入linux后手工执行脚本：
 ```
-$ cd /hyperledger/devenv
-$ ./setup.sh
+$ cd /hyperledger/devenv && ./setup.sh
 ```
-这样，你就拥有了一个fabric开发环境。(snap a2)  
+这样，你就拥有了一个fabric开发环境。(snap a3)  
 
 通过分析`setup.sh`，也可以看到手工安装docker-compose、golang的办法：
 #### 安装docker-compose
@@ -28,8 +24,7 @@ $ chmod +x /usr/local/bin/docker-compose
 #### 安装go lang
 `setup.sh`中提供的是从`golang.org`下载安装包，下面描述的是从另一个网站下载安装包。
 ```
-$ cd /opt
-$ wget https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz
+$ cd /opt && wget https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz
 $ tar -C /usr/local -xzf go1.9.2.linux-amd64.tar.gz
 ```
 在文件`/etc/profile`的最后添加：
@@ -46,32 +41,15 @@ go version go1.9.2 linux/amd64
 ### Hyperledger Fabric Samples
 [Hyperledger官方GETTING STARTED](https://hyperledger-fabric.readthedocs.io/en/latest/samples.html)  
 ```
-$ cd /opt
-$ git clone -b master https://github.com/hyperledger/fabric-samples.git
-$ cd fabric-samples
-$ curl -sSL https://goo.gl/6wtTN5 | bash -s 1.1.0-preview
+$ cd /opt && git clone -b master https://github.com/hyperledger/fabric-samples.git
+$ cd fabric-samples && curl -sSL https://goo.gl/6wtTN5 | bash -s 1.1.0-preview
 ```
-脚本会自动下载了很多docker镜像:
-```
-hyperledger/fabric-ca          x86_64-1.1.0-preview   2736904862db        4 weeks ago         218MB
-hyperledger/fabric-tools       x86_64-1.0.4           6051774928a6        4 weeks ago         1.33GB
-hyperledger/fabric-couchdb     x86_64-1.0.4           cf24b91dfeb1        4 weeks ago         1.5GB
-hyperledger/fabric-kafka       x86_64-1.0.4           7a9d6f3c4a7c        4 weeks ago         1.29GB
-hyperledger/fabric-zookeeper   x86_64-1.0.4           53c4a0d95fd4        4 weeks ago         1.3GB
-hyperledger/fabric-orderer     x86_64-1.0.4           b17741e7b036        4 weeks ago         151MB
-hyperledger/fabric-peer        x86_64-1.0.4           1ce935adc397        4 weeks ago         154MB
-hyperledger/fabric-javaenv     x86_64-1.0.4           a517b70135c7        4 weeks ago         1.41GB
-hyperledger/fabric-ccenv       x86_64-1.0.4           856061b1fed7        4 weeks ago         1.28GB
-```
-上述脚本还下载了几个工具到`/opt/fabric-samples/bin`目录下，它们是`cryptogen`、`configtxgen`、`configtxlator`、`orderer`、`peer`。  
-为了访问它们方便，需要修改PATH参数。编辑`/etc/profile`，在文件的最后添加内容：
-```
-export PATH=/opt/fabric-samples/bin:$PATH
-```
-为了保存VM当前状态，回到vagrant命令行下执行`vagrant snapshot save a3`  
+脚本会自动下载了很多docker镜像，如ca、order、peer、ccenv、tools、couchdb、kafka、zookeeper、javaenv等。
+
+脚本还下载了几个工具到`/opt/fabric-samples/bin`目录下，它们是`cryptogen`、`configtxgen`、`configtxlator`、`orderer`、`peer`。  
 
 ## MSP配置(cryptogen)
-要运行cryptogen，需要一个指定一个配置文件`crypto-config.yaml`，如：
+cryptogen工具根据配置文件`crypto-config.yaml`中配置，生成整个区块链所有成员的密码材料文件。
 ```
 $ cd /opt/fabric-samples/first-network
 $ cryptogen generate --config=./crypto-config.yaml
