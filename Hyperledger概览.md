@@ -107,6 +107,7 @@ Hyperledger Indy是一个专门用于分布式账本去中心身份。它提供�
 
 
 ## 备忘
+### 文档
 [Hyperledger Composer](https://hyperledger.org/projects/composer)  
 [Hyperledger Composer教程](https://developer.ibm.com/courses/all/ibm-blockchain-foundation-developer/?course=begin#11982)，含composer的安装。  
 [另一个官方文档](http://fabrictestdocs.readthedocs.io/en/latest/glossary.html)  
