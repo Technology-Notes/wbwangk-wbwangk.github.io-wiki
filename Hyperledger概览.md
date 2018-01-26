@@ -71,7 +71,9 @@ Hyperledger Fabric还提供了创建**通道**的能力，允许一组参与者�
 [英文官方文档](https://hyperledger-fabric.readthedocs.io/en/latest/)   
 [中文官方文档](https://hyperledgercn.github.io/hyperledgerDocs/)  
 
-[自己整理的Fabric文档](https://github.com/wbwangk/wbwangk.github.io/wiki/Fabric)  
+[自己的Fabric文档](https://wbwangk.github.io/hyperledgerDocs/)  
+
+Composer项目在Fabric的基础上增加了REST API、web UI等能力。这是自己翻译的[Composer文档](https://wbwangk.github.io/ComposerDocs/)。
 
 ## Hyperledger项目介绍
 #### 
