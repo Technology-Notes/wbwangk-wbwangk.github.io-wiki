@@ -267,6 +267,91 @@ echo '{
 cd /tmp/onelinecard
 tar -cv * | docker exec -i composer tar x -C /home/composer/.composer
 ```
+执行上述startComposer.sh，将连接配置文件和密码文件“注入”到playground容器中：
+```
+./startComposer.sh
+```
+8080端口已经NAT映射到了宿主机，用浏览器打开localhost:8080。可以看到管理员卡片PeerAdmin@hlfv1。利用这个卡片导入一个业务网络，如basic-sample-network。  
+
+当业务网络加载后，可以用`docker ps` 查看一下刚刚加载的basic-sample-network业务网络（其实是一个链码容器）:
+```
+docker ps | grep basic-sample-network
+ff4864b4d79b        dev-peer0.org1.example.com-basic-sample-network-0.16.3-278a38da3819da959c27265acb9d6ab86b0261815749e50e5fcd25e928935ced   "chaincode -peer.add…"   23 seconds ago      Up 22 seconds                                                        dev-peer0.org1.example.com-basic-sample-network-0.16.3
+```
+至此，已经证明了composer容器已经连接到了fabric-tools环境，并启动了一个链码容器。
+
+### 启动另一个composer-playground容器
+可以启动多个composer-playground容器连接到同一个Fabric区块链网络。这么做的动机是不同区块链开发者共享账本，分别开发自己个性化的链码。
+
+在当前目录下再制作一个`docker-compose-playground2.yml`文件。容器名、端口号都需要修改：
+```
+version: '2'
+
+services:
+
+  composer:
+    container_name: composer2
+    image: hyperledger/composer-playground
+    ports:
+      - '8081:8080'
+networks:
+  default:
+    external:
+      name: composer_default
+```
+启动容器composer2的命令：
+```
+docker-compose -p composer2 -f docker-compose-playground2.yml up -d
+```
+在制作一个startComposer2.sh，以便将连接配置文件和身份文件注入到容器composer2中。下面是startComposer2.sh：
+```bash
+# manually create the card store
+docker exec composer2 mkdir /home/composer/.composer
+
+# build the card store locally first
+rm -fr /tmp/onelinecard
+mkdir /tmp/onelinecard
+mkdir /tmp/onelinecard/cards
+mkdir /tmp/onelinecard/client-data
+mkdir /tmp/onelinecard/cards/PeerAdmin@hlfv1
+mkdir /tmp/onelinecard/client-data/PeerAdmin@hlfv1
+mkdir /tmp/onelinecard/cards/PeerAdmin@hlfv1/credentials
+
+# copy the various material into the local card store
+cd fabric-scripts/hlfv1/composer
+cp creds/* /tmp/onelinecard/client-data/PeerAdmin@hlfv1
+cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem /tmp/onelinecard/cards/PeerAdmin@hlfv1/credentials/certificate
+cp crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/114aab0e76bf0c78308f89efc4b8c9423e31568da0c340ca187a9b17aa9a4457_sk /tmp/onelinecard/cards/PeerAdmin@hlfv1/credentials/privateKey
+echo '{"version":1,"userName":"PeerAdmin","roles":["PeerAdmin", "ChannelAdmin"]}' > /tmp/onelinecard/cards/PeerAdmin@hlfv1/metadata.json
+echo '{
+    "type": "hlfv1",
+    "name": "hlfv1",
+    "orderers": [
+       { "url" : "grpc://orderer.example.com:7050" }
+    ],
+    "ca": { "url": "http://ca.org1.example.com:7054",
+            "name": "ca.org1.example.com"
+    },
+    "peers": [
+        {
+            "requestURL": "grpc://peer0.org1.example.com:7051",
+            "eventURL": "grpc://peer0.org1.example.com:7053"
+        }
+    ],
+    "channel": "composerchannel",
+    "mspID": "Org1MSP",
+    "timeout": 300
+}' > /tmp/onelinecard/cards/PeerAdmin@hlfv1/connection.json
+
+# transfer the local card store into the container
+cd /tmp/onelinecard
+tar -cv * | docker exec -i composer2 tar x -C /home/composer/.composer
+```
+与startComposer.sh相比，只是把容器名改成了composer2。
+用浏览器打开localhost:8081，加载一个业务网络bond-network。
+
+这时，如果用docker ps命令查看，可以看到相关的4个容器：composer、composer2、basic-sample-network、bond-network。
+
 
 ## Hyperledger Composer Playground(容器外)
 准备Fabric环境：
