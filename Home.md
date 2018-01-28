@@ -187,3 +187,7 @@ sudo usermod -a -G docker $USER
 
 #### p2p ssh
 https://github.com/nobonobo/ssh-p2p
+
+### 数字资产保护
+https://www.ascribe.io
+文档：C:\Users\wbwang\Desktop\区块链\oreilly-blockchain-by-melanie-swan.pdf
