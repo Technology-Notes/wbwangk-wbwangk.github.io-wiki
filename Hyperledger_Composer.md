@@ -352,7 +352,6 @@ tar -cv * | docker exec -i composer2 tar x -C /home/composer/.composer
 
 这时，如果用docker ps命令查看，可以看到相关的4个容器：composer、composer2、basic-sample-network、bond-network。
 
-
 ## Hyperledger Composer Playground(容器外)
 准备Fabric环境：
 ```bash
@@ -960,3 +959,24 @@ Error: Failed to load connector module "composer-connector-hlfv1" for connection
 解决办法：  
 ubuntu@ubuntu-xenial:/usr/local/lib/node_modules/composer-cli$ npm rebuild --unsafe-perm  
 
+## 把Composer变成云服务
+
+本章尝试多个用户(或称租户、开发者)通过Composer共享同一个Fabric网络。
+1. 每个用户一个Composer容器，容器中是playground。
+2. 所有用户共享同一个通道，即不同用户的composer的业务网络安装在同一个通道上
+3. 每个用户可以启动一到多个业务网络(相当于Fabric的链码)
+
+Composer与Fabric的集成原理请参照文档[以容器方式集成Playground与fabric-tools](https://github.com/wbwangk/wbwangk.github.io/wiki/Hyperledger_Composer#%E4%BB%A5%E5%AE%B9%E5%99%A8%E6%96%B9%E5%BC%8F%E9%9B%86%E6%88%90playground%E4%B8%8Efabric-tools)。
+
+可能存在的冲突：
+1. 多个用户共享了同一个CA。通过playground可以在CA中新建身份（Identity），这个身份可能重复（名称冲突）。
+2. 通过playground可以新建业务网络，业务网络名称可能重复导致报错
+
+已知的隔离性：
+1. 两个用户可以导入同一个业务网络档案(.bna)，只要新建的业务网络名称不同就可以独立运行
+2. 两个用户都可以在playground中用CA的管理员（默认是admin:adminpw）颁发新的身份给参与者，由于参与者对于不同composer容器是隔离的，导致CA身份也可以互相不可见
+
+### 服务发现与反向代理
+使用[Consul](https://github.com/wbwangk/wbwangk.github.io/wiki/consul测试)做Composer的服务发现。即新启动的composer容器需要向consul中注册。关于consul参考文档[consul测试]。  
+
+使用[Fabio](https://github.com/wbwangk/wbwangk.github.io/wiki/fabio测试)做反向代理服务。Fabio可以自动监控Consul中带有`urlprefix-`标签服务，并按约定将用户请求反向代理到相应的服务。
