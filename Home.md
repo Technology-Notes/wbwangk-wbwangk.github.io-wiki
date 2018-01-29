@@ -191,3 +191,8 @@ https://github.com/nobonobo/ssh-p2p
 ### 数字资产保护
 https://www.ascribe.io
 文档：C:\Users\wbwang\Desktop\区块链\oreilly-blockchain-by-melanie-swan.pdf
+
+### blockchain demo
+https://github.com/anders94/blockchain-demo
+
+[![](https://camo.githubusercontent.com/a9e81eef2ba0dfa94a66c2200569cb0c00bf3eb2/68747470733a2f2f696d672e796f75747562652e636f6d2f76692f5f3136306f4d7a626c59382f302e6a7067)](https://www.youtube.com/watch?v=_160oMzblY8)
