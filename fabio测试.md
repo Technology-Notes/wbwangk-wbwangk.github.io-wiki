@@ -95,7 +95,7 @@ Serving /foo from svc-a on 127.0.0.1:5000
 ```
 9999端口是fabio的代理(proxy)端口。fabio将9999端口收到的/foo路径下的请求，根据路由策略(tag:urlprefix-/foo)发往127.0.0.1:5000端口的svc-a服务。
 
-### 自制测试
+### 代理playground
 在本机的8080端口上运行着一个composer-playground服务。在该服务上随便找一个URL充当健康检查URL(貌似只要响应状态码是200即可):
 ```
 curl localhost:8080/config.json
