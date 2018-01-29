@@ -197,6 +197,13 @@ https://github.com/anders94/blockchain-demo
 
 [![](https://camo.githubusercontent.com/a9e81eef2ba0dfa94a66c2200569cb0c00bf3eb2/68747470733a2f2f696d672e796f75747562652e636f6d2f76692f5f3136306f4d7a626c59382f302e6a7067)](https://www.youtube.com/watch?v=_160oMzblY8)
 
+### Token
+
+Token是一种数字化的价值载体，是权益证明。加密的，可流通。[1](https://www.jianshu.com/p/981689784579)
+
+区块链的 token被广泛认识，归功于以太坊及其订立的 ERC20标准。基于这个标准，任何人都可以在以太坊上发行自定义的 token，这个token可以代表任何权益和价值。现在用 token来作为代币权益证明进行ICO是一个普遍的做法。...今天我想提出一个建议，就是把 token 翻译成为“通证”，意思是就是“可流通的加密数字权益证明”。... “通证”三要素：第一是数字权益证明；第二是加密；第三是可流通。[2](http://blog.csdn.net/myan/article/details/78712506)。
+
+
 ### 有用的blockchain资源（Blockchain-stuff）
 https://github.com/Xel/Blockchain-stuff
 
@@ -209,9 +216,4 @@ LBRY是第一个由市场参与者控制的数字市场。去中心的内容分�
 和BitTorrent相比：发布和购买行为被记录；侵权内容的URL可以被更改（原理不明）；
 不收取租金：没有必要给予45％的YouTube或30％的苹果。
 
-### Token
-
-Token是一种数字化的价值载体，是权益证明。加密的，可流通。[1](https://www.jianshu.com/p/981689784579)
-
-区块链的 token被广泛认识，归功于以太坊及其订立的 ERC20标准。基于这个标准，任何人都可以在以太坊上发行自定义的 token，这个token可以代表任何权益和价值。现在用 token来作为代币权益证明进行ICO是一个普遍的做法。...今天我想提出一个建议，就是把 token 翻译成为“通证”，意思是就是“可流通的加密数字权益证明”。... “通证”三要素：第一是数字权益证明；第二是加密；第三是可流通。[2](http://blog.csdn.net/myan/article/details/78712506)。
 
