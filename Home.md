@@ -196,3 +196,8 @@ https://www.ascribe.io
 https://github.com/anders94/blockchain-demo
 
 [![](https://camo.githubusercontent.com/a9e81eef2ba0dfa94a66c2200569cb0c00bf3eb2/68747470733a2f2f696d672e796f75747562652e636f6d2f76692f5f3136306f4d7a626c59382f302e6a7067)](https://www.youtube.com/watch?v=_160oMzblY8)
+
+### 有用的blockchain资源（Blockchain-stuff）
+https://github.com/Xel/Blockchain-stuff
+
+
