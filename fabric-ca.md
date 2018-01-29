@@ -10,7 +10,7 @@ fabric-ca默认数据库是sqlite3。sqlite的数据存储在文件中，数据�
 ```
 apt update
 apt install sqlite3
-/etc/hyperledger/fabric-ca-server
+cd /etc/hyperledger/fabric-ca-server
 sqlite3 fabric-ca-server.db
 > .tables
 affiliations  certificates  users
