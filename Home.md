@@ -200,4 +200,18 @@ https://github.com/anders94/blockchain-demo
 ### 有用的blockchain资源（Blockchain-stuff）
 https://github.com/Xel/Blockchain-stuff
 
+## blockchain场景
+### LBRY
+LBRY是一个标准，虽然提供了参考实现。
+https://github.com/lbryio/lbry：LBRY is a free, open, and community-run digital marketplace.
+LBRY是第一个由市场参与者控制的数字市场。去中心的内容分享，支持付费获取内容，社区控制。
+保护隐私vs恐怖分子的隐私；开车旅行很奇妙vs每天撞死几百万人；
+和BitTorrent相比：发布和购买行为被记录；侵权内容的URL可以被更改（原理不明）；
+不收取租金：没有必要给予45％的YouTube或30％的苹果。
+
+### Token
+
+Token是一种数字化的价值载体，是权益证明。加密的，可流通。[1](https://www.jianshu.com/p/981689784579)
+
+区块链的 token被广泛认识，归功于以太坊及其订立的 ERC20标准。基于这个标准，任何人都可以在以太坊上发行自定义的 token，这个token可以代表任何权益和价值。现在用 token来作为代币权益证明进行ICO是一个普遍的做法。...今天我想提出一个建议，就是把 token 翻译成为“通证”，意思是就是“可流通的加密数字权益证明”。... “通证”三要素：第一是数字权益证明；第二是加密；第三是可流通。[2](http://blog.csdn.net/myan/article/details/78712506)。
 
