@@ -209,10 +209,10 @@ Enigma被认为是一个保护用户隐私的项目，因为内容不再上传�
 ### 有用的blockchain资源（Blockchain-stuff）
 https://github.com/Xel/Blockchain-stuff
 
-## blockchain场景
+### blockchain场景
 参考了[Blockchain-stuff](https://github.com/Xel/Blockchain-stuff)
 
-### LBRY
+#### LBRY
 LBRY是一个标准，虽然提供了参考实现。
 https://github.com/lbryio/lbry：LBRY is a free, open, and community-run digital marketplace.
 LBRY是第一个由市场参与者控制的数字市场。去中心的内容分享，支持付费获取内容，社区控制。
@@ -220,21 +220,23 @@ LBRY是第一个由市场参与者控制的数字市场。去中心的内容分�
 和BitTorrent相比：发布和购买行为被记录；侵权内容的URL可以被更改（原理不明）；
 不收取租金：没有必要给予45％的YouTube或30％的苹果。
 
-### artlery
+#### artlery
 art-backed加密货币(CLIO)，致力于艺术家分享作品并获得收益。
 
-### ascribe.io
+#### ascribe.io
 可以上传文件，获得保护。Lock in attribution, securely share and trace where your digital work spreads.
 
-### bitmark
+#### bitmark
 BITMARK GIVES YOU THE TOOLS TO TURN YOUR DIGITAL ASSETS INTO CRYPTO PROPERTY AND ENTER THE DATA ECONOMY.
 bitmark交给你一个工具，将你的数字资产变成加密财产并进入数字经济。
 (也是上传文件，生成数字指纹)
 bitmark依赖IFTTT进行数字资产的共享、分发、交易。
 
-### binded
+#### binded
 Copyright made simple。The easy way to protect your images, free forever.
 
-### everledger.io
+#### everledger.io
 钻石保真。Everledger成功的背后一半核心是区块链技术，另外一半则是宝石指纹技术。
 
+### EthList：Ethereum Reading List
+https://github.com/Scanate/EthList
