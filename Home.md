@@ -208,6 +208,8 @@ Token是一种数字化的价值载体，是权益证明。加密的，可流通
 https://github.com/Xel/Blockchain-stuff
 
 ## blockchain场景
+参考了[Blockchain-stuff](https://github.com/Xel/Blockchain-stuff)
+
 ### LBRY
 LBRY是一个标准，虽然提供了参考实现。
 https://github.com/lbryio/lbry：LBRY is a free, open, and community-run digital marketplace.
