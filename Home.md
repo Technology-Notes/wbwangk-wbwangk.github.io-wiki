@@ -240,3 +240,7 @@ Copyright made simple。The easy way to protect your images, free forever.
 
 ### EthList：Ethereum Reading List
 https://github.com/Scanate/EthList
+
+### 区块链主流开源技术体系介绍
+http://www.8btc.com/elwingao-blockchain-6
+
