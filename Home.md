@@ -254,3 +254,9 @@ http://www.8btc.com/elwingao-blockchain-7
 
 量子链的定位是，做一个符合行业监管的区块链去中心化应用开发平台。[1](http://www.8btc.com/elwingao-blockchain-5)  
 
+### 区块链应用开发入门
+[1](http://www.8btc.com/elwingao-blockchain-1)
+####  比特币
+1. 基于Blockchain.info的API进行开发  
+2. 采用Docker容器来快速安装和配置私有节点的比特币测试网络(bitcoin-testnet)作为开发试验环境  
+
