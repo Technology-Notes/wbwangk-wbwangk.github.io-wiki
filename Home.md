@@ -260,3 +260,6 @@ http://www.8btc.com/elwingao-blockchain-7
 1. 基于Blockchain.info的API进行开发  
 2. 采用Docker容器来快速安装和配置私有节点的比特币测试网络(bitcoin-testnet)作为开发试验环境  
 
+### p2p网络原理
+https://github.com/FactomProject/factomd/tree/5ea4f88d9019885aa89d933f4b8987fccbae1987/p2p
+
