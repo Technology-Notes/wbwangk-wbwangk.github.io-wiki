@@ -263,3 +263,7 @@ http://www.8btc.com/elwingao-blockchain-7
 ### p2p网络原理
 https://github.com/FactomProject/factomd/tree/5ea4f88d9019885aa89d933f4b8987fccbae1987/p2p
 
+### 区块链笔记
+http://book.8btc.com/books/1/master_bitcoin/_book/
+
+一枚电子货币（an electronic coin）是这样的一串数字签名：每一位所有者通过对前一次交易和下一位拥有者的公钥(Public key) 签署一个随机散列的数字签名，并将这个签名附加在这枚电子货币的末尾，电子货币就发送给了下一位所有者。而收款人通过对签名进行检验，就能够验证该链条的所有者。
