@@ -267,3 +267,26 @@ https://github.com/FactomProject/factomd/tree/5ea4f88d9019885aa89d933f4b8987fccb
 http://book.8btc.com/books/1/master_bitcoin/_book/
 
 一枚电子货币（an electronic coin）是这样的一串数字签名：每一位所有者通过对前一次交易和下一位拥有者的公钥(Public key) 签署一个随机散列的数字签名，并将这个签名附加在这枚电子货币的末尾，电子货币就发送给了下一位所有者。而收款人通过对签名进行检验，就能够验证该链条的所有者。
+#### REST查询比特币钱包的例子
+[1](http://book.8btc.com/books/1/master_bitcoin/_book/2/2.html)
+查找Alice的比特币地址所有的未消费的输出:
+```
+$ curl https://blockchain.info/unspent?active=1Cdid9KFAaatwczBwBttQcwXYCpvK8h7FK
+{
+  "unspent_outputs": [
+    {
+      "tx_hash":"186f9f998a5...2836dd734d2804fe65fa35779",
+      "tx_index":104810202,
+      "tx_output_n":0,
+      "script":"76a9147f9b1a7fb68d60c536c2fd8aeaa53a8f3cc025a888ac",
+      "value":10000000,
+      "value_hex":"00989680",
+      "confirmations":0
+    }
+  ]
+}
+```
+[点击查看Joe和Alice间的交易信息](https://blockchain.info/tx/7957a35fe64f80d234d76d83a2a8f1a0d8149a41d81de548f0a65a8a999f6f18)
+
+#### 交易输出是个脚本
+Alice的交易输出会包含一个脚本，这个脚本说 “这个输出谁能拿出一个签名和Bob的公开地址匹配上，就支付给谁”
