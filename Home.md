@@ -290,3 +290,9 @@ $ curl https://blockchain.info/unspent?active=1Cdid9KFAaatwczBwBttQcwXYCpvK8h7FK
 
 #### 交易输出是个脚本
 Alice的交易输出会包含一个脚本，这个脚本说 “这个输出谁能拿出一个签名和Bob的公开地址匹配上，就支付给谁”
+#### Merkle树
+Merkle树是一种哈希二叉树，它是一种用作快速归纳和校验大规模数据完整性的数据结构。  
+H~A~ = SHA256(SHA256(交易A))  
+交易HK由4个哈希值（在图7-5中由蓝色标注）HL、HIJ、HMNOP和HABCDEFGH组成的路径证明其存在。  
+![](http://book.8btc.com/books/1/master_bitcoin/_book/7/Fig705.png)
+
