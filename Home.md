@@ -297,7 +297,9 @@ H~A~ = SHA256(SHA256(交易A))
 ![](http://book.8btc.com/books/1/master_bitcoin/_book/7/Fig705.png)
 
 ### 以太坊官网文档中文版
-http://book.8btc.com/books/6/ethereum/_book/
+[文档](http://book.8btc.com/books/6/ethereum/_book/)  
+以太坊官网：https://ethereum.org/  
+
 
 [1](http://book.8btc.com/books/6/ethereum/_book/ethereum-account-management.html)如果我们把以太坊限制为只有外部账户，只允许外部账户之间进行交易，我们就会进入到"代币"系统，"代币"系统不如比特币本身有力，只能用于转移以太币。
 
@@ -327,3 +329,6 @@ true
 > net.peerCount
 4
 ```
+#### 以太坊浏览器
+https://ethstats.net/
+
