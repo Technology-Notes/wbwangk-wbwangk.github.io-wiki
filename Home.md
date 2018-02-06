@@ -347,3 +347,7 @@ https://console.bluemix.net/docs/services/blockchain/index.html
 ### linux看硬盘空间
 `df -h`看整个VM的存储使用情况，单位是字节；`du .`查看某目录占用的空间大小，单位是k。
 
+### 手把手教你发行自己的以太坊ERC20 Token
+[1](http://blog.csdn.net/sinat_34070003/article/details/79107181)
+安装chrome插件metamask，连接以太币测试网Ropsten Test Net，领了4个ETH。  
+
