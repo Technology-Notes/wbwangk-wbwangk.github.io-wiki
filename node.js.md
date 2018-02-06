@@ -33,3 +33,71 @@ $ npm install
 这样启动的angular服务就绑定`c7302.ambari.apache.org`主机的4200端口了。  
 
 [Promises](https://www.promisejs.org/)  
+
+## web服务器
+
+在当前目录下编辑一个`server.js`：
+```javascript
+var http = require('http');
+var fs = require('fs');
+var url = require('url');
+ 
+ 
+// 创建服务器
+http.createServer( function (request, response) {  
+   // 解析请求，包括文件名
+   var pathname = url.parse(request.url).pathname;
+   
+   // 输出请求的文件名
+   console.log("Request for " + pathname + " received.");
+   
+   // 从文件系统中读取请求的文件内容
+   fs.readFile(pathname.substr(1), function (err, data) {
+      if (err) {
+         console.log(err);
+         // HTTP 状态码: 404 : NOT FOUND
+         // Content Type: text/plain
+         response.writeHead(404, {'Content-Type': 'text/html'});
+      }else{             
+         // HTTP 状态码: 200 : OK
+         // Content Type: text/plain
+         response.writeHead(200, {'Content-Type': 'text/html'});    
+         
+         // 响应文件内容
+         response.write(data.toString());        
+      }
+      //  发送响应数据
+      response.end();
+   });   
+}).listen(8080);
+ 
+// 控制台会输出以下信息
+console.log('Server running at http://127.0.0.1:8080/');
+```
+再在当前目录下创建一个index.html:
+```html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>菜鸟教程(runoob.com)</title>
+</head>
+<body>
+    <h1>我的第一个标题</h1>
+    <p>我的第一个段落。</p>
+</body>
+</html>
+```
+启动web服务器：
+```
+$ node server.js
+Server running at http://127.0.0.1:8080/
+```
+访问地址`http://127.0.0.1:8080/index.html`可以看到上述的index.html网页的内容。
+
+进一步的测试：
+```
+$ mkdir temp && cp index.html temp
+$ curl http://127.0.0.1:8080/temp/index.html
+```
+可以正常返回temp目录下index.html的内容。这说明用server.js搭建的web服务器可以正常地支持目录结构。
