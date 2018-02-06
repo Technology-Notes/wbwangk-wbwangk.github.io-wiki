@@ -332,3 +332,18 @@ true
 #### 以太坊浏览器
 https://ethstats.net/
 
+#### 智能合约Solidity编程语言
+http://www.tryblockchain.org/
+
+#### 以太坊HelloWorld学习
+https://github.com/littleredhat1997/Ethereum
+
+#### 七节以太坊教程
+本教程一共有七节课，主要是通过Nodejs来开发基于以太坊的Dapp应用教学，功能简单，容易上手，为你打开一个除了truffle的另一个应用开发模式。  
+
+### IBM区块链平台
+https://console.bluemix.net/docs/services/blockchain/index.html
+
+### linux看硬盘空间
+`df -h`看整个VM的存储使用情况，单位是字节；`du .`查看某目录占用的空间大小，单位是k。
+
