@@ -350,5 +350,9 @@ https://console.bluemix.net/docs/services/blockchain/index.html
 ### 手把手教你发行自己的以太坊ERC20 Token
 [1](http://blog.csdn.net/sinat_34070003/article/details/79107181)
 安装chrome插件metamask，连接以太币测试网Ropsten Test Net，领了4个ETH。  
+
 #### 以太坊浏览器
 https://ropsten.etherscan.io/
+
+### 杨海勇做的composer-playground多租户POC
+https://note.youdao.com/share/?id=428fa61d01b21264f68067b56b995246&type=note#/
