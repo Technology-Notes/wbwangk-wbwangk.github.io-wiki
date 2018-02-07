@@ -28,11 +28,17 @@ MetaMask浮动框上账户的地址显示不全，可以点账户傍边的三个
 
 一个代币智能合约的例子中[这个网址](https://link.jianshu.com/?t=https://ropsten.etherscan.io/address/0x655275d5ea52c62531aa43a85949c63dd858e0e0#code)可以看到，复制到Remix的左侧源码区即可。
 
-"Run"选项卡中的“Environment”设置为“Injected Web3”，Create按钮左边的输入框中输入：
+**Run**选项卡中的**Environment**设置为`Injected Web3`，Create按钮左边的输入框中输入：
 ```
 100000000,"zhongxh's test token",8,"ZTT"
 ```
 含义是Token的数量、Token的全称、Token的精度(即Token最小为小数点后几位)、Token的符号。这个内容后面会用到，如果改变了需要记下来。
+
+需要注意**Settings**选项卡中的Solidity版本，是在下拉框中选择的。我选择的版本是：
+```
+0.4.20-nightly.2018.1.29+commit.a668b9de
+```
+这个版本变化很快，需要记住你自己选择的版本。在后面在以太坊浏览器中进行合约校验时需要选择同样的Solidity版本，否则校验会失败。
 
 点击Create按钮后，MetaMask会弹出的“CONFIRM TRANSACTION”的页面，这个页面是用来确认发送的，点击**SUBMIT**提交，再点**SENT**。
 
@@ -49,4 +55,51 @@ From是我的钱包地址，To是智能合约的地址(Contract Address)。下�
 这里的Nonce是当前账户发出的交易序号。我这里显示1是因为这是当前账户的第2个交易（貌似以太坊的合约地址是账户地址加上这个Nonce后哈希得到的）。
 
 ### 发布智能合约
-在etherscan浏览器的**MISC**下拉菜单中选择**Verify Contract**
+在etherscan浏览器的**MISC**下拉菜单中选择**Verify Contract**，进入了合约校验页面。对于智能合约来说，需要校验的内容一是源码，二是初始化参数（构造函数参数）。因为源码决定了代币(Token)的运行逻辑，而初始化参数代表了初始状态（如代币总数）。
+
+在etherscan中校验的合约不支持导入(import)，即仅支持把合约代码写在同一个程序文件中。
+
+在输入框中输入的内容：
+```
+Contract address: 0x4292f38c4e1f13cf6f7a37a194e1616b365d5247
+Contract name: HumanStandardToken
+Compiler: 0.4.20-nightly.2018.1.29+commit.a668b9de
+Optimization: No
+```
+上述信息可以在etherscan浏览器的[这个页面](https://ropsten.etherscan.io/address/0x4292f38c4e1f13cf6f7a37a194e1616b365d5247#code)查询到。
+上述页面中还有合约源码和初始化参数。其中，初始化参数（Constructor Arguments (ABI-encoded and is the last bytes of the Contract Creation Code above)）如下：
+```
+0000000000000000000000000000000000000000000000000000000005f5e1000000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000c000000000000000000000000000000000000000000000000000000000000000147a686f6e6778682773207465737420746f6b656e00000000000000000000000000000000000000000000000000000000000000000000000000000000000000035a54540000000000000000000000000000000000000000000000000000000000
+```
+上面的字符串是`100000000,"zhongxh's test token",8,"ZTT"`的ABI编码。
+
+在合约校验页面上需要分别将合约源码和初始化参数分别粘贴好，然后点**Verify And Publish**按钮。
+
+如果一切正常会显示校验通过。
+
+### 测试智能合约
+因为Metamask不支持toekn的发送，需要切换到[MyEtherWallet](https://link.jianshu.com/?t=https://www.myetherwallet.com/)钱包。
+
+在**MyEtherWallet**页面上，点击右上角的下拉框来切换网络到`Ropsten(infura.io)`。把语言选择为简体中文。然后点超链接**发送以太币/发送代币**。用私钥的方式导入钱包。
+
+点击Metamask右上角的“...”，然后点击"Export Private Key "，输入密码，即可获得私钥。将私钥拷到MyEtherWallet，就可以解锁你的钱包了。
+
+钱包解锁后在屏幕右侧显示：
+```
+账户地址：
+0x313117B29B6980603525e2de87145315879c17Eb
+账户余额：
+3.986141362 ROPSTEN ETH
+```
+这只是你账户上的以太币余额，而不是你要发行的ZTT代币的余额。
+
+点击右下角的**Add Custom Token**按钮，调出三个输入框，输入：
+```
+地址 Token Contract: 0x4292f38c4e1f13cf6f7a37a194e1616b365d5247
+代币符号: ZTT
+小数点位数: 8
+```
+点击**保存**按钮，然后就出现了ZTT的余额的显示：
+```
+1 ZTT
+```
