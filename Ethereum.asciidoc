@@ -103,3 +103,13 @@ Optimization: No
 ```
 1 ZTT
 ```
+#### MetaMask显示代币
+在MetaMask浮动框中选择**Tokens**选项卡，点击**ADD TOKEN**按钮，输入合约地址：
+```
+0x4292f38c4e1f13cf6f7a37a194e1616b365d5247
+```
+MetaMask自动填充剩余输入框，然后显示余额：
+```
+You own 1 token
+1.000 ZTT
+```
