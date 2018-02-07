@@ -135,7 +135,7 @@ MetaMask的当前账户是Account2，点**SEND**按钮，在交易的目标地�
 交易被确认后（以太坊的确认周期是15秒左右），MetaMask中可以看到账户中ETH余额的变化。
 
 #### 代币的转账
-仍通过[https://www.myetherwallet.com](https://www.myetherwallet.com)来完成代币ZTT的转账。
+仍通过[https://www.myetherwallet.com](https://www.myetherwallet.com) 来完成代币ZTT的转账。
 
 1. 通过MetaMask切换账户到Account1，导出Account1的私钥。
 
