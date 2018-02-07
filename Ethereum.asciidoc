@@ -1,0 +1,47 @@
+## 发行自己的以太坊ERC20 Token
+[原文](http://blog.csdn.net/sinat_34070003/article/details/79107181)  
+
+### 安装以太坊轻钱包MetaMask
+[MetaMask](https://link.jianshu.com/?t=https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?authuser=2)是一款在谷歌浏览器Chrome上使用的插件类型的以太坊钱包，该钱包不需要下载，只需要在谷歌浏览器添加对应的扩展程序即可，非常轻量级，使用起来也非常方便。（可能需要翻墙才能安装）[1](http://8btc.com/thread-76137-1-5.html)   
+
+安装好MetaMask后Chrome右上角会多了一个橙色的狐狸头图标。点图标会打开MetaMask浮动框。新建钱包，输入密码。
+
+MetaMask会为用户创建12个英文助记词，一定要保存好这些助记词，一定要保存好这些助记词，一定要保存好这些助记词。在其他钱包导入这个新创建的账户的时候需要输入这些助记词。
+
+在以太坊的主网络上发布智能合约需要以太币(ETH)，而使用测试网络可以直接申请到测试用的以太币。在MetaMask浮动框的左上角的下拉框中选择`Ropsten Test Network`选项，来切换到测试网。这个测试网貌似由`infura.io`提供。
+
+点击“BUY”按钮，然后点“ROPSTEN TEST FAUCET”。点击绿色的按钮“request 1 ether from faucet”，就可以领取1ETH。测试的话一个以太币够用了，如果再想多领点，就点[这个网址](https://link.jianshu.com/?t=http://faucet.ropsten.be:3001/%20)再领3个以太币(ETH)。倒是可以熟悉一下以太币地址的概念。
+
+MetaMask浮动框上账户的地址显示不全，可以点账户傍边的三个黑点调出一个下拉框选择将账户地址复制到剪切板。如果我刚新建的账户地址是：
+```
+0x313117B29B6980603525e2de87145315879c17Eb
+```
+所有的加密货币都会有类似的地址，这代表了用户的账户，账户往往并余额。比特币的地址是用户公钥的哈希，以太币应该也差不多。
+
+如果两个途径都领了，则你有了4个ETH，这可以在MetaMask中看到，最新版的MetaMask甚至显示这4个ETH价值多少美元。我这里显示的是价值2951.74美元，当然是这时的真正的以太币的价值。
+
+做到这里你已经在Ropsten以太坊测试网络中拥有了4个以太币，可以部署自己的智能合约了。如果你拥有真正的以太币，当然也可以在以太坊的主网络上做测试，那么就是可以跳过这一节。
+
+### 开发智能合约
+
+以太坊的智能合约使用Solidity语言开发，这个语言（相对于比特币的脚本）是图灵完备的。为了让本测试简单，使用在线的开发工具。原文使用的是[Remix](https://link.jianshu.com/?t=https://ethereum.github.io/browser-solidity)，然我这里打开后只是一个白网页。从github的`https://github.com/ethereum/browser-solidity`项目上查到了Remix的另一个部署[https://remix.ethereum.org](https://remix.ethereum.org/)，用这个来调试智能合约源码。
+
+一个代币智能合约的例子中[这个网址](https://link.jianshu.com/?t=https://ropsten.etherscan.io/address/0x655275d5ea52c62531aa43a85949c63dd858e0e0#code)可以看到，复制到Remix的左侧源码区即可。
+
+"Run"选项卡中的“Environment”设置为“Injected Web3”，Create按钮左边的输入框中输入：
+```
+100000000,"zhongxh's test token",8,"ZTT"
+```
+含义是Token的数量、Token的全称、Token的精度(即Token最小为小数点后几位)、Token的符号。这个内容后面会用到，如果改变了需要记下来。
+
+点击Create按钮后，MetaMask会弹出的“CONFIRM TRANSACTION”的页面，这个页面是用来确认发送的，点击“SUBMIT”提交，再点“SENT”。
+
+这时，创建智能合约的提案已经提交到了以太坊测试网Ropsten(infura.io)。在MetaMask的SENT选项卡中可以看到刚刚提交的智能合约提案，点击这个提案就跳转到了以太坊浏览器[etherscan](https://ropsten.etherscan.io/tx/0x5901912c0f23302a813c4462c3c1fee6724c767654dbb51cf9e2677ca1d1e8d3)我刚刚创建的交易中。智能合约的提案也是一种特殊的交易，也会被打包到区块中。
+
+该交易的关键信息有：
+```
+From: 0x313117b29b6980603525e2de87145315879c17eb
+To:[Contract 0x4292f38c4e1f13cf6f7a37a194e1616b365d5247 Created]  
+Nonce: 1
+```
+From是我的钱包地址，To是智能合约的地址(Contract Address)。下面会用到智能合约地址。
