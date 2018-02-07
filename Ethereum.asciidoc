@@ -34,7 +34,7 @@ MetaMask浮动框上账户的地址显示不全，可以点账户傍边的三个
 ```
 含义是Token的数量、Token的全称、Token的精度(即Token最小为小数点后几位)、Token的符号。这个内容后面会用到，如果改变了需要记下来。
 
-点击Create按钮后，MetaMask会弹出的“CONFIRM TRANSACTION”的页面，这个页面是用来确认发送的，点击“SUBMIT”提交，再点“SENT”。
+点击Create按钮后，MetaMask会弹出的“CONFIRM TRANSACTION”的页面，这个页面是用来确认发送的，点击**SUBMIT**提交，再点**SENT**。
 
 这时，创建智能合约的提案已经提交到了以太坊测试网Ropsten(infura.io)。在MetaMask的SENT选项卡中可以看到刚刚提交的智能合约提案，点击这个提案就跳转到了以太坊浏览器[etherscan](https://ropsten.etherscan.io/tx/0x5901912c0f23302a813c4462c3c1fee6724c767654dbb51cf9e2677ca1d1e8d3)我刚刚创建的交易中。智能合约的提案也是一种特殊的交易，也会被打包到区块中。
 
@@ -45,3 +45,8 @@ To:[Contract 0x4292f38c4e1f13cf6f7a37a194e1616b365d5247 Created]
 Nonce: 1
 ```
 From是我的钱包地址，To是智能合约的地址(Contract Address)。下面会用到智能合约地址。
+
+这里的Nonce是当前账户发出的交易序号。我这里显示1是因为这是当前账户的第2个交易（貌似以太坊的合约地址是账户地址加上这个Nonce后哈希得到的）。
+
+### 发布智能合约
+在etherscan浏览器的**MISC**下拉菜单中选择**Verify Contract**
