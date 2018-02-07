@@ -113,3 +113,25 @@ MetaMask自动填充剩余输入框，然后显示余额：
 You own 1 token
 1.000 ZTT
 ```
+
+### 测试代币
+下面测试一下代币在多个账户之间的转移。  
+
+在MetaMask中新建一个账号。方法是点击MetaMask浮动框右上角的头像图标，点选**Create Account**，就创建了`Acccount 2`。新账户的地址：
+```
+0xaD32794E0681ab84972F74D799bF683aA87a45c6
+```
+Account2的余额是：0ETH、0ZTT。  
+
+象上文一样向faucet讨要1个ETH。会启动一个交易，然后在MetaMask中看到Account2拥有了1ETH。
+
+#### Account2向Account1转账ETH
+MetaMask的当前账户是Account2，点**SEND**按钮，在交易的目标地址中粘贴入Account1的地址：
+```
+0x313117B29B6980603525e2de87145315879c17Eb
+```
+数量上输入0.5，然后点**NEXT**按钮，再点**SUBMIT**就提交了转账交易。在**SENT**选项卡中可以看到新建的交易。点击该交易会跳到Etherscan浏览器，浏览器会显示这个交易的详细信息。
+
+交易被确认后（以太坊的确认周期是15秒左右），MetaMask中可以看到账户中ETH余额的变化。
+
+#### 代币的转账
