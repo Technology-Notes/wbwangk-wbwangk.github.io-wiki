@@ -356,3 +356,16 @@ https://ropsten.etherscan.io/
 
 ### 杨海勇做的composer-playground多租户POC
 https://note.youdao.com/share/?id=428fa61d01b21264f68067b56b995246&type=note#/
+
+### 详解以太坊的工作原理
+[1](https://baijiahao.baidu.com/s?id=1581231980661527205&wfr=spider&for=pc)
+以太坊的哈希算法:KECCAK-256  
+
+以太坊有两种类型的账户：
+
+1. 外部拥有的账户，被私钥控制且没有任何代码与之关联
+
+2. 合约账户，被它们的合约代码控制且有代码与之关联
+
+![](https://t12.baidu.com/it/u=3959818670,2742092085&fm=173&s=B1B14D308322650B5B4D7C5A030050F0&w=640&h=298&img.JPEG)
+
