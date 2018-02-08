@@ -212,3 +212,33 @@ MetaMask的当前账户是Account2，点**SEND**按钮，在交易的目标地�
 
 如果一个区块同时满足一下几个条件，我们才能认为这个区块是有效的：当从起始状态（父块的最终状态）按顺序执行完生成新的状态后，在内部要保持一致，包括叔链、交易区块哈希、给定的交易。
 
+### truffle
+初始化，生成项目骨架：
+```
+cd ~/geth/truffleProject
+truffle init
+testrpc
+```
+testrpc运行了一个模拟的以太坊环境，服务端口是8545。
+
+另外起一个终端窗口，编辑当前目录下的truffle.js：
+```javascript
+module.exports = {
+  networks: {
+    development: {
+      host: "localhost",
+      port: 8545,
+      network_id: "*" // Match any network id
+    }
+  }
+};
+```
+然后执行：
+```
+$ truffle deploy
+Using network 'development'.
+Network up to date.
+```
+truffle serve已经不推荐了，而用类似webpack：http://truffleframework.com/boxes/webpack
+
+
