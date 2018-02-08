@@ -147,3 +147,28 @@ MetaMask的当前账户是Account2，点**SEND**按钮，在交易的目标地�
 
 5. 成功后在MetaMask中切换账户到Account2，可以看到Account2的ZTT代币的余额现在是0.1ZTT了。
 
+## 笔记
+### 详解以太坊的工作原理
+[1](https://baijiahao.baidu.com/s?id=1581231980661527205&wfr=spider&for=pc)
+以太坊的哈希算法:KECCAK-256  
+
+以太坊有两种类型的账户：
+
+1. 外部拥有的账户，被私钥控制且没有任何代码与之关联
+
+2. 合约账户，被它们的合约代码控制且有代码与之关联
+
+![](https://t12.baidu.com/it/u=3959818670,2742092085&fm=173&s=B1B14D308322650B5B4D7C5A030050F0&w=640&h=298&img.JPEG)
+
+### 以太坊黄皮书
+[地址](https://github.com/yuange1024/ethereum_yellowpaper/blob/master/Paper_Chinese.pdf)  
+
+账户状态包含以下四个字段：
+
+- nonce，随机数：这个值等于账户发出的交易数与这个账户创建的合约数量之和。创建合约本来就是交易的一种，所以这个值就是该账户的交易数
+
+- balance，余额：表示这个账户拥有多少Wei。（1ETH=Wei*10^18）
+
+- storageRoot，存储根节点：保存账户内容的Merkle Paricia树根节点的256位哈希编码到字典树中，作为从256位整数键值哈希的Keccak 256位哈希到256位整数的RLP-编码映射。
+
+- codeHash，代码哈希：这个账户的ENM(Ethereum Virtual Machine，以太坊虚拟机)代码哈希值——代码执行时，这个地址会接受一个消息调用；它和其他字段不同，创建后不可更改。状态数据库中包含所有像这样的代码片段哈希，以便后续使用。
