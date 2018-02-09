@@ -147,99 +147,6 @@ MetaMask的当前账户是Account2，点**SEND**按钮，在交易的目标地�
 
 5. 成功后在MetaMask中切换账户到Account2，可以看到Account2的ZTT代币的余额现在是0.1ZTT了。
 
-## 笔记
-### 详解以太坊的工作原理
-[1](https://baijiahao.baidu.com/s?id=1581231980661527205&wfr=spider&for=pc)
-以太坊的哈希算法:KECCAK-256  
-
-以太坊有两种类型的账户：
-
-1. 外部拥有的账户，被私钥控制且没有任何代码与之关联
-
-2. 合约账户，被它们的合约代码控制且有代码与之关联
-
-![](https://t12.baidu.com/it/u=3959818670,2742092085&fm=173&s=B1B14D308322650B5B4D7C5A030050F0&w=640&h=298&img.JPEG)
-
-### 以太坊黄皮书
-[地址](https://github.com/yuange1024/ethereum_yellowpaper/blob/master/Paper_Chinese.pdf)  
-
-**账户状态**包含以下四个字段：
-
-- nonce，随机数：这个值等于账户发出的交易数与这个账户创建的合约数量之和。（创建合约本来就是交易的一种，所以这个值就是该账户的交易数）
-
-- balance，余额：表示这个账户拥有多少Wei。（1ETH=Wei*10^18）
-
-- storageRoot，存储根节点：保存账户内容的Merkle Paricia树根节点的256位哈希编码到字典树中，作为从256位整数键值哈希的Keccak 256位哈希到256位整数的RLP-编码映射。
-
-- codeHash，代码哈希：这个账户的ENM(Ethereum Virtual Machine，以太坊虚拟机)代码哈希值——代码执行时，这个地址会接受一个消息调用；它和其他字段不同，创建后不可更改。状态数据库中包含所有像这样的代码片段哈希，以便后续使用。
-
-#### 交易的字段
-- nonce，随机数：账户状态中nonce的当前值
-
-- gasPrice，燃料价格：为执行交易所需要的计算资源付出的gas价格，以Wei为单位
-
-- gasLimit，燃料上限：用于执行交易的最大gas数量。这个值须在交易前设置，且设置后不能再修改。（可以理解为油箱大小，如果路程远请换大油箱）
-
-- to，接收者地址：消息调用接收者的160位地址。对于合约创建交易，无需接收者地址
-
-- value，转账额度：转到接收者账户的额度，以Wei为单位。对于合约创建，表示捐助到合约地址的额度
-
-- init，初始化（合约创建专用字段）：一个不限制大小的字节数组，表示账户初始化程序的EVM代码。init是EVM代码片段；执行init后会返回另外一个代码片段，每次合约接受小说调用（通过交易或内部调用）后都会执行这个代码片段。仅当合约账户创建时会执行一次init。
-
-- data，数据（消息调用专用字段）：一个不限制大小的字节数据，表示消息调用的输入数据
-
-#### 区块的字段
-区块头字段：
-
-- parentHash，父块哈希：父区块头的Keccak 256位哈希
-
-- ommersHash，叔链哈希：当前区块的叔链列表Keccak 256位哈希
-
-- beneficiary，受益者地址：成功挖到这个区块的160位地址，这个区块中的所有交易费都会转到这个地址
-
-- stateRoot，状态字典树根节点哈希：状态字典树根节点的Keccak 256位哈希，交易打包到当前区块且区块定稿后可以生成这个值
-
-- transactionsRoot，交易字典树根节点哈希：交易字典树根节点Keccak 256位哈希，在交易字典树含有区块中的所有交易列表
-
-- receiptsRoot，接受者字典树根节点哈希：接受者字典树根节点的Keccak 256位哈希，在接受者字典树含有区块中的所有交易信息中的接收者。
-
-（后略）
-
-#### 交易收据
-为了让交易信息编码能有利于零知识证明、索引、搜索，我们将每个包含一定信息的交易收据进行编码。保存在一个索引字典树中。交易收据是一个包含四个条目的元组：交易后的状态；当前区块中交易累计燃料使用量，交易发生后会立即更新这个值；交易执行过程中创建的日志集合；日志Bloom过滤器。
-
-#### 整体有效性
-
-如果一个区块同时满足一下几个条件，我们才能认为这个区块是有效的：当从起始状态（父块的最终状态）按顺序执行完生成新的状态后，在内部要保持一致，包括叔链、交易区块哈希、给定的交易。
-
-### truffle
-初始化，生成项目骨架：
-```
-cd ~/geth/truffleProject
-truffle init
-testrpc
-```
-testrpc运行了一个模拟的以太坊环境，服务端口是8545。
-
-另外起一个终端窗口，编辑当前目录下的truffle.js：
-```javascript
-module.exports = {
-  networks: {
-    development: {
-      host: "localhost",
-      port: 8545,
-      network_id: "*" // Match any network id
-    }
-  }
-};
-```
-然后执行：
-```
-$ truffle deploy
-Using network 'development'.
-Network up to date.
-```
-truffle serve已经不推荐了，而用类似webpack：http://truffleframework.com/boxes/webpack
 
 
 ## 搭建基于以太坊go-ethereum的私有链环境
@@ -411,4 +318,104 @@ webpack: Compiled successfully.
 我用curl访问localhost:8080与上面的图片内容一样。虽然用NAT将8080映射到了windows，但在windows下浏览器访问localhost:8080却出不来页面，可能是webpack-dev-server监听的方式与NAT不兼容。
 
 通过上面的页面可以完成转账.
+
+## 笔记
+### 详解以太坊的工作原理
+[1](https://baijiahao.baidu.com/s?id=1581231980661527205&wfr=spider&for=pc)
+以太坊的哈希算法:KECCAK-256  
+
+以太坊有两种类型的账户：
+
+1. 外部拥有的账户，被私钥控制且没有任何代码与之关联
+
+2. 合约账户，被它们的合约代码控制且有代码与之关联
+
+![](https://t12.baidu.com/it/u=3959818670,2742092085&fm=173&s=B1B14D308322650B5B4D7C5A030050F0&w=640&h=298&img.JPEG)
+
+### 以太坊黄皮书
+[地址](https://github.com/yuange1024/ethereum_yellowpaper/blob/master/Paper_Chinese.pdf)  
+
+**账户状态**包含以下四个字段：
+
+- nonce，随机数：这个值等于账户发出的交易数与这个账户创建的合约数量之和。（创建合约本来就是交易的一种，所以这个值就是该账户的交易数）
+
+- balance，余额：表示这个账户拥有多少Wei。（1ETH=Wei*10^18）
+
+- storageRoot，存储根节点：保存账户内容的Merkle Paricia树根节点的256位哈希编码到字典树中，作为从256位整数键值哈希的Keccak 256位哈希到256位整数的RLP-编码映射。
+
+- codeHash，代码哈希：这个账户的ENM(Ethereum Virtual Machine，以太坊虚拟机)代码哈希值——代码执行时，这个地址会接受一个消息调用；它和其他字段不同，创建后不可更改。状态数据库中包含所有像这样的代码片段哈希，以便后续使用。
+
+#### 交易的字段
+- nonce，随机数：账户状态中nonce的当前值
+
+- gasPrice，燃料价格：为执行交易所需要的计算资源付出的gas价格，以Wei为单位
+
+- gasLimit，燃料上限：用于执行交易的最大gas数量。这个值须在交易前设置，且设置后不能再修改。（可以理解为油箱大小，如果路程远请换大油箱）
+
+- to，接收者地址：消息调用接收者的160位地址。对于合约创建交易，无需接收者地址
+
+- value，转账额度：转到接收者账户的额度，以Wei为单位。对于合约创建，表示捐助到合约地址的额度
+
+- init，初始化（合约创建专用字段）：一个不限制大小的字节数组，表示账户初始化程序的EVM代码。init是EVM代码片段；执行init后会返回另外一个代码片段，每次合约接受小说调用（通过交易或内部调用）后都会执行这个代码片段。仅当合约账户创建时会执行一次init。
+
+- data，数据（消息调用专用字段）：一个不限制大小的字节数据，表示消息调用的输入数据
+
+#### 区块的字段
+区块头字段：
+
+- parentHash，父块哈希：父区块头的Keccak 256位哈希
+
+- ommersHash，叔链哈希：当前区块的叔链列表Keccak 256位哈希
+
+- beneficiary，受益者地址：成功挖到这个区块的160位地址，这个区块中的所有交易费都会转到这个地址
+
+- stateRoot，状态字典树根节点哈希：状态字典树根节点的Keccak 256位哈希，交易打包到当前区块且区块定稿后可以生成这个值
+
+- transactionsRoot，交易字典树根节点哈希：交易字典树根节点Keccak 256位哈希，在交易字典树含有区块中的所有交易列表
+
+- receiptsRoot，接受者字典树根节点哈希：接受者字典树根节点的Keccak 256位哈希，在接受者字典树含有区块中的所有交易信息中的接收者。
+
+（后略）
+
+#### 交易收据
+为了让交易信息编码能有利于零知识证明、索引、搜索，我们将每个包含一定信息的交易收据进行编码。保存在一个索引字典树中。交易收据是一个包含四个条目的元组：交易后的状态；当前区块中交易累计燃料使用量，交易发生后会立即更新这个值；交易执行过程中创建的日志集合；日志Bloom过滤器。
+
+#### 整体有效性
+
+如果一个区块同时满足一下几个条件，我们才能认为这个区块是有效的：当从起始状态（父块的最终状态）按顺序执行完生成新的状态后，在内部要保持一致，包括叔链、交易区块哈希、给定的交易。
+
+### truffle
+初始化，生成项目骨架：
+```
+cd ~/geth/truffleProject
+truffle init
+testrpc
+```
+testrpc运行了一个模拟的以太坊环境，服务端口是8545。
+
+另外起一个终端窗口，编辑当前目录下的truffle.js：
+```javascript
+module.exports = {
+  networks: {
+    development: {
+      host: "localhost",
+      port: 8545,
+      network_id: "*" // Match any network id
+    }
+  }
+};
+```
+然后执行：
+```
+$ truffle deploy
+Using network 'development'.
+Network up to date.
+```
+truffle serve已经不推荐了，而用类似webpack：http://truffleframework.com/boxes/webpack
+
+###  以太坊客户端Ethereum Wallet与Geth区别简介
+[原文](http://blog.csdn.net/wo541075754/article/details/77619533)   
+Geth是以太坊客户端，含有分布式账本数据，可以达几十G。   
+Ethereum Wallet是个图形UI，含有账户私钥，可以代表个人身份与以太坊交互，如转账。   
+
 
