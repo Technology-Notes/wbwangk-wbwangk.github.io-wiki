@@ -376,4 +376,39 @@ Listening on localhost:8545
 ```
 看上去ganache代替geth提供了一个以太坊的运行环境。屏幕上显示的是一些测试用的账号以及对应的私钥。
 
+#### 部署和运行
+将当前项目部署到测试环境：
+```
+$ cd truffleProject
+$ truffle deploy
+Using network 'development'.
+Network up to data.
+```
+运行web服务，原文是`truffle serve`。但实测报错：
+```
+TypeError: fsevents is not a constructor
+```
+网上找到的[答案](https://github.com/trufflesuite/truffle/issues/463)是用`npm run dev`代替。
+```
+$ cd truffleProject2
+ npm run dev
+
+> truffle-init-webpack@0.0.2 dev /home/vagrant/geth/truffleProject2
+> webpack-dev-server
+
+Project is running at http://localhost:8080/
+webpack output is served from /
+Hash: 06cbdfeabaa7f12839e6
+Version: webpack 2.7.0
+...
+webpack: Compiled successfully.
+```
+这是用`webpack-dev-server`代替了`truffle serve`。truffle官方文档也说应该这么做。
+
+#### 测试
+按博文原文用浏览器访问http://localhost:8080 应显示如下页面：
+![](http://img.blog.csdn.net/20161114210305453)
+我用curl访问localhost:8080与上面的图片内容一样。虽然用NAT将8080映射到了windows，但在windows下浏览器访问localhost:8080却出不来页面，可能是webpack-dev-server监听的方式与NAT不兼容。
+
+通过上面的页面可以完成转账.
 
