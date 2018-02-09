@@ -357,3 +357,80 @@ https://ropsten.etherscan.io/
 ### 杨海勇做的composer-playground多租户POC
 https://note.youdao.com/share/?id=428fa61d01b21264f68067b56b995246&type=note#/
 
+### webpack 网页依赖管理和打包工具
+[官方快速开始](https://webpack.js.org/guides/getting-started/)  
+
+### 搭建基于以太坊go-ethereum的私有链环境
+[原博文](http://blog.csdn.net/wo541075754/article/details/53064877)
+安装在ubuntu16上。
+
+#### 安装go-ethereum客户端
+```
+sudo apt-get install software-properties-common
+sudo add-apt-repository -y ppa:ethereum/ethereum
+sudo add-apt-repository -y ppa:ethereum/ethereum-dev
+sudo apt-get update
+sudo apt-get install ethereum
+```
+#### 创世区块
+工作目录是`~/geth`。新建创世块json文件piccgenesis.json。内容如下：
+```
+{
+ "nonce":"0x0000000000000042",
+ "mixhash":"0x0000000000000000000000000000000000000000000000000000000000000000",
+ "difficulty": "0x4000",
+ "alloc": {},
+ "coinbase":"0x0000000000000000000000000000000000000000",
+ "timestamp": "0x00",
+ "parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000",
+ "extraData": "SecBroBlock",
+ "gasLimit":"0x0000ffff"
+}
+```
+初始化：
+```
+geth init ~/geth/genesis.json
+```
+#### 启动私有链
+```
+$ geth --identity "secbro etherum" --rpc --rpccorsdomain "*" --datadir "~/geth/chain2" --port "30303" --rpcapi "db,eth,net,web3" -- networkid 95518 console --dev 
+...
+IPC endpoint opened: /home/vagrant/geth/chain2/geth.ipc
+HTTP endpoint opened: http://127.0.0.1:8545
+```
+最后的--dev表示以开发模式启动
+
+#### 命令行测试
+看到启动页面之后，新开启一个终端，并执行一下命令，并把日志输出到文本文件当中：
+```
+$ geth --dev console 2>> file_to_log_output
+> eth.accounts
+["0xedfc191463e44db52fd7dc1562bd8379d28c32c2"]
+> personal.newAccount("1")
+"0xe03a714a803e54525b8a6352990ead0b4e747bd6"
+> eth.accounts
+["0xedfc191463e44db52fd7dc1562bd8379d28c32c2", "0xe03a714a803e54525b8a6352990ead0b4e747bd6"]
+> eth.blockNumber
+0
+```
+eth.accounts是查看账户。personal.newAccount是新建用户，括号里是密码。最后是查看区块高度。
+
+启动和停止挖矿：`miner.start()`、`miner.stop()`。
+
+查看账户余额和转账：
+```
+> eth.getBalance("0xe03a714a803e54525b8a6352990ead0b4e747bd6")
+0
+> eth.sendTransaction({from:"0xedfc191463e44db52fd7dc1562bd8379d28c32c2",to:"0xe03a714a803e54525b8a6352990ead0b4e747bd6",value:web3.toWei(3,"ether")})
+0x9c6c89f73133ee8d28ac07db9a7f670b79f8c4f24cabdb13e92d185f30b57646
+> eth.getBalance("0xe03a714a803e54525b8a6352990ead0b4e747bd6")
+3000000000000000000
+```
+转了3ETH却显示3后面18个0，因为显示的计量单位是Wei。
+
+按ctrl+D可以退出交互环境。
+
+#### truffle
+truffle是以太坊最受欢迎的一个开发框架。
+
+
