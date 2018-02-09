@@ -242,3 +242,138 @@ Network up to date.
 truffle serve已经不推荐了，而用类似webpack：http://truffleframework.com/boxes/webpack
 
 
+## 搭建基于以太坊go-ethereum的私有链环境
+[原博文](http://blog.csdn.net/wo541075754/article/details/53064877)
+安装在ubuntu16上。
+
+### 安装go-ethereum客户端
+```
+sudo apt-get install software-properties-common
+sudo add-apt-repository -y ppa:ethereum/ethereum
+sudo add-apt-repository -y ppa:ethereum/ethereum-dev
+sudo apt-get update
+sudo apt-get install ethereum
+```
+#### 创世区块
+工作目录是`~/geth`。新建创世块json文件piccgenesis.json。内容如下：
+```
+{
+ "nonce":"0x0000000000000042",
+ "mixhash":"0x0000000000000000000000000000000000000000000000000000000000000000",
+ "difficulty": "0x4000",
+ "alloc": {},
+ "coinbase":"0x0000000000000000000000000000000000000000",
+ "timestamp": "0x00",
+ "parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000",
+ "extraData": "SecBroBlock",
+ "gasLimit":"0x0000ffff"
+}
+```
+初始化：
+```
+geth init ~/geth/genesis.json
+```
+#### 启动私有链
+```
+$ geth --identity "secbro etherum" --rpc --rpccorsdomain "*" --datadir "~/geth/chain2" --port "30303" --rpcapi "db,eth,net,web3" -- networkid 95518 console --dev 
+...
+IPC endpoint opened: /home/vagrant/geth/chain2/geth.ipc
+HTTP endpoint opened: http://127.0.0.1:8545
+```
+最后的--dev表示以开发模式启动
+
+#### 命令行测试
+看到启动页面之后，新开启一个终端，并执行一下命令，并把日志输出到文本文件当中：
+```
+$ geth --dev console 2>> file_to_log_output
+> eth.accounts
+["0xedfc191463e44db52fd7dc1562bd8379d28c32c2"]
+> personal.newAccount("1")
+"0xe03a714a803e54525b8a6352990ead0b4e747bd6"
+> eth.accounts
+["0xedfc191463e44db52fd7dc1562bd8379d28c32c2", "0xe03a714a803e54525b8a6352990ead0b4e747bd6"]
+> eth.blockNumber
+0
+```
+eth.accounts是查看账户。personal.newAccount是新建用户，括号里是密码。最后是查看区块高度。
+
+启动和停止挖矿：`miner.start()`、`miner.stop()`。
+
+查看账户余额和转账：
+```
+> eth.getBalance("0xe03a714a803e54525b8a6352990ead0b4e747bd6")
+0
+> eth.sendTransaction({from:"0xedfc191463e44db52fd7dc1562bd8379d28c32c2",to:"0xe03a714a803e54525b8a6352990ead0b4e747bd6",value:web3.toWei(3,"ether")})
+0x9c6c89f73133ee8d28ac07db9a7f670b79f8c4f24cabdb13e92d185f30b57646
+> eth.getBalance("0xe03a714a803e54525b8a6352990ead0b4e747bd6")
+3000000000000000000
+```
+转了3ETH却显示3后面18个0，因为显示的计量单位是Wei。
+
+按ctrl+D可以退出交互环境。
+
+### truffle和testrpc
+truffle是以太坊最受欢迎的一个开发框架。安装：
+```
+$ npm install -g truffle
+```
+truffle是本地的用来编译、部署智能合约的工具。testrpc不同于geth，geth是真正的以太坊环境，testrpc是在本地使用内存模拟的一个以太坊环境，对于开发调试来说，更为方便快捷，当合约在testrpc中测试通过后，再部署到geth中去。所以可以说truffle和testrpc就是两大杀器。
+
+项目初始化：
+```
+$ cd ~/geth
+$ mkdir truffleProject && cd truffleProject
+$ truffle init
+```
+执行以上命令之后，truffle会默认生成一个MetaCoin的demo。
+
+安装testrpc：
+```
+npm install -g ethereumjs-testrpc
+```
+屏幕提示该项目已经改名为ganache-cli。重新安装：
+```
+npm install -g ganache-cli
+```
+运行命令也由testrpc更名为ganache-cli。
+
+ganache(即testrpc)也会使用8545端口，所以需要先停止之前另一个终端窗口的geth。然后执行：
+```
+$ ganache-cli
+...
+Available Accounts
+==================
+(0) 0x1cc3599dce8bfbe2d96b2a0f7507cfbd71b1ef0b
+(1) 0x2fc3a30008ce738195a2704a37cec3509c6edbbe
+(2) 0x9c7d4ac0e0d5d13a267c28a8da9c050e3ce81f13
+(3) 0xb369d8bcd384fd55b4cf718661eba862ef7feb32
+(4) 0x37d18b941366708ce02bfc1df660eb7a68b72ea1
+(5) 0xbded52ecc06e1e07bd4f0a6b3aa2067e74cec832
+(6) 0xbf585d6aeaa82445dd2b4b326b021f4bf070411c
+(7) 0xbed1d6ca867e6ab1cd17cb4a5bf91101641e45dc
+(8) 0xa9cc18829e9bd5ad858d83f7bf5848f379afe814
+(9) 0xa9157fbce92203255f0be7a906d01841e4320ed9
+
+Private Keys
+==================
+(0) 484c3525ddd00e22b65fbed1609d220007eaa45682e4bee7db001708f20cfcbf
+(1) 4907f855fe3479d8a3113d7c818324044fb33afb78921ab78b3cf1c70f525c54
+(2) 96ad5a8b9d2c7376d76e4d4f24a278f0b201f40583ede5b47c2f8648cadb1787
+(3) 5d87b37179b7f241ca6b5e628769effac939ee59d121f544cd0fd4271901ba38
+(4) 82e6003b37668866d5ba4a57946f65e7868e89c3530f41444995a4b062cd59e9
+(5) 92b01af2eb726f76e1bf7c14311804de8536737001564070ec5efe454a179ef9
+(6) 9e18ba2e0d6b281e8d40a7de27fc25d33b7e3dab82c8a1ba32fe55036479d09c
+(7) 84f5ed50f8c0e5b8fcd1a3badc7e3215165769a6c2eb234d745eeeac24e1ba69
+(8) 47b954d9d163ad47d811e5693fe15b7ed4100d06e8b45e0a142679029e7ee4b3
+(9) 6546f97235297ecdcd533fc7fdb23c940cd075055d0bdffce94e2a37e7147055
+
+HD Wallet
+==================
+Mnemonic:      clever trust network couple give become cereal skate idle planet term spin
+Base HD Path:  m/44'/60'/0'/0/{account_index}
+
+Listening on localhost:8545
+```
+看上去ganache代替geth提供了一个以太坊的运行环境。屏幕上显示的是一些测试用的账号以及对应的私钥。
+
+
