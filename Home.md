@@ -363,3 +363,5 @@ https://note.youdao.com/share/?id=428fa61d01b21264f68067b56b995246&type=note#/
 ###  智能合约中存在的3种最常见的误解
 http://blog.csdn.net/wo541075754/article/details/79061040
 
+### Swarm vs IPFS
+https://ethereum.stackexchange.com/questions/2138/what-is-the-difference-between-swarm-and-ipfs
