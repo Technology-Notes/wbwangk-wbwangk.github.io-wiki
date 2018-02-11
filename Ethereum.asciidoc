@@ -419,7 +419,7 @@ Geth是以太坊客户端，含有分布式账本数据，可以达几十G。
 Ethereum Wallet是个图形UI，含有账户私钥，可以代表个人身份与以太坊交互，如转账。   
 
 ### Ganache
-Ganache是一个以太坊的本地开发环境，可以模拟出智能合约的运行环境。[1](http://truffleframework.com/docs/ganache/using)Ganache提供图形界面，支持Windows、MacOS、Linux。对于没有图形界面的服务器环境，使用ganache-cli（以前叫testrpc）[2](https://github.com/trufflesuite/ganache-cli/blob/master/README.md)。  
+Ganache是一个以太坊的本地开发环境，可以模拟出智能合约的运行环境。[1](http://truffleframework.com/docs/ganache/using) Ganache提供图形界面，支持Windows、MacOS、Linux。对于没有图形界面的服务器环境，使用ganache-cli（以前叫testrpc）[2](https://github.com/trufflesuite/ganache-cli/blob/master/README.md) 。  
 
 安装和运行ganache-cli：
 ```
