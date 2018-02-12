@@ -814,4 +814,19 @@ truffle test
 ```
 如果在ganache-cli的终端窗口中，可以看到整个测试过程，区块高度从4长到了14。  
 
-#### 创建用户界面以与智能合约进行交互
+#### 安装和配置MetaMask
+[MetaMask](https://metamask.io/) 是Chrome和Firebox的浏览器扩展，是一个以太坊钱包。通过MetaMask可以连接上以太坊主网或测试网进行以太坊账户的管理，包括查看余额、转账等，支持代币。在本文的[其它章节](https://github.com/wbwangk/wbwangk.github.io/wiki/Ethereum#%E5%8F%91%E8%A1%8C%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BB%A5%E5%A4%AA%E5%9D%8Aerc20-token) 中也讲到了MetaMask的使用。  
+
+1. 在浏览器中安装MetaMask（需要墙）。2-4. 略
+
+5.6. 在MetaMask浮动框中，点击**Import Existing DEN**。输入ganache-cli刚运行时提示的12个英文单词。
+![](http://truffleframework.com/tutorials/images/pet-shop/metamask-initial.png)  
+在下面输入两次密码，点击**OK**。
+
+7. 在MetaMask浮动框的左上角下拉框中选择**Custom RPC**。
+
+8. 输入地址`http://127.0.0.1:8545`，点**Save**按钮。这里的端口号和原文不一样。我这里ganache-cli启动时的默认端口是8545，而不是7545。  
+下拉框上的网络名称切换成了"Private Network"。
+
+9. 点一下"Settings"左侧的黑色箭头回到账户页面。ganache-cli为每个账户设定的以太币初始值是100。你会注意到它在第一个账户上稍微少一些，因为当合同本身被部署时以及测试运行时使用了一些燃料。
+![](http://truffleframework.com/tutorials/images/pet-shop/metamask-account1.png)
