@@ -430,3 +430,211 @@ Listening  on localhost:8545
 ```
 这样就在8545端口上启动了一个以太坊的客户端模拟程序。  
 
+## Truffle官方教程
+[官方地址](http://truffleframework.com/tutorials/)   
+
+### 以太坊概述
+[原文地址](http://truffleframework.com/tutorials/ethereum-overview)  
+进行Truffle教程前，要求先读一下这个“以太坊概述”。这里将概述中关键内容摘录在这里。不包括区块链的介绍，只有关于以太坊的部分。  
+
+#### 以太坊是什么
+以太坊是一个区块链，允许你在其可信赖的环境中运行程序。这与比特币区块链形成鲜明对比，区块链只允许你管理加密货币。
+
+为此，以太坊有一个名为以太坊虚拟机（EVM）的虚拟机。EVM允许代码在区块链中进行验证和执行，从而保证其在每个人的机器上以相同的方式运行。此代码包含在“智能合约”中。
+
+除了追踪账户余额之外，以太坊还会在区块链上维护EVM的状态。所有节点运行智能合约，来验证合约及其输出的完整性。
+
+#### 什么是智能合约
+**智能合约是在EVM上运行的代码**。智能合约可以接受并存储以太币、数据，或两者的组合。然后，使用编入合同的逻辑，它可以将以太币分配给其他账户甚至其他智能合约。
+
+这是Bob和Alice的智能合约示例。爱丽丝想聘请鲍勃建立一个露台，他们正在使用一个托管合同（一个地方来存钱，直到满足条件）在最终交易之前存储他们的以太币。
+![](http://truffleframework.com/tutorials/images/ethereum-overview/smart-contract-step1.png)
+1. 爱丽丝同意在托管合同中存入露台的付款，而鲍勃同意存入相等的金额  
+![](http://truffleframework.com/tutorials/images/ethereum-overview/smart-contract-step2.png)  
+2. 鲍勃完成露台项目，爱丽丝给予智能合同许可释放资金
+![](http://truffleframework.com/tutorials/images/ethereum-overview/smart-contract-step3.png)
+3. 鲍勃收到爱丽丝的付款和押金
+（可以把规定写入合同代码中：如果鲍勃不能建立露台或者如果他表现不佳的话，需要把鲍勃的押金赔偿给爱丽丝。）
+**智能合约是用一种名为Solidity的语言编写的**。[Solidity](https://solidity.readthedocs.io/)是静态类型的，支持继承、库和复杂的用户定义类型等等。Solidity语法与JavaScript类似。
+
+#### 以太坊网络
+到目前为止，我们已经描述了以太坊公开链（或称“MainNet”）。在MainNet上，包括账户余额和交易在内的链上数据是公开的，任何人都可以创建节点并开始验证交易。以太币在这个网络上有市场价值，可以兑换成其他加密货币或者美元等法定货币（fiat currency，简称法币）。
+
+1. 本地测试网络
+以太坊区块链可以在本地模拟开发。本地测试网络可以即时处理事务，并可根据需要分配以太币。存在一系列以太坊模拟器; 我们推荐[Ganache](http://truffleframework.com/ganache)。
+
+2. 公共测试网络
+在最终部署到主网络之前，开发人员使用公共测试网络（或测试网）来测试以太网应用程序。这些网络上的以太币仅用于测试目的，没有任何价值。
+
+有三个公共测试网络被广泛使用：
+
+- **Ropsten**：由以太坊基金会创建的官方测试网络。其功能类似于MainNet。
+
+- **Kovan**：一种使用称为“权威证明”( "proof-of-authority")的共识方法的网络。这意味着它的交易通过选定的成员进行验证，从而带来一贯性的四秒的锁定时间。此测试网上的以太币的供应也受到控制，以减轻垃圾迁移（智能合约的部署或升级被称为迁移mitigate）攻击。
+
+- **Rinkeby**：一个也使用权威证明的测试网，由以太坊基金会创建的。
+
+3. 私有/企业网络
+以太网专用网络允许各方共享数据，而不公开访问。私人区块链是以下选择的不错选择：
+
+- 共享敏感数据，如医疗保健记录
+- 由于较小的网络规模，扩展可以处理更高的读写吞吐量
+
+私有企业区块链的一个例子是最初由摩根大通实现的[Quorum](https://www.jpmorgan.com/country/US/EN/Quorum) 。（请阅读我们的[博客文章](http://truffleframework.com/tutorials/building-dapps-for-quorum-private-enterprise-blockchains) ，了解使用Truffle调试Quorum。）
+
+#### 分布式应用程序(dapp)
+使用智能合约进行处理的应用程序称为“分布式应用程序”或“dapps”。这些dapps的用户界面包括熟悉的语言，如HTML、CSS和JavaScript。应用程序本身可以托管在传统的Web服务器上，也可以驻留在分散的文件服务（如[Swarm](http://swarm-gateways.net/bzz:/theswarm.eth/) 或[IPFS](http://ipfs.io/) ）上。
+
+鉴于以太坊区块链的好处，dapp可能成为许多行业的解决方案，包括但不限于：
+
+- 记账  
+- 金融  
+- 供应链  
+- 房地产  
+- 交易市场  
+
+创建自己的dapp，测试它并将其部署到你选择的以太坊网络的最佳方法是什么？当然是使用[Truffle](http://truffleframework.com/docs/getting_started/project)。
+
+### 调试一个智能合约
+[1](http://truffleframework.com/tutorials/debugging-a-smart-contract)  
+本教程使用的是[Solidity](https://solidity.readthedocs.io/en/develop/introduction-to-smart-contracts.html)文档中的例子。大约相当于Solidity的hello world。  
+
+例子的程序源码是：
+```solidity
+pragma solidity ^0.4.17;
+
+contract SimpleStorage {
+  uint myVariable;
+
+  function set(uint x) public {
+    myVariable = x;
+  }
+
+  function get() constant public returns (uint) {
+    return myVariable;
+  }
+}
+```
+1.创建工作目录; 2.创建一个空的Truffle项目(在本机的/home/vagrant/geth目录下)：
+```
+mkdir simple-storage && cd simple-storage
+truffle init
+```
+3.在`contracts/`目录下创建一个文件`Store.sol`，内容如下：
+```
+pragma solidity ^0.4.17;
+
+contract SimpleStorage {
+  uint myVariable;
+
+  function set(uint x) public {
+    myVariable = x;
+  }
+
+  function get() constant public returns (uint) {
+    return myVariable;
+  }
+}
+```
+4. 创建了一个叫`SimpleStorage`的合约。  
+在`migrations/`目录下创建一个叫`2_deploy_contracts.js`的文件，包含下列内容：
+```
+var SimpleStorage = artifacts.require("SimpleStorage");
+
+module.exports = function(deployer) {
+  deployer.deploy(SimpleStorage);
+};
+```
+这个文件用于将合约部署到区块链。
+
+5. 编译合约。注意在项目的根目录下运行：
+```
+truffle compile
+```
+6. 打开一个新的终端窗口，运行`truffle develop`来启动Truffle内置的开发环境（这是Truffle内置的区块链模拟环境，可用于合约的调试。在下一个教程中将会使用一个叫Ganache的区块链模拟环境）：
+```
+truffle develop
+```
+屏幕上会显示一些预置的账户和私钥信息，然后进入`truffle(develop)>`提示符。在这个truffle命令行中，输入下列命令将合约部署到区块链：
+```
+truffle(develop)> migrate
+```
+#### 与这个基础智能合约进行交互
+通过`truffle develop`智能合约被部署到了一个测试网络中，这将进入一个类似[Ganache](http://truffleframework.com/ganache) 的[控制台](http://truffleframework.com/docs/getting_started/console)。Ganache是专门为Truffle实现的开发用区块链。  
+
+*注意：可能你疑惑为啥我们不需要通过挖矿来确保交易安全，Truffle开发控制台已经为我们做好了这些。如果使用一个不同的网络，你可能需要通过挖矿确保交易提交到区块链。* 
+
+1. 在`trffle develop`工作台中运行下列命令：
+```
+SimpleStorage.deployed().then(function(instance){return instance.get.call();}).then(function(value){return value.toNumber()});
+```
+这个命令访问SimpleStorage合约，调用`get()`函数，返回值是字符串，转换为数字，显示为`0`。*Solidity的整数变量的初始值是0*，这不同于其他语言，可能会`NULL`和`undefined`。  
+
+2. 现在在合约上运行一个交易。
+```
+SimpleStorage.deployed().then(function(instance){return instance.set(4);});
+```
+这会将变量设置为`4`。提示中会显示交易ID(`tx`和`transactionHash`)。下面的调试中会用到这个交易ID。
+
+3. 使用`get()`函数来检查修改后的值：
+```
+SimpleStorage.deployed().then(function(instance){return instance.get.call();}).then(function(value){return value.toNumber()});
+4
+```
+#### 单步执行
+Truffle Develop比较厉害的地方是支持单步调试。  
+故意在原来的合约中增加死循环。将`set()`函数修改为：
+```
+function set(uint x) public {
+  while(true) {
+    myVariable = x;
+  }
+}
+```
+
+1. 在Truffle开发控制台中，更新合约：
+```
+migrate --reset
+```
+这将触发编译和迁移。
+2. 为了显示调试信息，可以另外启动一个控制台专门显示日志。在另外的终端中执行：
+```
+truffle develop --log
+```
+3. 执行`set()`函数：
+```
+SimpleStorage.deployed().then(function(instance){return instance.set(4);});
+Error: VM Exception while processing transaction: out of gas
+```
+这是因为死循环耗尽了燃料(gas)，导致报告`out of gas`错误。  
+
+
+4. 通过调试定位bug位置。调试的命令格式是`debug <Transaction ID>`。
+```
+debug 0xe493340792ab92b95ac40e43dca6bc88fba7fd67191989d59ca30f79320e883f
+```
+注意把交易ID替换成你自己的。
+看到的提示如下：
+```
+   Gathering transaction data...
+
+   Addresses affected:
+     0x377bbcae5327695b32a1784e0e13bedc8e078c9c - SimpleStorage
+
+   Commands:
+   (enter) last command entered (step next)
+   (o) step over, (i) step into, (u) step out, (n) step next
+   (;) step instruction, (p) print instruction, (h) print this help, (q) quit
+
+   Store.sol | 0x377bbcae5327695b32a1784e0e13bedc8e078c9c:
+
+   1: pragma solidity ^0.4.17;
+   2:
+   3: contract SimpleStorage {
+      ^^^^^^^^^^^^^^^^^^^^^^^
+
+   debug(develop:0xe4933407...)>
+```
+不停按回车键可以进行单步执行合约。直到找到bug位置。
+
+### 以太坊宠物商店
