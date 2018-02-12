@@ -876,4 +876,19 @@ VM的3000和3001端口已经通过NAT映射到了windows。在windows下用浏�
 ![](http://truffleframework.com/tutorials/images/pet-shop/dapp.png)
 （3001端口应是lite-server的管理控制台）  
 
-2. 
+2. 为了使用dapp，点击选择宠物图片下的**Adopt**按钮。  
+
+3. 你会被MetaMask自动提示来批准交易。点击**Submit**按钮来批准交易。
+![](http://truffleframework.com/tutorials/images/pet-shop/metamask-transactionconfirm.png)
+（通过Foxfire和Chrome的MetaMask插件都试了，无法自动提示批准交易。可能与NAT有关）
+
+4. 被收养宠物旁边的按钮变成了“Sucess”和被禁用，说明这个宠物已经被收养。  
+![](http://truffleframework.com/tutorials/images/pet-shop/dapp-success.png)
+
+5. 在MetaMask中，你可以看到刚刚的交易：
+![](http://truffleframework.com/tutorials/images/pet-shop/metamask-transactionsuccess.png)
+
+您还可以在Ganache中看到在列出的同一交易。
+
+恭喜！你已经迈出了一大步，成为一个成熟的dapp开发者。为了在本地进行开发，您可以使用所有工具开始制作更高级的dapp。如果您希望让您的dapp能够让其他人使用，请继续关注我们将来部署到Ropsten测试网络的教程。
+
