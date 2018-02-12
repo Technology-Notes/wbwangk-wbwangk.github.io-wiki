@@ -418,18 +418,6 @@ truffle serve已经不推荐了，而用类似webpack：http://truffleframework.
 Geth是以太坊客户端，含有分布式账本数据，可以达几十G。   
 Ethereum Wallet是个图形UI，含有账户私钥，可以代表个人身份与以太坊交互，如转账。   
 
-### Ganache
-Ganache是一个以太坊的本地开发环境，可以模拟出智能合约的运行环境。[1](http://truffleframework.com/docs/ganache/using) Ganache提供图形界面，支持Windows、MacOS、Linux。对于没有图形界面的服务器环境，使用ganache-cli（以前叫testrpc）[2](https://github.com/trufflesuite/ganache-cli/blob/master/README.md) 。  
-
-安装和运行ganache-cli：
-```
-$ npm install -g ganache-cli
-$ ganache-cli
-...
-Listening  on localhost:8545
-```
-这样就在8545端口上启动了一个以太坊的客户端模拟程序。  
-
 ## Truffle官方教程
 [官方地址](http://truffleframework.com/tutorials/)   
 
@@ -642,14 +630,167 @@ debug 0xe493340792ab92b95ac40e43dca6bc88fba7fd67191989d59ca30f79320e883f
 
 本教程面向那些具有以太坊和智能合约基础知识的人员，他们具有HTML和JavaScript的一些知识，但对于dapps是新手。
 
-**注意：对于以太坊的基础知识，请在继续之前阅读Truffle的[以太坊概述](https://github.com/wbwangk/wbwangk.github.io/wiki/Ethereum#%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%A6%82%E8%BF%B0) 。**
+*注意：对于以太坊的基础知识，请在继续之前阅读Truffle的[以太坊概述](https://github.com/wbwangk/wbwangk.github.io/wiki/Ethereum#%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%A6%82%E8%BF%B0) 。*
 
 在本教程中，我们将涵盖：
 
-建立开发环境
-使用松露盒创建松露项目
-写智能合约
-编译和迁移智能合约
-测试智能合约
-创建用户界面以与智能合约进行交互
-在浏览器中与dapp交互
+- 建立开发环境  
+- 使用Truffle Box创建Truffle项目  
+- 写智能合约  
+- 编译和迁移智能合约  
+- 测试智能合约  
+- 创建用户界面以与智能合约进行交互  
+- 在浏览器中与dapp交互  
+
+#### 背景
+皮特宠物店的皮特·斯坎德隆（Pete Scandlon）有意使用以太坊作为一种有效的方式来处理宠物的收养。商店在给定的时间有16个宠物的空间，他们已经有一个宠物数据库。作为一个概念的初步证明，**Pete希望看到一个将以太坊地址与宠物关联起来的dapp**。
+
+将提供网站结构和样式。**我们的工作是为其使用编写智能合同和前端逻辑**。
+
+#### 建立开发环境
+假定git、nodejs、npm已经装好。安装Truffle：
+```
+npm install -g truffle
+```
+执行`truffle version`来验证Truffle是否安装好。
+我们也将使用[Ganache](http://truffleframework.com/ganache) ，这是一个个人区块链，可用于部署合约、开发应用程序和运行测试。您可以通过导航到[这里](http://truffleframework.com/ganache) 下载Ganache 。
+
+*注意：如果您在没有图形界面的环境中开发，还可以使用Truffle Develop，即Truffle的内置个人区块链代替Ganache。您将需要更改一些设置（例如区块链运行的端口），以便适应Truffle Develop教程。*
+
+#### 使用truffle创建项目
+本教程使用了一个特殊的Truffle Box `pet-shop`，包括基本的项目结构以及用户界面的代码。
+
+1. 创建工作目录；2. 下载`pet-shop`(在本机的~/geth目录下)
+```
+mkdir pet-shop-tutorial && cd pet-shop-tutorial
+truffle unbox pet-shop
+```
+*注：Truffle可以通过几种不同的方式进行初始化。另一个有用的初始化命令是truffle init创建一个空的Truffle项目，不包含示例合约。有关更多信息，请参阅[创建项目](http://truffleframework.com/docs/getting_started/project) 的文档。*
+
+【目录结构】
+默认的Truffle目录结构包含以下内容：
+
+- `contracts/`：包含我们的智能合约的Solidity源文件。这里有一个重要的合约Migrations.sol，我们稍后再谈。
+
+- `migrations/`：Truffle使用迁移系统来处理智能合同部署。迁移是追踪变化的额外特殊智能合约。
+
+- `test/`：包含我们智能合约的JavaScript和Solidity测试
+
+- `truffle.js`：Truffle配置文件
+
+`pet-shop`Truffle Box有额外的文件和文件夹，但我们现在还不担心这些。
+
+#### 编写智能合约
+我们通过编写处理后台逻辑和存储的智能合约来开始我们的dapp。
+
+1. 在`contracts/`目录下创建一个叫`Adoption.sol`的文件。2. 添加下列内容：
+```solidity
+pragma solidity ^0.4.17;
+
+contract Adoption {
+
+}
+```
+- `pragma`命令意味着这是“只有编译器关心的附加信息”，插入符号(^)表示不能低于这个版本号。  
+- 就像JavaScript或PHP，语句用分号结束。  
+
+【创建变量】
+Solidity是一种静态类型的语言，意味着像字符串，整数和数组等数据类型必须被定义。**Solidity有一个称为地址的独特类型**。地址是以太坊地址，存储为20个字节的值。以太坊区块链上的每个账户和智能合约都有一个地址，并可以通过此地址发送和接收以太币。
+1. 之后在下一行添加以下变量`contract Adoption {`。
+```
+address[16] public adopters;
+```
+注意事项：
+
+- 我们已经定义了一个变量：`adopters`。这是一个以太坊地址**数组**。数组包含一个类型，可以有一个固定的或可变的长度。在这种情况下，类型是地址`address`，长度是`16`。
+
+- 你可能已注意到`adopters`是公共的。**公共**变量具有自动getter方法，但是在数组的情况下，键是必需的并且只会返回一个值。稍后，我们将编写一个函数来返回整个数组，供我们的用户界面使用。
+
+#### 你的第一个函数：收养一个宠物
+让我们允许用户做出收养请求。
+
+在上面设置的变量声明之后，将下面的函数添加到智能合约中。
+```
+// Adopting a pet
+function adopt(uint petId) public returns (uint) {
+  require(petId >= 0 && petId <= 15);
+
+  adopters[petId] = msg.sender;
+
+  return petId;
+}
+```
+注意事项：
+
+- 在Solidity中，必须指定函数参数和输出的类型。在这里，我们将输入`petId`（整数）并返回一个整数。
+
+- 我们正在检查确保`petId`在我们`adopters`数组的范围内。Solidity数组索引为0，因此ID值将需要在0到15之间。我们使用`require()`语句来确保ID在范围内。
+
+- 如果ID在范围内，就添加调用者地址到adopters数组。*调用这个函数的人或智能合约的地址用`msg.sender`表示*。
+
+- 最后，我们返回`petId`以便提供一个确认。
+
+#### 你的第二个函数：获取收养者
+如上所述，数组getter只从给定的键返回一个单一的值。我们的UI需要更新所有的宠物收养状态，但是做16个API调用并不理想。所以我们下一步是编写一个函数来返回整个数组。
+
+在我们上面添加的`adopt()`函数之后，添加以下函数`getAdopters()`到智能合约：
+```
+// Retrieving the adopters
+function getAdopters() public view returns (address[16]) {
+  return adopters;
+}
+```
+因为`adopters`已经声明，我们可以简单地返回它。确保指定返回类型（在这里，类型为`adopters`）为`address[16]`。
+
+#### 编译和迁移智能合约
+现在我们已经编写了智能合约，接下来的步骤是编译和迁移它。
+
+Truffle有一个内置的开发者控制台，我们称之为Truffle Develop，它生成一个开发区块链，我们可以用来测试部署合约。它还能够直接从控制台运行Truffle命令。在本教程中我们将使用Truffle Develop执行我们合约中的大部分操作。
+
+【编译】
+Solidity是一种编译语言，这意味着我们需要将Solidity编译为用于以太坊虚拟机（EVM）执行的字节码。把它看作是将我们人类可读的Solidity翻译成EVM所理解的东西。
+
+1. 在一个终端窗口中，在dapp的根目录中输入：
+```
+truffle compile
+```
+
+【迁移】
+现在已经成功编译了合约，现在是时候将它们迁移到区块链了！
+
+迁移是一个部署脚本，旨在改变应用程序合约的状态，将其从一个状态转移到另一个状态。对于第一次迁移，您可能只是部署新的代码，但随着时间的推移，其他迁移可能会移动数据或替换成一个新的合约。
+
+*注意：在[Truffle文档](http://truffleframework.com/docs/getting_started/migrations) 中了解更多关于迁移的信息*。
+
+你会在`migrations/`目录看到一个JavaScript文件：`1_initial_migration.js`。这将处理部署`Migrations.sol`合约以观察后续的智能合同迁移，并确保我们未来不会双重迁移不变的合同。
+
+现在我们准备创建我们自己的迁移脚本。
+
+1. 在`migrations/`目录中创建一个名为`2_deploy_contracts.js`的新文件。
+
+2. 将以下内容添加到`2_deploy_contracts.js`文件中：
+```
+var Adoption = artifacts.require("Adoption");
+
+module.exports = function(deployer) {
+  deployer.deploy(Adoption);
+};
+```
+3. 在我们可以将合约迁移到区块链之前，我们需要先运行区块链。在原文中使用的是图形界面的[Ganache](http://truffleframework.com/ganache) 。对于没有图形界面的服务器环境，使用[ganache-cli]((https://github.com/trufflesuite/ganache-cli/blob/master/README.md) ) （以前叫testrpc）。  
+
+安装ganache-cli: `npm install -g ganache-cli`。
+
+在项目的根目录下启动ganache-cli：
+```
+$ ganache-cli
+...
+Listening  on localhost:8545
+```
+这样就在8545端口上启动了一个以太坊的客户端模拟程序。  
+
+4. 将合约迁移到区块链。
+```
+$ truffle migrate
+Using network 'development'.
+...
+```
