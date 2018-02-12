@@ -642,7 +642,7 @@ debug 0xe493340792ab92b95ac40e43dca6bc88fba7fd67191989d59ca30f79320e883f
 
 本教程面向那些具有以太坊和智能合约基础知识的人员，他们具有HTML和JavaScript的一些知识，但对于dapps是新手。
 
-**注意：对于以太坊的基础知识，请在继续之前阅读Truffle的[以太坊概述](https://github.com/wbwangk/wbwangk.github.io/wiki/Ethereum#以太坊概述)。**
+**注意：对于以太坊的基础知识，请在继续之前阅读Truffle的[以太坊概述](https://github.com/wbwangk/wbwangk.github.io/wiki/Ethereum#%E4%BB%A5%E5%A4%AA%E5%9D%8A%E6%A6%82%E8%BF%B0) 。**
 
 在本教程中，我们将涵盖：
 
