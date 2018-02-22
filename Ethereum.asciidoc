@@ -1117,7 +1117,7 @@ truffle(nodeseven)> SimpleStorage.deployed().then(function(instance) { return in
 #### 私下与合约互动
 到目前为止，我们已经向您展示了如何在迁移中部署私有的合约。在Quorum上构建dapp时，了解如何使所有交易私有化也很有帮助。
 
-在JavaScript中使用合约的地方，Truffle使用[truffle-contract](https://github.com/trufflesuite/truffle-contract)抽象。例如，当您在上面的控制台中与`SimpleStorage`进行交互时，您正在使用`truffle-contract`合约抽象。这些抽象也用于您的迁移、基于JavaScript的单元测试以及使用Truffle执行外部脚本。
+在JavaScript中使用合约的地方，Truffle使用[truffle-contract](https://github.com/trufflesuite/truffle-contract) 抽象。例如，当您在上面的控制台中与`SimpleStorage`进行交互时，您正在使用`truffle-contract`合约抽象。这些抽象也用于您的迁移、基于JavaScript的单元测试以及使用Truffle执行外部脚本。
 
 Truffle的合约抽象允许您针对合约中可用的任何函数创建一个交易。它通过评估合约的函数并将它们提供给JavaScript来实现。要看到这些交易正在进行，我们将使用Truffle的一项高级功能，让我们在我们的Truffle环境中执行外部脚本。
 
