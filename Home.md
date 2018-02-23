@@ -365,3 +365,7 @@ http://blog.csdn.net/wo541075754/article/details/79061040
 
 ### Swarm vs IPFS
 https://ethereum.stackexchange.com/questions/2138/what-is-the-difference-between-swarm-and-ipfs
+
+### 区块链向Web开发人员解释，第1部分：理论
+https://marmelab.com/blog/2016/04/28/blockchain-for-web-developers-the-theory.html  
+在编写《区块链入门》时引用了该文章的文字和图片  
