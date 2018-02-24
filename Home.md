@@ -369,3 +369,10 @@ https://ethereum.stackexchange.com/questions/2138/what-is-the-difference-between
 ### 区块链向Web开发人员解释，第1部分：理论
 https://marmelab.com/blog/2016/04/28/blockchain-for-web-developers-the-theory.html  
 在编写《区块链入门》时引用了该文章的文字和图片  
+
+### 隔离见证 (Segregated Witness)
+https://www.zhihu.com/question/58567061  
+
+而隔离见证 (Segregated Witness，以下简称SW) ，是由比特币核心开发员Pieter Wuille 在2015年12月於香港提出的软分叉非常巧妙地彻底解决了这个问题（在交易发出後，确认前的交易ID可以被任意更改）。SW用户在交易时，会把比特币传送到有别於传统的地址。当要使用这些比特币的时候，其签署 (即见证)并不会记录为交易ID的一部份，而是另外处理。也就是说，交易ID完全是由交易状态 (即结馀的进出) 决定，不受见证部份影响。
+
+
