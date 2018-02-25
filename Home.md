@@ -386,3 +386,6 @@ http://www.8btc.com/sidechains-solved-key-piece-puzzle
 ### 薛蛮子: 区块链改变生产关系
 http://www.8btc.com/xue-man-zi-says-blockchain-equip-everyone-with-ablity-to-create-bat
 区块链精神的认识： 首先是信任的规模化。其次是代码即共识，第三个是赋能到个体。
+
+### Chrome插件开发
+https://www.cnblogs.com/liuxianan/p/chrome-plugin-develop.html
