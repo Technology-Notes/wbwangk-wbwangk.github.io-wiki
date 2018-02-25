@@ -626,6 +626,7 @@ debug 0xe493340792ab92b95ac40e43dca6bc88fba7fd67191989d59ca30f79320e883f
 不停按回车键可以进行单步执行合约。直到找到bug位置。
 
 ### 以太坊宠物商店
+[英文原文](http://truffleframework.com/tutorials/pet-shop)  
 本教程将带您完成第一个dapp——一个宠物商店的收养跟踪系统！
 
 本教程面向那些具有以太坊和智能合约基础知识的人员，他们具有HTML和JavaScript的一些知识，但对于dapps是新手。
