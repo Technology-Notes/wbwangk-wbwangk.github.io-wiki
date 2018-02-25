@@ -379,3 +379,6 @@ https://www.zhihu.com/question/58567061
 
 ### 以太坊：什么是ERC20标准？
 https://www.jianshu.com/p/a5158fbfaeb9
+
+#### 侧链：为什么研究者认为它解决了谜题中的重要一环
+http://www.8btc.com/sidechains-solved-key-piece-puzzle
