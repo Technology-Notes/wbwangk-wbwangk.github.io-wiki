@@ -380,5 +380,9 @@ https://www.zhihu.com/question/58567061
 ### 以太坊：什么是ERC20标准？
 https://www.jianshu.com/p/a5158fbfaeb9
 
-#### 侧链：为什么研究者认为它解决了谜题中的重要一环
+### 侧链：为什么研究者认为它解决了谜题中的重要一环
 http://www.8btc.com/sidechains-solved-key-piece-puzzle
+
+### 薛蛮子: 区块链改变生产关系
+http://www.8btc.com/xue-man-zi-says-blockchain-equip-everyone-with-ablity-to-create-bat
+区块链精神的认识： 首先是信任的规模化。其次是代码即共识，第三个是赋能到个体。
