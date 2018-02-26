@@ -389,3 +389,6 @@ http://www.8btc.com/xue-man-zi-says-blockchain-equip-everyone-with-ablity-to-cre
 
 ### Chrome插件开发
 https://www.cnblogs.com/liuxianan/p/chrome-plugin-develop.html
+
+### 解读：智能合约、以太坊、ICO
+https://www.kaspersky.com.cn/blog/ethereum-ico/8756/
