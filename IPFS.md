@@ -77,3 +77,9 @@ curl "http://127.0.0.1:5001/api/v0/swarm/disconnect?arg=/ip4/54.93.113.247/tcp/4
 ```
 curl "http://127.0.0.1:5001/api/v0/object/get?arg=QmaaqrHyAQm7gALkRW8DcfGX3u8q9rWKnxEMmf7m9z515w&encoding=json"
 ```
+
+## 命令
+```
+ipfs config show
+```
+查看配置
