@@ -3,7 +3,7 @@ IPFS（InterPlanetary File System）是一个点对点的分布式超媒体分�
 IPFS用基于内容的寻址替代传统的基于域名的寻址，用户不需要关心服务器的位置，不用考虑文件存储的名字和路径。我们将一个文件放到IPFS节点中，将会得到基于其内容计算出的唯一加密哈希值。哈希值直接反映文件的内容，哪怕只修改1比特，哈希值也会完全不同。当IPFS被请求一个文件哈希时，它会使用一个分布式哈希表找到文件所在的节点，取回文件并验证文件数据。
 
 本文参考了官方原文[Getting Started](https://ipfs.io/docs/getting-started/)。  
-（最近访问http://ipfs.io/ipfs/<hash>  不行了，可能被墙了？）
+
 #### 下载go-ipfs
 在节点1(一个ubuntu16的VM)上执行：
 ```
@@ -29,6 +29,7 @@ echo "hello world" >hello.txt
 ipfs add hello.txt
 added QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5o hello.txt
 ```
+（如果加上`-r`参数，可以把整个目录都添加到ipfs。例如`ipfs add -r ~/opt`）
 
 #### 启动ipfs服务
 ```
@@ -52,6 +53,8 @@ ipfs config Addresses.API /ip4/0.0.0.0/tcp/8081
 curl https://ipfs.io/ipfs/QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5o
 hello world
 ```
+根据文件内容同步到`https://ipfs.io`上很很慢，可能几分钟后才能访问上述地址。
+
 我还特意找了一个VM安装ipfs，并添加同样内容（"hello world"）的文件到ipfs，发现hash是一样的。相信全球大量的人员在测试ipfs时都可能会使用"hello world"作为文件内容。  
 所以当访问地址`https://ipfs.io/ipfs/QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5o`时，访问的不见得是你自己的电脑上的这个hello.txt文件，除非这个文件的内容独特到全球只有你的电脑上有。  
 文档`https://ipfs.io/ipfs/QmXZXP8QRMG7xB4LDdKeRL5ZyZGZdhxkkLUSqoJDV1WRAp`的内容比较独特，恐怕只有我自己的电脑上有，如果我不开机并启动ipfs进程，估计别人访问不了。
@@ -129,7 +132,19 @@ $ ipfs files read /webb/webb.txt
 webb wang
 ```
 以上演示了创建目录，向目录中添加文件，对目录进行列表等操作。
-
 **cp不会改变文件hash，mv会改变hash寻址**
+
+目录也有哈希值：
+```
+$ ipfs files ls /  -l
+webb    Qme738bWGaVkATZtU2CDasoTZJWYrVqrff3RwqxuKweNP4  0
+$ ipfs cat Qme738bWGaVkATZtU2CDasoTZJWYrVqrff3RwqxuKweNP4/webb.txt
+webb wang
+$ ipfs files ls /webb -l           (得到webb.txt的哈希值)
+webb.txt        QmUcfdnf8jDHKytxa4z8YEG3SsMXr6iWdepfvzKqpnBwU7  10
+$ ipfs cat QmUcfdnf8jDHKytxa4z8YEG3SsMXr6iWdepfvzKqpnBwU7  
+webb wang
+```
+如果用`ipfs files read`命令读取文件，后面的参数不能是哈希地址。
 
 
