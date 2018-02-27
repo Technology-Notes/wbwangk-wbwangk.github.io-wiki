@@ -3,6 +3,7 @@ IPFS（InterPlanetary File System）是一个点对点的分布式超媒体分�
 IPFS用基于内容的寻址替代传统的基于域名的寻址，用户不需要关心服务器的位置，不用考虑文件存储的名字和路径。我们将一个文件放到IPFS节点中，将会得到基于其内容计算出的唯一加密哈希值。哈希值直接反映文件的内容，哪怕只修改1比特，哈希值也会完全不同。当IPFS被请求一个文件哈希时，它会使用一个分布式哈希表找到文件所在的节点，取回文件并验证文件数据。
 
 本文参考了官方原文[Getting Started](https://ipfs.io/docs/getting-started/)。  
+（最近访问http://ipfs.io/ipfs/<hash>  不行了，可能被墙了？）
 #### 下载go-ipfs
 在节点1(一个ubuntu16的VM)上执行：
 ```
@@ -41,8 +42,10 @@ Daemon is ready
 
 另一个常见的可设置端口是Addresses.API:
 ```
-ipfs config Addresses.API /ip4/0.0.0.0/tcp/5002
+ipfs config Addresses.API /ip4/0.0.0.0/tcp/8081
 ```
+上述命令将ipfs的API端口修改为8081。假如VM的8081端口通过NAT映射到了宿主机的8081端口，则在宿主机windows下打开浏览器访问地址：`http://127.0.0.1:8081/webui`，则会显示ipfs的管理界面（自动重定向）。
+
 #### 远程访问本地文件
 `QmT78zSuBmuS4z925WZfrqQ1qHaJ56DQaTfyMUF7F8ff5o`是之前hello.txt的哈希值。下面在浏览器中访问这个文件：
 ```
