@@ -119,6 +119,8 @@ $ ipfs cat /ipfs/QmPZ9gcCEpqKTo6aq61g2nXGUhM4iCL3ewB6LDXZCtioEB
 `cat`显示单个文件，`ls`显示文件夹。
 
 ### 文件操作
+[原文](http://www.8btc.com/iffs-ipns)  
+
 ```
 $ ipfs cat /ipfs/QmUcfdnf8jDHKytxa4z8YEG3SsMXr6iWdepfvzKqpnBwU7
 webb wang
@@ -145,6 +147,33 @@ webb.txt        QmUcfdnf8jDHKytxa4z8YEG3SsMXr6iWdepfvzKqpnBwU7  10
 $ ipfs cat QmUcfdnf8jDHKytxa4z8YEG3SsMXr6iWdepfvzKqpnBwU7  
 webb wang
 ```
-如果用`ipfs files read`命令读取文件，后面的参数不能是哈希地址。
+如果用`ipfs files read`命令读取文件，后面的参数不能是哈希地址。  
 
+现在目录`/webb`的哈希值是`Qme738bWGaVkATZtU2CDasoTZJWYrVqrff3RwqxuKweNP4`。现在可以通过浏览器访问这个哈希地址：`http://127.0.0.1:8080/ipfs/Qme738bWGaVkATZtU2CDasoTZJWYrVqrff3RwqxuKweNP4`，浏览器会显示这个目录下的文件列表。然后访问目录下的文件：
+```
+$ curl http://127.0.0.1:8080/ipfs/Qme738bWGaVkATZtU2CDasoTZJWYrVqrff3RwqxuKweNP4/webb.txt
+webb wang
+```
 
+#### 将目录发布到IPNS
+```
+$ ipfs name publish Qme738bWGaVkATZtU2CDasoTZJWYrVqrff3RwqxuKweNP4
+Published to QmQiqapf8V2DZ439uTAfEiBuXUBB3wQLZH8EreKaUDaxUo: /ipfs/Qme738bWGaVkATZtU2CDasoTZJWYrVqrff3RwqxuKweNP4
+```
+验证发布的结果:
+```
+$ ipfs name resolve QmQiqapf8V2DZ439uTAfEiBuXUBB3wQLZH8EreKaUDaxUo
+/ipfs/Qme738bWGaVkATZtU2CDasoTZJWYrVqrff3RwqxuKweNP4
+```
+返回的是我们发布的内容。现在只发布了一个`/webb`目录而已。
+
+现在可以通过IPNS访问发布的结果了(注意路径是`ipns`，不是`ipfs`)：
+```
+https://ipfs.io/ipns/QmQiqapf8V2DZ439uTAfEiBuXUBB3wQLZH8EreKaUDaxUo
+```
+访问上述网址很慢，可能是网络的原因。可以访问本地服务，效果是一样的：
+```
+curl http://127.0.0.1/ipns/QmQiqapf8V2DZ439uTAfEiBuXUBB3wQLZH8EreKaUDaxUo
+(返回一个网页的很多html代码)
+```
+利用IPNS将目录发布到了网络上，然后用节点ID访问目录中内容。这种做法保留了文件名的稳定。
