@@ -114,3 +114,19 @@ $ ipfs cat /ipfs/QmPZ9gcCEpqKTo6aq61g2nXGUhM4iCL3ewB6LDXZCtioEB
 (显示了readme文件的内容)
 ```
 `cat`显示单个文件，`ls`显示文件夹。
+
+### 文件操作
+```
+$ ipfs cat /ipfs/QmUcfdnf8jDHKytxa4z8YEG3SsMXr6iWdepfvzKqpnBwU7
+webb wang
+$ ipfs files mkdir /webb
+$ ipfs files ls
+webb
+$ ipfs files cp /ipfs/QmUcfdnf8jDHKytxa4z8YEG3SsMXr6iWdepfvzKqpnBwU7 /webb/webb.txt
+$ ipfs files ls /webb
+webb.txt
+$ ipfs files read /webb/webb.txt
+webb wang
+```
+以上演示了创建目录，向目录中添加文件，对目录进行列表等操作。
+
