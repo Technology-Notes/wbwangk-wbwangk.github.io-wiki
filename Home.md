@@ -397,3 +397,8 @@ https://www.kaspersky.com.cn/blog/ethereum-ico/8756/
 http://www.ceoclub.cc/blockchain/20170826/761.html
  昨天，Vitalik Buterin和Joseph Poon发布了Plasma项目的工作草案。
 以太坊版的闪电网络，或类似功能
+
+### Algorand
+http://www.8btc.com/sivio-micali-algorand  
+图灵奖得主Sivio Micali的Algorand区块链协议简介  
+随机投票的共识算法  
