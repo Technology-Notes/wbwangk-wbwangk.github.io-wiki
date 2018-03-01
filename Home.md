@@ -415,3 +415,7 @@ http://www.8btc.com/regis-decentralized-registry
 ### uPort基于区块链的身份验证
 https://www.jianshu.com/p/12a2454440bf
 项目官网:uport.me
+
+### 以太坊上的去中心化自治组织管理应用：Aragon白皮书（中文）
+Aragon Network: 去中心化的价值交换基础设施  
+http://ethfans.org/posts/aragon-network-whitepaper  
