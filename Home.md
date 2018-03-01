@@ -426,3 +426,6 @@ http://me.tryblockchain.org/Ethereum-MerklePatriciaTree.html
 ### 以太坊开发入门，完整入门
 http://blog.csdn.net/uxiAD7442KMy1X86DtM3/article/details/79385479  
 涉及Merkle树、IPFS、Gelem、Mist、Status、MetaMask、Parity等，很全面
+
+### Filecoin：一种去中心化的存储网络
+http://chainx.org/paper/index/index/id/13.html
