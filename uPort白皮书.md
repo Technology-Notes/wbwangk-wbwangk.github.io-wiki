@@ -282,24 +282,25 @@ Sensui服务器将在未来采用更复杂的架构为用户支付费用，这�
 ## 参考文献
 
 REFERENCES
-[1](https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust/blob/master/topics-and-advance-readings/PGP-Paradigm.pdf)
 
-[2](http://ipfs.io/)
+[1] https://github.com/WebOfTrustInfo/rebooting-the-web-of-trust/blob/master/topics-and-advance-readings/PGP-Paradigm.pdf
 
-[3](https://github.com/ethereum/wiki/wiki/White-Paper)
+[2] http://ipfs.io/
 
-[4](https://github.com/blockstack/blockchain-profile-js)
+[3] https://github.com/ethereum/wiki/wiki/White-Paper
 
-[5](https://minilock.io/)
+[4] https://github.com/blockstack/blockchain-profile-js
 
-[6](https://github.com/keybase/saltpack)
+[5] https://minilock.io/
 
-[7](https://github.com/ConsenSys/uport-persona)
+[6] https://github.com/keybase/saltpack
 
-[8](https://github.com/ConsenSys/uport-lib)
+[7] https://github.com/ConsenSys/uport-persona
 
-[9](https://web.whatsapp.com/)
+[8] https://github.com/ConsenSys/uport-lib
 
-[10](https://web.wechat.com/)
+[9] https://web.whatsapp.com/
 
-[11](https://www.bankid.com/en/)
+[10] https://web.wechat.com/
+
+[11] https://www.bankid.com/en/
