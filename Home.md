@@ -405,3 +405,6 @@ http://www.8btc.com/sivio-micali-algorand
 
 ### 从零构建基于以太坊（Ethereum）钱包Parity联盟链
 http://www.8btc.com/ethereum-parity  
+
+### ConsenSys的BTC Relay，被认为是第一个侧链
+http://www.8btc.com/relay-connecting-ethereum-with-bitcoin  
