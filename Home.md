@@ -402,3 +402,6 @@ http://www.ceoclub.cc/blockchain/20170826/761.html
 http://www.8btc.com/sivio-micali-algorand  
 图灵奖得主Sivio Micali的Algorand区块链协议简介  
 随机投票的共识算法  
+
+### 从零构建基于以太坊（Ethereum）钱包Parity联盟链
+http://www.8btc.com/ethereum-parity  
