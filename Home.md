@@ -408,3 +408,9 @@ http://www.8btc.com/ethereum-parity
 
 ### ConsenSys的BTC Relay，被认为是第一个侧链
 http://www.8btc.com/relay-connecting-ethereum-with-bitcoin  
+
+### Regis是一个平台，它能够构建、部署和管理在以太坊区块链分散登记
+http://www.8btc.com/regis-decentralized-registry  
+
+### uPort基于区块链的身份验证
+https://www.jianshu.com/p/12a2454440bf
