@@ -419,3 +419,10 @@ https://www.jianshu.com/p/12a2454440bf
 ### 以太坊上的去中心化自治组织管理应用：Aragon白皮书（中文）
 Aragon Network: 去中心化的价值交换基础设施  
 http://ethfans.org/posts/aragon-network-whitepaper  
+
+### Merkle Patricia Tree 梅克尔帕特里夏树（MPT）规范
+http://me.tryblockchain.org/Ethereum-MerklePatriciaTree.html  
+
+### 以太坊开发入门，完整入门
+http://blog.csdn.net/uxiAD7442KMy1X86DtM3/article/details/79385479  
+涉及Merkle树、IPFS、Gelem、Mist、Status、MetaMask、Parity等，很全面
