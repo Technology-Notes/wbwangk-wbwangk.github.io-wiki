@@ -429,3 +429,7 @@ http://blog.csdn.net/uxiAD7442KMy1X86DtM3/article/details/79385479
 
 ### Filecoin：一种去中心化的存储网络
 http://chainx.org/paper/index/index/id/13.html
+
+### ENS 以太坊名称解析
+ENS注册地址：https://registrar.ens.domains  
+介绍文章：http://8btc.com/thread-93086-1-1.html  
