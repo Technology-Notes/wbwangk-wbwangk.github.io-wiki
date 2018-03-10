@@ -433,3 +433,6 @@ http://chainx.org/paper/index/index/id/13.html
 ### ENS 以太坊名称解析
 ENS注册地址：https://registrar.ens.domains  
 介绍文章：http://8btc.com/thread-93086-1-1.html  
+
+### 比特币交易（Transaction）的输入与输出
+http://blog.csdn.net/taifei/article/details/73735289
