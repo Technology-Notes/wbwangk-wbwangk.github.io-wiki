@@ -439,3 +439,7 @@ http://blog.csdn.net/taifei/article/details/73735289
 
 ### www.provenance.org 一个产品溯源网站
 基于以太坊
+
+### Ethereum explained...[to your mother]
+https://ethereum.stackexchange.com/questions/45/how-would-i-explain-ethereum-to-a-non-technical-friend
+
