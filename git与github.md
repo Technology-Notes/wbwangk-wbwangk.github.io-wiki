@@ -146,3 +146,18 @@ INFO    -  Your documentation should shortly be available at: https://wbwangk.gi
 #### 查看结果
 首先，到`https://github.com/wbwangk/hyperledgerDocs/tree/gh-pages`查看提交的结果。  
 然后到 https://wbwangk.github.io/hyperledgerDocs/ 去查看github pages解析后的结果。
+
+## Restructured Text Markup, Sphinx
+[原文](https://ethereum-homestead.readthedocs.io/en/latest/about.html#restructured-text-markup-sphinx)  
+与Markdown类似的标记语言，格式更丰富。例如，下面以太坊homestead版本文档就是用rst格式编写的。编译办法：
+```
+git clone https://github.com/ethereum/homestead-guide
+cd homestead-guide
+make html
+```
+提示找不到`sphinx-build`命令。参考[这个官方文档](http://www.sphinx-doc.org/en/master/usage/installation.html)后，在ubuntu下安装：
+```
+sudo apt-get install python-sphinx
+make html
+```
+就将这个项目构建出来了。构建出来的html文档存放在了`build`目录下。
