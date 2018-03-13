@@ -446,3 +446,5 @@ https://ethereum.stackexchange.com/questions/45/how-would-i-explain-ethereum-to-
 ### 星火节点计划Windows接入文档
 https://article.pchome.net/content-2045443.html
 国内以太坊节点数量不足300个，而且国内特殊的网络原因也会影响到国内用户同步区块数据。为了国内用户更加流畅地同步区块，EthFans 发起星火节点计划。
+
+### cosmos vs polkadot   跨链
