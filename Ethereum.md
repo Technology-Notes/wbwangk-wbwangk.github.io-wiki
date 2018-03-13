@@ -1188,3 +1188,5 @@ truffle(nodeseven)> SimpleStorage.deployed().then(function(instance) { return in
 
 干杯，快乐的编码！
 
+## 参考
+[Ethereum Homestead Documentation](http://www.ethdocs.org/en/latest/index.html)（以太坊homestead版文档，homestead即当前正在用的版本）
