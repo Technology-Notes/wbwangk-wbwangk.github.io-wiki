@@ -448,3 +448,6 @@ https://article.pchome.net/content-2045443.html
 国内以太坊节点数量不足300个，而且国内特殊的网络原因也会影响到国内用户同步区块数据。为了国内用户更加流畅地同步区块，EthFans 发起星火节点计划。
 
 ### cosmos vs polkadot   跨链
+
+### polkadot中文白皮书
+https://wenku.baidu.com/view/348dee67590216fc700abb68a98271fe910eaf3b.html
