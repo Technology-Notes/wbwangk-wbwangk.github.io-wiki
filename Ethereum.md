@@ -184,7 +184,18 @@ at block: 0 (Thu, 01 Jan 1970 00:00:00 UTC)
 
 （你还可以在getBalance时故意输入错误的地址，会显示Error: invalid address）
 
-
+#### 挖矿
+计划在节点2（u1602）上挖矿。首先，要设置一个地址，用来接收挖到的ETH。使用节点2上新建的那个账号（地址是`0x862ddc87ba62b4644fd02aba13e390237b4e028d`）。
+```
+> personal.listAccounts
+["0xb7c3a15402706b7bbecbf9c4895d434f9836e13b"]
+> miner.setEtherbase("0xb7c3a15402706b7bbecbf9c4895d434f9836e13b")
+true
+```
+开始挖矿：
+```
+> miner.start()
+```
 
 
 
