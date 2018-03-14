@@ -21,14 +21,13 @@ sudo apt-get install geth
 ```
 （用公司的网络apt-get update报错，用手机上网才行）  
 
-
 ### 启动u1601节点（节点1）
 
 #### 创建一个以太坊账号
 首先，创建一个以太坊账号，充当节点1的默认账号。这个默认账号即是节点1挖矿收益的存入账号，也是它运行交易的付费账号。
 ```
 $ cd ~/geth
-$ geth --datadir ~/geth2/chain1 account new
+$ geth --datadir ~/geth/chain1 account new
 Your new account is locked with a password. Please give a password. Do not forget this password.
 Passphrase: 1
 Repeat passphrase: 1
@@ -63,86 +62,96 @@ DAO事件后以太坊硬分叉为ETH和ETC。两者的网络id都是1，为了�
 
 用`alloc`属性为新建了账号分配了一些ETH。
 
-### 主网
-运行`geth`默认会连接到以太坊主网。然后会自动同步区块数据。下面的命令可以查看geth连接到peer数量：
+另外两个节点初始化也需要这个创世区块配置文件，复制到另外两个节点：
 ```
-$ geth console
-(一些提示)
+$ scp CustomGenesis.json vagrant@u1602:~/geth
+$ scp CustomGenesis.json vagrant@u1603:~/geth
+```
+
+#### 初始化
+```
+$ geth --datadir ~/geth/chain1 init ~/geth/CustomGenesis.json
+```
+#### 启动节点1
+```
+$ geth --identity "u1601" --rpc --rpccorsdomain "*" --datadir "~/geth/chain1" --port "30303" --rpcapi "db,eth,net,web3" --networkid 85105780 console
+> admin.nodeInfo.enode
+"enode://f6f8a89474e43dc082e738786f73bb8f41b5a194465d6795dd5452389b81e09f1883a308ba72224cf463a4dd639262cf9d02c0aec426e10c7f28cdce52595eb4@[::]:30303"
+```
+通过`admin.nodeInfo.enode`获取节点id（enode），这个enode在启动另外两个节点时会用到。
+
+可以在控制台中看一下当前的peer数量：
+```
 > net.peerCount
-8
+0
 ```
-admin.peers() 会返回当前已连接的所有节点信息：
+没有任何peer连接到当前节点，所以显示数量是0
+
+### 启动另外两个节点
+
+#### 启动u1602（节点2）
+在另外的终端窗口中ssh到u1602虚拟机：
 ```
+$ geth --datadir ~/geth/chain1 init ~/geth/CustomGenesis.json
+$ geth --identity "u1602" --rpc --rpccorsdomain "*" --datadir "~/geth/chain1" --port "30303" --rpcapi "db,eth,net,web3" --networkid 85105780 --bootnodes "enode://f6f8a89474e43dc082e738786f73bb8f41b5a194465d6795dd5452389b81e09f1883a308ba72224cf463a4dd639262cf9d02c0aec426e10c7f28cdce52595eb4@192.168.16.101:30303"
+```
+回到节点1（u1601）可以查看peer数量和peer信息：
+```
+> net.peerCount
+1
+```
+可以看到peer数量不再是0，说明两个以太坊peer已经互相找到了。
+
+#### 启动u1603（节点3）
+在另外的终端窗口中ssh到u1603虚拟机：
+```
+$ geth --datadir ~/geth/chain1 init ~/geth/CustomGenesis.json
+$ geth --identity "u1603" --rpc --rpccorsdomain "*" --datadir "~/geth/chain1" --port "30303" --rpcapi "db,eth,net,web3" --networkid 85105780 --bootnodes "enode://f6f8a89474e43dc082e738786f73bb8f41b5a194465d6795dd5452389b81e09f1883a308ba72224cf463a4dd639262cf9d02c0aec426e10c7f28cdce52595eb4@192.168.16.101:30303"
+```
+回到节点1（u1601）可以查看peer数量和peer清单：
+```
+> net.peerCount
+2
 > admin.peers
-```
-admin.nodeInfo返回的是本节点信息：
-```
-> admin.nodeInfo
-```
-
-### 私链
-> eth.accounts
-["0xbf624b9337264580fe8d69891117d0939eef4087", "0x49f620de8dd28957c4e16a7ab626ff84f94d7904"]
->
-
-
-    "config": {
-        "chainId": 15,
-        "homesteadBlock": 0,
-        "eip155Block": 0,
-        "eip158Block": 0
+[{
+    caps: ["eth/63"],
+    id: "0e2ffa09f3ba3b5b72d2756ffe0acb96d1b4e19f4ef77bcce92eba825440bef304b88a3d3b207d0ddab1c7d138c02cb7a7dd0c5cbb98a2722f1b23327a991ccf",
+    name: "Geth/u1602/v1.8.2-stable-b8b9f7f4/linux-amd64/go1.9.4",
+    network: {
+      inbound: true,
+      localAddress: "192.168.16.101:30303",
+      remoteAddress: "192.168.16.102:58530",
+      static: false,
+      trusted: false
     },
-
-~geth/CustomGenesis.json:
-```
-{
-    "config": {
-        "chainId": 322,
-        "homesteadBlock": 0,
-        "eip155Block": 0,
-        "eip158Block": 0
-    },
-    "nonce": "0x0000000000000043",     "timestamp": "0x0",
-    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "extraData": "0x01",     "gasLimit": "0x8000001",     "difficulty": "0x401",
-    "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "coinbase": "0x3333333333333333333333333333333333333332",     
-    "alloc": {  }
-}
-```
-geth init ~/geth/CustomGenesis.json
-
-#### 创世块中设定部分账户余额
-```
-$ geth --datadir ~/geth2/chain1 account new
-Your new account is locked with a password. Please give a password. Do not forget this password.
-Passphrase: 1
-Repeat passphrase: 1
-Address: {67352ce02631da33a3f4112685b521217283d482}
-```
-
-{
-    "config": {
-        "chainId": 322,
-        "homesteadBlock": 0,
-        "eip155Block": 0,
-        "eip158Block": 0
-    },
-    "nonce": "0x0000000000000043",     "timestamp": "0x0",
-    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "extraData": "0x01",     "gasLimit": "0x8000001",     "difficulty": "0x401",
-    "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-    "coinbase": "0x3333333333333333333333333333333333333332",     
-    "alloc": {
-       "67352ce02631da33a3f4112685b521217283d482": {
-         "balance": "100000000000" }
+    protocols: {
+      eth: {
+        difficulty: 1025,
+        head: "0x838cda0e9ed6a103ec86a1de64f7bebffcfadf645f4b63114ce37461bc5fc2d0",
+        version: 63
+      }
     }
-}
+}, {
+    caps: ["eth/63"],
+    id: "9377c9cd5501934d875d64b0da59b3e74b44b86f401e771732709f5f92e4ddd3fe41d0a12ba096bb211d3cbe9a480ba146c073f63de5f5e34d4f3fd28b6483d0",
+    name: "Geth/u1603/v1.8.2-stable-b8b9f7f4/linux-amd64/go1.9.4",
+    network: {
+      inbound: true,
+      localAddress: "192.168.16.101:30303",
+      remoteAddress: "192.168.16.103:43064",
+      static: false,
+      trusted: false
+    },
+    protocols: {
+      eth: {
+        difficulty: 1025,
+        head: "0x838cda0e9ed6a103ec86a1de64f7bebffcfadf645f4b63114ce37461bc5fc2d0",
+        version: 63
+      }
+    }
+}]
 ```
 
-geth --datadir ~/geth2/chain1 init ~/geth2/CustomGenesis.json
- geth --datadir ./chain1 init ./CustomGenesis.json
-geth --identity "webb etherum2" --rpc --rpccorsdomain "*" --datadir "~/geth/chain1" --port "30303" --rpcapi "db,eth,net,web3" --networkid 85105780 --bootnodes "enode://f6f8a89474e43dc082e738786f73bb8f41b5a194465d6795dd5452389b81e09f1883a308ba72224cf463a4dd639262cf9d02c0aec426e10c7f28cdce52595eb4@192.168.16.101:30303"
 
 
 
