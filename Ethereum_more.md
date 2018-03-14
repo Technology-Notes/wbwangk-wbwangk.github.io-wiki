@@ -78,3 +78,5 @@ Address: {67352ce02631da33a3f4112685b521217283d482}
 ```
 
 geth --datadir ~/geth2/chain1 init ~/geth2/CustomGenesis.json
+ geth --datadir ./chain1 init ./CustomGenesis.json
+geth --identity "webb etherum2" --rpc --rpccorsdomain "*" --datadir "~/geth/chain1" --port "30303" --rpcapi "db,eth,net,web3" --networkid 85105780 --bootnodes "enode://f6f8a89474e43dc082e738786f73bb8f41b5a194465d6795dd5452389b81e09f1883a308ba72224cf463a4dd639262cf9d02c0aec426e10c7f28cdce52595eb4@192.168.16.101:30303"
