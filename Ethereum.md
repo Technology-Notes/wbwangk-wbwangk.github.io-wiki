@@ -1,3 +1,157 @@
+## 部署多节点以太坊私有链
+geth是以太坊的go语言实现的客户端。另一个常用的是parity。
+
+### 安装过程
+安装环境是windows10下的三个ubuntu虚拟机：
+```
+u1601  192.168.16.101
+u1602  192.168.16.102
+u1603  192.168.16.103
+```
+u1601充当近似于种子节点的作用，先启动。另两个节点启动时主动连接到u1602。
+
+三个VM使用的用户是vagrant，都创建了`~/geth`目录，并将数据目录放在`~/geth/chain1`。
+
+三个节点都需要安装geth，都要执行下列命令 ([参考](https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Ubuntu))：
+```
+sudo apt-get install software-properties-common
+sudo add-apt-repository -y ppa:ethereum/ethereum
+sudo apt-get update
+sudo apt-get install geth
+```
+（用公司的网络apt-get update报错，用手机上网才行）  
+
+
+### 启动u1601节点（节点1）
+
+#### 创建一个以太坊账号
+首先，创建一个以太坊账号，充当节点1的默认账号。这个默认账号即是节点1挖矿收益的存入账号，也是它运行交易的付费账号。
+```
+$ cd ~/geth
+$ geth --datadir ~/geth2/chain1 account new
+Your new account is locked with a password. Please give a password. Do not forget this password.
+Passphrase: 1
+Repeat passphrase: 1
+Address: {67352ce02631da33a3f4112685b521217283d482}
+```
+创建账号是不需要以太坊网络。在创世区块中给这个账号预分配一些余额。
+
+#### 区块链初始化
+先创建创世区块配置文件，然后执行初始化。 
+
+在创建一个创世区块配置文件（`~/geth/CustomGenesis.json`）:
+```json
+{
+    "config": {
+        "chainId": 322,
+        "homesteadBlock": 0,
+        "eip155Block": 0,
+        "eip158Block": 0
+    },
+    "nonce": "0x0000000000000043",     "timestamp": "0x0",
+    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "extraData": "0x01",     "gasLimit": "0x8000001",     "difficulty": "0x401",
+    "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "coinbase": "0x3333333333333333333333333333333333333332",
+    "alloc": {
+       "67352ce02631da33a3f4112685b521217283d482": {
+         "balance": "100000000000" }
+    }
+}
+```
+DAO事件后以太坊硬分叉为ETH和ETC。两者的网络id都是1，为了区分只好引入了chainId。ETH的主网chainId是1，ETC是62。私有链要与主链区分开来，networkid和chainid都设置得个性一些，这里是322。
+
+用`alloc`属性为新建了账号分配了一些ETH。
+
+### 主网
+运行`geth`默认会连接到以太坊主网。然后会自动同步区块数据。下面的命令可以查看geth连接到peer数量：
+```
+$ geth console
+(一些提示)
+> net.peerCount
+8
+```
+admin.peers() 会返回当前已连接的所有节点信息：
+```
+> admin.peers
+```
+admin.nodeInfo返回的是本节点信息：
+```
+> admin.nodeInfo
+```
+
+### 私链
+> eth.accounts
+["0xbf624b9337264580fe8d69891117d0939eef4087", "0x49f620de8dd28957c4e16a7ab626ff84f94d7904"]
+>
+
+
+    "config": {
+        "chainId": 15,
+        "homesteadBlock": 0,
+        "eip155Block": 0,
+        "eip158Block": 0
+    },
+
+~geth/CustomGenesis.json:
+```
+{
+    "config": {
+        "chainId": 322,
+        "homesteadBlock": 0,
+        "eip155Block": 0,
+        "eip158Block": 0
+    },
+    "nonce": "0x0000000000000043",     "timestamp": "0x0",
+    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "extraData": "0x01",     "gasLimit": "0x8000001",     "difficulty": "0x401",
+    "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "coinbase": "0x3333333333333333333333333333333333333332",     
+    "alloc": {  }
+}
+```
+geth init ~/geth/CustomGenesis.json
+
+#### 创世块中设定部分账户余额
+```
+$ geth --datadir ~/geth2/chain1 account new
+Your new account is locked with a password. Please give a password. Do not forget this password.
+Passphrase: 1
+Repeat passphrase: 1
+Address: {67352ce02631da33a3f4112685b521217283d482}
+```
+
+{
+    "config": {
+        "chainId": 322,
+        "homesteadBlock": 0,
+        "eip155Block": 0,
+        "eip158Block": 0
+    },
+    "nonce": "0x0000000000000043",     "timestamp": "0x0",
+    "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "extraData": "0x01",     "gasLimit": "0x8000001",     "difficulty": "0x401",
+    "mixhash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "coinbase": "0x3333333333333333333333333333333333333332",     
+    "alloc": {
+       "67352ce02631da33a3f4112685b521217283d482": {
+         "balance": "100000000000" }
+    }
+}
+```
+
+geth --datadir ~/geth2/chain1 init ~/geth2/CustomGenesis.json
+ geth --datadir ./chain1 init ./CustomGenesis.json
+geth --identity "webb etherum2" --rpc --rpccorsdomain "*" --datadir "~/geth/chain1" --port "30303" --rpcapi "db,eth,net,web3" --networkid 85105780 --bootnodes "enode://f6f8a89474e43dc082e738786f73bb8f41b5a194465d6795dd5452389b81e09f1883a308ba72224cf463a4dd639262cf9d02c0aec426e10c7f28cdce52595eb4@192.168.16.101:30303"
+
+
+
+
+
+
+
+
+
 ## 发行自己的以太坊ERC20 Token
 [原文](http://blog.csdn.net/sinat_34070003/article/details/79107181)  
 
