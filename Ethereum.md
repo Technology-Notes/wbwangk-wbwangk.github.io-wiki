@@ -152,6 +152,37 @@ $ geth --identity "u1603" --rpc --rpccorsdomain "*" --datadir "~/geth/chain1" --
 }]
 ```
 
+### 测试
+打开一个新终端窗口，ssh到u1602。在u1602上新建一个账号：
+```
+$ geth --datadir ~/geth/chain1 account new
+Passphrase: 1
+Repeat passphrase: 1
+Address: {862ddc87ba62b4644fd02aba13e390237b4e028d}
+```
+进入节点2的控制台：
+```
+$ geth --datadir ~/geth/chain1 attach
+Welcome to the Geth JavaScript console!
+
+instance: Geth/u1602/v1.8.2-stable-b8b9f7f4/linux-amd64/go1.9.4
+coinbase: 0x862ddc87ba62b4644fd02aba13e390237b4e028d
+at block: 0 (Thu, 01 Jan 1970 00:00:00 UTC)
+ datadir: /home/vagrant/geth/chain1
+ modules: admin:1.0 debug:1.0 eth:1.0 miner:1.0 net:1.0 personal:1.0 rpc:1.0 txpool:1.0 web3:1.0
+
+> eth.accounts
+["0x862ddc87ba62b4644fd02aba13e390237b4e028d"]
+> eth.getBalance("0x862ddc87ba62b4644fd02aba13e390237b4e028d")
+0
+> eth.getBalance("67352ce02631da33a3f4112685b521217283d482")
+100000000000
+```
+`geth attach`命令会用IPC与geth进程通信，然后打开一个Geth JavaScript控制台。
+
+在节点2上新建的这个账户（地址是`0x862ddc87ba62b4644fd02aba13e390237b4e028d`）的ETH余额是0。而在创世区块中分配了余额的那个账号（地址`67352ce02631da33a3f4112685b521217283d482`）的余额是`100000000000`。
+
+（你还可以在getBalance时故意输入错误的地址，会显示Error: invalid address）
 
 
 
