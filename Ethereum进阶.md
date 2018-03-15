@@ -1,5 +1,5 @@
 ## 部署多节点以太坊私有链
-geth是以太坊的go语言实现的客户端。另一个常用的是parity。
+[参考](https://www.cnblogs.com/zl03jsj/p/6876064.html)
 
 ### 安装过程
 安装环境是windows10下的三个ubuntu虚拟机：
