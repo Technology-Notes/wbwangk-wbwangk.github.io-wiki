@@ -451,3 +451,22 @@ https://article.pchome.net/content-2045443.html
 
 ### polkadot中文白皮书
 https://wenku.baidu.com/view/348dee67590216fc700abb68a98271fe910eaf3b.html
+
+### Ethereum Private chain Explorers 
+
+https://ethereum.stackexchange.com/questions/13667/ethereum-private-chain-explorers  
+
+Hosted Testnet (Morden) Explorers:
+
+https://morden.ether.camp
+
+http://testnet.etherscan.io
+
+Open source projects:
+
+https://github.com/gobitfly/etherchain-light
+
+https://github.com/etherparty/explorer
+
+https://github.com/maran/ethereum-blockchain-explorer
+
