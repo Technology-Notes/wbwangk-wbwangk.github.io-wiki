@@ -78,7 +78,9 @@ $ geth --identity "u1601" --rpc --rpccorsdomain "*" --datadir "~/geth/chain1" --
 > admin.nodeInfo.enode
 "enode://f6f8a89474e43dc082e738786f73bb8f41b5a194465d6795dd5452389b81e09f1883a308ba72224cf463a4dd639262cf9d02c0aec426e10c7f28cdce52595eb4@[::]:30303"
 ```
-通过`admin.nodeInfo.enode`获取节点id（enode），这个enode在启动另外两个节点时会用到。
+通过`admin.nodeInfo.enode`获取节点id（enode），这个enode在启动另外两个节点时会用到。  
+
+rpc默认监听`localhost:8545`。有时rpc需要从其他节点发出。可以增加`--rpcaddr "192.168.16.101"`参数来修改监听的IP地址。  
 
 可以在控制台中看一下当前的peer数量：
 ```
