@@ -233,5 +233,44 @@ true
 ```
 上面的数字之所以这么大，是因为不小心启动了u1602的挖矿，这个账户是u1602的coinbase账户，里面有挖矿得到的收益。
 
+## 以太坊浏览器
+以太坊主网和测试网可以通过etherscan.io来浏览。但私有以太坊网络只能使用开源的浏览器了。[这个回答](https://ethereum.stackexchange.com/questions/13667/ethereum-private-chain-explorers)中提到的两个开源浏览器项目是：
 
+- https://github.com/gobitfly/etherchain-light
 
+- https://github.com/etherparty/explorer
+
+前者仅支持parity，测试了一下后者。
+
+### etherparty/explorer
+安装：
+```
+$ git clone https://github.com/etherparty/explorer
+$ cd explorer 
+$ npm start
+```
+(问题：npm start报错，说是找不到node。通过创建node软连接解决问题：`sudo ln -s /usr/bin/nodejs /usr/bin/node`)  
+
+做了两个修改。一是修改package.json：
+```
+"start": "http-server ./app -a 0.0.0.0 -p 8000 -c-1"
+```
+二是修改了app/app.js：
+```
+var eth_node_url = 'http://192.168.16.101:8545'; // TODO: remote URL
+```
+geth实例的启动命令也做了修改。否则geth仅支持localhost:8545的rpc调用。将u1601的geth启动命令修改为：
+```
+geth --identity "u1601" --rpc --rpcaddr "192.168.16.101" --rpccorsdomain "*" --datadir "~/geth/chain1" --port "30303" --rpcapi "db,eth,net,web3" --networkid 85105780 console
+```
+即增加了`--rpcaddr "192.168.16.101"`。
+
+当上面的修改都做好后执行npm start提示：
+```
+$ npm start
+...
+> EthereumExplorer@0.1.0 start /home/vagrant/geth/explorer
+> http-server ./app -a 0.0.0.0 -p 8000 -c-1
+...
+```
+然后在宿主机windows下的浏览器中访问地址：192.168.16.101:8000，就显示了当前区块链的数据。
