@@ -178,7 +178,7 @@ at block: 0 (Thu, 01 Jan 1970 00:00:00 UTC)
 > eth.getBalance("67352ce02631da33a3f4112685b521217283d482")
 100000000000
 ```
-`geth attach`命令会用IPC与geth进程通信，然后打开一个Geth JavaScript控制台。
+`geth attach`命令会用IPC与geth进程通信，然后打开一个Geth JavaScript控制台。`geth attach`时还显示了coinbase地址，这就是挖矿收益的保存账户地址。  
 
 在节点2上新建的这个账户（地址是`0x862ddc87ba62b4644fd02aba13e390237b4e028d`）的ETH余额是0。而在创世区块中分配了余额的那个账号（地址`67352ce02631da33a3f4112685b521217283d482`）的余额是`100000000000`。
 
