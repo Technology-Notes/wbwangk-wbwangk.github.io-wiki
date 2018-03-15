@@ -185,19 +185,51 @@ at block: 0 (Thu, 01 Jan 1970 00:00:00 UTC)
 （你还可以在getBalance时故意输入错误的地址，会显示Error: invalid address）
 
 #### 挖矿
-计划在节点2（u1602）上挖矿。首先，要设置一个地址，用来接收挖到的ETH。使用节点2上新建的那个账号（地址是`0x862ddc87ba62b4644fd02aba13e390237b4e028d`）。
+在u1601上启动挖矿：
 ```
-> personal.listAccounts
+> eth.blockNumber
+0
+> eth.accounts
 ["0xb7c3a15402706b7bbecbf9c4895d434f9836e13b"]
-> miner.setEtherbase("0xb7c3a15402706b7bbecbf9c4895d434f9836e13b")
+> eth.getBalance("0xb7c3a15402706b7bbecbf9c4895d434f9836e13b")
+0
+> miner.start()
 true
+...
+INFO [03-15|00:59:52] Successfully sealed new block            number=8 hash=1dc639…ddbc0d
+INFO [03-15|00:59:52] 🔗 block reached canonical chain          number=3 hash=e48dbd…351f31
+INFO [03-15|00:59:52] 🔨 mined potential block                  number=8 hash=1dc639…ddbc0d
+INFO [03-15|00:59:52] Commit new mining work                   number=9 txs=0 uncles=0 elapsed=244.944µs
+...
+> miner.stop()
+true
+> eth.blockNumber
+79
+> eth.getBalance("0xb7c3a15402706b7bbecbf9c4895d434f9836e13b")
+70000000000000000000
 ```
-开始挖矿：
+
+#### 转账交易
+```
+> personal.unlockAccount("0xb7c3a15402706b7bbecbf9c4895d434f9836e13b", "1")
+true
+> eth.sendTransaction({from: "0xb7c3a15402706b7bbecbf9c4895d434f9836e13b", to: "0x862ddc87ba62b4644fd02aba13e390237b4e028d", value: web3.toWei(1, "ether")})
+INFO [03-15|01:26:52] Submitted transaction                    fullhash=0x20f2705d5701cb08a714689f3aec02fad90afa7f258aacf211b6498318a83e96 recipient=0x862Ddc87bA62b4644Fd02AbA13E390237b4e028d
+"0x20f2705d5701cb08a714689f3aec02fad90afa7f258aacf211b6498318a83e96"
+> eth.getBalance("0x862ddc87ba62b4644fd02aba13e390237b4e028d")
+```
+转账前要解锁账户，可以理解为密码换私钥。unlockAccount的参数`1`是密码。
+交易通过挖矿才能打包到区块，而从确认交易。所以如果只是向上面这样发出交易，账户余额是不会变的。需要启动挖矿：
 ```
 > miner.start()
+true
+...
+>miner.stop()
+true
+> eth.getBalance("0x862ddc87ba62b4644fd02aba13e390237b4e028d")
+457000756000000000000
 ```
-
-
+上面的数字之所以这么大，是因为这个账户是u1602的coinbase账户，里面有挖矿得到的收益。
 
 
 
