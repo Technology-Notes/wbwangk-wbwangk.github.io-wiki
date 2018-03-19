@@ -507,4 +507,6 @@ POS: 代表：未来币以及转型之后的以太坊。
 DPOS: 代表：EOS。  
 POA: 代表： POA Network （https://poa.network/）
 
+### 盘点国内最热门的五款区块链项目：量子链、红烧肉、共享链、公信宝、NEO
+http://app.myzaker.com/news/article.php?pk=5a311c581bc8e0b55a000001  
 
