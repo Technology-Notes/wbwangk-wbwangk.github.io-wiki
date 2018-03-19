@@ -510,3 +510,13 @@ POA: 代表： POA Network （https://poa.network/）
 ### 盘点国内最热门的五款区块链项目：量子链、红烧肉、共享链、公信宝、NEO
 http://app.myzaker.com/news/article.php?pk=5a311c581bc8e0b55a000001  
 
+### 可参考的区块链白皮书
+[Qtum量子链v0.6](https://s.qtum.site/white-papers/%5B2016-08-01%5DQuantum-White-Paper-v0.6-CN.pdf)(新版是英文的)  
+[Bytom比原链](http://bytom.io/BytomWhitePaperV1.0.pdf)  
+[公信宝区块链技术和应用白皮书(V2.0.0)](https://github.com/gxchain/whitepaper/blob/master/zh/whitepaper.md)  
+[iCubeChain 白皮书：超级智能自金融网络](https://github.com/wbwangk/wbwangk.github.io/raw/master/Docs/iCubeChain%20%E7%99%BD%E7%9A%AE%E4%B9%A6%EF%BC%9A%E8%B6%85%E7%BA%A7%E6%99%BA%E8%83%BD%E8%87%AA%E9%87%91%E8%9E%8D%E7%BD%91%E7%BB%9C%20.pdf)  
+[中钞可信登记开放平台白皮书](https://github.com/wbwangk/wbwangk.github.io/raw/master/Docs/%E4%B8%AD%E9%92%9E%E5%8F%AF%E4%BF%A1%E7%99%BB%E8%AE%B0%E5%BC%80%E6%94%BE%E5%B9%B3%E5%8F%B0%E7%99%BD%E7%9A%AE%E4%B9%A6.pdf)  
+
+
+
+
