@@ -520,6 +520,10 @@ http://app.myzaker.com/news/article.php?pk=5a311c581bc8e0b55a000001
 ### 区块链的预言机oracle机制解释
 http://www.sohu.com/a/215929325_686941  
 
+### Setup your first Parity PoA network in a few commands
+自带了[ethstats](https://github.com/cubedro/eth-netstats)面版。  
+有3个authority节点和3个member节点构成的集群。  
+
 
 
 
