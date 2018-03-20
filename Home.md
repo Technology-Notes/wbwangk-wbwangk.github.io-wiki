@@ -527,7 +527,8 @@ http://www.sohu.com/a/215929325_686941
 ### Kovan基于POA共识的以太坊测试网络
 http://www.8btc.com/parity-pushes-new-ethereum-testnet
 
-
+### 当区块链延伸到版权保护 这些问题值得深思
+http://mp.weixin.qq.com/s/AFdVIDx7gVLPeYtVnmOR9w
 
 
 
