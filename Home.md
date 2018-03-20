@@ -524,6 +524,9 @@ http://www.sohu.com/a/215929325_686941
 自带了[ethstats](https://github.com/cubedro/eth-netstats)面版。  
 有3个authority节点和3个member节点构成的集群。安装在u1601上。  
 
+### Kovan基于POA共识的以太坊测试网络
+http://www.8btc.com/parity-pushes-new-ethereum-testnet
+
 
 
 
