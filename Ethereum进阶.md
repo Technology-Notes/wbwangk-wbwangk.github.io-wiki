@@ -362,15 +362,18 @@ base_path = "~/parity/parity1"
 port = 30301
 [rpc]
 port = 8541
+interface = "192.168.16.102"
 apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts"]
 [ui]
 port = 8181
+interface = "192.168.16.102"
 [websockets]
 port = 8451
+interface = "192.168.16.102"
 [ipc]
 disable = true
 ```
-由于我没打算通过windows的浏览器访问u1602节点，所以没有指定IP，parity会监听默认的`127.0.0.1`。  
+
 而且需要把`demo-speck.json`从u1601上复制过来（）：
 ```
 scp vagrant@u1601:/home/vagrant/parity/demo-spec.json .
@@ -393,3 +396,183 @@ curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["
 curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["node1", "node1"],"id":0}' -H "Content-Type: application/json" -X POST localhost:8541
 {"jsonrpc":"2.0","result":"0x00aa39d30f0d20ff03a22ccfc30b7efbfca597c2","id":0}
 ```
+
+#### UI
+1. 用命令`parity --config node0.toml`启动u1601节点上的parity。
+
+2. 在宿主机windows下用浏览器访问地址`192.168.16.101:8180`。第一次会让创建一个账户（原文中没提），挺麻烦还跳不过去，只能耐心按步骤做，除了让手工输入英文的“我知道了xxx”还让用手工输入助记码。
+
+3. 点击顶部的accounts按钮后（http://192.168.16.101:8180/#/accounts）再点"RESTORE"按钮。
+
+4. account recovery phrase中输入`node0`，account name也可以输入node0，然后在密码中输入两次`node0`，再点Import按钮就成功导入了之前创建的node0账号。
+
+5. node0账号的地址是`0x00Bd138aBD70e2F00903268F3Db08f2D25677C9e`。
+
+6. 用上面类似的办法导入账号`user`，密码也是`user`。user账号的地址是`0x004ec07d2329997267Ec62b4166639513386F32E`。
+
+7. 在u1602节点上执行`parity --config node1.toml`
+
+8. 在宿主windows下的浏览器访问地址`192.168.16.102:8181`
+
+9. 用账户`node1`和密码`node1`恢复账户。node1账户的地址是`0x00Aa39d30F0D20FF03a22cCfc30B7EfbFca597C2`
+
+还可以使用命令`parity account new --config node0.toml`，在不启动parity的情况下新建账号，只能这样不能控制产生的地址。
+
+### 3.完成链配置
+盘点一下手头的地址：
+- 节点0（u1601）有地址是`0x00Bd138aBD70e2F00903268F3Db08f2D25677C9e`的权威账号和地址为`0x004ec07d2329997267Ec62b4166639513386F32E`的user账号。
+
+- 节点1（u1602）有地址是`0x00Aa39d30F0D20FF03a22cCfc30B7EfbFca597C2`的权威账号。
+
+重新打开两个节点的`demo-spec.json`文件，将两个权威账户加入到`validators`(验证者)数组中：
+```json
+"validators" : {
+    "list": [
+        "0x00Bd138aBD70e2F00903268F3Db08f2D25677C9e",
+        "0x00Aa39d30F0D20FF03a22cCfc30B7EfbFca597C2"
+    ]
+}
+```
+将user账号也加入到创世区块，并分配一些余额。
+```
+"0x004ec07d2329997267Ec62b4166639513386F32E": { "balance": "10000000000000000000000" }
+```
+完整的`demo-spec.json`是下面的样子：
+```json
+{
+    "name": "DemoPoA",
+    "engine": {
+        "authorityRound": {
+            "params": {
+                "gasLimitBoundDivisor": "0x400",
+                "stepDuration": "5",
+                "validators" : {
+                    "list": [
+                        "0x00Bd138aBD70e2F00903268F3Db08f2D25677C9e",
+                        "0x00Aa39d30F0D20FF03a22cCfc30B7EfbFca597C2"
+                    ]
+                }
+            }
+        }
+    },
+    "params": {
+        "gasLimitBoundDivisor": "0x400",
+        "maximumExtraDataSize": "0x20",
+        "minGasLimit": "0x1388",
+        "networkID" : "0x2323"
+    },
+    "genesis": {
+        "seal": {
+            "authorityRound": {
+                "step": "0x0",
+                "signature": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+        },
+        "difficulty": "0x20000",
+        "gasLimit": "0x5B8D80"
+    },
+    "accounts": {
+        "0x0000000000000000000000000000000000000001": { "balance": "1", "builtin": { "name": "ecrecover", "pricing": { "linear": { "base": 3000, "word": 0 } } } },
+        "0x0000000000000000000000000000000000000002": { "balance": "1", "builtin": { "name": "sha256", "pricing": { "linear": { "base": 60, "word": 12 } } } },
+        "0x0000000000000000000000000000000000000003": { "balance": "1", "builtin": { "name": "ripemd160", "pricing": { "linear": { "base": 600, "word": 120 } } } },
+        "0x0000000000000000000000000000000000000004": { "balance": "1", "builtin": { "name": "identity", "pricing": { "linear": { "base": 15, "word": 3 } } } },
+        "0x004ec07d2329997267Ec62b4166639513386F32E": { "balance": "10000000000000000000000" }
+    }
+}
+```
+两个节点的创始区块配置都要改成上面的内容。
+
+### 4.运行权威节点
+
+在节点0（u1601）上创建密码文件`node0.pwds`，内容是账号node0的密码：
+```
+node0
+```
+在节点1（u1602）上创建密码文件`node1.pwds`，内容是账号node1的密码：
+```
+node1
+```
+在节点0的`node0.toml`的最后添加：
+```
+[account]
+password = ["node0.pwds"]
+[mining]
+engine_signer = "0x00Bd138aBD70e2F00903268F3Db08f2D25677C9e"
+reseal_on_txs = "none"
+```
+在节点1的`node1.toml`的最后添加：
+```
+[account]
+password = ["node1.pwds"]
+[mining]
+engine_signer = "0x00Aa39d30F0D20FF03a22cCfc30B7EfbFca597C2"
+reseal_on_txs = "none"
+```
+在节点0上启动parity：
+```
+parity --config node0.toml
+```
+在节点1上启动parity：
+```
+parity --config node1.toml
+```
+
+### 5.连接到节点
+要让节点连接在一起需要知道它们的[enode地址](https://github.com/ethereum/wiki/wiki/enode-url-format)。
+
+有三种方式获取enode：
+
+- RPC
+
+- UI (in the footer)
+
+- 启动时的控制台输出
+
+获取了节点的enode后，可以在`demo-spec.json`[配置文件](https://wiki.parity.io/Configuring-Parity#config-file.md)的network部分的`bootnodes = []`属性中添加。这相当于在配置种子节点。
+
+这里使用curl来获取enode（由于指定了IP，即使在u1602上执行也行）：
+```
+curl --data '{"jsonrpc":"2.0","method":"parity_enode","params":[],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
+{"jsonrpc":"2.0","result":"enode://0b3f61826d32939de15b08efad0b6892bf91ffc70e3c5c719e78fa56d58ab3fe8a94c1a688cd259394f9fe420aac65e2927e942c14c0cde3042abba4804a16e1@10.0.2.15:30300","id":0}
+```
+下面要将node0的地址告诉node1。如果看一下node0上的parity启动控制台上的输出，显示的是`0/25 peers`，表示没有任何对等节点连接过来。
+
+在node1（u1602）上执行：
+```
+curl --data '{"jsonrpc":"2.0","method":"parity_addReservedPeer","params":["enode://0b3f61826d32939de15b08efad0b6892bf91ffc70e3c5c719e78fa56d58ab3fe8a94c1a688cd259394f9fe420aac65e2927e942c14c0cde3042abba4804a16e1@192.168.16.101:30300"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.102:8541
+{"jsonrpc":"2.0","result":true,"id":0}
+```
+注意：节点0有多个IP，虽然返回的是`10.0.2.15`，为了一致改成了`192.168.16.101`。
+
+之后，如果再看一下node0上的parity启动控制台上的输出，显示的是`1/25 peers`，表示有一个任何对等节点连接过来了。
+
+### 6.发送交易
+#### RPC
+通过浏览器界面可以看到：user账户的余额是10000ETH，权威账户node0的余额是0。通过下面的命令从user发送1个ETH到node0：
+```
+curl --data '{"jsonrpc":"2.0","method":"personal_sendTransaction","params":[{"from":"0x004ec07d2329997267Ec62b4166639513386F32E","to":"0x00Bd138aBD70e2F00903268F3Db08f2D25677C9e","value":"0xde0b6b3a7640000"}, "user"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
+{"jsonrpc":"2.0","result":"0x8ed59347a1c81e3247ef477398cf2166066b06578ba3230fa79e6990366a1064","id":0}
+```
+浏览器界面会通过websocket自动刷新，现在user账户的余额是9999.00ETH，node0余额成了1.00ETH。
+
+也可以用curl
+```
+curl --data '{"jsonrpc":"2.0","method":"eth_getBalance","params":["0x00Bd138aBD70e2F00903268F3Db08f2D25677C9e", "latest"],"id":1}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
+{"jsonrpc":"2.0","result":"0xde0bb2ca241f9b0","id":1}
+```
+如果把上面的16进制结果转换成10进制会是`1000004917651438000`。这里的单位是wei，小数点左移18位后是1.00，即1.00ETH。
+
+用下面的命令从user账户转账1.00ETH到node1权威账号：
+```
+curl --data '{"jsonrpc":"2.0","method":"personal_sendTransaction","params":[{"from":"0x004ec07d2329997267Ec62b4166639513386F32E","to":"0x00Aa39d30F0D20FF03a22cCfc30B7EfbFca597C2","value":"0xde0b6b3a7640000"}, "user"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
+{"jsonrpc":"2.0","result":"0x24d0930773b87d6a95d9b3c5e1b26c7273c262c5a51d14e3a3e7029df2f06429","id":0}
+```
+仍然可以用下面的命令检查余额：
+```
+curl --data '{"jsonrpc":"2.0","method":"eth_getBalance","params":["0x00Aa39d30F0D20FF03a22cCfc30B7EfbFca597C2", "latest"],"id":1}' -H "Content-Type: application/json" -X POST 192.168.16.102:8541
+{"jsonrpc":"2.0","result":"0xde0b6b3a7640000","id":1}
+```
+上面的命令发送到`192.168.16.101:8540`也是可以的。这说明整个以太坊网络是连通的。
+
+在浏览器界面上可以看到user用户的余额变成了9998.00ETH。
+
