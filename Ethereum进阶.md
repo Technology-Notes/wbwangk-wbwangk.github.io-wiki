@@ -576,3 +576,32 @@ curl --data '{"jsonrpc":"2.0","method":"eth_getBalance","params":["0x00Aa39d30F0
 
 在浏览器界面上可以看到user用户的余额变成了9998.00ETH。
 
+### 7.进一步开发
+非权威节点不需要对共识消息进行签名，所以在配置文件中不需要加入类似下列的内容：
+```
+[account]
+password = ["node1.pwds"]
+[mining]
+engine_signer = "0x00Aa39d30F0D20FF03a22cCfc30B7EfbFca597C2"
+reseal_on_txs = "none"
+```
+当某VM上只会运行一个parity实例时，很多参数都可以直接用默认值代替。
+
+在u1603节点上运行一个非权威parity实例，其配置文件`node2.toml`为：
+```
+[parity]
+chain = "demo-spec.json"
+[network]
+bootnodes = ["enode://0b3f61826d32939de15b08efad0b6892bf91ffc70e3c5c719e78fa56d58ab3fe8a94c1a688cd259394f9fe420aac65e2927e942c14c0cde3042abba4804a16e1@192.168.16.101:30300"]
+[rpc]
+apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts"]
+```
+将`demo-spec.json`也要复制过来：
+```
+scp vagrant@192.168.16.101:~/parity/demo-spec.json .
+```
+启动节点2：
+```
+parity --config node2.toml
+```
+在节点0的控制台上可以看到`2/25 peers`的输出，说明节点2已经连接到了网络上。而节点1和节点2上仍显示`1/25 peers`。
