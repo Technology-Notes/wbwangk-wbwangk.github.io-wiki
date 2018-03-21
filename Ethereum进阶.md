@@ -274,3 +274,122 @@ $ npm start
 ...
 ```
 然后在宿主机windows下的浏览器中访问地址：192.168.16.101:8000，就显示了当前区块链的数据。
+
+## 部署多节点Parity PoA区块链
+参考1: https://wiki.parity.io/Demo-PoA-tutorial  
+参考2：[上面教程的翻译](https://github.com/wbwangk/wbwangk.github.io/blob/a6e547fb648ec5c16bbcd6ed9446056f7d999b4d/Parity/Demo-PoA-tutorial.md)  
+还有[一篇文章](http://blog.csdn.net/fidelhl/article/details/55805638)但使用了废弃的命令行选项  
+
+部署环境是win10宿主机下的3个ubuntu16.4虚拟机[1](https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/tmp/Vagrantfile_ubuntu16.4)：
+```
+u1601  192.168.16.101
+u1602  192.168.16.102
+u1603  192.168.16.103
+```
+在三台VM上都创建目录`~/parity`，都利用下列命令安装parity：
+```
+sudo snap install parity
+```
+本文章的一些配置与官方原文不同。是因为官方的环境是带有桌面的单机环境，而我的环境是多个节点的非桌面环境，需要通过windows宿主机带的浏览器访问以太坊区块链的UI，所以无法使用类似`localhost:8180`的方式，而是使用类似`192.168.16.101:8180`的方式。这导致在很多地方需要设定IP，否则parity会默认使用127.0.0.1。    
+
+### 1. 选择你的链
+在u1601的`~/parity`目录下创建`demo-spec.json`文件，作为创世区块配置文件：
+```
+{
+    "name": "DemoPoA",
+    "engine": {
+        "authorityRound": {
+            "params": {
+                "stepDuration": "5",
+                "validators" : {
+                    "list": []
+                }
+            }
+        }
+    },
+    "params": {
+        "gasLimitBoundDivisor": "0x400",
+        "maximumExtraDataSize": "0x20",
+        "minGasLimit": "0x1388",
+        "networkID" : "0x2323"
+    },
+    "genesis": {
+        "seal": {
+            "authorityRound": {
+                "step": "0x0",
+                "signature": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+            }
+        },
+        "difficulty": "0x20000",
+        "gasLimit": "0x5B8D80"
+    },
+    "accounts": {
+        "0x0000000000000000000000000000000000000001": { "balance": "1", "builtin": { "name": "ecrecover", "pricing": { "linear": { "base": 3000, "word": 0 } } } },
+        "0x0000000000000000000000000000000000000002": { "balance": "1", "builtin": { "name": "sha256", "pricing": { "linear": { "base": 60, "word": 12 } } } },
+        "0x0000000000000000000000000000000000000003": { "balance": "1", "builtin": { "name": "ripemd160", "pricing": { "linear": { "base": 600, "word": 120 } } } },
+        "0x0000000000000000000000000000000000000004": { "balance": "1", "builtin": { "name": "identity", "pricing": { "linear": { "base": 15, "word": 3 } } } }
+    }
+}
+```
+这个文件内容与原文完全一样。`engine`是指定共识引擎，这里使用的共识引擎是[Aura](https://wiki.parity.io/Pluggable-Consensus.html#aura)。  
+
+### 2. 安装两个节点
+可以用两种方式设置parity的启动参数，命令行和配置文件。推荐使用配置文件方式。[这里](https://wiki.parity.io/Configuring-Parity#config-file.md)是配置文件的完整说明。  
+在u1601节点上创建配置文件`node0.toml`:
+```
+[parity]
+chain = "demo-spec.json"
+base_path = "~/parity/parity0"
+[network]
+port = 30300
+[rpc]
+port = 8540
+interface = "192.168.16.101"
+apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts"]
+[ui]
+port = 8180
+interface = "192.168.16.101"
+[websockets]
+port = 8450
+interface = "192.168.16.101"
+```
+在u1602节点的`~/parity`目录下创建配置文件`node1.toml`:
+```
+[parity]
+chain = "demo-spec.json"
+base_path = "~/parity/parity1"
+[network]
+port = 30301
+[rpc]
+port = 8541
+apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts"]
+[ui]
+port = 8181
+[websockets]
+port = 8451
+[ipc]
+disable = true
+```
+由于我没打算通过windows的浏览器访问u1602节点，所以没有指定IP，parity会监听默认的`127.0.0.1`。  
+而且需要把`demo-speck.json`从u1601上复制过来（）：
+```
+scp vagrant@u1601:/home/vagrant/parity/demo-spec.json .
+```
+
+#### RPC
+用命令`parity --config node0.toml`启动节点。然后在另外的终端窗口用curl创建第一个权威地址：
+```
+curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["node0", "node0"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
+{"jsonrpc":"2.0","result":"0x00bd138abd70e2f00903268f3db08f2d25677c9e","id":0}
+```
+创建user地址：
+```
+curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["user", "user"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
+{"jsonrpc":"2.0","result":"0x004ec07d2329997267ec62b4166639513386f32e","id":0}
+```
+
+用另外的终端窗口登录u1602，并使用命令`parity --config node1.toml`启动parity。然后在另外的终端窗口用curl创建第二个权威地址：
+```
+curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["node1", "node1"],"id":0}' -H "Content-Type: application/json" -X POST localhost:8541
+{"jsonrpc":"2.0","result":"0x00aa39d30f0d20ff03a22ccfc30b7efbfca597c2","id":0}
+```
