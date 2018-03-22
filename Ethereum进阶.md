@@ -286,10 +286,11 @@ u1601  192.168.16.101
 u1602  192.168.16.102
 u1603  192.168.16.103
 ```
-在三台VM上都创建目录`~/parity`，都利用下列命令安装parity：
+在三台VM上都创建目录`~/parity`，都利用下列命令安装parity[[1](https://wiki.parity.io/Setup#one-line-binary-installer)]：
 ```
-sudo snap install parity
+$ bash <(curl https://get.parity.io -kL)
 ```
+(用`sudo snap install parity`方式安装的parity版本不是最新的)  
 本文章的一些配置与官方原文不同。是因为官方的环境是带有桌面的单机环境，而我的环境是多个节点的非桌面环境，需要通过windows宿主机带的浏览器访问以太坊区块链的UI，所以无法使用类似`localhost:8180`的方式，而是使用类似`192.168.16.101:8180`的方式。这导致在很多地方需要设定IP，否则parity会默认使用127.0.0.1。    
 
 ### 1. 选择你的链
