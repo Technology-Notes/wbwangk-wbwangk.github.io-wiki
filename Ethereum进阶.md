@@ -534,25 +534,22 @@ parity --config node1.toml
 这里使用curl来获取enode（由于指定了IP，即使在u1602上执行也行）：
 ```
 curl --data '{"jsonrpc":"2.0","method":"parity_enode","params":[],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
-{"jsonrpc":"2.0","result":"enode://0b3f61826d32939de15b08efad0b6892bf91ffc70e3c5c719e78fa56d58ab3fe8a94c1a688cd259394f9fe420aac65e2927e942c14c0cde3042abba4804a16e1@10.0.2.15:30300","id":0}
 ```
-下面要将node0的地址告诉node1。如果看一下node0上的parity启动控制台上的输出，显示的是`0/25 peers`，表示没有任何对等节点连接过来。
+上述请求会返回节点0的enode。
 
-在node1（u1602）上执行：
+下面要将node0的enode告诉node1。需要用上面请求返回的enode替换掉`enode://RESULT`。在node1（u1602）上执行：
 ```
-curl --data '{"jsonrpc":"2.0","method":"parity_addReservedPeer","params":["enode://0b3f61826d32939de15b08efad0b6892bf91ffc70e3c5c719e78fa56d58ab3fe8a94c1a688cd259394f9fe420aac65e2927e942c14c0cde3042abba4804a16e1@192.168.16.101:30300"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.102:8541
-{"jsonrpc":"2.0","result":true,"id":0}
+curl --data '{"jsonrpc":"2.0","method":"parity_addReservedPeer","params":["enode://acb45956b6095c16110e522bf60023906b2f27509a0fd0b8a96a7c7929ad013a005ed42d8fc77f40b851323830129af89856330db9e33c02e641e9f90ef67d25@192.168.16.101:30300"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.102:8541
 ```
-注意：节点0有多个IP，虽然返回的是`10.0.2.15`，为了一致改成了`192.168.16.101`。
+注意：节点0有多个IP，为了一致可能需要手工改成`enode://RESUILT@192.168.16.101:30300`。
 
-之后，如果再看一下node0上的parity启动控制台上的输出，显示的是`1/25 peers`，表示有一个任何对等节点连接过来了。
+之后，看一下node0上的parity启动控制台上的输出，显示的是`1/25 peers`（之前是`0/25 peers`），表示有一个任何对等节点连接过来了。
 
 ### 6.发送交易
 #### RPC
 通过浏览器界面可以看到：user账户的余额是10000ETH，权威账户node0的余额是0。通过下面的命令从user发送1个ETH到node0：
 ```
 curl --data '{"jsonrpc":"2.0","method":"personal_sendTransaction","params":[{"from":"0x004ec07d2329997267Ec62b4166639513386F32E","to":"0x00Bd138aBD70e2F00903268F3Db08f2D25677C9e","value":"0xde0b6b3a7640000"}, "user"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
-{"jsonrpc":"2.0","result":"0x8ed59347a1c81e3247ef477398cf2166066b06578ba3230fa79e6990366a1064","id":0}
 ```
 浏览器界面会通过websocket自动刷新，现在user账户的余额是9999.00ETH，node0余额成了1.00ETH。
 
@@ -566,7 +563,6 @@ curl --data '{"jsonrpc":"2.0","method":"eth_getBalance","params":["0x00Bd138aBD7
 用下面的命令从user账户转账1.00ETH到node1权威账号：
 ```
 curl --data '{"jsonrpc":"2.0","method":"personal_sendTransaction","params":[{"from":"0x004ec07d2329997267Ec62b4166639513386F32E","to":"0x00Aa39d30F0D20FF03a22cCfc30B7EfbFca597C2","value":"0xde0b6b3a7640000"}, "user"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
-{"jsonrpc":"2.0","result":"0x24d0930773b87d6a95d9b3c5e1b26c7273c262c5a51d14e3a3e7029df2f06429","id":0}
 ```
 仍然可以用下面的命令检查余额：
 ```
