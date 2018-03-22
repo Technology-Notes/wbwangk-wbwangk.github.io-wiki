@@ -534,3 +534,6 @@ http://mp.weixin.qq.com/s/AFdVIDx7gVLPeYtVnmOR9w
 ### 溯源链
 https://www.tacchain.io/Index/index_c.html
 
+### sybil attack （女巫攻击）
+http://blog.csdn.net/qq_35056292/article/details/60480292  
+
