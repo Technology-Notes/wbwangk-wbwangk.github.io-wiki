@@ -401,6 +401,7 @@ curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["
 
 #### UI
 1. 用命令`parity --config node0.toml`启动u1601节点上的parity。
+(注意: 1.10版本及之后版本的parity默认没有启动UI，需要用`parity ui --config node0.toml`来启动)
 
 2. 在宿主机windows下用浏览器访问地址`192.168.16.101:8180`。第一次会让创建一个账户（原文中没提），挺麻烦还跳不过去，只能耐心按步骤做，除了让手工输入英文的“我知道了xxx”还让用手工输入助记码。
 
