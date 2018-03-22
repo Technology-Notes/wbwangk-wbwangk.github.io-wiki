@@ -485,11 +485,11 @@ curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["
 
 ### 4.运行权威节点
 
-在节点0（u1601）上创建密码文件`node0.pwds`，内容是账号node0的密码：
+在节点0（u1601）上创建密码文件`/home/vagrant/parity/node0.pwds`(node0.pwds与node0.toml在同一目录下)，内容是账号node0的密码：
 ```
 node0
 ```
-在节点1（u1602）上创建密码文件`node1.pwds`，内容是账号node1的密码：
+在节点1（u1602）上创建密码文件`/home/vagrant/parity/node1.pwds`(node1.pwds与node1.toml在同一目录下)，内容是账号node1的密码：
 ```
 node1
 ```
