@@ -339,7 +339,7 @@ sudo snap install parity
 ```
 [parity]
 chain = "demo-spec.json"
-base_path = "~/parity/parity0"
+base_path = "/home/vagrant/parity"
 [network]
 port = 30300
 [rpc]
@@ -357,7 +357,7 @@ interface = "192.168.16.101"
 ```
 [parity]
 chain = "demo-spec.json"
-base_path = "~/parity/parity1"
+base_path = "/home/vagrant/parity"
 [network]
 port = 30301
 [rpc]
