@@ -383,19 +383,20 @@ scp vagrant@u1601:/home/vagrant/parity/demo-spec.json .
 用命令`parity --config node0.toml`启动节点。然后在另外的终端窗口用curl创建第一个权威地址：
 ```
 curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["node0", "node0"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
-{"jsonrpc":"2.0","result":"0x00bd138abd70e2f00903268f3db08f2d25677c9e","id":0}
 ```
+上述请求的响应会返回地址`0x00bd138abd70e2f00903268f3db08f2d25677c9e`。
+
 创建user地址：
 ```
 curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["user", "user"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
-{"jsonrpc":"2.0","result":"0x004ec07d2329997267ec62b4166639513386f32e","id":0}
 ```
+上述请求的响应会返回地址`0x004ec07d2329997267ec62b4166639513386f32e`。
 
 用另外的终端窗口登录u1602，并使用命令`parity --config node1.toml`启动parity。然后在另外的终端窗口用curl创建第二个权威地址：
 ```
-curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["node1", "node1"],"id":0}' -H "Content-Type: application/json" -X POST localhost:8541
-{"jsonrpc":"2.0","result":"0x00aa39d30f0d20ff03a22ccfc30b7efbfca597c2","id":0}
+curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["node1", "node1"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.102:8541
 ```
+上述请求的响应会返回地址`0x00aa39d30f0d20ff03a22ccfc30b7efbfca597c2`。
 
 #### UI
 1. 用命令`parity --config node0.toml`启动u1601节点上的parity。
