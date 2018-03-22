@@ -537,3 +537,7 @@ https://www.tacchain.io/Index/index_c.html
 ### sybil attack （女巫攻击）
 http://blog.csdn.net/qq_35056292/article/details/60480292  
 
+### 加密货币市值
+https://coinmarketcap.com/zh/all/views/all/  
+排名144位的是POA Network
+
