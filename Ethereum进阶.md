@@ -616,4 +616,4 @@ to authorize your browser.
 Or use the generated token:
 jdsS-OVYO-rF0z-eJhY
 ```
-可以在页面上输入上述token，或者直接在地址栏中输入带token的URL。
+可以在页面上输入上述token`jdsS-OVYO-rF0z-eJhY`，或者直接在地址栏中输入带token的URL`http://192.168.16.107:8181/#/auth?token=jdsS-OVYO-rF0z-eJhY`。
