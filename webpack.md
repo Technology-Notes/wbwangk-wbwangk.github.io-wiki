@@ -1,4 +1,4 @@
-环境：ubuntu16.4桌面版 ([1](vagrant9/ubuntu16.4/u1607))。
+环境：ubuntu16.4桌面版 <sup>[1](vagrant9/ubuntu16.4/u1607))</sup>。
 
 安装nodejs、npm[1](https://github.com/wbwangk/wbwangk.github.io/wiki/ubuntu16%E4%B8%8B%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85#nodejs--npm)。
 
