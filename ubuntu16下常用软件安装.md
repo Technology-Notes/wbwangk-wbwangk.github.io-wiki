@@ -51,7 +51,8 @@ $ npm install npm@latest -g
 ```
 curl -sL https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/tmp/nodejs7.source | sudo -E bash -
 ```
-一般能够成功。
+一般能够成功。然后是apt-get update、安装nodejs、npm自我升级。最终nodejs和npm的版本分别是7.10.1和5.7.1。nodejs现在有了8和9版本。
+
 #### centos下装nodejs
 ```sh
 $ yum install epel-release
