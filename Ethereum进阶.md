@@ -606,6 +606,8 @@ parity --config node2.toml
 在节点0的控制台上可以看到`2/25 peers`的输出，说明节点2已经连接到了网络上。而节点1和节点2上仍显示`1/25 peers`。
 
 ### 问题
+
+#### 安全token
 用浏览器访问parity界面时，有时会提示安全令牌错误。还提示让`parity signer new-token`来生成令牌，并在页面上输入。
 
 例如，访问地址`192.168.16.102:8181`（节点1）时提示令牌错误。则在u1602的`~/parity`目录下执行：
@@ -619,3 +621,9 @@ Or use the generated token:
 jdsS-OVYO-rF0z-eJhY
 ```
 可以在页面上输入上述token`jdsS-OVYO-rF0z-eJhY`，或者直接在地址栏中输入带token的URL`http://192.168.16.107:8181/#/auth?token=jdsS-OVYO-rF0z-eJhY`。
+
+#### cors
+执行后续的[dapp教程](https://wiki.parity.io/Tutorial-Part-1.html)时，mydapp应该显示的`hello world`出不来。发现是cors的问题。需要用下列命令启动：
+```
+parity --config node0.toml --jsonrpc-cors all ui
+```
