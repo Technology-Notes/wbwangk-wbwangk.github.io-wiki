@@ -47,7 +47,7 @@ npm的自我升级:
 ```
 $ npm install npm@latest -g
 ```
-上面的curl的结果是在`/et/apt/sources.list.d/`目录下创建nodejs的源。但可能因为国内网络的问题执行失败。现在把上述文件移动到了这个地址：https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/tmp/nodejs7.source，所以可以尝试：
+上面的curl的结果是在`/etc/apt/sources.list.d/`目录下创建nodejs的源`nodesource.list`。但可能因为国内网络的问题执行失败。现在把上述文件移动到了这个地址：https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/tmp/nodejs7.source，所以可以尝试：
 ```
 curl -sL https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/tmp/nodejs7.source | sudo -E bash -
 ```
