@@ -93,3 +93,27 @@ npx webpack --config webpack.config.js
 
 > 其实webpack默认就会加载`webpack.config.js`，这里放在命令行参数中是为了解释而已。
 
+### NPM Scripts
+命令`webpack`（或`npx webpack`）会触发webpack的构建。如果把这个命令放入package.json的scripts，如：
+```
+  {
+    "name": "webpack-demo",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
++     "build": "webpack"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+      "webpack": "^4.0.1",
+      "webpack-cli": "^2.0.9",
+      "lodash": "^4.17.5"
+    }
+  }
+```
+则当执行`npm run build`的时候，会自动触发webpack的构建执行。注意，在`scripts`中指定的包，就像用`npx`执行它一样的效果。
+
