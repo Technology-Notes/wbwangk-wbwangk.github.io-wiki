@@ -35,7 +35,7 @@ npm install --save lodash
 
   document.body.appendChild(component());
 ```
-import并不是javascript的语法。它会被webpack构建后放入dist目录下的bundle.js文件中。
+import并不是传统的javascript的语法（它是ECMAScript 2015的标准）。它会被webpack构建后放入dist目录下的bundle.js文件中。
 
 修改`dist/index.html`:
 ```
@@ -62,4 +62,34 @@ import并不是javascript的语法。它会被webpack构建后放入dist目录�
 +    <script src="main.js"></script>
 ```
 由于测试使用的是桌面版ubuntu，所以可以直接用图形界面中的火狐浏览器打开`dist/index.html`，也可以显示'Hello webpack'。
+
+### Modules
+`import`和`export`是[ES2015](https://babeljs.io/learn-es2015/)标准语法，但不被主流浏览器支持，通过webpack可以把它们编译成浏览器支持的语法。
+
+除了`import`和`export`，webpack并不会转译其他的[ES2015](https://babeljs.io/learn-es2015/)语法，如果你想使用这种语法，需要你自己引入一个[转译器](https://webpack.js.org/loaders/#transpiling)，如[Babel](https://babeljs.io/)（parity教程使用的这个）。引入转译器需要用到webpack的[loader](https://webpack.js.org/concepts/loaders/)系统。
+
+### 使用配置
+webpack使用[配置文件](https://webpack.js.org/concepts/configuration)来控制其行为。它的配置文件叫`webpack.config.js`，位于项目的根目录下。
+
+编辑`webpack.config.js`:
+```javascript
+const path = require('path');
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  }
+};
+```
+看到这里就明白为啥webpack生成的js文件不叫builde.js而是main.js，因为没有创建这个配置文件。
+
+使用新创建的配置文件重新执行webpack构建：
+```
+npx webpack --config webpack.config.js
+```
+会发现dist目录下有了两个几乎一样的js文件：main.js和bundle.js，main.js是上次未指定配置文件时构建的。
+
+> 其实webpack默认就会加载`webpack.config.js`，这里放在命令行参数中是为了解释而已。
 
