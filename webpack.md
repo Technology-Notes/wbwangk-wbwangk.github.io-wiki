@@ -236,3 +236,32 @@ module.exports = {
     }
 };
 ```
+## http-server
+
+webpack@4似乎引入了一个新的web服务器，安装：
+```
+$ npm install --savedev http-server
+```
+然后配置package.json:
+```json
+{
+  ...
+  "scripts": {
+-    "build": "webpack"
++    "build": "webpack",
++    "start": "http-server dist"
+  },
+  ...
+}
+```
+启动http-server(或执行`npx http-server dist`)：
+```
+$ npm start
+Starting up http-server, serving dist
+Available on:
+  http://127.0.0.1:8080
+  http://10.0.2.15:8080
+  http://192.168.16.107:8080
+...
+```
+dist目录（相对于package.json所在的目录）就是web服务器的根目录。
