@@ -345,14 +345,15 @@ base_path = "/home/vagrant/parity"
 port = 30300
 [rpc]
 port = 8540
-interface = "0.0.0.0"
+interface = "192.168.16.101"
+cors = ["all"]
 apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts"]
 [ui]
 port = 8180
-interface = "0.0.0.0"
+interface = "192.168.16.101"
 [websockets]
 port = 8450
-interface = "0.0.0.0"
+interface = "192.168.16.101"
 ```
 在u1602节点的`~/parity`目录下创建配置文件`node1.toml`:
 ```
@@ -363,14 +364,15 @@ base_path = "/home/vagrant/parity"
 port = 30300
 [rpc]
 port = 8540
-interface = "0.0.0.0"
+interface = "192.168.16.102"
+cors = ["all"]
 apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts"]
 [ui]
 port = 8180
-interface = "0.0.0.0"
+interface = "192.168.16.102"
 [websockets]
 port = 8450
-interface = "0.0.0.0"
+interface = "192.168.16.102"
 [ipc]
 disable = true
 ```
