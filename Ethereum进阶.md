@@ -631,3 +631,8 @@ jdsS-OVYO-rF0z-eJhY
 ```
 parity --config node0.toml --jsonrpc-cors all ui
 ```
+或者在配置文件中定义：
+```
+[rpc]
+cors = ["all"]
+```
