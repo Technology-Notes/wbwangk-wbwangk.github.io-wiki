@@ -345,14 +345,14 @@ base_path = "/home/vagrant/parity"
 port = 30300
 [rpc]
 port = 8540
-interface = "192.168.16.101"
+interface = "0.0.0.0"
 apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts"]
 [ui]
 port = 8180
-interface = "192.168.16.101"
+interface = "0.0.0.0"
 [websockets]
 port = 8450
-interface = "192.168.16.101"
+interface = "0.0.0.0"
 ```
 在u1602节点的`~/parity`目录下创建配置文件`node1.toml`:
 ```
@@ -360,17 +360,17 @@ interface = "192.168.16.101"
 chain = "demo-spec.json"
 base_path = "/home/vagrant/parity"
 [network]
-port = 30301
+port = 30300
 [rpc]
-port = 8541
-interface = "192.168.16.102"
+port = 8540
+interface = "0.0.0.0"
 apis = ["web3", "eth", "net", "personal", "parity", "parity_set", "traces", "rpc", "parity_accounts"]
 [ui]
-port = 8181
-interface = "192.168.16.102"
+port = 8180
+interface = "0.0.0.0"
 [websockets]
-port = 8451
-interface = "192.168.16.102"
+port = 8450
+interface = "0.0.0.0"
 [ipc]
 disable = true
 ```
@@ -381,19 +381,19 @@ scp vagrant@u1601:/home/vagrant/parity/demo-spec.json .
 ```
 
 #### RPC
-用命令`parity --config node0.toml`启动节点。然后在另外的终端窗口用curl创建第一个权威地址：
+用命令`parity --config node0.toml`启动节点。然后在另外的终端窗口用curl创建第一个权威地址(账号和密码都是node0)：
 ```
 curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["node0", "node0"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
 ```
 上述请求的响应会返回地址`0x00bd138abd70e2f00903268f3db08f2d25677c9e`。
 
-创建user地址：
+创建user地址(账号和密码都是user)：
 ```
 curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["user", "user"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.101:8540
 ```
 上述请求的响应会返回地址`0x004ec07d2329997267ec62b4166639513386f32e`。
 
-用另外的终端窗口登录u1602，并使用命令`parity --config node1.toml`启动parity。然后在另外的终端窗口用curl创建第二个权威地址：
+用另外的终端窗口登录u1602，并使用命令`parity --config node1.toml`启动parity。然后在另外的终端窗口用curl创建第二个权威地址(账号和密码都是node1)：
 ```
 curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["node1", "node1"],"id":0}' -H "Content-Type: application/json" -X POST 192.168.16.102:8541
 ```
@@ -401,7 +401,7 @@ curl --data '{"jsonrpc":"2.0","method":"parity_newAccountFromPhrase","params":["
 
 #### UI
 1. 用命令`parity --config node0.toml`启动u1601节点上的parity。
-(注意: 1.10版本及之后版本的parity默认没有启动UI，需要用`parity ui --config node0.toml`来启动)
+(注意: 1.10版本及之后版本的parity默认没有启动UI(8180端口)，需要用`parity ui --config node0.toml`来启动。如果是非本机访问UI，还要加上`--jsonrpc-cors all`来允许跨域ajax调用。所以完整的命令是`parity ui --config node0.toml --jsonrpc-cors all`)
 
 2. 在宿主机windows下用浏览器访问地址`192.168.16.101:8180`。第一次会让创建一个账户（原文中没提），挺麻烦还跳不过去，只能耐心按步骤做，除了让手工输入英文的“我知道了xxx”还让用手工输入助记码。
 
@@ -527,7 +527,7 @@ parity --config node1.toml
 
 - RPC
 
-- UI (in the footer)
+- UI (in the footer) (这个我没找到)
 
 - 启动时的控制台输出
 
@@ -621,6 +621,8 @@ Or use the generated token:
 jdsS-OVYO-rF0z-eJhY
 ```
 可以在页面上输入上述token`jdsS-OVYO-rF0z-eJhY`，或者直接在地址栏中输入带token的URL`http://192.168.16.107:8181/#/auth?token=jdsS-OVYO-rF0z-eJhY`。
+
+（其实在parity启动控制台上会显示类似`Open: http://0.0.0.0:8180/#/auth?token=RtVa-6AVt-kxAq-vku6 to authorize your browser`）
 
 #### cors
 执行后续的[dapp教程](https://wiki.parity.io/Tutorial-Part-1.html)时，mydapp应该显示的`hello world`出不来。发现是cors的问题。需要用下列命令启动：
