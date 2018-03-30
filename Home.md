@@ -543,3 +543,6 @@ https://coinmarketcap.com/zh/all/views/all/
 
 ### 【Chainge之供应链金融】系列二：区块链3.0：分道扬镳，说散就散
 http://www.8btc.com/178811-2
+
+### solidity变量的一个教程
+http://wiki.jikexueyuan.com/project/solidity-zh/types.html
