@@ -546,3 +546,6 @@ http://www.8btc.com/178811-2
 
 ### solidity变量的一个教程
 http://wiki.jikexueyuan.com/project/solidity-zh/types.html
+
+### 以太坊中文文档（riversyang翻译）
+https://github.com/riversyang/homestead-guide-cn
