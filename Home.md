@@ -329,7 +329,7 @@ true
 > net.peerCount
 4
 ```
-#### 以太坊浏览器
+#### 以太坊监控
 https://ethstats.net/
 
 #### 智能合约Solidity编程语言
