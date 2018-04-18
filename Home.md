@@ -559,3 +559,7 @@ A web application to prove the existence of documents using the blockchain
 
 ### The blockchain for Smart Media Tokens (SMTs) and decentralized applications. https://steem.io
 https://github.com/steemit/steem
+
+### “比特币是Wei Dai在网络朋克中所提到的B-Money构想和尼克·萨博提出的Bitgold的具体实现。”
+http://www.8btc.com/bitcoin-lovers
+
