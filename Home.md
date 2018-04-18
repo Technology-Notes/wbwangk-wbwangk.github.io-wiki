@@ -556,3 +556,6 @@ https://github.com/ConsenSys/eth-lightwallet
 ### Proof of Existence 
 https://proofofexistence.com/
 A web application to prove the existence of documents using the blockchain
+
+### The blockchain for Smart Media Tokens (SMTs) and decentralized applications. https://steem.io
+https://github.com/steemit/steem
