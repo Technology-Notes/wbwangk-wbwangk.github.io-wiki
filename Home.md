@@ -552,3 +552,7 @@ https://github.com/riversyang/homestead-guide-cn
 
 ### 以太坊轻钱包或钱包托管
 https://github.com/ConsenSys/eth-lightwallet
+
+### Proof of Existence 
+https://proofofexistence.com/
+A web application to prove the existence of documents using the blockchain
