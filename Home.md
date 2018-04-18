@@ -549,3 +549,6 @@ http://wiki.jikexueyuan.com/project/solidity-zh/types.html
 
 ### 以太坊中文文档（riversyang翻译）
 https://github.com/riversyang/homestead-guide-cn
+
+### 以太坊轻钱包或钱包托管
+https://github.com/ConsenSys/eth-lightwallet
