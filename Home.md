@@ -563,3 +563,6 @@ https://github.com/steemit/steem
 ### “比特币是Wei Dai在网络朋克中所提到的B-Money构想和尼克·萨博提出的Bitgold的具体实现。”
 http://www.8btc.com/bitcoin-lovers
 
+### CryptoPunk
+https://github.com/larvalabs/cryptopunks  
+Collectible 8-bit characters on the Ethereum blockchain. http://www.larvalabs.com/cryptopunks
