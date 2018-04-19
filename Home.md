@@ -581,3 +581,7 @@ https://github.com/brakmic/BlockchainStore
 
 ### awesome-ethereum
 https://github.com/btomashvili/awesome-ethereum
+
+### 基于以太坊的声誉
+https://github.com/Iudex/Iudex
+用户需要绑定外部账号，如微博，然后通过 http://oraclize.it/ 抓取数据，进行计算
