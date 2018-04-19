@@ -885,7 +885,7 @@ VM的3000和3001端口已经通过NAT映射到了windows。在windows下用浏�
 
 3. 你会被MetaMask自动提示来批准交易。点击**Submit**按钮来批准交易。
 ![](http://truffleframework.com/tutorials/images/pet-shop/metamask-transactionconfirm.png) 
-（通过Foxfire和Chrome的MetaMask插件都试了，无法自动提示批准交易。可能与NAT有关）
+（我通过Foxfire和Chrome的MetaMask插件都试了，无法自动提示批准交易。可能与NAT有关。后来的补充：还有一种可能就是MetaMask没有登录。）
 
 4. 被收养宠物旁边的按钮变成了“Sucess”和被禁用，说明这个宠物已经被收养。  
 ![](http://truffleframework.com/tutorials/images/pet-shop/dapp-success.png)
