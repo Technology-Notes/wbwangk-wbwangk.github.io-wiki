@@ -569,3 +569,6 @@ Collectible 8-bit characters on the Ethereum blockchain. http://www.larvalabs.co
 
 ### 令牌是什么
 https://github.com/ethereumbook/ethereumbook/blob/develop/tokens.asciidoc
+
+### ethereumbook中文版
+https://github.com/AMTCOIN/ethereumbook_zh
