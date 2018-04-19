@@ -578,3 +578,6 @@ https://github.com/MyCryptoHQ/MyCrypto
 
 ### 以太坊实现的零售商店
 https://github.com/brakmic/BlockchainStore
+
+### awesome-ethereum
+https://github.com/btomashvili/awesome-ethereum
