@@ -575,3 +575,6 @@ https://github.com/AMTCOIN/ethereumbook_zh
 
 ### 开源的在线钱包
 https://github.com/MyCryptoHQ/MyCrypto   
+
+### 以太坊实现的零售商店
+https://github.com/brakmic/BlockchainStore
