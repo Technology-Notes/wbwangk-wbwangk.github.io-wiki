@@ -572,3 +572,6 @@ https://github.com/ethereumbook/ethereumbook/blob/develop/tokens.asciidoc
 
 ### ethereumbook中文版
 https://github.com/AMTCOIN/ethereumbook_zh
+
+### 开源的在线钱包
+https://github.com/MyCryptoHQ/MyCrypto   
