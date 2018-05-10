@@ -585,3 +585,13 @@ https://github.com/btomashvili/awesome-ethereum
 ### 基于以太坊的声誉
 https://github.com/Iudex/Iudex
 用户需要绑定外部账号，如微博，然后通过 http://oraclize.it/ 抓取数据，进行计算
+
+### 以太坊节点数、客户端版本、节点分布等
+https://ethernodes.org/network/1  
+Parity：4916，Geth：9527， 总数：16326  
+
+Total16326 (100%)  
+United States5751 (35.23%)  
+China2376 (14.55%)  
+Canada923 (5.65%)   
+Germany843 (5.16%  
