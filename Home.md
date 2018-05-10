@@ -595,3 +595,6 @@ United States5751 (35.23%)
 China2376 (14.55%)  
 Canada923 (5.65%)   
 Germany843 (5.16%  
+
+### 以太坊分片的中文讲座
+https://www.youtube.com/watch?v=GhuWWShfqBI
