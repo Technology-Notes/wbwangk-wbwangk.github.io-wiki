@@ -605,3 +605,7 @@ https://github.com/beidan/Puzzle
 ### 以太坊基金会声明反对EME作为W3C推荐标准
 https://blog.ethereum.org/2017/08/21/statement-objecting-w3c-publishing-eme-recommendation/  
 EME是加密媒体扩展的缩写
+
+### 中国将建区块链国家标准，最快2019年完成
+http://www.8btc.com/blockchain_standard_2019
+
