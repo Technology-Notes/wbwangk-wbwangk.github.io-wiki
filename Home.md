@@ -609,3 +609,9 @@ EME是加密媒体扩展的缩写
 ### 中国将建区块链国家标准，最快2019年完成
 http://www.8btc.com/blockchain_standard_2019
 
+### 沈寓实：“互链网”时代即将到来，区块链是中国的重大机遇
+http://www.8btc.com/blockchain_security_chance  
+网络空间世界观——两重世界与五域重构  
+信息互联网向价值互联网转变  
+区块链技术构建网络空间超互联未来  
+
