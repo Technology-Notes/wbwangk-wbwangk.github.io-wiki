@@ -619,3 +619,9 @@ http://www.8btc.com/blockchain_security_chance
 https://blog.ethereum.org/2016/12/05/zksnarks-in-a-nutshell/  
 zkSNARK的可能性令人印象深刻，您可以验证计算的正确性，而无需执行它们，您甚至不会知道执行了什么 - 只是它正确地完成了。  
 解释RSA、零知识证明等。  
+
+### 世界银行权威点评比特币、以太坊、瑞波币的弊端
+http://www.8btc.com/world-bank-digital-currency  
+挖矿难度分析： 几乎相当于整个孟加拉国的耗电量。平均用于处理一笔交易的电费(约20美元)，可以为大约5户高收入国家的家庭供电一天。（截至2018年春季，矿工每次交易获得的总报酬略低于100美元。）   
+2018年3月各矿池提供网络区块数据表  
+Fizzy是保险公司AXA的一个参数保险应用程序(https:/fizzy.axa/)  
