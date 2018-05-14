@@ -615,3 +615,7 @@ http://www.8btc.com/blockchain_security_chance
 信息互联网向价值互联网转变  
 区块链技术构建网络空间超互联未来  
 
+### zkSNARK介绍
+https://blog.ethereum.org/2016/12/05/zksnarks-in-a-nutshell/  
+zkSNARK的可能性令人印象深刻，您可以验证计算的正确性，而无需执行它们，您甚至不会知道执行了什么 - 只是它正确地完成了。  
+解释RSA、零知识证明等。  
