@@ -632,3 +632,9 @@ http://www.8btc.com/201805161324
 ### 大咖超链接丨尹振涛：虚拟货币的监管首先要明确它是资产
 http://www.8btc.com/chaolianji-yinzhengtao
 
+### 通货膨胀，交易费用和货币政策的加密货币政策
+https://blog.ethereum.org/2016/07/27/inflation-transaction-fees-cryptocurrency-monetary-policy/  
+
+### Scalability and Asynchronous Programming
+https://docs.google.com/presentation/d/1CjD0W4l4-CwHKUvfF5Vlps76fKLEC6pIwu1a_kC_YRQ/edit#slide=id.p  
+一个讲以太坊扩展性和异步编程的PPT
