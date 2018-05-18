@@ -628,3 +628,7 @@ Fizzy是保险公司AXA的一个参数保险应用程序(https:/fizzy.axa/)
 
 ### 比特币是有限游戏，还是无限游戏？
 http://www.8btc.com/201805161324  
+
+### 大咖超链接丨尹振涛：虚拟货币的监管首先要明确它是资产
+http://www.8btc.com/chaolianji-yinzhengtao
+
