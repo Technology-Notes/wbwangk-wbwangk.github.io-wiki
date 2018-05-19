@@ -644,4 +644,7 @@ https://docs.google.com/presentation/d/1CjD0W4l4-CwHKUvfF5Vlps76fKLEC6pIwu1a_kC_
 [第二篇文章介绍了如何生成由这些令牌控制的数字民主](https://blog.ethereum.org/2015/12/04/ethereum-in-practice-part-2-how-to-build-a-better-democracy-in-under-a-100-lines-of-code/)  
 [第一篇文章中，我们详细介绍了如何创建一个令牌](https://blog.ethereum.org/2015/12/03/how-to-build-your-own-cryptocurrency/)  
 
-第一篇中有Token的示范代码(不是ERC20)，比较容易读懂。
+第一篇中有Token的示范代码(不是ERC20)，比较容易读懂。该token表示股东在某个组织中的股份，最高是100%。
+第二篇中是一个投票，股东的股份值代表了投票的权重，可以投票给某个地址转账以太币。
+第三篇演示了投票执行合约的某个函数。
+
