@@ -638,3 +638,10 @@ https://blog.ethereum.org/2016/07/27/inflation-transaction-fees-cryptocurrency-m
 ### Scalability and Asynchronous Programming
 https://docs.google.com/presentation/d/1CjD0W4l4-CwHKUvfF5Vlps76fKLEC6pIwu1a_kC_YRQ/edit#slide=id.p  
 一个讲以太坊扩展性和异步编程的PPT
+
+### 以太坊15年的入门三教程
+[以太坊实践第3部分：如何在区块链上建立自己的透明银行](https://blog.ethereum.org/2015/12/07/ethereum-in-practice-part-3-how-to-build-your-own-transparent-bank-on-the-blockchain/)  
+[第二篇文章介绍了如何生成由这些令牌控制的数字民主](https://blog.ethereum.org/2015/12/04/ethereum-in-practice-part-2-how-to-build-a-better-democracy-in-under-a-100-lines-of-code/)  
+[第一篇文章中，我们详细介绍了如何创建一个令牌](https://blog.ethereum.org/2015/12/03/how-to-build-your-own-cryptocurrency/)  
+
+第一篇中有Token的示范代码(不是ERC20)，比较容易读懂。
