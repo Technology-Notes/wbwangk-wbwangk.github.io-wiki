@@ -648,3 +648,5 @@ https://docs.google.com/presentation/d/1CjD0W4l4-CwHKUvfF5Vlps76fKLEC6pIwu1a_kC_
 第二篇中是一个投票，股东的股份值代表了投票的权重，可以投票给某个地址转账以太币。
 第三篇演示了投票执行合约的某个函数。
 
+### 从零到一
+http://www.doc88.com/p-0993271886880.html  http://vdisk.weibo.com/s/GZDboi2fBIag  
