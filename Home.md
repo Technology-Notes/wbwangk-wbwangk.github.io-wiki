@@ -650,3 +650,9 @@ https://docs.google.com/presentation/d/1CjD0W4l4-CwHKUvfF5Vlps76fKLEC6pIwu1a_kC_
 
 ### 从零到一
 http://www.doc88.com/p-0993271886880.html  http://vdisk.weibo.com/s/GZDboi2fBIag  
+
+### Futarchy简介(预测市场)
+https://blog.ethereum.org/2014/08/21/introduction-futarchy/
+
+### 您可能没有想过的保证金和预测市场的应用
+https://blog.ethereum.org/page/10/  
