@@ -666,3 +666,6 @@ http://www.8btc.com/augur59107
 ### 代币分类框架：一套正确认识 token 的思维工具
 https://ethfans.org/posts/the-token-classification-framework  
 从五个维度对 token 进行分类  
+
+### 引介 | 区块链上的自主身份
+https://ethfans.org/posts/31973
