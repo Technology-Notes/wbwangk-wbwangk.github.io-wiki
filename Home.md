@@ -660,3 +660,5 @@ https://blog.ethereum.org/page/10/
 ### 以太坊中的梅克尔(Merkle)树
 https://blog.ethereum.org/2015/11/15/merkling-in-ethereum/
 
+### 预测市场Augur
+http://www.8btc.com/augur59107
