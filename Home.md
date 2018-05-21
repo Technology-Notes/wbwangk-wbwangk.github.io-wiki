@@ -662,3 +662,7 @@ https://blog.ethereum.org/2015/11/15/merkling-in-ethereum/
 
 ### 预测市场Augur
 http://www.8btc.com/augur59107
+
+### 代币分类框架：一套正确认识 token 的思维工具
+https://ethfans.org/posts/the-token-classification-framework  
+从五个维度对 token 进行分类  
