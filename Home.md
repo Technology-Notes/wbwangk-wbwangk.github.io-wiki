@@ -656,3 +656,7 @@ https://blog.ethereum.org/2014/08/21/introduction-futarchy/
 
 ### 您可能没有想过的保证金和预测市场的应用
 https://blog.ethereum.org/page/10/  
+
+### 以太坊中的梅克尔(Merkle)树
+https://blog.ethereum.org/2015/11/15/merkling-in-ethereum/
+
