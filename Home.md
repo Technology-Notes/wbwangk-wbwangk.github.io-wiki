@@ -692,3 +692,6 @@ https://ethfans.org/posts/building-google-for-the-economic-web-on-the-ethereum-b
 ### 科普 | 小跑进入以太坊，Part-3
 https://ethfans.org/posts/getting-up-to-speed-on-ethereum-part-3
 预言机、预测市场、稳定币、 基本注意力代币（BAT）、如何发布列表、查找和筛选列表，如何在社区内部管理声誉
+
+### EthFans精选 | 以太坊入门清单
+https://ethfans.org/posts/1099
