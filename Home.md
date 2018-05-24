@@ -672,3 +672,6 @@ https://ethfans.org/posts/31973
 
 ### 王永利：区块链发展，要跳出“比特币区块链”范式
 http://www.8btc.com/wang-yong-li-0523
+
+### “电商版以太坊”CyberMiles：我们的构想与未知
+https://www.leiphone.com/news/201804/05YG1SHXasUA1Slz.html
