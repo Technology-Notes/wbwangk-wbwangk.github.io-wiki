@@ -669,3 +669,6 @@ https://ethfans.org/posts/the-token-classification-framework
 
 ### 引介 | 区块链上的自主身份
 https://ethfans.org/posts/31973
+
+### 王永利：区块链发展，要跳出“比特币区块链”范式
+http://www.8btc.com/wang-yong-li-0523
