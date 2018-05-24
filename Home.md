@@ -682,3 +682,6 @@ http://www.8btc.com/yujianing-2
 ### 科普 | 为什么使用提款（Withdrawal）模式？
 https://ethfans.org/posts/why-use-the-withdrawal-pattern
 
+### 科普 | 现代经济中的货币，Part-3
+https://ethfans.org/posts/money-in-modern-economy-part-3
+
