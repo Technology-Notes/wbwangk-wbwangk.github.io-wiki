@@ -685,3 +685,6 @@ https://ethfans.org/posts/why-use-the-withdrawal-pattern
 ### 科普 | 现代经济中的货币，Part-3
 https://ethfans.org/posts/money-in-modern-economy-part-3
 
+### 观点 | 重新发明 Google：代币就是新时代的“超链接”
+https://ethfans.org/posts/building-google-for-the-economic-web-on-the-ethereum-blockchain  
+有web1.0、web2.0、web3.0的对比表格
