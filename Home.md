@@ -678,3 +678,7 @@ https://www.leiphone.com/news/201804/05YG1SHXasUA1Slz.html
 
 ### 工信部于佳宁：“区块链+”：金融支持实体经济的新路径
 http://www.8btc.com/yujianing-2
+
+### 科普 | 为什么使用提款（Withdrawal）模式？
+https://ethfans.org/posts/why-use-the-withdrawal-pattern
+
