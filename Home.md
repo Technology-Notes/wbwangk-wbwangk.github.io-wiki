@@ -688,3 +688,7 @@ https://ethfans.org/posts/money-in-modern-economy-part-3
 ### 观点 | 重新发明 Google：代币就是新时代的“超链接”
 https://ethfans.org/posts/building-google-for-the-economic-web-on-the-ethereum-blockchain  
 有web1.0、web2.0、web3.0的对比表格
+
+### 科普 | 小跑进入以太坊，Part-3
+https://ethfans.org/posts/getting-up-to-speed-on-ethereum-part-3
+预言机、预测市场、稳定币、 基本注意力代币（BAT）、如何发布列表、查找和筛选列表，如何在社区内部管理声誉
