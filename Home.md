@@ -706,3 +706,6 @@ https://ethfans.org/posts/oracles-help-smart-contracts-resolve-subjective-events
 ### 干货 | 智能合约开发简介
 https://ethfans.org/posts/introduction-smart-contract-development
 里面有个简单的例子：收益被自动均分给数个股东地址。使用了Remix、web3.js、Mist等四种方式部署合约。
+
+### 解读 | 基于智能合约的去中心化基金设计方案
+https://ethfans.org/posts/1064  
