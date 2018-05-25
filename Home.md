@@ -698,3 +698,7 @@ https://ethfans.org/posts/1099
 
 ### PPT | 以太坊台北分片研讨会：安全模式机制设计
 https://ethfans.org/posts/taipei-sharding-workshop-security-models-in-mechanism-design
+
+### 引介 | 预言机：让智能合约起飞
+https://ethfans.org/posts/oracles-help-smart-contracts-resolve-subjective-events  
+预言机（Oracles）将会是 2018 年最重大的基础设施发明
