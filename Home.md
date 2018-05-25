@@ -702,3 +702,7 @@ https://ethfans.org/posts/taipei-sharding-workshop-security-models-in-mechanism-
 ### 引介 | 预言机：让智能合约起飞
 https://ethfans.org/posts/oracles-help-smart-contracts-resolve-subjective-events  
 预言机（Oracles）将会是 2018 年最重大的基础设施发明
+
+### 干货 | 智能合约开发简介
+https://ethfans.org/posts/introduction-smart-contract-development
+里面有个简单的例子：捐款(?)被自动平均分配给数个（被资助人？）地址。使用了Remix、web3.js、Mist等四种方式部署合约。
