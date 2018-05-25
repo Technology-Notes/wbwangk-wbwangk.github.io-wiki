@@ -695,3 +695,6 @@ https://ethfans.org/posts/getting-up-to-speed-on-ethereum-part-3
 
 ### EthFans精选 | 以太坊入门清单
 https://ethfans.org/posts/1099
+
+### PPT | 以太坊台北分片研讨会：安全模式机制设计
+https://ethfans.org/posts/taipei-sharding-workshop-security-models-in-mechanism-design
