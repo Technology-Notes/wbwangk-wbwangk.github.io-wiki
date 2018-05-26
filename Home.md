@@ -683,7 +683,8 @@ http://www.8btc.com/yujianing-2
 https://ethfans.org/posts/why-use-the-withdrawal-pattern
 
 ### 科普 | 现代经济中的货币，Part-3
-https://ethfans.org/posts/money-in-modern-economy-part-3
+https://ethfans.org/posts/money-in-modern-economy-part-3  
+货币主要分为三类：通货（Currency）、银行存款（Bank Deposit）和中央银行准备金（Central Bank Reserve）。  
 
 ### 观点 | 重新发明 Google：代币就是新时代的“超链接”
 https://ethfans.org/posts/building-google-for-the-economic-web-on-the-ethereum-blockchain  
