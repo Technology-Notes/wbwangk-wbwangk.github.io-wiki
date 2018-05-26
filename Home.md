@@ -736,3 +736,8 @@ https://ethfans.org/posts/blockchains-industrialise-trust
 （区块链）商品化的步伐取决于可扩展性和互操作性。  
 Ether 的市场价值差不多是 300亿美元（编者注：文章是在 2017年10月发表的），而所有代币的市场价值大概是 70亿美元。  
 Ether（以太币）的内在价值取决于可扩展性和互操作性  
+
+### 观点 | 区块链：将信任工业化
+https://ethfans.org/posts/blockchains-industrialise-trust  
+区块链是信任机器。区块链是三方协议的平台，将能源密集型（energy-intensive）的计算转化为有经济意义的信任关系。  
+威廉姆森的方法澄清了：区块链并非无需信任的。相反，它们乃是 信任机器，而它们的使用将构成 信任的工业化。机会主义成本会阻碍交易的发生，而区块链跨越了它们。  
