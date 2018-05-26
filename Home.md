@@ -729,3 +729,10 @@ https://ethfans.org/posts/will-cryptocurrency-protocols-be-fat-or-thin
 
 ### 干货 | 零知识证明：抛砖引玉，Part-2
 https://ethfans.org/posts/zero-knowledge-proofs-an-illustrated-primer-part-2
+
+### 观点 | 没有“胖协议”这回事
+https://ethfans.org/posts/blockchains-industrialise-trust  
+逻辑和价值都储存在 EVM 上、数据储存在蜂群（Swarm）协议中，信息储存在耳语（Whisper）协议中。  
+（区块链）商品化的步伐取决于可扩展性和互操作性。  
+Ether 的市场价值差不多是 300亿美元（编者注：文章是在 2017年10月发表的），而所有代币的市场价值大概是 70亿美元。  
+Ether（以太币）的内在价值取决于可扩展性和互操作性  
