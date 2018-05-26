@@ -724,4 +724,7 @@ http://www.sohu.com/a/139805820_325319
 
 ### 观点 | 加密货币协议会变胖还是变瘦？
 https://ethfans.org/posts/will-cryptocurrency-protocols-be-fat-or-thin  
-对于胖协议的示意图有所增强，解释了协议变胖的原因  
+对于胖协议的示意图有所增强，解释了协议变胖的原因; 竞争壁垒；[价值创造与价值获取之间几乎没有关系](https://medium.com/evergreen-business-weekly/why-value-capture-is-the-most-important-business-idea-you-haven-t-read-enough-about-c035c657d091)  
+
+### 干货 | 零知识证明：抛砖引玉，Part-2
+https://ethfans.org/posts/zero-knowledge-proofs-an-illustrated-primer-part-2
