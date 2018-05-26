@@ -721,3 +721,7 @@ token的分类、一些ETH的表格和图表、部分经济学内容（如收入
 ### 三大去中心化储存Sia 、Storj、MaidSAFE
 http://www.sohu.com/a/139805820_325319  
 提到了IPFS，但认为IPFS与上述三者有显著不同  
+
+### 观点 | 加密货币协议会变胖还是变瘦？
+https://ethfans.org/posts/will-cryptocurrency-protocols-be-fat-or-thin  
+对于胖协议的示意图有所增强，解释了协议变胖的原因  
