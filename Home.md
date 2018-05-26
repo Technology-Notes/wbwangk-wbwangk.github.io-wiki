@@ -713,3 +713,7 @@ https://ethfans.org/posts/1064
 ### 教程 | 以太坊开发演练， Part-3：安全性、限制性以及一些顾虑
 https://ethfans.org/posts/ethereum-development-walkthrough-part-3  
 三部分教程的最后一部，里面有个“角力游戏”的例子  
+
+### 巴比特智库丨时戳资本：Token经济研究报告
+http://www.8btc.com/blockchain-research-report-series04  
+token的分类、一些ETH的表格和图表、部分经济学内容（如收入的三次分配）
