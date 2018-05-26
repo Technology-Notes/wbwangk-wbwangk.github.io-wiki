@@ -709,3 +709,7 @@ https://ethfans.org/posts/introduction-smart-contract-development
 
 ### 解读 | 基于智能合约的去中心化基金设计方案
 https://ethfans.org/posts/1064  
+
+### 教程 | 以太坊开发演练， Part-3：安全性、限制性以及一些顾虑
+https://ethfans.org/posts/ethereum-development-walkthrough-part-3  
+三部分教程的最后一部，里面有个“角力游戏”的例子  
