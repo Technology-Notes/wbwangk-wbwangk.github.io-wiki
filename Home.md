@@ -717,3 +717,7 @@ https://ethfans.org/posts/ethereum-development-walkthrough-part-3
 ### 巴比特智库丨时戳资本：Token经济研究报告
 http://www.8btc.com/blockchain-research-report-series04  
 token的分类、一些ETH的表格和图表、部分经济学内容（如收入的三次分配）
+
+### 三大去中心化储存Sia 、Storj、MaidSAFE
+http://www.sohu.com/a/139805820_325319  
+提到了IPFS，但认为IPFS与上述三者有显著不同  
