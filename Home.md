@@ -789,3 +789,7 @@ https://ethfans.org/posts/cent-income-from-anywhere
 
 我们意识到，奖励金的核心其实是以物质刺激行为。具体来说，我们赏金合约开始应用于三类行为：回答、创作和反应。回答问题、创作自定义内容和对某人的项目/音乐/视频做出反应，似乎为人们在这些方面发布物质奖赏提供了足够的价值。
 
+### 教程 | 如何在Ethereum上编写自己的CryptoKitties风格的游戏
+https://ethfans.org/speedx/articles/how-to-code-your-own-cryptokitties-style-game-on-ethereum  
+ERC-721: Non-Fungible Tokens(非可互换代币)  
+以太猫的形象（图像）并没有存储在以太坊上。  
