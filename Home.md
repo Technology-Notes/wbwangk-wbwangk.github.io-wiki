@@ -748,4 +748,4 @@ https://ethfans.org/posts/the-meaning-of-decentralization
 
 ### 干货 | 为你的以太坊应用程序设计架构
 https://ethfans.org/posts/designing-the-architecture-for-your-ethereum-application  
-
+以太坊应用程序是serverless的，介绍了客户端、服务器、区块链之间的调用关系和典型实现。
