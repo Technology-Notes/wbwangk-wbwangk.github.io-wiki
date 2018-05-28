@@ -781,3 +781,11 @@ https://ethfans.org/posts/what-do-we-mean-by-blockchains-are-trustless
 ### 干货 | 公有链的基本挑战: Part 1
 https://ethfans.org/posts/fundamental-challenges-with-public-blockchains-part-1  
 谈到了关于如何保护隐私、POW的不可持续、分片  
+
+### 观点 | Cent：收益无处不在
+https://ethfans.org/posts/cent-income-from-anywhere  
+
+社交网络并非真正的社交网络，而是内容网络。
+
+我们意识到，奖励金的核心其实是以物质刺激行为。具体来说，我们赏金合约开始应用于三类行为：回答、创作和反应。回答问题、创作自定义内容和对某人的项目/音乐/视频做出反应，似乎为人们在这些方面发布物质奖赏提供了足够的价值。
+
