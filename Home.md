@@ -778,3 +778,6 @@ https://ethfans.org/posts/what-do-we-mean-by-blockchains-are-trustless
 
 也许，描述区块链的一种更准确的方式，不是“无需信任”这样的，而是：它建立在分散化信任的基础上：我们是在信任集合中的每一个人。  
 
+### 干货 | 公有链的基本挑战: Part 1
+https://ethfans.org/posts/fundamental-challenges-with-public-blockchains-part-1  
+谈到了关于如何保护隐私、POW的不可持续、分片  
