@@ -753,3 +753,8 @@ https://ethfans.org/posts/designing-the-architecture-for-your-ethereum-applicati
 ### 观点 | 去中心化区块链预言机, Part-1
 https://ethfans.org/posts/on-decentralization-of-blockchain-oracles  
 Oraclize 是在2015年第一次提出的，上述第二种方式的实现系统。从那以后，其他玩家（最著名的是微软）采用了类似的方式验证这个项目。Oraclize 作为世界上最广泛应用的区块链预言机服务，每天为测试（从2015年投入使用以来，共处理数百万个请求）和产品（从2015年投入使用以来，共处理超过40万个请求）环境按需提供数据。  
+
+### 观点 | 为什么要用区块链代替数据库？
+https://ethfans.org/posts/why-use-the-blockchain-instead-of-a-database-what-gives-tokens-value  
+基本上，区块链体现了很多博弈论以及激励模型。  
+不可变性、安全性、冗余性、降低费用/成本、问责/透明度  
