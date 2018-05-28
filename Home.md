@@ -749,3 +749,7 @@ https://ethfans.org/posts/the-meaning-of-decentralization
 ### 干货 | 为你的以太坊应用程序设计架构
 https://ethfans.org/posts/designing-the-architecture-for-your-ethereum-application  
 以太坊应用程序是serverless的，介绍了客户端、服务器、区块链之间的调用关系和典型实现。
+
+### 观点 | 去中心化区块链预言机, Part-1
+https://ethfans.org/posts/on-decentralization-of-blockchain-oracles  
+Oraclize 是在2015年第一次提出的，上述第二种方式的实现系统。从那以后，其他玩家（最著名的是微软）采用了类似的方式验证这个项目。Oraclize 作为世界上最广泛应用的区块链预言机服务，每天为测试（从2015年投入使用以来，共处理数百万个请求）和产品（从2015年投入使用以来，共处理超过40万个请求）环境按需提供数据。  
