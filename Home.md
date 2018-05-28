@@ -746,3 +746,6 @@ https://ethfans.org/posts/blockchains-industrialise-trust
 https://ethfans.org/posts/the-meaning-of-decentralization  
 ![](http://upyun-assets.ethfans.org/uploads/photo/image/17a9d626353b4108b506b42a312781ff.png)  
 
+### 干货 | 为你的以太坊应用程序设计架构
+https://ethfans.org/posts/designing-the-architecture-for-your-ethereum-application  
+
