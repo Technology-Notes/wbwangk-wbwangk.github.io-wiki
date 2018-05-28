@@ -764,3 +764,6 @@ https://ethfans.org/posts/why-use-the-blockchain-instead-of-a-database-what-give
 实用代币——允许您在网络中使用或执行一个行为的代币，例如ETH，ZRX。在以太坊网络中，您需要花费Ether（又名：gas）来运行智能合约，等  
 资产代币——代表实际资产或产品的代币  
 权益代币——像股份一样代币，能为您提供某种投票或共识参与的权利  
+
+### 教程 | 剖析ERC721——了解非同质以太坊代币
+https://ethfans.org/posts/the-anatomy-of-erc721  
