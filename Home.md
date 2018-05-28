@@ -767,3 +767,7 @@ https://ethfans.org/posts/why-use-the-blockchain-instead-of-a-database-what-give
 
 ### 教程 | 剖析ERC721——了解非同质以太坊代币
 https://ethfans.org/posts/the-anatomy-of-erc721  
+
+### 教程 | 【Ethereum 智能合约开发笔记】使用 Infura 和 web3.js 呼叫合约
+https://ethfans.org/posts/call-smart-contract-with-infura-2018-2-7    
+申请infura API-KEY，使用curl发出调用
