@@ -741,3 +741,8 @@ Ether（以太币）的内在价值取决于可扩展性和互操作性
 https://ethfans.org/posts/blockchains-industrialise-trust  
 区块链是信任机器。区块链是三方协议的平台，将能源密集型（energy-intensive）的计算转化为有经济意义的信任关系。  
 威廉姆森的方法澄清了：区块链并非无需信任的。相反，它们乃是 信任机器，而它们的使用将构成 信任的工业化。机会主义成本会阻碍交易的发生，而区块链跨越了它们。  
+
+### 观点 | Vitalik：去中心化的意涵（V神出品）
+https://ethfans.org/posts/the-meaning-of-decentralization  
+![](http://upyun-assets.ethfans.org/uploads/photo/image/17a9d626353b4108b506b42a312781ff.png)  
+
