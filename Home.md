@@ -770,4 +770,4 @@ https://ethfans.org/posts/the-anatomy-of-erc721
 
 ### 教程 | 【Ethereum 智能合约开发笔记】使用 Infura 和 web3.js 呼叫合约
 https://ethfans.org/posts/call-smart-contract-with-infura-2018-2-7    
-申请infura API-KEY，使用curl发出调用
+申请infura API-KEY，使用curl发出调用：curl https://mainnet.infura.io/<your-api-key> ...  
