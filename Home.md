@@ -771,3 +771,10 @@ https://ethfans.org/posts/the-anatomy-of-erc721
 ### 教程 | 【Ethereum 智能合约开发笔记】使用 Infura 和 web3.js 呼叫合约
 https://ethfans.org/posts/call-smart-contract-with-infura-2018-2-7    
 申请infura API-KEY，使用curl发出调用：curl https://mainnet.infura.io/<your-api-key> ...  
+
+### 观点 | 当我们说“区块链是无需信任的”，我们的意思是
+https://ethfans.org/posts/what-do-we-mean-by-blockchains-are-trustless  
+当我们说区块链是“无需信任的”，我们的意思是：有一个机制使得系统中的所有参与者都可以对什么是一贯的事实形成一个共识。权力和信任在网络的股东（例如：开发者、矿工、消费者）之间是分布式的（或者说：被共享的），而不是集中在单个个体或说实体（例如：银行、政府、或者金融机构）上的。
+
+也许，描述区块链的一种更准确的方式，不是“无需信任”这样的，而是：它建立在分散化信任的基础上：我们是在信任集合中的每一个人。  
+
