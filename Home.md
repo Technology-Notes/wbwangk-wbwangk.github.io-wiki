@@ -801,3 +801,9 @@ https://ethfans.org/posts/understanding-blockchain-fundamentals-part-2
 ### 干货 | 代币支付的以太坊智能服务
 https://ethfans.org/posts/ethereum-smart-service-payment-with-tokens  
 文章解释了如何实现一个收费服务（收代币）智能合约是如何实现的，收代币比收以太币麻烦  
+
+### 干货 | 区块链经济学：制度加密经济学入门指南
+https://ethfans.org/posts/the-blockchain-economy-a-beginners-guide-to-institutional-cryptoeconomics  
+人们对事实及其变化达成一致（即对账本内容达成共识，以及对账本的精确性充分信任）是市场资本主义的基石。  
+钞票的价值取决于社会对货币及作为其发行主体的政府的共识。  
+区块链是一种制度技术。和政府及公司不同的是，区块链是一种维护账本的新型方式，即协作性经济活动。  
