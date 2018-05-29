@@ -796,4 +796,4 @@ ERC-721: Non-Fungible Tokens(非可互换代币)
 
 ### 科普 | 了解区块链基本原理的第二节：工作量证明和权益证明
 https://ethfans.org/posts/understanding-blockchain-fundamentals-part-2  
-里面有个图解释了pow的不可篡改性  
+里面有个图解释了pow的不可篡改性，还有个图解释了pow电力消耗超过大多数非洲国家    
