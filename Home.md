@@ -793,3 +793,7 @@ https://ethfans.org/posts/cent-income-from-anywhere
 https://ethfans.org/speedx/articles/how-to-code-your-own-cryptokitties-style-game-on-ethereum  
 ERC-721: Non-Fungible Tokens(非可互换代币)  
 以太猫的形象（图像）并没有存储在以太坊上。  
+
+### 科普 | 了解区块链基本原理的第二节：工作量证明和权益证明
+https://ethfans.org/posts/understanding-blockchain-fundamentals-part-2  
+里面有个图解释了pow的不可篡改性  
