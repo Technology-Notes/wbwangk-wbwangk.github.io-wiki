@@ -807,3 +807,7 @@ https://ethfans.org/posts/the-blockchain-economy-a-beginners-guide-to-institutio
 人们对事实及其变化达成一致（即对账本内容达成共识，以及对账本的精确性充分信任）是市场资本主义的基石。  
 钞票的价值取决于社会对货币及作为其发行主体的政府的共识。  
 区块链是一种制度技术。和政府及公司不同的是，区块链是一种维护账本的新型方式，即协作性经济活动。  
+
+### 加密经济学: 区块链技术前景之路基
+https://ethfans.org/zzzhang/articles/561  
+加密经济学（cryptoeconomics）综合自密码学、计算机网络和博弈论（它为安全体系提供一些经济激励/反激励集合的展示）。  
