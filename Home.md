@@ -908,3 +908,6 @@ BAT 的解决方案既大胆又简单。他们提出以浏览器作为中立方�
 ### [Curation Markets 的简明介绍及其意义](https://underplay.me/orange/p/38)
 curation markets是信息流（朋友圈、微博、头条等）排序机制。  
 另一篇：[今日头条和微信不能解决的问题，就是区块链的机会](https://underplay.me/orange/p/56)  
+
+另一篇：[“排序”机制：区块链原生应用独有的创新设计](https://underplay.me/orange/p/43)  
+介绍了[Cent](https://underplay.me/orange/p/32)。 Cent 还有另一个独特的用户角色：排序者。排序者不回答问题，但同样有机会获得 eth 币。    
