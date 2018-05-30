@@ -884,8 +884,8 @@ https://ethfans.org/posts/application-protocols-are-the-better-investment-heres-
 ### 区块链与数字身份：uport、Civic、Evernym、AirPlatform、Indy、SelfKey
 https://www.jianshu.com/p/fe1807af171f  
 
-### 干货 | 加密经济学应用的机制设计，Part-1
+### [干货 | 加密经济学应用的机制设计，Part-1](https://ethfans.org/posts/a-crash-course-in-mechanism-design-for-cryptoeconomic-applications-part-1)
 
-#### [什么是机制设计（Mechanism Design）](https://ethfans.org/posts/a-crash-course-in-mechanism-design-for-cryptoeconomic-applications-part-1)
-https://ethfans.org/posts/a-crash-course-in-mechanism-design-for-cryptoeconomic-applications-part-1  
+#### 什么是机制设计（Mechanism Design）
+
 我们可以将机制设计想象成一种反向博弈论。在博弈论中，我们将博弈过程视为给定的，并分析参与者能获得的效益。在机制设计中，我们先定义理想的结果，然后倒推回去创建博弈过程，以激励手段引导参与者走向设计好的结果。另一种简单的理解，可以将博弈论和机制设计视为同一枚硬币的正反面。
