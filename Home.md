@@ -898,4 +898,5 @@ https://www.jianshu.com/p/fe1807af171f
 
 ### [YOURS，基于BCH的内容激励平台](https://underplay.me/orange/p/66)
 
-
+### [Dtube想成为区块链版Youtube，但最有意思的却是它的开发方式](https://underplay.me/orange/p/65)
+Dtube 的底层应用的是 steemit + IPFS。
