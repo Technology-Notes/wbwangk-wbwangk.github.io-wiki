@@ -880,3 +880,6 @@ https://ethfans.org/posts/application-protocols-are-the-better-investment-heres-
 
 一个胖协议的图(Web 3.0价值堆栈)
 ![](http://upyun-assets.ethfans.org/uploads/photo/image/138eb3c4cec34a7080f9cbdb09b2bca7.png)  
+
+### 区块链与数字身份：uport、Civic、Evernym、AirPlatform、Indy、SelfKey
+https://www.jianshu.com/p/fe1807af171f  
