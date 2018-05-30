@@ -900,3 +900,7 @@ https://www.jianshu.com/p/fe1807af171f
 
 ### [Dtube想成为区块链版Youtube，但最有意思的却是它的开发方式](https://underplay.me/orange/p/65)
 Dtube 的底层应用的是 steemit + IPFS。
+
+### [有关基本注意力代币和广告的一些想法](https://www.jianshu.com/p/a454a946e115)
+几周前，基本注意力代币（Basic Attention Token，以下简称为 BAT）在 30 秒内募集了 3500 万美元。  
+BAT 的解决方案既大胆又简单。他们提出以浏览器作为中立方取代媒体来衡量注意力（以他们的 Brave 浏览器作为标准的实施者，但未来可以成为插件／扩展件）。然后，有趣的地方是，把注意力转化成具有实际价值的「代币」，可以直接在广告主和媒体之间进行交易。  
