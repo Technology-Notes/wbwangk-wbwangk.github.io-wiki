@@ -874,5 +874,9 @@ Gnosis 使用“荷兰式拍卖”作为其代币拍卖的模型；  预测市�
 https://www.jianshu.com/p/b6a14c472cc1?from=timeline  
 阿里巴巴与零知识证明  
 
-### 一个胖协议的图
+### 观点 | 应用程序协议是更好的投资
+https://ethfans.org/posts/application-protocols-are-the-better-investment-heres-why  
+在胖协议中，Joel Monegro 预测区块链将轻而易举地成为捕获互联网价值的领域。他展示了在当前的互联网中 HTTP 或 TCP / IP 如何获取零价值，而 FANG（脸书、亚马逊、奈飞、谷歌）则创造了数十亿美元价值。然而，在新的“区块链”互联网中，协议占据了大部分的价值，公司却只能获得少量价值。比特币市值超过 1370 亿美元，而最有价值的比特币公司 Coinbase 只值16亿美元。
+
+一个胖协议的图(Web 3.0价值堆栈)
 ![](http://upyun-assets.ethfans.org/uploads/photo/image/138eb3c4cec34a7080f9cbdb09b2bca7.png)  
