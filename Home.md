@@ -811,3 +811,6 @@ https://ethfans.org/posts/the-blockchain-economy-a-beginners-guide-to-institutio
 ### 加密经济学: 区块链技术前景之路基
 https://ethfans.org/zzzhang/articles/561  
 加密经济学（cryptoeconomics）综合自密码学、计算机网络和博弈论（它为安全体系提供一些经济激励/反激励集合的展示）。  
+里面有各个矿池所占比例  
+
+### 
