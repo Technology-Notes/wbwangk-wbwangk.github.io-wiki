@@ -860,4 +860,19 @@ Zero Knowledge Proof, ZKP
 #### 区块链中的博弈论
 博弈论本质上是对战略决策的研究。其核心是做对自己最有利的决策，并记住对手的决策。博弈论中一个最基本的概念是：“纳什均衡”。  
 
-纳什均衡是一种状态。在此状态下，每个参与者的策略是对其他参与者策略的最优反应。没有一个参与者可以通过独自变换策略来增加收益。
+纳什均衡是一种状态。在此状态下，每个参与者的策略是对其他参与者策略的最优反应。没有一个参与者可以通过独自变换策略来增加收益。  
+
+### 以太币供给曲线
+https://ethfans.org/shaoping/articles/ether-supply  
+
+### 观点 | 弄清加密经济学
+https://ethfans.org/ajian1984/articles/773  
+Gnosis 使用“荷兰式拍卖”作为其代币拍卖的模型；  预测市场Augur和Gnosis
+状态通道（闪电网络）
+
+### 零知识证明与zkSNARK
+https://www.jianshu.com/p/b6a14c472cc1?from=timeline  
+阿里巴巴与零知识证明  
+
+### 一个胖协议的图
+![](http://upyun-assets.ethfans.org/uploads/photo/image/138eb3c4cec34a7080f9cbdb09b2bca7.png)  
