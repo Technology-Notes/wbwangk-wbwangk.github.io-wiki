@@ -924,3 +924,6 @@ curation markets是信息流（朋友圈、微博、头条等）排序机制。
 第一，区块链是信息革命的拐点；第二，区块链是数字经济的基石；第三，区块链是新一代互联网的战略支撑型技术；第四，区块链是用一种自证清白的方式建立一种去中介化的信任机制。  
 
 ### [干货 | 以太坊可更新智能合约研究与开发综述](https://ethfans.org/posts/ethereum-upgradeable-smart-contract-strategies)
+
+### [GSI条码，中国物品编码中心](http://www.ancc.org.cn/Service/queryTools/External.aspx)
+目前，国际物品编码协会（GS1）已将690至697之间的前缀码分配给中国物品编码中心使用，通常以这些前缀码开始的厂商识别代码都是由中国物品编码中心负责分配和管理的；以其他前缀码开始的则由国外GS1成员组织负责，一般称为"国外条码"
