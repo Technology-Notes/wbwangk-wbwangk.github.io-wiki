@@ -156,6 +156,28 @@ Cent向所有人提供了从整个Cent网络按需回答到任何类型的帖子
 
 ICA和新的分类用户界面现在正在运行 - 前往[Cent](http://beta.cent.co/)并检查出来。
 
+## Cent Spotlight ＃1 - 众包调查(Crowdsourcing Surveys)
+[英文原文](https://medium.com/cent-official/cent-spotlight-1-crowdsourcing-surveys-10f3ebfc34da)  
+*这是每周一系列文章中的第一篇，主要介绍所有关于Cent的事情，涵盖值得注意的Centians、Cent的新用途以及其他需要了解的信息。* 
+
+Cent提供了一种新的强大的方式来与连接到互联网的人进行交互。通过允许任何人轻松将奖励附加到帖子并将其广播到快速增长的用户群中，Cent的潜在用途随个人用户需求而变化。 
+
+尽管我们已经编制了一个Cent的潜在用例列表[ [链接](https://beta.cent.co/help) ]，我们希望将焦点集中在一个特定的Centian如何使用一个创新性的悬赏来以新颖的方式利用平台的力量。 
+
+不到一个月前，用户@seewatercrypto3在Cent上[发布了第一个调查](https://beta.cent.co/+dbgid8) ，是关于用户度假和旅行体验的几个简短问题清单。
+
+![img](https://cdn-images-1.medium.com/max/880/1*jhvhUOCSq-o_p2pkPG8BQw.png)
+
+通过Cent的按需性质，@seewatercrypto3能够调动来自六个用户的支持，他们为八个调查问题中的每一个提供了高质量的答复。 
+
+使用一个0.045 ETH的悬赏（当时大约为19美元），那么完成一次调查的低于32美分。随着Cent热情的用户群越来越知名的迅速和真诚的回答，帮助创造了坚实的ROI（投资回报率）。 
+
+Cent与其他服务的不同之处在于鼓励其成员将收件箱的一小部分用于交换加密货币。Cent承诺提供在任何可以想象的主题上获得来自用户网络的按需竞争回答。 
+
+就他们而言，回复的用户正在争夺每个帖子附带的奖金的80％。其余的20％分发给帮助排序和整理每篇文章的最佳回答的用户。这种强大的激励机制有助于吸引越来越多的用户进入Cent，同时展示那些发布高质量回答的用户清单。 
+
+因此，下一次您需要获得众包调查的有效回答时，或者您想要弄清下一本书应该阅读的内容，或者您需要一个即将到期论文或编辑文章，或者即使你只是单纯的想说点什么 - 附加奖金，并张贴到[beta.cent.co](http://beta.cent.co/)。
+
 ## Cent Spotlight＃2 - 在Cent上获得奖金
 [英文原文](https://medium.com/cent-official/cent-spotlight-2-getting-paid-on-cent-12538c050c30)  
 
