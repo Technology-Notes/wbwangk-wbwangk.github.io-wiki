@@ -157,6 +157,7 @@ Cent向所有人提供了从整个Cent网络按需回答到任何类型的帖子
 ICA和新的分类用户界面现在正在运行 - 前往[Cent](http://beta.cent.co/)并检查出来。
 
 ## Cent Spotlight＃2 - 在Cent上获得奖金
+[英文原文](https://medium.com/cent-official/cent-spotlight-2-getting-paid-on-cent-12538c050c30)  
 
 [Cent](https://beta.cent.co/)是加密领域为数不多的应用程序之一，专注于对用户贡献时间和创造力提供支付手段。本文继续讨论如何通过参与平台上的悬赏来开始赚取ETH。
 
