@@ -423,7 +423,7 @@ Ether Value:	$558.24 (@ $604.73/ETH)
 
 回答问题也可以插入图片、加重字体、序号列表、列表、preformatted text。
 
-preformatted text就是html的<pre>(?)，可定义预格式化的文本？在html中<pre>标签一般用来表示计算机的源代码，用于输入与html、js、css等冲突的特殊字符。
+preformatted text就是html的`<pre>`(?)，可定义预格式化的文本？在html中`<pre>`标签一般用来表示计算机的源代码，用于输入与html、js、css等冲突的特殊字符。
 
 
 
