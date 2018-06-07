@@ -940,3 +940,6 @@ curation markets是信息流（朋友圈、微博、头条等）排序机制。
 
 ### [gitcoinco/ethavatar](https://github.com/gitcoinco/ethavatar)
 将以太坊地址与头像绑定
+
+### [独家专访Cent.co创始人](http://www.moderntreatise.com/business/2017/9/6/exculusive-interview-with-the-founders-of-centco)
+
