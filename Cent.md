@@ -358,3 +358,72 @@ Cryptogs之外，我还致力于[Galleass.io](http://galleass.io/)，一个很�
   在[beta.cent.co](http://beta.cent.co/)注册后，查看实时奖励，对一些配对答案排序，然后回答。当你回答时，就是你。你是独一无二的，对世界有着独特的视角。确保您以清晰的格式和简洁的交付方式呈现您最好的一面。
 
   仅此而已。任何人都可加入。你在等什么？我们迫不及待想要在Cent上看到你，这是今天在互联网上最好的地方。
+
+## 体验Cent
+#### 手机钱包imToken与12个助记词
+我在手机上安装过imToken应用，这是一个以太坊钱包。当时安装imToken的时候提示过12个助记词，我把它存在电脑上（知道这样不安全）。这个12个助记词对应的以太坊地址是：
+```
+0x04a3334057658dB693f69F21dfe582ff6094B72d
+```
+#### 在线钱包myetherwallet
+我打开在线钱包myetherwallet的[发送以太币 / 发送代币](https://www.myetherwallet.com/#send-transaction)网页，选择`Mnemonic Phrase`，这是导入助记词来解锁钱包。
+
+将imToken的12个助记词粘贴到Mnemonic Phrase输入框中，点`解锁`按钮。屏幕显示了账户地址：
+```
+0x04a3334057658dB693f69F21dfe582ff6094B72d
+```
+以及账户余额为`0 ETH`，还显示有在Etherscan查看交易历史的[链接](https://etherscan.io/address/0x04a3334057658db693f69f21dfe582ff6094b72d)。
+
+#### 注册Cent
+在 https://beta.cent.co 用邮箱wbwang@inspur.com注册新用户，昵称是wbwangk。然后在Account菜单的SETTINGS选项卡中输入了上面的以太坊地址并保存。
+
+在邮箱wbwang@inspur.com中收到确认信并点击邮件中的确认链接。
+
+#### 参与排序
+
+随便选了一个悬赏(bounty): https://beta.cent.co/+fjd9ff 。 这是@phoebe用户让人在推特上关注他，然后在”回答“上贴出证明（关注后的推特截图）。奖金是0.01ETH($6.08)，显示`6 days left`，即还剩。
+
+进入时有36个回答，两两配对共18对。当我为某对排序后，屏幕提示`1/18`。我对12对进行了排序后，点击浏览器的刷新按钮。屏幕某区域提示：
+```
+Pick the best of each set: 0/6
+```
+说明我还有6对可以排序。
+
+我选择退出登录（log out）。刷新页面，提示有`0/18`对回答可以排序，点击排序箭头后显示了登录页面。
+
+#### 添加悬赏
+屏幕右上角有个大加号`+`，点击后提示：
+```
+Web3 Required.
+To post a bounty, please ensure you have a Web3 wallet set up and are logged in. For mobile users, check out Toshi. For desktop users, we recommend the browser extension MetaMask.
+```
+因为添加悬赏需要缴纳ETH保证金，所以需要Toshi或MetaMask。
+
+点击Chrome插件MetaMask，在弹出的小窗口上点击`Restore from seed phrase`，将imToken的12个助记词粘贴到输入框后点确认按钮。在MetaMask的下拉框中选择Main Network，即以太坊主网，显示了0x04333...的地址和余额为0ETH。
+
+再点击Cent网页的右上角大加号，进入了发帖表单，哪怕我以太坊账户余额是0ETH。
+
+除了标题、内容外，下面是设置悬赏(`Incentivize responses by adding a bounty`)，默认持续时间是3天、金额是0.01ETH($6.06)。
+
+在帖子中可以插入图片、加重字体、序号列表、列表、preformatted text。
+
+点击插入图片会弹出一个选择本地文件的窗口，可以插入多个图片。编辑完毕点击提交，MetaMask弹出窗口让签署交易。在MetaMask中显示会触发从地址0x04333...向地址0x6CdCCb2b249298419Ab3deA261a92FBacF2223aB的转账。由于我的以太坊账户余额不足，MetaMask会提示：`Insufficient balance for transaction`。
+
+0x6CdCC...是Cent的智能合约地址，可以到[这个网址](https://etherscan.io/address/0x6cdccb2b249298419ab3dea261a92fbacf2223ab#code)查看智能合约源码。
+
+这个合约的余额：
+```
+Balance:	0.923118259136016993 Ether
+Ether Value:	$558.24 (@ $604.73/ETH)
+```
+应该是所有未完成悬赏的总额，即保证金总额。
+
+#### 回答
+用户登录后可以回答提问，即参与解决悬赏问题。回答的输入框位于悬赏帖子和排序区域(如显示0/18进度)之间。
+
+回答问题也可以插入图片、加重字体、序号列表、列表、preformatted text。
+
+preformatted text就是html的<pre>(?)，可定义预格式化的文本？在html中<pre>标签一般用来表示计算机的源代码，用于输入与html、js、css等冲突的特殊字符。
+
+
+
