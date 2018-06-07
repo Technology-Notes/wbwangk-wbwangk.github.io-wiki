@@ -944,3 +944,7 @@ curation markets是信息流（朋友圈、微博、头条等）排序机制。
 ### [独家专访Cent.co创始人](http://www.moderntreatise.com/business/2017/9/6/exculusive-interview-with-the-founders-of-centco)
 
 ### [内容 信息与知识](http://m.jrj.com.cn/rss/xiaozhi/2017/2/26/22105400.shtml)
+
+### [Quora +以太坊= Cent.co〜这是我的想法](https://steemit.com/cryptocurrency/@kaigani/quora-ethereum-cent-co-here-are-my-thoughts)
+提出了cent还应考虑用户信誉,如让用户先回答低级问题
+
