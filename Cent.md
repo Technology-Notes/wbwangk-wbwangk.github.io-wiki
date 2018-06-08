@@ -426,4 +426,151 @@ Ether Value:	$558.24 (@ $604.73/ETH)
 preformatted text就是html的`<pre>`(?)，可定义预格式化的文本？在html中`<pre>`标签一般用来表示计算机的源代码，用于输入与html、js、css等冲突的特殊字符。
 
 
+尝试用Redis+以太坊实现Cent的基本功能。
+[Redis笔记](https://github.com/wbwangk/wbwangk.github.io/wiki/Redis)
+
+#### 悬赏(bounty)
+键：加号和5位base36（小写字母和数字），URI的组成部分，如`https://beta.cent.co/+jp7663`
+
+为了将来分库容易和提高性能，将悬赏拆成两个键存储，标题、描述和用户存在一个哈希中（+开头），到期时间、悬赏金额、用户、回答计数存放在另一个哈希中（++开头）。如：
+键为`+jp7663`的哈希和键为`++jp7663`的哈希。
+
+#### 回答(response)
+
+
+## Cent URL分析
+
+问题id（585）不知道啥时候取到前端的。
+
+#### 取问题
+https://beta.cent.co/data/question?questionIDs=585&_=1528447185442  
+```json
+{
+    "results": [
+        {
+            "id": 585, 
+            "user_id": 3312, 
+            "channel_id": null, 
+            "title": "What are the basics of mining crypto?", 
+            "body": "I want to know:
+
+1) Which cryptoassets are most profitable to mine and what kind of returns can I expect?
+
+2) What general equipment do I need to get started and what are the upfront and recurring costs?
+
+3) Have you tried any cloud mining platforms or mining pools and if so, how was your experience?
+
+4) Anything else you think would be helpful or resources you recommend.", 
+            "answer_count": 2, 
+            "create_time": "2018-06-08T07:17:18.000Z", 
+            "reveal_time": "2018-06-15T07:15:16.000Z", 
+            "status": "PUBL", 
+            "closed": 0
+        }
+    ]
+}
+
+```
+#### 取悬赏
+https://beta.cent.co/data/bounty?questionIDs=585&_=1528447185443  
+```json
+{"results":[{"id":585,"user_id":3312,"question_id":585,"amount":0.03,"create_time":"2018-06-08T07:15:16.000Z","status":"CONF"}]}
+```
+#### 取回答
+https://beta.cent.co/data/answer?questionID=585&_=1528447185444    
+```json
+{
+    "results": [
+        {
+            "id": 19356, 
+            "user_id": 176, 
+            "question_id": 585, 
+            "body": "1) [https://whattomine.com/](https://whattomine.com/)
+
+2) I would suggest ASIC miners if you have the money. They are more powerful for the price.
+
+3) Yes, not worth it.
+
+4) The main recommendation is to buy coins and hold. Most coins will go PoS. Do a little research. Mining will be obsolete. I sold my rig. Do the math.", 
+            "create_time": "2018-06-08T08:03:02.000Z", 
+            "reveal_time": null, 
+            "status": "PUBL", 
+            "comment_count": 0
+        }, 
+        {
+            "id": 19357, 
+            "user_id": 4708, 
+            "question_id": 585, 
+            "body": "Ahem, ahem, crypto miner here from _January 2018 _(with just one card, though), it's my time to shine!
+
+1) **The most profitable cryptos depend on the video card(s) or ASIC(s)** you plan to use as mining hardware. I can only speak of video cards as I have no experience with ASICs. If you want to know which coins are most profitable for a certain model of GPU, head over to **[https://whattomine.com/](https://whattomine.com/)**, put a \"1\" in the box next to the chosen GPU, click \"_calculate_\" and you'll obtain a list from most profitable to least profitable crypto. You can actually put the exact number of GPUs you have of each type (for ex. \"2\" 1070 and \"1\" 1050Ti, and so on). Whattomine offers the best estimates I could find around the net, but they are not exact since the website assumes you're running your GPU with suggested overclock settings and at a certain power consumption value. In my case (I mine with my single 1060 6GB) whattomine's estimates are always off by 1\\-2 cents, which is anyway a negligible error.
+
+_About the returns_... Erm... Well I don't have exactly good news. Between December and late January it was still VERY profitable to mine, while right now it's profitable but nowhere near the aforementioned period. I can still mine about 80 euro cents/day while spending 40 euro cents/day, but in January I was still mining for about 1.3 euro/day if my memory serves me right.
+
+2) **To mine you just need a PC**, not even a very powerful one, **and a relatively recent GPU** (I'd go with the **10 series**). If you already have those, no upfront cost for you. If you don't... Well, right now GPUs go for MSRP, RAM is terribly overpriced, the only stuff which costs reasonable money is a Ryzen CPU + motherboard. It's not a good time to build a PC for mining only.
+
+The recurring costs? **THE ELECTRICITY BILL**, my fellow internet stranger. Go take your utility bill from the closet, spread it open, take ALL the entries whose unit is \"**$/kWh**\" (or \"euro/kWh\", or \"₽/kWh\" etc etc depending on where you are), sum them together and write the result on a piece of paper. Now, **open Afterburner, set a maximum % value for the power consumption of the GPU, for example 60% (it won't go past that 60% while mining)**. **Find the maximum power in W that your GPU reaches in standard conditions** (it's typically written on the manufacturer's page, for example here it's 120W: [https://www.zotac.com/product/graphics_card/zotac-geforce-gtx-1060-amp-edition#spec](https://www.zotac.com/product/graphics_card/zotac-geforce-gtx-1060-amp-edition#spec)), and from that max value calculate the 60% of the max. That will be your GPU's power consumption while mining. **Now, for the rest of the PC, you have to estimate how much power all the other parts consume.** You may use **HWMonitor** to find out how much power your CPU consumes while idle (it's typically around 5\\-15W). For the other components a quick search like \"[https://www.bing.com/search?q=power+consumption+motherboard+ram&pc=MOZI&form=MOZLBR](https://www.bing.com/search?q=power+consumption+motherboard+ram&pc=MOZI&form=MOZLBR)\" will yield many pages with different estimates. Have a look around and **you'll come up with around 60\\-80W more or less** depending on your hardware and your optimism on the matter, hehe.
+
+**You now have the total power consumed by ALL your hardware (GPU, CPU, rest of the PC) in Watts**. Multiply by 24 hours (you'll mine all day, right?) and you'll have an energy value in Wh. Divide by 1000 and you'll obtain an energy value in kWh. Multiply this value by that value in $/kWh you wrote on paper and **you'll have your daily recurring energy cost in $**!
+
+3) I never tried any cloud mining platforms, they are typically **not profitable**: I mean, if I mine a cryptocurrency and I sell it to you, I'm certainly not going to make you pay _LESS_ than its current value, _a bit more_ for sure.
+
+If you're asking about experiences with mining pools, well if you're going to mine literally any coin that hasn't been JUST launched (and by \"JUST\" I mean no more than 48h ago) then **you'll have to join a pool to earn block rewards**. Going solo is totally unprofitable unless you have a 10+ GPU rig at least.
+
+4) If you're unsure where to start but want a quick buck right now while you learn the ropes in the next couple of weeks or so, **[https://www.nicehash.com/](https://www.nicehash.com/) **is a good place to start. Download their mining management program, it will download all the miner programs it needs and, once you benchmark your GPU(s) with its benchmarking feature, you'll be good to go. I still use it often even though I can edit miner config files just fine and I've joined many pools to mine ETH, ETC, ZCash, BTCP, since Nicehash pays in BTC. If you're going to use it, I suggest you also use their internal web wallet, the minimum payouts will be smaller (1 mBTC, which I reach in about 8\\-9 days with my card right now). Then you may send their payments to a Coinbase account for selling purposes with a 0 fee transaction.
+
+Another suggestion: **always download the mining programs either from Nicehash** (you can then copy them from the NH folder to whatever folder you desire, alter their config files and have them mine to any pool you decide) **or from their official GitHub pages**. There are many scammers out there, including those who distribute malware disguised as mining programs!
+
+**Coinfoundry is very newbie\\-friendly and has a guided configuration generator** for the most efficient miner of the coin you choose to mine; here is the page for their ETC pool: [https://coinfoundry.org/pool/etc](https://coinfoundry.org/pool/etc) .
+
+That's all, I guess. Have fun mining!", 
+            "create_time": "2018-06-08T08:03:03.000Z", 
+            "reveal_time": null, 
+            "status": "PUBL", 
+            "comment_count": 0
+        }
+    ]
+}
+```
+#### 取当前用户的回答
+https://beta.cent.co/data/answer?userID=6587&questionID=585&_=1528447185447  
+```json
+{"results":[]}
+```
+当前用户id是6587，没有回答。估计当前用户的回答会特殊处理或标记。
+
+#### 取当前用户的投票（排序）
+https://beta.cent.co/data/vote?questionID=585&userID=6587&_=1528447185448
+```json
+{
+    "results": [
+        {
+            "id": 348248, 
+            "user_id": 6587, 
+            "answer_id": 19357, 
+            "question_id": 585, 
+            "create_time": "2018-06-08T08:38:59.000Z", 
+            "score": 1, 
+            "weight": 1, 
+            "samples": 1
+        }, 
+        {
+            "id": 348249, 
+            "user_id": 6587, 
+            "answer_id": 19356, 
+            "question_id": 585, 
+            "create_time": "2018-06-08T08:38:59.000Z", 
+            "score": -1, 
+            "weight": 1, 
+            "samples": 1
+        }
+    ]
+}
+```
+
+#### 取所有投票（排序）
+https://beta.cent.co/data/vote?questionID=585&_=1528447185449  
+```json
+{"results":[{"answer_id":19356,"mag":2,"net":0},{"answer_id":19357,"mag":2,"net":0}]}
+```
 
