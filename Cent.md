@@ -526,6 +526,164 @@ PS: Sorry for low bounty now, if you want to see more research on passive income
         }, 
 (后略)
 ```
+还伴随有另一个请求：https://beta.cent.co/data/question?limit=0&_=1528511316499，这个请求的返回值的closed值都是1：
+```json
+{
+    "results": [
+        {
+            "id": 578, 
+            "user_id": 3312, 
+            "channel_id": null, 
+            "title": "Upload the best picture you've taken this week", 
+            "body": "Please upload your favorite picture that you've taken during the past week.  Original photos only \\- don't copy and paste from the web! 
+
+Shoutout to @Ninjatron for suggesting this bounty in a previous post.  ", 
+            "answer_count": 68, 
+            "create_time": "2018-06-04T20:28:05.000Z", 
+            "reveal_time": "2018-06-08T20:13:10.000Z", 
+            "status": "PUBL", 
+            "closed": 1
+        }, 
+        {
+            "id": 582, 
+            "user_id": 1528, 
+            "channel_id": null, 
+            "title": "Provide Feedback for DEX Aggregator & Portfolio Mgr", 
+            "body": "We just launched the beta of our DEX dashboard. Trade across multiple decentralized exchanges through a simple UI.
+
+Track and trade your ERC\\-20 portfolio right from your wallet (Metamask, Ledger, Trezor).
+
+Buy and sell across EtherDelta, KyberNetwork, Bancor, and Radar Relay. More DEXs coming soon!
+
+[https://totle.com](https://totle.com)
+
+I welcome all feedback. :) 
+
+Thanks!
+
+Jordan
+
+![: ](https://s3.amazonaws.com/cent-img-prod/0868a699-fb89-4ce7-a148-c045f5559b84.png)
+
+![: ](https://s3.amazonaws.com/cent-img-prod/635ce69d-52c9-47bd-9870-a10a6be1499d.gif)", 
+            "answer_count": 47, 
+            "create_time": "2018-06-05T19:31:53.000Z", 
+            "reveal_time": "2018-06-08T19:30:35.000Z", 
+            "status": "PUBL", 
+            "closed": 1
+        }, 
+        {
+            "id": 580, 
+            "user_id": 5789, 
+            "channel_id": null, 
+            "title": "Trivial Research: Provide update on one token from list - post to Discourse!", 
+            "body": "[https://forum.trivial.co/top](https://forum.trivial.co/top)
+
+Only those tokens:
+
+0x Protocol Token \\- Trivial
+
+EthLend Token \\- Trivial
+
+Maker \\- Trivial
+
+OmiseGo \\- Trivial
+
+WeTrust \\- Trivial
+
+Gnosis 
+
+You can use and you are encouraged to use data and news from [https://trivial.co/](https://trivial.co/) to find recent news and charts. 
+
+    Also if you want more data sources added - let me know ", 
+            "answer_count": 22, 
+            "create_time": "2018-06-05T16:29:49.000Z", 
+            "reveal_time": "2018-06-08T16:05:07.000Z", 
+            "status": "PUBL", 
+            "closed": 1
+        }, 
+        {
+            "id": 577, 
+            "user_id": 2274, 
+            "channel_id": null, 
+            "title": "What are some good place to donate ETH to", 
+            "body": "I'm gaining ETH on Cent and while I am hodling some I would like to donate some. 
+
+**Other than the foundation tip jar what are some good places to donate ETH to? **
+
+**I would like ETH addresses and links to websites if there is one. Bonus points for reasons why it is a good place to donate ETH to.**", 
+            "answer_count": 29, 
+            "create_time": "2018-06-04T15:13:30.000Z", 
+            "reveal_time": "2018-06-08T15:10:15.000Z", 
+            "status": "PUBL", 
+            "closed": 1
+        }, 
+        {
+            "id": 579, 
+            "user_id": 5789, 
+            "channel_id": null, 
+            "title": "Post research on forum forum.trivial.co", 
+            "body": "Post here: [https://forum.trivial.co/c/token/burning](https://forum.trivial.co/c/token/burning)
+
+In previous task I've asked about finding tokens with burn mechanism 
+
+Please create account and post those posts on trivial forum ", 
+            "answer_count": 11, 
+            "create_time": "2018-06-05T14:11:31.000Z", 
+            "reveal_time": "2018-06-06T14:05:46.000Z", 
+            "status": "PUBL", 
+            "closed": 1
+        }, 
+        {
+            "id": 573, 
+            "user_id": 4443, 
+            "channel_id": null, 
+            "title": "Who is the female equivalent of Han Solo?", 
+            "body": "Which female in fiction or real life best exemplifies the rogue with a heart of gold characteristics of Han Solo? Why?", 
+            "answer_count": 75, 
+            "create_time": "2018-06-02T17:09:13.000Z", 
+            "reveal_time": "2018-06-05T16:26:37.000Z", 
+            "status": "PUBL", 
+            "closed": 1
+        }, 
+        {
+            "id": 572, 
+            "user_id": 3312, 
+            "channel_id": null, 
+            "title": "What are the best cities around the world to work remotely?", 
+            "body": "For my well\\-traveled Centians \\- have you come across any cities that were particularly suited for working remotely?  I'm thinking an abundance of coffee shops, cheap accommodations, fast/free wifi, other remote workers, etc. ", 
+            "answer_count": 53, 
+            "create_time": "2018-06-01T17:59:47.000Z", 
+            "reveal_time": "2018-06-04T17:54:24.000Z", 
+            "status": "PUBL", 
+            "closed": 1
+        }, 
+        {
+            "id": 575, 
+            "user_id": 1390, 
+            "channel_id": null, 
+            "title": "Best of the Internet (BOTI) 5/27~6/2", 
+            "body": "![: ](https://s3.amazonaws.com/cent-img-prod/530fe864-cbeb-4237-b886-f058b4e0117d.gif)
+
+I'm about 12 hours out from hopping on a plane to Japan and I'm looking forward to seeing what the submissions will be for the best of the internet last week.
+
+As always I'm looking for the funniest, most important, thought provoking articles, podcasts, memes, Tweets, Grams, Youtube videos, apps, Dapps and anything else as long as you think it was the best thing on the internet last week, so **respond with \\*links\\*, \\*pics\\* and a short explanation of why you think it was the best thing on the internet last week. **
+
+Make sure you only share something that was published or posted last week **between May 26th and June 2nd.**
+
+Users who share something great (i.e. something that I never would have come across had it not been for their share) will get an extra $1 from me.
+
+Enjoy the last part of your weekend yall and start sharing the best of the internet last week.", 
+            "answer_count": 23, 
+            "create_time": "2018-06-03T11:50:32.000Z", 
+            "reveal_time": "2018-06-04T11:43:49.000Z", 
+            "status": "PUBL", 
+            "closed": 1
+        }
+    ]
+}
+
+```
 
 #### 取问题
 https://beta.cent.co/data/question?questionIDs=585&_=1528447185442  
