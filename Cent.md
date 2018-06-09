@@ -443,6 +443,89 @@ preformatted text就是html的`<pre>`(?)，可定义预格式化的文本？在h
 这个悬赏查询时只有两个回答。利用当前用户（userID=6587）进行了排序（投票1次）。下面请求应反映了当前用户的排序后状态。
 
 问题id（585）不知道啥时候取到前端的。
+#### 取新问题清单
+https://beta.cent.co/data/question?sort=new&_=1528511316496  
+```json
+{
+    "results": [
+        {
+            "id": 587, 
+            "user_id": 4340, 
+            "channel_id": null, 
+            "title": "Earn and spend cryptocurrency IRL with Wirex", 
+            "body": "![: ](https://s3.amazonaws.com/cent-img-prod/9cc641b4-f8ea-4f96-bbe9-6a3fff910843.png)
+
+Wirex offers a **free** Visa card you can use to pay online and offline with fiat and/or cryptocurrency. 
+
+With Wirex you get 3 wallets – Bitcoin, Litecoin and Fiat bound on your Visa card. You can buy, sell and exchange currencies in the app with **minimal to zero fees**! Ripple and Ethereum wallets to be added in June. You can also send cryptocurrencies to another Wirex account with **no mining fees**!
+
+What I want you to do:
+
+- Follow my affiliate link: **[https://links.wirexapp.com/MpmB/4bTIQcutbK?action=affiliate-register&code=JySWRwVEP0Ocuvsb3juP2g](https://links.wirexapp.com/MpmB/4bTIQcutbK?action=affiliate-register&code=JySWRwVEP0Ocuvsb3juP2g)**, register and benefit from earning and spending cryptocurrency.
+
+- Post a screenshot of your registration and card order confirmation (the Visa card is **free – no shipping costs either!**).
+
+- Use you own affiliate link to invite your friends, spread the word and help the mass adoption of cryptocurrencies.
+
+**What you get: **
+
+- A bounty of 0.3 ETH.
+
+- CryptoBack – use the free physical Wirex Visa card in stores and get 0,5% back in Bitcoin.
+
+- 10% in Bitcoin for every gross fees on your referrals.
+
+	
+
+	
+
+**	You can pay with cryptocurrency for your coffee now. There are no excuses anymore!**", 
+            "answer_count": 21, 
+            "create_time": "2018-06-08T16:13:24.000Z", 
+            "reveal_time": "2018-06-15T15:56:52.000Z", 
+            "status": "PUBL", 
+            "closed": 0
+        }, 
+        {
+            "id": 586, 
+            "user_id": 5789, 
+            "channel_id": null, 
+            "title": "Provide feedback on Medium and Twitter.  I will be writing and spreading the cent!", 
+            "body": "Article about incentivisation!  
+
+[https://twitter.com/kacperwikiel/status/1005106293516984320](https://twitter.com/kacperwikiel/status/1005106293516984320)
+
+[https://medium.com/@kacperwikiel/incentive-designs-30e88e1d1e91](https://medium.com/@kacperwikiel/incentive-designs-30e88e1d1e91)
+
+PS: Sorry for low bounty now, if you want to see more research on passive income/ basic income / attention economy please send some tips here: 0x2577a8539cb2194acd72f035dbb691ce5f406d3f", 
+            "answer_count": 0, 
+            "create_time": "2018-06-08T15:19:05.000Z", 
+            "reveal_time": "2018-06-11T15:19:05.000Z", 
+            "status": "PRIV", 
+            "closed": 0
+        }, 
+        {
+            "id": 585, 
+            "user_id": 3312, 
+            "channel_id": null, 
+            "title": "What are the basics of mining crypto?", 
+            "body": "I want to know:
+
+1) Which cryptoassets are most profitable to mine and what kind of returns can I expect?
+
+2) What general equipment do I need to get started and what are the upfront and recurring costs?
+
+3) Have you tried any cloud mining platforms or mining pools and if so, how was your experience?
+
+4) Anything else you think would be helpful or resources you recommend.", 
+            "answer_count": 19, 
+            "create_time": "2018-06-08T07:17:18.000Z", 
+            "reveal_time": "2018-06-15T07:15:16.000Z", 
+            "status": "PUBL", 
+            "closed": 0
+        }, 
+(后略)
+```
 
 #### 取问题
 https://beta.cent.co/data/question?questionIDs=585&_=1528447185442  
