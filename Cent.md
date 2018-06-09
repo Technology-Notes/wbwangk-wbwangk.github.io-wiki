@@ -797,6 +797,115 @@ https://beta.cent.co/data/answer?userID=6587&questionID=578&_=1528523075210
 ```
 当前用户id是6587，没有回答。估计当前用户的回答会特殊处理或标记。
 
+#### 取所有投票（排序）
+https://beta.cent.co/data/vote?questionID=585&_=1528523075231  
+```json
+{
+    "results": [
+        {
+            "answer_id": 19356, 
+            "mag": 26, 
+            "net": -4
+        }, 
+        {
+            "answer_id": 19357, 
+            "mag": 31, 
+            "net": 8
+        }, 
+        {
+            "answer_id": 19358, 
+            "mag": 29, 
+            "net": -1
+        }, 
+        {
+            "answer_id": 19359, 
+            "mag": 30, 
+            "net": -6
+        }, 
+        {
+            "answer_id": 19360, 
+            "mag": 28, 
+            "net": 2
+        }, 
+        {
+            "answer_id": 19361, 
+            "mag": 26, 
+            "net": -4
+        }, 
+        {
+            "answer_id": 19362, 
+            "mag": 27, 
+            "net": 4
+        }, 
+        {
+            "answer_id": 19364, 
+            "mag": 26, 
+            "net": 6
+        }, 
+        {
+            "answer_id": 19371, 
+            "mag": 22, 
+            "net": -0.6667
+        }, 
+        {
+            "answer_id": 19376, 
+            "mag": 22, 
+            "net": 2
+        }, 
+        {
+            "answer_id": 19377, 
+            "mag": 20, 
+            "net": 6.6666
+        }, 
+        {
+            "answer_id": 19378, 
+            "mag": 16, 
+            "net": -8
+        }, 
+        {
+            "answer_id": 19380, 
+            "mag": 17, 
+            "net": -3
+        }, 
+        {
+            "answer_id": 19384, 
+            "mag": 14, 
+            "net": -8
+        }, 
+        {
+            "answer_id": 19393, 
+            "mag": 10, 
+            "net": -2
+        }, 
+        {
+            "answer_id": 19394, 
+            "mag": 10, 
+            "net": 0
+        }, 
+        {
+            "answer_id": 19398, 
+            "mag": 7, 
+            "net": -5
+        }, 
+        {
+            "answer_id": 19406, 
+            "mag": 7, 
+            "net": 7
+        }, 
+        {
+            "answer_id": 19407, 
+            "mag": 5, 
+            "net": -1
+        }, 
+        {
+            "answer_id": 19408, 
+            "mag": 3, 
+            "net": -3
+        }
+    ]
+}
+```
+
 #### 取当前用户的投票（排序）
 https://beta.cent.co/data/vote?questionID=585&userID=6587&_=1528447185448
 ```json
@@ -824,12 +933,6 @@ https://beta.cent.co/data/vote?questionID=585&userID=6587&_=1528447185448
         }
     ]
 }
-```
-
-#### 取所有投票（排序）
-https://beta.cent.co/data/vote?questionID=585&_=1528447185449  
-```json
-{"results":[{"answer_id":19356,"mag":2,"net":0},{"answer_id":19357,"mag":2,"net":0}]}
 ```
 
 #### 取评论
