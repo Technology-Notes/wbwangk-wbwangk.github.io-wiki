@@ -33,6 +33,19 @@ redis不用读写分离，每个请求都是单线程，为什么要进行读写
 排序集合：集合上增加了一个排序字段score，是可重复的值，代表顺序
 哈希：配成对儿的字符串(field/value)
 
+### 自增计数器
+[参考](https://blog.csdn.net/alexhendar/article/details/48315935)  
+```
+redis> SET page_view 20
+OK
+
+redis> INCR page_view
+(integer) 21
+
+redis> GET page_view    # 数字值在 Redis 中以字符串的形式保存
+"21"
+```
+
 ### Redis体验
 #### 安装
 ubuntu16.4(vm：u1601)：
