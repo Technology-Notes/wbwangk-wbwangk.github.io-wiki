@@ -776,9 +776,24 @@ That's all, I guess. Have fun mining!",
 }
 ```
 #### 取当前用户的回答
-https://beta.cent.co/data/answer?userID=6587&questionID=585&_=1528447185447  
+https://beta.cent.co/data/answer?userID=6587&questionID=578&_=1528523075210  
 ```json
-{"results":[]}
+{
+    "results": [
+        {
+            "id": 19325, 
+            "user_id": 6587, 
+            "question_id": 578, 
+            "body": "taishan china.
+
+![: ](https://s3.amazonaws.com/cent-img-prod/dbbc0dda-a320-487c-a9c9-3dae8d1c5ad0.png)", 
+            "create_time": "2018-06-07T06:59:30.000Z", 
+            "reveal_time": null, 
+            "status": "PUBL", 
+            "comment_count": 0
+        }
+    ]
+}
 ```
 当前用户id是6587，没有回答。估计当前用户的回答会特殊处理或标记。
 
