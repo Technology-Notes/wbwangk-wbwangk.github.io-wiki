@@ -971,3 +971,23 @@ https://beta.cent.co/data/comment?answerID=19060&_=1528511316488
 ```json
 {"results":[{"id":1313,"handle":"kvmmc"},{"id":1416,"handle":"Jasonmiller2134"}]}
 ```
+#### 取用户评论(comment)
+https://beta.cent.co/data/answer?userID=6587&questionID=578&_=1528524564944  
+```json
+{
+    "results": [
+        {
+            "id": 19325, 
+            "user_id": 6587, 
+            "question_id": 578, 
+            "body": "taishan china.
+
+![: ](https://s3.amazonaws.com/cent-img-prod/dbbc0dda-a320-487c-a9c9-3dae8d1c5ad0.png)", 
+            "create_time": "2018-06-07T06:59:30.000Z", 
+            "reveal_time": null, 
+            "status": "PUBL", 
+            "comment_count": 0
+        }
+    ]
+}
+```
