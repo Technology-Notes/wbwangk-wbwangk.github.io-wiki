@@ -972,21 +972,33 @@ https://beta.cent.co/data/comment?answerID=19060&_=1528511316488
 {"results":[{"id":1313,"handle":"kvmmc"},{"id":1416,"handle":"Jasonmiller2134"}]}
 ```
 #### 取用户评论(comment)
-https://beta.cent.co/data/answer?userID=6587&questionID=578&_=1528524564944  
+https://beta.cent.co/data/comment?answerID=19060&_=1528524564950  
 ```json
 {
     "results": [
         {
-            "id": 19325, 
-            "user_id": 6587, 
-            "question_id": 578, 
-            "body": "taishan china.
-
-![: ](https://s3.amazonaws.com/cent-img-prod/dbbc0dda-a320-487c-a9c9-3dae8d1c5ad0.png)", 
-            "create_time": "2018-06-07T06:59:30.000Z", 
-            "reveal_time": null, 
-            "status": "PUBL", 
-            "comment_count": 0
+            "id": 3239, 
+            "user_id": 1416, 
+            "answer_id": 19060, 
+            "body": "Please excuse my ignorance, but what is it a monument too/symbolize.", 
+            "create_time": "2018-06-08T16:51:22.000Z", 
+            "status": "PUBL"
+        }, 
+        {
+            "id": 3233, 
+            "user_id": 1313, 
+            "answer_id": 19060, 
+            "body": "It's in Delhi, our iconic monument the 'INDIA GATE'", 
+            "create_time": "2018-06-08T08:55:24.000Z", 
+            "status": "PUBL"
+        }, 
+        {
+            "id": 3213, 
+            "user_id": 1416, 
+            "answer_id": 19060, 
+            "body": "Gorgeous! Where is this??", 
+            "create_time": "2018-06-06T23:56:05.000Z", 
+            "status": "PUBL"
         }
     ]
 }
