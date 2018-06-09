@@ -576,3 +576,39 @@ https://beta.cent.co/data/vote?questionID=585&_=1528447185449
 {"results":[{"answer_id":19356,"mag":2,"net":0},{"answer_id":19357,"mag":2,"net":0}]}
 ```
 
+#### 取评论
+https://beta.cent.co/data/comment?answerID=19060&_=1528511316488  
+```json
+{
+    "results": [
+        {
+            "id": 3239, 
+            "user_id": 1416, 
+            "answer_id": 19060, 
+            "body": "Please excuse my ignorance, but what is it a monument too/symbolize.", 
+            "create_time": "2018-06-08T16:51:22.000Z", 
+            "status": "PUBL"
+        }, 
+        {
+            "id": 3233, 
+            "user_id": 1313, 
+            "answer_id": 19060, 
+            "body": "It's in Delhi, our iconic monument the 'INDIA GATE'", 
+            "create_time": "2018-06-08T08:55:24.000Z", 
+            "status": "PUBL"
+        }, 
+        {
+            "id": 3213, 
+            "user_id": 1416, 
+            "answer_id": 19060, 
+            "body": "Gorgeous! Where is this??", 
+            "create_time": "2018-06-06T23:56:05.000Z", 
+            "status": "PUBL"
+        }
+    ]
+}
+```
+还有一个伴随的请求：https://beta.cent.co/data/user/handle?userIDs=1313%2C1416&_=1528511316489  
+```json
+{"results":[{"id":1313,"handle":"kvmmc"},{"id":1416,"handle":"Jasonmiller2134"}]}
+```
