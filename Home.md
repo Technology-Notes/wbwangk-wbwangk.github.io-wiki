@@ -948,3 +948,5 @@ curation markets是信息流（朋友圈、微博、头条等）排序机制。
 ### [Quora +以太坊= Cent.co〜这是我的想法](https://steemit.com/cryptocurrency/@kaigani/quora-ethereum-cent-co-here-are-my-thoughts)
 提出了cent还应考虑用户信誉,如让用户先回答低级问题
 
+### [群体智慧,算法和预测市场 （上）](https://www.jianshu.com/p/09d21432d9d4)
+“靠谱度加权”（believability-weighted）
