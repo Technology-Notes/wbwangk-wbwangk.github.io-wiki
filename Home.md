@@ -950,3 +950,7 @@ curation markets是信息流（朋友圈、微博、头条等）排序机制。
 
 ### [群体智慧,算法和预测市场 （上）](https://www.jianshu.com/p/09d21432d9d4)
 “靠谱度加权”（believability-weighted）
+
+### [Merculet深度分析--注意力经济与首席增长官](https://www.jianshu.com/p/4bab53a9afa0)
+在Thomas H.Davenport《Attention Economy (注意力经济)》一书中，给出过关于注意力的定义：注意力是对某条特定信息的精神集中。  
+
