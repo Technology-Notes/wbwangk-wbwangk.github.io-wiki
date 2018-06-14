@@ -1,7 +1,6 @@
 
 性能极高 – Redis能读的速度是110000次/s,写的速度是81000次/s 。
 
-[参考](https://blog.csdn.net/mrleeapple/article/details/78620220)  
 ####  业务使用方式
 hash sets: 关注列表, 粉丝列表, 双向关注列表(key-value(field), 排序)
 
@@ -163,3 +162,4 @@ zadd usr.index.type 0 1:3
 冒号前面的是type，后面的是uid。  
 
 
+参考：[Redis 在新浪微博中的应用](https://blog.csdn.net/mrleeapple/article/details/78620220)  
