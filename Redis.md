@@ -348,4 +348,13 @@ zrangebylex usr.index.type [1: (1;
 
 分号（0x3B）在ascii码表中紧挨在冒号（0x3A）后面，所以上面使用了分号表示。也可以直接写成`[1: (1\0x3B`，只是不更好理解。
 
+#### score当索引
+还可以把日期转化为数字，放在分数中充当索引用，如：
+```
+zadd question_index1 20180608153053 "question_335" 
+zrange question_index1 20180608153052 -1 withscores
+1) "question_335"
+2) "20180608153053"
+```
+
 参考：[Redis 在新浪微博中的应用](https://blog.csdn.net/mrleeapple/article/details/78620220)  
