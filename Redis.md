@@ -33,7 +33,7 @@ redis不用读写分离，每个请求都是单线程，为什么要进行读写
 哈希：配成对儿的字符串(field/value)
 
 ### 自增计数器
-[参考](https://blog.csdn.net/alexhendar/article/details/48315935)  
+[参考：Redis自增实现计数](https://blog.csdn.net/alexhendar/article/details/48315935)  
 ```
 redis> SET page_view 20
 OK
