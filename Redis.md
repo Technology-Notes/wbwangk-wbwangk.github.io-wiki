@@ -23,14 +23,193 @@ redis不用读写分离，每个请求都是单线程，为什么要进行读写
 对于非范围唯一索引，我们可以简单的把索引也存成KV对，v保存主key即可，而范围检索，或者非唯一索引，则要使用redis的zset来实现。
 
 
-### Redis基础
-[redis官方网站中文版](http://www.redis.cn/)  
-#### [数据类型](http://www.redis.cn/topics/data-types-intro.html)
+### [Redis数据类型介绍](http://www.redis.cn/topics/data-types-intro.html)
 字符串：二进制安全，可以包含任意数据类型，如图片、串行化对象
 列表：类似字符串数组（链表），按插入顺序排序
 集合：无序字符串合集，重复元素自动合并
 排序集合：集合上增加了一个排序字段score，是可重复的值，代表顺序
 哈希：配成对儿的字符串(field/value)
+
+原文中关于有序集合部分是英文的，下面是其中文翻译：
+
+#### Redis有序集合
+
+有序集合是一种类似于Set和Hash之间的混合的数据类型。与集合类似，有序集合由唯一的非重复字符串元素组成，因此在某种意义上，有序集合也是集合。
+
+然而，虽然集合中的元素没有排序，但有序集合中的每个元素都与称为*分数（score）*的浮点数值相关联（这就是为什么这个类型也与哈希类似，因为每个元素都映射到一个值）。
+
+而且，有序集合中的元素按*顺序排列*（因此它们不按请求排序，排序是用于表示有序集合的数据结构的特性）。他们根据以下规则进行排序：
+
+- 如果A和B是两个具有不同分数的元素，如果A.score> B.score，则A> B。
+- 如果A和B具有完全相同的分数，如果A字符串按字典顺序大于B字符串，则A> B。A和B字符串不能相等，因为已排序的集合仅允许唯一的元素。
+
+让我们从一个简单的例子开始，添加一些黑客名称作为有序集合的元素，其出生年份为“分数”。
+
+```
+> zadd hackers 1940 "Alan Kay"
+(integer) 1
+> zadd hackers 1957 "Sophie Wilson"
+(integer 1)
+> zadd hackers 1953 "Richard Stallman"
+(integer) 1
+> zadd hackers 1949 "Anita Borg"
+(integer) 1
+> zadd hackers 1965 "Yukihiro Matsumoto"
+(integer) 1
+> zadd hackers 1914 "Hedy Lamarr"
+(integer) 1
+> zadd hackers 1916 "Claude Shannon"
+(integer) 1
+> zadd hackers 1969 "Linus Torvalds"
+(integer) 1
+> zadd hackers 1912 "Alan Turing"
+(integer) 1
+```
+
+正如你所看到的`ZADD`是类似的`SADD`，但需要一个额外的参数（放置在要添加的元素之前），这是分数。`ZADD`也是可变的，所以你可以自由地指定多个分值对，即使这在上面的例子中没有使用。
+
+对于有序集合，返回按出生年份排序的黑客列表是微不足道的，因为实际上*他们已经被排序*。
+
+实现注意事项：有序集合是通过包含跳过列表和哈希列表的双重数据结构实现的，因此每次添加元素Redis都会执行O(log(N))操作。这很好，但是当我们要求排序元素时，Redis根本不需要做任何工作，它已经全部排序：
+
+```
+> zrange hackers 0 -1
+1) "Alan Turing"
+2) "Hedy Lamarr"
+3) "Claude Shannon"
+4) "Alan Kay"
+5) "Anita Borg"
+6) "Richard Stallman"
+7) "Sophie Wilson"
+8) "Yukihiro Matsumoto"
+9) "Linus Torvalds"
+```
+
+注意：0和-1意味着从元素索引0到最后一个元素（这里的-1的作用就像它在`LRANGE`命令中的作用一样）。
+
+如果我想反序排列他们，从年轻到最老呢？使用[ZREVRANGE](http://www.redis.cn/commands/zrevrange)而不是[ZRANGE](http://www.redis.cn/commands/zrange)：
+
+```
+> zrevrange hackers 0 -1
+1) "Linus Torvalds"
+2) "Yukihiro Matsumoto"
+3) "Sophie Wilson"
+4) "Richard Stallman"
+5) "Anita Borg"
+6) "Alan Kay"
+7) "Claude Shannon"
+8) "Hedy Lamarr"
+9) "Alan Turing"
+```
+
+使用`WITHSCORES`参数还可以返回分数：
+
+```
+> zrange hackers 0 -1 withscores
+1) "Alan Turing"
+2) "1912"
+3) "Hedy Lamarr"
+4) "1914"
+5) "Claude Shannon"
+6) "1916"
+7) "Alan Kay"
+8) "1940"
+9) "Anita Borg"
+10) "1949"
+11) "Richard Stallman"
+12) "1953"
+13) "Sophie Wilson"
+14) "1957"
+15) "Yukihiro Matsumoto"
+16) "1965"
+17) "Linus Torvalds"
+18) "1969"
+```
+
+#### 操控范围
+
+有序集合比这更强大，它可以操控范围。让我们得到所有1950年以前出生的人。我们使用该`ZRANGEBYSCORE`命令来执行此操作：
+
+```
+> zrangebyscore hackers -inf 1950
+1) "Alan Turing"
+2) "Hedy Lamarr"
+3) "Claude Shannon"
+4) "Alan Kay"
+5) "Anita Borg"
+```
+
+我们要求Redis以负无穷大到1950年的分数返回所有元素（包括两个极值）。
+
+也可以按范围删除元素。让我们从有序集合中删除1940年至1960年间出生的所有黑客：
+
+```
+> zremrangebyscore hackers 1940 1960
+(integer) 4
+```
+
+`ZREMRANGEBYSCORE` 可能不是最好的命令名称，但它可能非常有用，并返回已删除元素的数量。
+
+为有序集合元素定义的另一个非常有用的操作是get-rank。可以询问一组元素中元素的位置。
+
+```
+> zrank hackers "Anita Borg"
+(integer) 4
+```
+
+`ZREVRANK`命令按降序获得排名。
+
+#### 字典分数
+
+使用Redis 2.8的最新版本，引入了一项新功能，允许按照字典顺序获取范围，假定有序集合中的元素都以相同的分数插入（元素与C语言库的 `memcmp`函数进行比较，因此可以保证没有排序，并且每个Redis实例将以相同的输出回复）。（C库函数memcmp是比较内存区域buf1和buf2的前count个字节。该函数是按字节比较的。）
+
+字典化范围操作主命令是`ZRANGEBYLEX`、`ZREVRANGEBYLEX`、`ZREMRANGEBYLEX`和`ZLEXCOUNT`。
+
+例如，让我们再次添加我们的著名黑客列表，但是这次对所有元素使用零分数：
+
+```
+> zadd hackers 0 "Alan Kay" 0 "Sophie Wilson" 0 "Richard Stallman" 0
+  "Anita Borg" 0 "Yukihiro Matsumoto" 0 "Hedy Lamarr" 0 "Claude Shannon"
+  0 "Linus Torvalds" 0 "Alan Turing"
+```
+
+根据有序集合排序规则，它们已经按字典顺序排序：
+
+```
+> zrange hackers 0 -1
+1) "Alan Kay"
+2) "Alan Turing"
+3) "Anita Borg"
+4) "Claude Shannon"
+5) "Hedy Lamarr"
+6) "Linus Torvalds"
+7) "Richard Stallman"
+8) "Sophie Wilson"
+9) "Yukihiro Matsumoto"
+```
+
+使用`ZRANGEBYLEX`我们可以要求词典范围：
+
+```
+> zrangebylex hackers [B [P
+1) "Claude Shannon"
+2) "Hedy Lamarr"
+3) "Linus Torvalds"
+```
+
+范围可以是包含的或不包含的（取决于第一个字符），也可以用字符串`+`和`-`字符串分别指定字符串无限大和负无限大。有关更多信息，请参阅文档。
+
+此功能非常重要，因为它使我们能够使用有序集作为通用索引。例如，如果要通过128位无符号整数参数为元素编制索引，则只需将元素添加到具有相同分数（例如0）的有序集合中，但是将8个字节的前缀组成**高位优先的128位数字**。由于高位优先的数字按字典顺序排列（按原始字节顺序排列）实际上也是以数字顺序排列的，因此您可以在128位空间中请求范围，并获取元素值以舍弃前缀。
+
+如果您想在更严格的演示环境中查看该功能，请查看[Redis自动填充演示](http://autocomplete.redis.io/)。
+
+#### 更新分数：排行榜
+
+在切换到下一个主题之前，最后一个关于有序集合的提示。有序集合的分数可以随时更新。对已包括在有序集合中的元素调用`ZADD`命令，将会以O(log(N )) 时间复杂度更新其分数（和位置）。因此，当有大量更新时，有序集合很适合。
+
+由于这个特点，一个常见的用例就是排行榜。典型的应用程序是Facebook游戏，您可以将按照用户的最高分数和等级做组合，以显示前N位用户，以及用户在排行榜中的排名（例如“你是＃4932最好成绩“）。
+
+
 
 ### 自增计数器
 [参考：Redis自增实现计数](https://blog.csdn.net/alexhendar/article/details/48315935)  
