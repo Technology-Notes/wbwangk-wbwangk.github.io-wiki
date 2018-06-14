@@ -23,7 +23,7 @@ redis不用读写分离，每个请求都是单线程，为什么要进行读写
 对于非范围唯一索引，我们可以简单的把索引也存成KV对，v保存主key即可，而范围检索，或者非唯一索引，则要使用redis的zset来实现。
 
 
-### [Redis数据类型介绍](http://www.redis.cn/topics/data-types-intro.html)
+### [Redis数据类型介绍(重点是有序集合)](http://www.redis.cn/topics/data-types-intro.html)
 字符串：二进制安全，可以包含任意数据类型，如图片、串行化对象
 列表：类似字符串数组（链表），按插入顺序排序
 集合：无序字符串合集，重复元素自动合并
