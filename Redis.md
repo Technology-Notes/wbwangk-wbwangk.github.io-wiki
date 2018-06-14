@@ -20,9 +20,9 @@ lists(queue): push/sub提醒,...
 新浪微博响应时间超时目前设置为5s；（返回很慢的记录key，需记录下来分析，慢日志）；
 redis不用读写分离，每个请求都是单线程，为什么要进行读写分离。
 
-### [redis索引的设计](https://blog.csdn.net/qq_16414307/article/details/50505084)  
-而范围检索，或者非唯一索引，则要使用redis 的 zset来实现。
-9a,2
+### [redis索引的设计](https://blog.csdn.net/qq_16414307/article/details/50505084)
+对于非范围唯一索引，我们可以简单的把索引也存成KV对，v保存主key即可，而范围检索，或者非唯一索引，则要使用redis的zset来实现。
+
 
 ### Redis基础
 [redis官方网站中文版](http://www.redis.cn/)  
@@ -120,7 +120,7 @@ redis 127.0.0.1:6379> ZADD key5 1 redis
 (integer) 1
 redis 127.0.0.1:6379> ZADD key5 3 mysql
 (integer) 0
-redis 127.0.0.1:6379> ZADD key5 4 mysql
+redis 127.0.0.1:6379> ZADD key5 4 mysql    (将分数由3改成了4)
 (integer) 0
 127.0.0.1:6379> ZRANGE key5 0 10 WITHSCORES
 1) "redis"
@@ -147,3 +147,19 @@ redis 127.0.0.1:6379> PFCOUNT runoobkey
 
 (integer) 3
 ```
+#### 索引
+增加了两个哈希，key是`usr:1`和`usr:2`：
+```
+hmset usr:1 uid 1 name aaa credit 10 type 0
+hmset usr:2 uid 2 name bbb credit 20 type 1
+hmset usr:3 uid 3 name ccc credit 25 type 1
+```
+如何快速检索出type是1的用户？办法是利用redis的有序集合（zset）结构，手工维护专门的索引：  
+```
+zadd usr.index.type 0 0:1
+zadd usr.index.type 0 1:2
+zadd usr.index.type 0 1:3
+```
+冒号前面的是type，后面的是uid。  
+
+
