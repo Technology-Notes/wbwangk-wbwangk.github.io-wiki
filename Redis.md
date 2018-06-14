@@ -339,6 +339,12 @@ zadd usr.index.type 0 1:2
 zadd usr.index.type 0 1:3
 ```
 冒号前面的是type，后面的是uid。  
+```
+zrangebylex usr.index.type [1: (1;
+1) "1:2"
+2) "1:3"
+```
+方括号表示`包含`，括号表示`不包含`。而中间的空格隔开了两个范围参数，表示按字母顺序大于（可能包含）第一个参数，小于（可能包含）第二个参数。
 
 
 参考：[Redis 在新浪微博中的应用](https://blog.csdn.net/mrleeapple/article/details/78620220)  
