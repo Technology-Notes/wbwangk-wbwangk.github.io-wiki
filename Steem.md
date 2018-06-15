@@ -8,4 +8,4 @@
 5. [Steemtools.com](https://link.zhihu.com/?target=http%3A//steemtools.com/) — steem的一系列工具  
 
 ### steem白皮书
-https://github.com/tongxiaofeng/steem-cn/blob/master/SteemWhitePaper-CN.md  
+[白皮书](https://github.com/tongxiaofeng/steem-cn/blob/master/SteemWhitePaper-CN.md)  
