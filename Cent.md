@@ -1118,3 +1118,77 @@ That's all, I guess. Have fun mining!",
     ]
 }
 ```
+
+#### 取赚钱记录(transaction)
+https://beta.cent.co/data/transaction?userID=&limit=0&_=1529388116057  
+```json
+{
+    "results": [
+        {
+            "id": 40274, 
+            "user_id": 6587, 
+            "amount": 0.000014864362690449, 
+            "currency": "ETH", 
+            "create_time": "2018-06-15T15:57:02.000Z", 
+            "bounty_id": null, 
+            "payout_id": null, 
+            "reward_id": null, 
+            "subsidy_id": 18879, 
+            "status": "POST", 
+            "is_credit": 1, 
+            "deposit_id": null, 
+            "tip_id": null, 
+            "parent_txn_id": null
+        }, 
+        {
+            "id": 40092, 
+            "user_id": 6587, 
+            "amount": 0.000010321100917431, 
+            "currency": "ETH", 
+            "create_time": "2018-06-15T07:15:18.000Z", 
+            "bounty_id": null, 
+            "payout_id": null, 
+            "reward_id": null, 
+            "subsidy_id": 18728, 
+            "status": "POST", 
+            "is_credit": 1, 
+            "deposit_id": null, 
+            "tip_id": null, 
+            "parent_txn_id": null
+        }, 
+        {
+            "id": 37514, 
+            "user_id": 6587, 
+            "amount": 2.95639320029e-7, 
+            "currency": "ETH", 
+            "create_time": "2018-06-08T15:23:46.000Z", 
+            "bounty_id": null, 
+            "payout_id": null, 
+            "reward_id": null, 
+            "subsidy_id": 17183, 
+            "status": "POST", 
+            "is_credit": 1, 
+            "deposit_id": null, 
+            "tip_id": null, 
+            "parent_txn_id": null
+        }
+    ]
+}
+```
+以上只截取了前两条和最后一条，中间的省略了。屏幕截图：  
+[(No Title)](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/cent_transaction2.jpg)  
+#### 取用户余额（balance）
+https://beta.cent.co/data/balance?_=1529388116066  
+```json
+{"results":[{"user_id":6587,"total":0.000077344934582515}]}
+```
+用户余额显示在上面截图的赚钱记录的上面。   
+
+#### 取用户统计（stats）
+https://beta.cent.co/data/user/stats?_=1529388116065  
+```json
+{"results":{"answers":0,"votes":6,"rewards":null,"subsidies":0.000067014344661172}}
+```
+屏幕截图：  
+[(No Title)](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/cent_stats.jpg)  
+返回值是以太币，截图上显示的是美元（经过转换）   
