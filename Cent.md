@@ -1176,7 +1176,7 @@ https://beta.cent.co/data/transaction?userID=&limit=0&_=1529388116057
 }
 ```
 以上只截取了前两条和最后一条，中间的省略了。屏幕截图：  
-[(No Title)](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/cent_transaction2.jpg)  
+![(No Title)](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/cent_transaction2.jpg)  
 #### 取用户余额（balance）
 https://beta.cent.co/data/balance?_=1529388116066  
 ```json
@@ -1190,5 +1190,5 @@ https://beta.cent.co/data/user/stats?_=1529388116065
 {"results":{"answers":0,"votes":6,"rewards":null,"subsidies":0.000067014344661172}}
 ```
 屏幕截图：  
-[(No Title)](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/cent_stats.jpg)  
+![(No Title)](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/cent_stats.jpg)  
 返回值是以太币，截图上显示的是美元（经过转换）   
