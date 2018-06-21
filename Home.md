@@ -914,6 +914,7 @@ curation markets是信息流（朋友圈、微博、头条等）排序机制。
 再一篇：[Cent，一个去中心化的知乎，但它的野心远不止于“问答”](https://underplay.me/orange/p/32)  
 
 ### [专门针对非技术人员的“智能合约”科普](https://mp.weixin.qq.com/s/CoUWeUVf2smgRDEvJgWYjA)
+![](https://mmbiz.qpic.cn/mmbiz_png/fDdiawLicfiaa1MqPaF2wib22308ibUflXK5mP8ibTzGRdVqCW91eLgrj3ND9cxiaKHTpUiaydupnibvkcib3gsUnFFaibr3Q/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1)
 
 ### [央视《对话》：区块链是互联网的第二个时代](http://www.8btc.com/cctv-dialogue-blockchain)
 “区块链是互联网的第二个时代”  
