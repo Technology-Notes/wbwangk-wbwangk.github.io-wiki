@@ -980,3 +980,6 @@ Steem选择奖励那些对一篇文章的全部推进（promotion）做出最大
 
 ### steem白皮书的一个中文翻译([tongxiaofeng/steem-cn]https://github.com/tongxiaofeng/steem-cn)
 翻译的质量一般，但完整。[这个链接](file:///E:/chrome-downloads/steemwhitepaper-cn-v2%20(1).pdf)是那个完整翻译。
+
+### [EOS 代币模型和资源使用](https://biweilai.com/posts/4888)
+EOS的代币模型比以太币复杂多了。EOS将资源（带宽和磁盘、CPU、内存）进行了细分，并用代币标识。有点像多人合资买房，然后根据股份确定房子如何分享。
