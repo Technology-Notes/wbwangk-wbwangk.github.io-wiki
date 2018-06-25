@@ -979,4 +979,4 @@ Steem选择奖励那些对一篇文章的全部推进（promotion）做出最大
 购买了债务的人，其一定数额的利润可得到保证，但无法分享随社区成长所带来的利润实现。
 
 ### steem白皮书的一个中文翻译([tongxiaofeng/steem-cn]https://github.com/tongxiaofeng/steem-cn)
-翻译的质量一般
+翻译的质量一般，但完整。[这个链接](file:///E:/chrome-downloads/steemwhitepaper-cn-v2%20(1).pdf)是那个完整翻译。
