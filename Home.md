@@ -1002,3 +1002,8 @@ EOS模仿了邮件系统，邮件写链。
 ### [走进EOS的存储系统](http://www.8btc.com/eos-storage-mechanism)
 IPFS、EOS存储代币TOK。EOS的文件存储在21个超级节点上，每个节点存一个副本。这要求EOS的超级节点必须是一个云数据中心才行。
 TOK每年增发5%，即5%的贬值率，相当于利息付给矿工（21个）  
+[EOS代码架构及分析（一）](http://www.8btc.com/eos-code-architecture)  
+[EOS代码架构及分析（二）](http://www.8btc.com/eos-code-architecture-2)  
+[EOS代码架构及分析（三）](http://www.8btc.com/eos-code-architecture-3)  
+[EOS代码架构及分析（四）](http://www.8btc.com/eos-code-architecture-4)  
+
