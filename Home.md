@@ -988,3 +988,6 @@ EOS的代币模型比以太币复杂多了。EOS将资源（带宽和磁盘、CP
 不同于以太坊，EOS对用户进行了区分：开发者和消费者。开发者支付交易费，消费者免费。   
 EOS模仿了邮件系统，邮件写链。  
 有几个链接，如白皮书（英文）、官网、博客、推特等  
+
+### [区块链公司TaTaTu融资5.75亿美元](http://www.8btc.com/575-million-ico-royal-backing-crazy-might-real)
+[官网](https://tatatu.com/)  TaTaTu是一家通过观看在线内容、分享照片和视频来获取token的区块链社交娱乐公司。  
