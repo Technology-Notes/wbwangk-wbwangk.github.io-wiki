@@ -995,3 +995,9 @@ EOS模仿了邮件系统，邮件写链。
 ### Telegram 基于区块链的即时消息
 融资仅次于EOS   
 [最大ICO项目Telegram遭俄罗斯封杀，抗议纸飞机能飞多远？](http://www.8btc.com/telegram-and-paper-plane)  
+
+### [BM：去中心化的区块链治理，EOS有办法](http://www.8btc.com/decentralized-governance)
+以太坊的“影子政府”通过硬分叉挽回了the DAO攻击的损失。当软件更新中出现一次计划意外的分叉时，比特币矿池能够投票决定支持哪一个分叉。以太坊基金会用商标法来定义交易所应该上线的官方链。隔离见证（Segwit）之所以被接受，是因为在一次社区领导人的会议上，他们就一项妥协方案进行了投票，该方案包括扩大区块容量，但后来由于该项计划已经开始逐步推出的计划，这个妥协方案才最终作罢。  
+
+### [走进EOS的存储系统](http://www.8btc.com/eos-storage-mechanism)
+IPFS、EOS存储代币TOK。EOS的文件存储在21个超级节点上，每个节点存一个副本。这要求EOS的超级节点必须是一个云数据中心才行。
