@@ -991,3 +991,7 @@ EOS模仿了邮件系统，邮件写链。
 
 ### [区块链公司TaTaTu融资5.75亿美元](http://www.8btc.com/575-million-ico-royal-backing-crazy-might-real)
 [官网](https://tatatu.com/)  TaTaTu是一家通过观看在线内容、分享照片和视频来获取token的区块链社交娱乐公司。  
+
+### Telegram 基于区块链的即时消息
+融资仅次于EOS   
+[最大ICO项目Telegram遭俄罗斯封杀，抗议纸飞机能飞多远？](http://www.8btc.com/telegram-and-paper-plane)  
