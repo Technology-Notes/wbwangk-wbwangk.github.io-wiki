@@ -1006,4 +1006,4 @@ TOK每年增发5%，即5%的贬值率，相当于利息付给矿工（21个）
 [EOS代码架构及分析（二）](http://www.8btc.com/eos-code-architecture-2)  
 [EOS代码架构及分析（三）](http://www.8btc.com/eos-code-architecture-3)  
 [EOS代码架构及分析（四）](http://www.8btc.com/eos-code-architecture-4)  
-
+讲了：传统合约->电子合约->智能合约的演化
