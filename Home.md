@@ -3,22 +3,6 @@
 ### Blockchain Demo
 https://anders.com/blockchain/
 
-### openssl sha256
-```
-$ openssl dgst -sha256
-dddd(stdin)= 5bf8aa57fc5a6bc547decf1cc6db63f10deb55a3c6c5df497d631fb3d95e1abf
-```
-dddd是要进行hash的文本，之后是组合键ctrl+d，而且要多按几次。dddd之后不要回车，否则回车也会被加入到hash输入中。
-### html2pdf
-http://www.pdfonfly.com/
-
-### docker远程管理
-centos:`/etc/sysconfig/docker`，ubunut:`/etc/default/docker`:
-```
-DOCKER_OPTS="$DOCKER_OPTS -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375 --api-cors-header='*'"
-```
-### PDF2MD
-http://pdf2md.morethan.io/
 
 ### 供应链可追溯性/防伪
 https://wiki.hyperledger.org/_media/groups/requirements/hyperledger_-_supply_chain_traceability-_anti_counterfeiting.pdf
@@ -26,23 +10,7 @@ https://wiki.hyperledger.org/_media/groups/requirements/hyperledger_-_supply_cha
 ### Tutorial: Hyperledger Fabric v1.1 – Create a Development Business Network on zLinux
 https://github.com/CATechnologies/blockchain-tutorials/wiki/Tutorial:-Hyperledger-Fabric-v1.1-%E2%80%93-Create-a-Development-Business-Network-on-zLinux#toc9
 
-### git proxy
-```
-git config --global https.proxy http://127.0.0.1:1080
-git config --global --unset http.proxy
-git config --global --unset https.proxy
-git config --global --unset all.proxy
-```
-### npm install 对目录没有权限
-```
-$ npm install --unsafe-perm --verbose -g composer-cli
-```
-### VM proxy
-当VM需要代理才能访问互联网时，在VM内执行：
-```
-$ export http_proxy=<宿主机ip:代理端口号>
-$ export https_proxy=<宿主机ip:代理端口号>
-```
+
 ### fabric 翻译项目
 https://lists.hyperledger.org/pipermail/hyperledger-twg-china/2017-November/000419.html
 https://wiki.hyperledger.org/groups/twgc/team_ie
