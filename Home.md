@@ -964,3 +964,6 @@ Ethereum可以用来编程，分散，担保和交易任何事物：投票，域
 | 比特币的电力消耗占全球电力消耗的百分比   | 0.32％          |
 | 年度碳足迹（二氧化碳千吨）               | 34851           |
 | 每笔交易的碳足迹（千克二氧化碳）         | 501.14          |
+
+### [Hyperledger Fabric的性能测试](https://stackoverflow.com/questions/50334489/performance-test-of-the-hyperledger-fabric/50349641#50349641)
+里面有ibm的一个性能优化的文档：https://drive.google.com/file/d/1OsIoPtlv5X2PWyOAlDn1FCnHCZPyrF57/view  
