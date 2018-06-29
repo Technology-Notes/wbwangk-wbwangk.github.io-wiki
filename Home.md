@@ -967,3 +967,5 @@ Ethereum可以用来编程，分散，担保和交易任何事物：投票，域
 
 ### [Hyperledger Fabric的性能测试](https://stackoverflow.com/questions/50334489/performance-test-of-the-hyperledger-fabric/50349641#50349641)
 里面有ibm的一个性能优化的文档：https://drive.google.com/file/d/1OsIoPtlv5X2PWyOAlDn1FCnHCZPyrF57/view  
+
+### [EOS正式版技术白皮书（中文）](https://www.jianshu.com/p/f65bf7691482)
