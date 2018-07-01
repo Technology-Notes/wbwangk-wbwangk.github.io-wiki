@@ -862,7 +862,7 @@ curation markets是信息流（朋友圈、微博、头条等）排序机制。
 [part 2](https://biweilai.com/posts/747)
 Steem致力于通过加密货币奖励，将自身价值的大部分，回馈给社区价值贡献者，以此助益社交媒体和在线社区；  
 Steem有一些关键设计原则。最重要原则是，每一个对该项目做出贡献的人，应按比例获得所有权，支付款项或债务，这个原则也适用于所有初创公司的创始及随后融资阶段中的股份分配过程。  
-第二个原则是，所有形式的资源（capital）都同样具有价值。这意味着，投入稀缺时间和精力生产和策划内容的人，与投入稀缺资金的人同样具有价值。这是汗水公平原则（[sweat equity principle](http://www.investopedia.com/terms/s/sweatequity.asp)），这也是一个在理解加密货币之前，让很多人困惑的概念。
+第二个原则是，所有形式的资源（capital）都同样具有价值。这意味着，**投入稀缺时间和精力生产和策划内容的人，与投入稀缺资金的人同样具有价值**。这是**汗水公平原则**（[sweat equity principle](http://www.investopedia.com/terms/s/sweatequity.asp)），这也是一个在理解加密货币之前，让很多人困惑的概念。
 
 [part 3](https://biweilai.com/posts/749)  
 Steem选择奖励那些对一篇文章的全部推进（promotion）做出最大化贡献的人，并以内容创建者所获最终奖励一定比例奖励那些投票者。  
