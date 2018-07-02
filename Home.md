@@ -969,3 +969,5 @@ Ethereum可以用来编程，分散，担保和交易任何事物：投票，域
 里面有ibm的一个性能优化的文档：https://drive.google.com/file/d/1OsIoPtlv5X2PWyOAlDn1FCnHCZPyrF57/view  
 
 ### [EOS正式版技术白皮书（中文）](https://www.jianshu.com/p/f65bf7691482)
+
+### [全国首例区块链存证判决在杭州互联网法院诞生！【附判决书】](https://mp.weixin.qq.com/s/upPNtzLBzXHFqwz8n4hwCA)
