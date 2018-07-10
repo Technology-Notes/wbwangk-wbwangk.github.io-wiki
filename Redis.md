@@ -273,6 +273,9 @@ OK
 127.0.0.1:6379> rpush key4 wbwang wang webb
 (integer) 5                 (右侧插入多个值)
 ```
+pop命令用于从列表中删除元素。`rpop`和`lpop`分别是从列表的右侧和左侧删除元素。  
+`rpush`配合`lpop`就是实现了队列的功能（先进先出）；`rpush`配合`rpop`就实现了堆栈的功能（后进先出）。
+
 #### [集合](http://www.runoob.com/redis/redis-sets.html)
 无序，值唯一，有点像枚举值。
 ```
