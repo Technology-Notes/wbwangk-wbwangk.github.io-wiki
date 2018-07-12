@@ -971,3 +971,6 @@ Ethereum可以用来编程，分散，担保和交易任何事物：投票，域
 ### [EOS正式版技术白皮书（中文）](https://www.jianshu.com/p/f65bf7691482)
 
 ### [全国首例区块链存证判决在杭州互联网法院诞生！【附判决书】](https://mp.weixin.qq.com/s/upPNtzLBzXHFqwz8n4hwCA)
+
+### 条形码校验
+13位的最后一位是校验码，校验算法：https://www.gs1hk.org/zh-cn/get-a-barcode/digit-calculator  
