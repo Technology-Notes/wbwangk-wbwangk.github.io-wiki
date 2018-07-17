@@ -1001,3 +1001,5 @@ Ethereum可以用来编程，分散，担保和交易任何事物：投票，域
 ### [数据同步实现全球商品互联互通](http://www.cqn.com.cn/news/zjpd/wpbm/zxdt/1010277.html)
 里面有对GPC的中文解释：  
 ![](http://www.cqn.com.cn/Upload/2015-03-02-10-40-33.jpg)  
+
+### [质量码打印说明](https://github.com/wbwangk/wbwangk.github.io/blob/master/Docs/buybos/%E8%B4%A8%E9%87%8F%E7%A0%81%E6%89%93%E5%8D%B0%E8%AF%B4%E6%98%8E.md)
