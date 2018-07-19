@@ -1003,3 +1003,7 @@ Ethereum可以用来编程，分散，担保和交易任何事物：投票，域
 ![](http://www.cqn.com.cn/Upload/2015-03-02-10-40-33.jpg)  
 
 ### [质量码打印说明](https://github.com/wbwangk/wbwangk.github.io/blob/master/Docs/buybos/%E8%B4%A8%E9%87%8F%E7%A0%81%E6%89%93%E5%8D%B0%E8%AF%B4%E6%98%8E.md)
+
+### [美国国会加密货币声音丨比特币是现代数字黄金，不能因“草率监管”而错失加密货币良机](http://www.8btc.com/cftc-official-to-congress-dont-be-hasty-with-crypto-rules)
+前CFTC主席Gensler对这个问题作出了一个回应，他说：“黄金背后也没有任何东西。它背后的是一种文化规范，几千年来我们都喜欢黄金。”  
+“我们把黄金当作一种价值储存手段，所以比特币是一种现代形式的数字黄金。这是一种社会建构，”他继续说道。
