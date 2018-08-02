@@ -1011,3 +1011,7 @@ Ethereum可以用来编程，分散，担保和交易任何事物：投票，域
 ### [马千里：回答出这三个问题，你和区块链就算“三观合”](http://www.8btc.com/values_application_blockchain)
 生产力应用、生产关系应用  
 ![](http://cdn.8btc.com/wp-content/uploads/2018/07/201807190439536403.jpg)  
+
+### V1H喷码机
+http://www.sojet-tech.com/  
+生产商：升捷丰电子(厦门)有限公司，供货商：济南安固捷
