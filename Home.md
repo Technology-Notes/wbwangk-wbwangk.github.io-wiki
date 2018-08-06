@@ -1018,3 +1018,6 @@ http://www.sojet-tech.com/
 
 ### [Gnosis代币发售模式创新 荷兰式拍卖细节详解](http://www.sohu.com/a/134524333_286863)
 参与者购买时宣布他们愿意付得最高价，但是最终的价格由最后一个也是最低的竞标价格所决定。
+
+### [ICO经济学](https://medium.com/@avtarsehra/economics-of-initial-coin-offerings-c083311e53ec)
+讲了日本的弹球游戏赌博Pachinko。  
