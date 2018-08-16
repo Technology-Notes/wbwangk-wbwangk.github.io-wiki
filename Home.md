@@ -1030,3 +1030,6 @@ http://www.sojet-tech.com/
 
 ### [两两PK，看谁笑到最后 ——孔多塞(Condorcet)投票制简介](http://www.snvote.com/article/page/79)
 波达计数法
+
+### [引介 | Kleros 研究路线图](https://ethfans.org/posts/kleros-research-roadmap)
+非二元乃至非线性结果、预言机、零知识元素、仲裁费保险、Kleros 和传统型仲裁
