@@ -1025,3 +1025,5 @@ http://www.sojet-tech.com/
 ### [支付宝当面付产品介绍](https://docs.open.alipay.com/194)
 [alipay.trade.pay(统一收单交易支付接口)](https://docs.open.alipay.com/api_1/alipay.trade.pay)、[自行实现签名](https://docs.open.alipay.com/291/106118)    
 [如何获取绑定微信支付所需要的商户号及商户平台API密钥？](https://docs.youhaosuda.com/topic/s/54f580450abc3e4481000063)、[微信支付API:统一下单](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1)  
+
+### [科普 | 如何在荒岛上利用纸笔来运作区块链](https://ethfans.org/posts/how-to-run-a-blockchain-on-a-deserted-island-with-pen-and-paper)
