@@ -1027,3 +1027,6 @@ http://www.sojet-tech.com/
 [如何获取绑定微信支付所需要的商户号及商户平台API密钥？](https://docs.youhaosuda.com/topic/s/54f580450abc3e4481000063)、[微信支付API:统一下单](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_1)  
 
 ### [科普 | 如何在荒岛上利用纸笔来运作区块链](https://ethfans.org/posts/how-to-run-a-blockchain-on-a-deserted-island-with-pen-and-paper)
+
+### [两两PK，看谁笑到最后 ——孔多塞(Condorcet)投票制简介](http://www.snvote.com/article/page/79)
+波达计数法
