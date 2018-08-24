@@ -1040,3 +1040,6 @@ http://www.sojet-tech.com/
 ### [SEER白皮书-下一代去中心化现实预测市场](http://baijiahao.baidu.com/s?id=1604303005443919864&wfr=spider&for=pc)
 预测市场应用场景： 体育竞猜、资产价格预测、金融市场预测、事件预测
 
+### [基于群体智慧的预测市场合约交易算法的设计研究](http://xueshu.baidu.com/s?wd=paperuri:(a2a5362250bde1a0de87705fcf58015e)&filter=sc_long_sign&sc_ks_para=q%3D%E5%9F%BA%E4%BA%8E%E7%BE%A4%E4%BD%93%E6%99%BA%E6%85%A7%E7%9A%84%E9%A2%84%E6%B5%8B%E5%B8%82%E5%9C%BA%E5%90%88%E7%BA%A6%E4%BA%A4%E6%98%93%E7%AE%97%E6%B3%95%E7%9A%84%E8%AE%BE%E8%AE%A1%E7%A0%94%E7%A9%B6&tn=SE_baiduxueshu_c1gjeupa&ie=utf-8&sc_us=7937378447459092166)
+依据事件合约的价格波动揭示合约事件的发展趋势，以合约价格的变化情况反映各因素对合约事件的影响程度以及交易群体对合约事件发展的共识。  
+校园十佳歌手实例  
