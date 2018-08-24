@@ -1036,3 +1036,7 @@ http://www.sojet-tech.com/
 
 ### [群体智慧,算法和预测市场 （上）](https://www.jianshu.com/p/09d21432d9d4)
 简单平均、贝叶斯推理、动态加权、极化。    “创见上的贤人政治”（idea meritocracy）
+
+### [SEER白皮书-下一代去中心化现实预测市场](http://baijiahao.baidu.com/s?id=1604303005443919864&wfr=spider&for=pc)
+预测市场应用场景： 体育竞猜、资产价格预测、金融市场预测、事件预测
+
