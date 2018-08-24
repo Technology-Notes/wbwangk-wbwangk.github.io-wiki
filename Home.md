@@ -1033,3 +1033,6 @@ http://www.sojet-tech.com/
 
 ### [引介 | Kleros 研究路线图](https://ethfans.org/posts/kleros-research-roadmap)
 非二元乃至非线性结果、预言机、零知识元素、仲裁费保险、Kleros 和传统型仲裁
+
+### [群体智慧,算法和预测市场 （上）](https://www.jianshu.com/p/09d21432d9d4)
+简单平均、贝叶斯推理、动态加权、极化  
