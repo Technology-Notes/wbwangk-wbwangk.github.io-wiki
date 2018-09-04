@@ -1,4 +1,4 @@
-http://c.gb688.cn/bzgk/gb/showGb?type=online&hcno=AD4B367EB602B4F6BCBF4BE4ED9F6129  
+[GB/T 20977-2007 糕点通则](http://c.gb688.cn/bzgk/gb/showGb?type=online&hcno=AD4B367EB602B4F6BCBF4BE4ED9F6129)  
 
 ### Blockchain Demo
 https://anders.com/blockchain/
