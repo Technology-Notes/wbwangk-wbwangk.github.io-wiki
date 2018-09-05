@@ -1,5 +1,5 @@
 [GB/T 20977-2007 糕点通则](http://c.gb688.cn/bzgk/gb/showGb?type=online&hcno=AD4B367EB602B4F6BCBF4BE4ED9F6129)  
-
+### [EXCEL SHA256哈希算法](https://blog.csdn.net/xhhjin/article/details/50520621)
 ### 人民币说法
 五元四角三分
 
