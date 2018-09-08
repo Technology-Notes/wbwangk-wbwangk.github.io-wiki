@@ -1074,3 +1074,15 @@ http://www.sojet-tech.com/
 
 ### [观点 | 区块链：一个在寻找问题的解决方案？](https://ethfans.org/posts/blockchain-solution-search-problem)
 管理，规则，疏忽；监管；隐私，复杂性，可扩展性；现金经济的十字路口；追索权  
+
+### [探访 AlphaWallet：谁会是区块链时代的“网景浏览器”？](https://underplay.me/orange/p/185)
+区块链技术栈大概分为四层，从下到上分别为：  
+1. 底层公链（例如以太坊）
+
+2. 智能资产的协议、智能合约标准（比如以太坊上的ERC20 、ERC721、ERC875）
+
+3. Gateway Application，通过这层入口与区块链进行连接（比如 blockstack、AlphaWallet）
+
+4. 区块链应用，加密经济的产品或服务（比如加密猫、fomo3d）
+
+
