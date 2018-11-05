@@ -206,6 +206,74 @@ restful的相关实现基于[Flask](https://cello.readthedocs.io/en/latest/flask
 - 灵活扩展
 - 代码稳定
 
+## 操作员仪表板
+
+默认情况下，操作员仪表板将侦听主节点上的`8080`端口，操作员可以使用默认`admin:pass`凭据登录。
+
+左边的面板使您能够快速跳转到各种功能，包括`overview`，`system status`，`Hosts`，`Active Clusters`，`Inused Clusters`和`About`。
+
+| 名称         | 网址                    | 功能                       |
+| ------------ | ----------------------- | -------------------------- |
+| 概览         | `/index`                | 查看系统状态的高级概览 |
+| 系统状态     | `/stat`                 | 查看系统的统计信息     |
+| 主机         | `/hosts`                | 操作被系统管理的主机     |
+| 活动集群     | `/clusters?type=active` | 操作池中正在运行的链   |
+| 使用中集群 | `/clusters?type=inused` | 操作系统中被用户占用的链 |
+
+### 概览
+
+![仪表板概述](https://cello.readthedocs.io/en/latest/imgs/dashboard_overview.png)
+
+默认概览页面显示系统的总体状态，例如，系统中部署的主机数量、这些主机上运行的群集数量。并且主机和集群都有状态编号。
+
+### 系统状态页面
+
+![仪表板状态](https://cello.readthedocs.io/en/latest/imgs/dashboard_status.png)
+
+系统状态页面显示系统中主机和群集统计信息，如类型、活动/非活动。
+
+### 主机
+
+![仪表板主机](https://cello.readthedocs.io/en/latest/imgs/dashboard_hosts.png)
+
+在“主机”页面中，您可以管理池中的所有现有主机，并添加新主机。主机显示它的`Type`（例如，用SINGLE表示Native Docker，或用SWARM表示Docker Swarm的），`Status`（活动或非活动），`Chains`（在主机中运行了多少个链），`Cap`（容量）和`Log Config`（级别，接收器）。那些不可调度的主机将具有灰线
+
+在Action下拉菜单中，您可以
+
+- 填充：用链填充主机直到它达到`capacity`。
+- 清除：清除主机上所有未使用的链。
+- 配置：设置主机的配置，例如，`name`或`capacity`。
+- 重置：重置主机上的所有内容，当您在主机上运行链遇到问题时非常有用。请注意，主机`reset`只有在链未使用时才能使用。
+- 删除：从池中删除主机，然后系统将不关心它。
+
+### 添加主机
+
+您可以单击该`Add Host`按钮将更多主机添加到池中。
+
+![仪表板添加主机](https://cello.readthedocs.io/en/latest/imgs/dashboard_add_host.png)
+
+### 活动的链
+
+该`Active Chains`页面显示系统中所有运行中的链，包括其名称、类型、状态、运行状况、大小和主机。那些已使用的链会有一条灰线。
+
+![仪表板集群](https://cello.readthedocs.io/en/latest/imgs/dashboard_clusters.png)
+
+在Action下拉菜单中，您可以
+
+- 开始：启动未运行的链。
+- 停止：停止运行中的链到停止状态。
+- 重启：重启链。
+- 删除：删除链。
+- 发布：将用户占用的链释放回池中，稍后将删除该池。
+
+`Add Chain`如果存在非充满的主机，则可以单击该按钮将更多链添加到池中。
+
+![仪表板添加群集](https://cello.readthedocs.io/en/latest/imgs/dashboard_add_cluster.png)
+
+### 已使用的链条
+
+过滤掉用户占用的那些正在运行的链。
+
 ## 术语
 
 ### 概述
