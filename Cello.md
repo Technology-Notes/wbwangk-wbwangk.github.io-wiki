@@ -1,6 +1,6 @@
 ## 概述
 [[原文](https://cello.readthedocs.io/en/latest/#welcome-to-hyperledger-cello)]  
-Hyperledger Cello是一个区块链模块工具包，也是Linux基金会托管的Hyperledger项目之一。Hyperledger Cello旨在为区块链生态系统提供按需“即服务”部署模型，以减少创建、管理和终止区块链所需的工作量。它在各种基础设施（例如，裸机、虚拟机和更多容器平台）之上高效且自动地提供多租户区块链服务。Hyperledger Cello最初由IBM提供，赞助商来自Soramitsu、华为和英特尔。
+Hyperledger Cello是一个区块链模块工具包，也是Linux基金会托管的Hyperledger项目之一。Hyperledger Cello旨在为区块链生态系统提供按需“即服务”部署模型，以减少创建、管理和终止区块链所需的工作量。它在各种基础设施（例如，裸机、虚拟机和多个容器平台）之上高效且自动地提供多租户区块链服务。Hyperledger Cello最初由IBM提供，赞助商来自Soramitsu、华为和英特尔。
 
 ![典型情景](https://cello.readthedocs.io/en/latest/imgs/scenario.png)
 
