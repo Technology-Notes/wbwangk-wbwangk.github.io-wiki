@@ -362,7 +362,7 @@ restful的相关实现基于[Flask](https://cello.readthedocs.io/en/latest/flask
 
 通常主机有几个属性：
 
-- `Name`：别名，为人阅读方便。
+- `Name`：别名，为人类阅读方便。
 - `Daemon URL`：Docker / Swarm Access的URL。
 - `Capacity`：主机最多可以拥有的链的数量。
 - `Logging Level`：此主机上链的默认日志记录级别。
@@ -376,7 +376,7 @@ restful的相关实现基于[Flask](https://cello.readthedocs.io/en/latest/flask
 
 一个链有几个属性：
 
-- `Name`：为人准备的别名。
+- `Name`：为人类阅读准备的别名。
 - `Host`：链所在的主机。
 - `Size`：链具有的节点数量。
 - `Consensus`：链采用什么样的共识，取决于区块链技术。
