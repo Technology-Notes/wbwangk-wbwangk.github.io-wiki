@@ -274,6 +274,65 @@ restful的相关实现基于[Flask](https://cello.readthedocs.io/en/latest/flask
 
 过滤掉用户占用的那些正在运行的链。
 
+## 用户仪表板
+
+默认情况下，用户仪表板将侦听主节点上的`8081`端口，操作员可以使用默认`admin:pass`凭据登录。
+
+左边的面板使您能够快速跳转到各种功能，包括`Chain`，`Invoke`，`Smart Contract`。
+
+| 名称                 | 网址                                 | 功能                           |
+| -------------------- | ------------------------------------ | ------------------------------ |
+| 登录                 | `/#/user/login`                      | 用户仪表板登录页面             |
+| 链                   | `/#/chain/index`                     | 查看所有链的高级概览           |
+| 链信息             | `/#/chain/info/$id`                  | 查看特定链信息                 |
+| 创建新智能合约的模板 | `/#/smart-contract/new`              | 创建新智能合约的模板           |
+| 智能合约模板列表     | `/#/smart-contract/index`            | 查看用户上传的所有智能合约模板 |
+| 智能合约模板信息     | `/#/smart-contract/info/$id`         | 查看特定智能合约模板信息       |
+| 运行中的智能合约         | `/#/smart-contract/running`          | 所有运行中的智能合约清单           |
+| 调用和查询           | `/#/smart-contract/invoke-query/$id` | 调用和查询智能合约             |
+
+### 用户仪表板，安装和使用链
+
+用户可以登录用户仪表板，并安装和使用链。
+
+![登录页面](https://cello.readthedocs.io/en/latest/imgs/user-dashboard/login.png)
+
+#### 链列表页面
+
+在此页面中将按用户显示所有安装的链。
+
+![连锁列表页面](https://cello.readthedocs.io/en/latest/imgs/user-dashboard/chain_list.png)
+
+#### 链明细页面
+
+在此页面中将显示链的基本信息，例如（块高度、通道数、已安装/实例化的链码数、最近的区块/交易）、操作历史。
+
+![链明细信息页面](https://cello.readthedocs.io/en/latest/imgs/user-dashboard/chain_info.png)
+
+#### 智能合约模板列表页面
+
+在此页面中将列出用户所有上传的智能合约模板，并支持智能合约的多版本。
+
+![智能合约模板列表页面](https://cello.readthedocs.io/en/latest/imgs/user-dashboard/smart_contract_template.png)
+
+#### 智能合约模板明细信息页面
+
+在此页面中将显示智能合约模板的详细信息，包括（多版本、已部署的智能合约、部署操作）
+
+![智能合约模板信息页面](https://cello.readthedocs.io/en/latest/imgs/user-dashboard/smart_contract_template_info.png)
+
+#### 智能合约操作页面
+
+在此页面中，用户可以调用/查询已部署的智能合约。
+
+![智能合约操作页面](https://cello.readthedocs.io/en/latest/imgs/user-dashboard/smart_contract_operation.png)
+
+#### 运行中的智能合约列表页面
+
+在此页面中将列出所有已部署的智能合约，包括（成功/失败）。
+
+![运行智能合约列表页面](https://cello.readthedocs.io/en/latest/imgs/user-dashboard/smart_contract_running.png)
+
 ## 术语
 
 ### 概述
