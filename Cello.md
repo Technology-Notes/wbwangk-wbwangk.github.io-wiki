@@ -160,3 +160,50 @@ Hyperledger Cello（HLC）是一种区块链配置和操作系统，可帮助人
 
 如果您想了解链和智能合约的更多用法，请继续访问[用户仪表板](https://cello.readthedocs.io/en/latest/dashboard_user/)。
 
+## 术语
+
+### 概述
+
+在多个服务器上部署Cello，建议至少有1个Master + N（N> = 1）Worker。
+
+- `Master`：运行Cello服务的管理节点。
+- `Worker`：用于托管区块链的平台（例如，Docker，Swarm，Kubernetes，vSphere Cloud）。`Worker`由`Master`管理。
+- `Host`：典型`worker`的资源将由一个唯一的平台管理。通常它可以是本地的Docker主机、Swarm集群、Kubernetes clsuter或其他裸机/虚拟/容器集群。
+- `Chain`（`Cluster`）：区块链网络，包括一定数量的peer+order节点。例如，Hyperledger Fabric网络、Sawthooth Lake或Iroha链。
+
+### Master
+
+该`Master`会包含主要的Cello[服务](https://cello.readthedocs.io/en/latest/service_management/)。
+
+这是整个Cello服务的控制面板，大部分管理工作都应该在这里处理。
+
+`Master`将管理在`Workers`中运行的区块链网络。
+
+### Worker
+
+`Workers`由`Master`服务管理，并帮助托管区块链。
+
+### 主机（Hosts)
+
+主机是由同一资源控制器管理的一组资源，可以是本机Docker主机、Swarm群集、Kubernetes群集或当前的某些云。
+
+通常主机有几个属性：
+
+- `Name`：别名，为人阅读方便。
+- `Daemon URL`：Docker / Swarm Access的URL。
+- `Capacity`：主机最多可以拥有的链的数量。
+- `Logging Level`：此主机上链的默认日志记录级别。
+- `Logging Type`：如何处理这些日志消息。
+- `Schedulable`：此主机上的链是否可以调度给用户。
+- `Autofill`：始终使用链自动填充主机。
+
+### 链
+
+链通常是一个区块链集群，例如，Fabric网络。
+
+一个链有几个属性：
+
+- `Name`：为人准备的别名。
+- `Host`：链所在的主机。
+- `Size`：链具有的节点数量。
+- `Consensus`：链采用什么样的共识，取决于区块链技术。
