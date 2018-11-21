@@ -1,3 +1,7 @@
+### 京东推广
+佣金比率：https://media.jd.com/statc/help/hc.htm#tit5  
+京东CPS联盟的解释：https://news.jd.com/140_1.html  
+
 ### [国家互联网信息办公室关于《区块链信息服务管理规定（征求意见稿）》公开征求意见的通知](https://mp.weixin.qq.com/s/rfKgpJ5SPZPEdemctBUBQQ)
 ### [照片拍摄及地理位置信息采集详解](https://wenku.baidu.com/view/2895ad6c10a6f524ccbf85f1.html)  
 ### [国家标准目录](http://www.std.gov.cn/gb/gbQuery)
