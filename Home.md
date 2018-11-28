@@ -1,5 +1,5 @@
+### [中国企业质量诚信网](http://www.qyzlcx.com/)
 ### [资产数字化为什么一定要用区块链？看这篇就懂了](https://www.sohu.com/a/138373912_785858)
-
 
 ### 《2018杭州市区块链产业报告》发布（附全文）
 https://mp.weixin.qq.com/s/CaBdp2SRbnJGUsIZ9Ez55w
