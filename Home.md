@@ -1,3 +1,4 @@
+### [中国链湾白皮书](file:///E:/Disk/%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%8F%82%E8%80%83/%E4%B8%AD%E5%9B%BD%E9%93%BE%E6%B9%BE%E7%99%BD%E7%9A%AE%E4%B9%A62017.pdf)
 ### [“小程序跳转小程序”功能调整](https://mp.weixin.qq.com/cgi-bin/announce?action=getannouncement&announce_id=11541056526eufNY&version=&lang=zh_CN&token=1246405614)
 ### [微商进化史](https://www.huxiu.com/article/256315.html)
 ### [易观：中国网上零售B2C市场年度综合分析2018(39页)（附下载链接）](http://www.3mbang.com/i-1081.html)
