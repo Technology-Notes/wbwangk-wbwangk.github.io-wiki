@@ -1,3 +1,6 @@
+### [有赞赵强：有赞如何帮商家投广告？](http://finance.ifeng.com/a/20181206/16607190_0.shtml)
+以往商家过于注重用户一次性ROI(投资回报率)，但是在获客成本提升的背景下，商家更应该关注用户的LTV(客户终生价值)，广告效果评估从ROI到LTV，是社交电商广告投放必须要转变的思维。
+
 ### [中国链湾白皮书](file:///E:/Disk/%E5%8C%BA%E5%9D%97%E9%93%BE/%E5%8F%82%E8%80%83/%E4%B8%AD%E5%9B%BD%E9%93%BE%E6%B9%BE%E7%99%BD%E7%9A%AE%E4%B9%A62017.pdf)
 ### [“小程序跳转小程序”功能调整](https://mp.weixin.qq.com/cgi-bin/announce?action=getannouncement&announce_id=11541056526eufNY&version=&lang=zh_CN&token=1246405614)
 ### [微商进化史](https://www.huxiu.com/article/256315.html)
