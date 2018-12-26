@@ -1,3 +1,5 @@
+### [1.今日头条 精准竞价广告价格](http://toutiao.appho.cn/kanli.html)
+
 ### [区域零售连锁的有赞样本：广缘e购“变形计”！](http://finance.ifeng.com/a/20181204/16602869_0.shtml)
 
 ### [有赞赵强：有赞如何帮商家投广告？](http://finance.ifeng.com/a/20181206/16607190_0.shtml)
