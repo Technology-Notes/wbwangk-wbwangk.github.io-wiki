@@ -1,4 +1,6 @@
 ### [1.今日头条 精准竞价广告价格](http://toutiao.appho.cn/kanli.html)
+### [落地页](https://baike.baidu.com/item/%E8%90%BD%E5%9C%B0%E9%A1%B5/673016?fr=aladdin)
+三秒原则:秒懂、秒信、秒杀  
 
 ### [区域零售连锁的有赞样本：广缘e购“变形计”！](http://finance.ifeng.com/a/20181204/16602869_0.shtml)
 
