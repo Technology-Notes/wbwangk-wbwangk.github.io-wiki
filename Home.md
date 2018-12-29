@@ -1,3 +1,7 @@
+### [微软、IBM、BAT争相发布BaaS，到底什么是区块链即服务？](http://www.sohu.com/a/233753212_429401)
+这篇文章的BaaS和区块链描述可当作区块链话术使用。
+
+
 ### [1.今日头条 精准竞价广告价格](http://toutiao.appho.cn/kanli.html)
 ### [落地页](https://baike.baidu.com/item/%E8%90%BD%E5%9C%B0%E9%A1%B5/673016?fr=aladdin)
 三秒原则:秒懂、秒信、秒杀  
