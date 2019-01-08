@@ -1,3 +1,6 @@
+### 有赞、酷客多、微盟
+https://baijiahao.baidu.com/s?id=1622058678825014428&wfr=spider&for=pc
+
 ### [Hyperledger Caliper 安装使用分析](https://blog.csdn.net/u013938484/article/details/80979810)
 一个账本性能基准测试框架，它允许用户用预定义的用例来测试不同的账本解决方案，并得到一组性能测试结果。
 这个基准框架的核心是一个能够翻译信息的“适配层”，Caliper能够安装智能合约，调用合约，并且查询各种分布式账本的状态，继而更好地评估其效力。
