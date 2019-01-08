@@ -1,3 +1,4 @@
+### [详解Google Authenticator工作原理](https://www.csdn.net/article/2014-09-23/2821808-Google-Authenticator)
 ### 有赞、酷客多、微盟
 https://baijiahao.baidu.com/s?id=1622058678825014428&wfr=spider&for=pc
 
