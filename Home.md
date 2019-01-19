@@ -1,3 +1,7 @@
+### [区块链信息服务管理规定](http://www.cac.gov.cn/2019-01/10/c_1123971164.htm)
+### [国家互联网信息办公室有关负责人就《区块链信息服务管理规定》答记者问](http://www.cac.gov.cn/2019-01/10/c_1123971223.htm) 
+### [互联网新闻信息服务管理规定](http://www.cac.gov.cn/2017-05/02/c_1120902760.htm)
+
 ### [市场监管总局印发《假冒伪劣重点领域治理工作方案（2019-2021）》](https://mp.weixin.qq.com/s/eO7sfFwSaY1FElMQ6YQLqA)
 ### [详解Google Authenticator工作原理](https://www.csdn.net/article/2014-09-23/2821808-Google-Authenticator)
 ### 有赞、酷客多、微盟
