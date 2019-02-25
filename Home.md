@@ -1,3 +1,4 @@
+### [TrustData：2018年短视频行业发展简析](http://www.199it.com/archives/730075.html)
 ### 信通院白皮书
 信通院发布的《大数据白皮书（2018年）》：http://www.cac.gov.cn/2018-04/25/c_1122741894.htm
 信通院2018人工智能发展白皮书技术篇重磅发布：http://www.caict.ac.cn/kxyj/qwfb/bps/201809/P020180906443463663989.pdf
