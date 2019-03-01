@@ -1,3 +1,4 @@
+### [专利申请基础知识](https://wenku.baidu.com/view/8d7c1c6d2bf90242a8956bec0975f46527d3a7e2.html)
 ### [TrustData：2018年短视频行业发展简析](http://www.199it.com/archives/730075.html)
 ### 信通院白皮书
 信通院发布的《大数据白皮书（2018年）》：http://www.cac.gov.cn/2018-04/25/c_1122741894.htm
