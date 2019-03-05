@@ -1,3 +1,4 @@
+![](http://cpquery.sipo.gov.cn/freeze.main?txn-code=txnImgToken&token=3FA49FAA61B2153AED03EE0084D9A202&imgToken=B3EEE92D4B0B4F76A1CFB9614B94BDA1)
 ### [天眼查检索专利](https://www.tianyancha.com/s/zhuanli)
 ### [二维码的生成细节和原理](https://www.cnblogs.com/alantu2018/p/8504373.html)
 ### [专利申请基础知识](https://wenku.baidu.com/view/8d7c1c6d2bf90242a8956bec0975f46527d3a7e2.html)
