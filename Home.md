@@ -1,3 +1,7 @@
+### 国家标准
+现行食品技术类强制国家标准59条[1](http://www.gb688.cn/bzgk/gb/std_list_type?r=0.4910481089509746&page=5&pageSize=10&p.p1=1&p.p5=PUBLISHED&p.p6=67&p.p90=circulation_date&p.p91=desc)  
+现行和即将实施的食品技术类推荐国家标准1293条[2](http://www.gb688.cn/bzgk/gb/std_list_type?r=0.20297146687837775&p.p1=2&p.p5=PUBLISHED|TOBEIMP&p.p6=67&p.p90=circulation_date&p.p91=desc)  
+
 ### [质量链专利填报](https://docs.qq.com/sheet/DSXl4bVRweGpJZ25k?newPad=1&newPadType=clone&tab=BB08J2)
 ### [天眼查检索专利](https://www.tianyancha.com/s/zhuanli)
 ### [二维码的生成细节和原理](https://www.cnblogs.com/alantu2018/p/8504373.html)
