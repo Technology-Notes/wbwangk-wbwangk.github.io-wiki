@@ -1,3 +1,7 @@
+### 安全测试笔记
+7.1.2  注册页面验证码不失效  
+注册页面发送短信处虽然增加了验证码，但是验证码不失效，可重放发送短信请求进行短信轰炸（同时，“发送时间间隔过断”有错别字）  
+ 
 ### 国家标准
 现行和即将实施食品技术类强制国家标准59条[1]((http://www.gb688.cn/bzgk/gb/std_list_type?r=0.4910481089509746&page=5&pageSize=10&p.p1=1&p)  
 现行和即将实施的食品技术类推荐国家标准1293条[2](http://www.gb688.cn/bzgk/gb/std_list_type?r=0.20297146687837775&p.p1=2&p.p5=PUBLISHED|TOBEIMP&p.p6=67&p.p90=circulation_date&p.p91=desc)  
