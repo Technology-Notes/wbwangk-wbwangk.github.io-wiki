@@ -1,3 +1,6 @@
+### [一文读懂椭圆曲线加密学](https://www.8btc.com/article/376027)
+![](https://appserversrc.8btc.com/newpost/201903191333291.)
+![](https://appserversrc.8btc.com/newpost/201903191333292.)
 ### [十分钟读懂央视CCTV力荐书籍：《加密资产》](https://www.8btc.com/article/376342)
 2019年2月25日算力为18TH/s的蚂蚁矿机售价4850元，比特币的总算力是43 330 000TH/s，因此攻击者想要控制比特币网络需要51%的算力，就需要至少花费59.54亿人民币（51%*4850*43330000/18）。
 
