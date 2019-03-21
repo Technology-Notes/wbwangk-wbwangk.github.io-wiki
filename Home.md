@@ -1,3 +1,16 @@
+### [JPM Coin 三部曲 (中) - 摩根大通为何青睐 Quorum 区块链?](https://www.8btc.com/article/375515)
+#### POA共识的图解
+PoA 基于一组有身份的节点，轮流进行记账。换句话说，每个节点在用自己的身份和权威作为担保。每个区块只需要一个签名确认，这大大提高了出块速度和每秒能够吞吐的交易。  
+虽然有中心化的风险，不过 PoA 的设计中为了限制单个节点的权力，每个节点的签名间隔需要大于 N (总节点数)/2。  
+#### RAFT
+RAFT 其实是一种已经广为使用的传统分布式一致性协议，应用在包括 Kubernetes, Docker Swarm 等容器集群管理系统。RAFT 的节点分为 Leader 、Follower 以及暂时的 Candidate。
+
+Leader 是负责生产区块的唯一节点，Follower 监听 Leader 的“心跳”，并收取 Leader 传递过来的区块。
+
+如果 Follower 在其周期内没有收到 Leader 发来的心跳，则会认为Leader 已经死了。此时，没有收到 Leader心跳的 Follower 重新发起选举，自己的身份从 Follower 改变为 Candidate。它会给自己投一票，然后发送投票申请到其他 Follower，自己成为 Leader。
+#### IBFT
+IBFT，全称 Istanbul Byzantine Fault Tolerance (伊斯坦布尔拜占庭容错) 可以在抗分叉的基础上，防止部分节点作恶。  
+IBFT 是一种实用拜占庭容错算法，与 RAFT 完全相信 Leader 不同，IBFT  的前提是包容 1/3 不诚实节点，通过验证者多轮投票，达到彼此一致后出块。
 ### [一文读懂椭圆曲线加密学](https://www.8btc.com/article/376027)
 ![](https://appserversrc.8btc.com/newpost/201903191333291.)
 RSA:  公钥：944,871,836,856,449,473  私钥：961,748,941 and 982,451,653  
