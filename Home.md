@@ -1,3 +1,6 @@
+### [意锐小白盒](https://www.inspiry.cn/)移动支付
+支持微信、支付宝、云闪付。可连接小键盘、银行pos、小票打印机、PC等。
+
 ### [《2019年认证认可检验检测工作要点》发布](https://mp.weixin.qq.com/s?__biz=MzAwNzUzNzU1MQ==&mid=2651208028&idx=1&sn=dc2b053d960cf164e0632ebd9b71a194&chksm=808e0fbcb7f986aaa8ccec93b13bb6ff25c4fd35008ee9a8ed0ca0ab74ddd10bd8b4917ff111&mpshare=1&scene=1&srcid=04021nwYGPk074NyAIKCxFna&key=f1b1b4aaf75e0cb5cb8ab15d5a3f546ed4f185505d2fe38d77edc2c3dcda48f0da5b57399af4672b5a0eb99169b0a39ff2b3ce7d5b08ab0f486bdbbcb347231fbae428f7185310a4619975b2039ace4b&ascene=1&uin=MTAyOTYwOTUyMw%3D%3D&devicetype=Windows+10&version=62060739&lang=zh_CN&pass_ticket=d2061J4FurqTKls7auyEcAYw58nxnbEUHnCWaR9R7Jd25EjXtoq49BmSEMa9His0)
 ### [额头出汗原则](https://wiki.mbalib.com/wiki/%E8%BE%9B%E5%8B%A4%E5%8E%9F%E5%88%99)
 额头出汗原则（或称辛勤原则）是一条知识产权法律原则，尤其关系到著作权法。根据这条法律原则，作者通过创作（如数据库、通讯录）时所付出的劳动就可获得著作权。并不需要真正的创造或“原创性”。
