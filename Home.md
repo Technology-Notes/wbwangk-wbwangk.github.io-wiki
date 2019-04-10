@@ -3,6 +3,7 @@
 [互联网诊疗管理办法（试行）](https://baike.baidu.com/item/%E4%BA%92%E8%81%94%E7%BD%91%E8%AF%8A%E7%96%97%E7%AE%A1%E7%90%86%E5%8A%9E%E6%B3%95%EF%BC%88%E8%AF%95%E8%A1%8C%EF%BC%89/22876322?fr=aladdin)  
 [互联网医院管理办法（试行）](https://baike.baidu.com/item/%E4%BA%92%E8%81%94%E7%BD%91%E5%8C%BB%E9%99%A2%E7%AE%A1%E7%90%86%E5%8A%9E%E6%B3%95%EF%BC%88%E8%AF%95%E8%A1%8C%EF%BC%89/22876336?fr=aladdin)  
 [远程医疗服务管理规范（试行）](https://baike.baidu.com/item/%E8%BF%9C%E7%A8%8B%E5%8C%BB%E7%96%97%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%E8%A7%84%E8%8C%83%EF%BC%88%E8%AF%95%E8%A1%8C%EF%BC%89/22875897?fr=aladdin)  
+[电子病历基本规范（试行）](https://baike.baidu.com/item/%E7%94%B5%E5%AD%90%E7%97%85%E5%8E%86%E5%9F%BA%E6%9C%AC%E8%A7%84%E8%8C%83%EF%BC%88%E8%AF%95%E8%A1%8C%EF%BC%89/128218)  
 
 ### [确权、用权、维权难，知产链想用区块链改变知产交易发行代理模式](https://www.8btc.com/article/131488)
 知产链提供了一个统一完整的去中心化知产确权、存证、交易、取证、维权服务区块链平台。  
