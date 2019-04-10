@@ -1,3 +1,21 @@
+### [确权、用权、维权难，知产链想用区块链改变知产交易发行代理模式](https://www.8btc.com/article/131488)
+知产链提供了一个统一完整的去中心化知产确权、存证、交易、取证、维权服务区块链平台。  
+技术架构上，知产链采取了DPOC（贡献授权证明机制）共识机制，克服了POW效率低下，POS权益均衡失效的风险。  
+
+### [区块链确权专家Sean Moss-Pultz ：个人数据也是一种产权，产权区块链将开启信息革命](https://www.8btc.com/article/268938)
+会上区块链确权专家 Sean Moss-Pultz 发表了题为《Property rights for data》的演讲。  
+![](https://cdn.8btc.com/wp-content/uploads/2018/09/201809070654261231.png)
+Facebook资产负债表余额500-600亿，市值却有5000亿美元。10倍的溢价是无形资产。
+
+[区块链所有权创业公司Bitmark获170万美元种子融资](https://www.baidu.com/link?url=0clS91mSuVoX5H11IiqAypdpeSiE-MomsXCpw4gePvGRlKY1Bj7rXLpXVEtyLEZY&wd=&eqid=940ba56f00027a36000000045cad58bf)
+Bitmark做的区块链叫Property rights blockchain。
+
+We create property around digital assets and facilitates economic transactions that now become possible within these property "containers". (译文：我们围绕数字资产创建资产，并促进经济交易，这些交易现在可以在这些资产“容器”中实现。)
+
+- Revenue-based financing(RBF) for games  
+- Scalable investing,less risk through diversification
+
+
 ### 京东数字网关
 [京东城市智能信用解决方案落地天津、宿迁 用大数据和AI评估企业信用](http://economy.lnd.com.cn/news/show/14/31498.html)  
 郑宇教授表示，“城市操作系统”能够让城市中海量多维数据彼此“对话”，将时空数据AI算法进行模块化、积木式输出，提高算法复用率，解决不同场景下智能应用的开发问题。在此过程中，为保证数据的安全，京东城市通过行业独创的数字网关技术，利用基于用户隐私保护的联合建模机制和多源数据融合算法，真正做到原始数据不用出户，实现企业与企业之间的互通，城市与城市之间的共联，让整个城市运营和公共服务在线化、数字化、智能化。
