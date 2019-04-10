@@ -1,8 +1,8 @@
 ### 区块链+医疗健康
-[互联网诊疗管理办法（试行）](https://baike.baidu.com/item/%E4%BA%92%E8%81%94%E7%BD%91%E8%AF%8A%E7%96%97%E7%AE%A1%E7%90%86%E5%8A%9E%E6%B3%95%EF%BC%88%E8%AF%95%E8%A1%8C%EF%BC%89/22876322?fr=aladdin)  
 [国务院办公厅关于促进“互联网+医疗健康”发展的意见](https://baike.baidu.com/item/%E5%9B%BD%E5%8A%A1%E9%99%A2%E5%8A%9E%E5%85%AC%E5%8E%85%E5%85%B3%E4%BA%8E%E4%BF%83%E8%BF%9B%E2%80%9C%E4%BA%92%E8%81%94%E7%BD%91%2B%E5%8C%BB%E7%96%97%E5%81%A5%E5%BA%B7%E2%80%9D%E5%8F%91%E5%B1%95%E7%9A%84%E6%84%8F%E8%A7%81/22548020)  
+[互联网诊疗管理办法（试行）](https://baike.baidu.com/item/%E4%BA%92%E8%81%94%E7%BD%91%E8%AF%8A%E7%96%97%E7%AE%A1%E7%90%86%E5%8A%9E%E6%B3%95%EF%BC%88%E8%AF%95%E8%A1%8C%EF%BC%89/22876322?fr=aladdin)  
 [互联网医院管理办法（试行）](https://baike.baidu.com/item/%E4%BA%92%E8%81%94%E7%BD%91%E5%8C%BB%E9%99%A2%E7%AE%A1%E7%90%86%E5%8A%9E%E6%B3%95%EF%BC%88%E8%AF%95%E8%A1%8C%EF%BC%89/22876336?fr=aladdin)  
-[远程医疗服务管理规范](https://baike.baidu.com/item/%E8%BF%9C%E7%A8%8B%E5%8C%BB%E7%96%97%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%E8%A7%84%E8%8C%83%EF%BC%88%E8%AF%95%E8%A1%8C%EF%BC%89/22875897?fr=aladdin)  
+[远程医疗服务管理规范（试行）](https://baike.baidu.com/item/%E8%BF%9C%E7%A8%8B%E5%8C%BB%E7%96%97%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%E8%A7%84%E8%8C%83%EF%BC%88%E8%AF%95%E8%A1%8C%EF%BC%89/22875897?fr=aladdin)  
 
 ### [确权、用权、维权难，知产链想用区块链改变知产交易发行代理模式](https://www.8btc.com/article/131488)
 知产链提供了一个统一完整的去中心化知产确权、存证、交易、取证、维权服务区块链平台。  
