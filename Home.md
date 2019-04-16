@@ -1,3 +1,4 @@
+### [Hyperledger Fabric 2.0 Alpha发布了！](https://mp.weixin.qq.com/s/LCDeCTfYJP8OiclWggN5vA)
 ### [Fabric v2.0 FabToken介绍](https://blog.csdn.net/qq_25977145/article/details/89240698)
   FabToken是一个允许你使用Hyperledger Fabric发行，转移，回收tokens的token管理系统。
 ### [无锡市人民政府关于进一步深化现代产业发展政策的意见](https://mp.weixin.qq.com/s/4n991ppmpAUklQOU8a-kXw)
