@@ -1,3 +1,14 @@
+### 关系图谱
+使用百度echart展示关系图谱：https://echarts.baidu.com/examples/editor.html?c=graph-circular-layout
+
+将第二行替换为：
+`$.get('https://raw.githubusercontent.com/wbwangk/wbwangk.github.io/master/tmp/les-miserables.gexf', function (xml) {`
+
+可以看到图表的输入已经变成了我自定义的，如文字有“王伟兵”。
+
+在`.gexf`配置文件定义中，`<edge id="3" source="3" target="2" weight="6.0">
+        <attvalues></attvalues>
+      </edge>`定义了**关系**。source和target都是引用签名的node定义。
 ### [杭州互联网法院诉讼平台](http://www.netcourt.gov.cn/portal/main/domain/index.htm)
 ### [Hyperledger Fabric 2.0 Alpha发布了！](https://mp.weixin.qq.com/s/LCDeCTfYJP8OiclWggN5vA)
 ### [Fabric v2.0 FabToken介绍](https://blog.csdn.net/qq_25977145/article/details/89240698)
