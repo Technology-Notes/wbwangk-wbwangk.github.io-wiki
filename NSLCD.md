@@ -8,7 +8,7 @@
 本指南涵盖最常见的配置，但[nss-pam-ldapd](https://arthurdejong.org/nss-pam-ldapd/)还支持TLS加密，使用Kerberos对LDAP服务器进行身份验证，使用Active Directory等等。有关详细信息，请参阅示例配置，[手册页](https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5)和[README](https://arthurdejong.org/nss-pam-ldapd/README)。
 
 #### 开始前
-假定你已经不是了一个LDAP服务器：
+假定你已经部署了一个LDAP服务器：
 - LDAP服务器URI(如ldap://c7301.ambari.apache.org)
 - LDAP服务器搜索基础(如dc=ambari,dc=apache,dc=org)
 本测试在centos7.3下进行，而且是刚刚部署的干净的centos7.3。  
