@@ -1,3 +1,5 @@
+### 工信部公开征求对《关于加强质量品牌建设 支撑制造业高质量发展的实施意见（征求意见稿）》的意见
+https://mp.weixin.qq.com/s/BIUm4DOWzB1SDq2wQP2G4g
 ### 关系图谱
 使用百度echart展示关系图谱：https://echarts.baidu.com/examples/editor.html?c=graph-circular-layout
 
