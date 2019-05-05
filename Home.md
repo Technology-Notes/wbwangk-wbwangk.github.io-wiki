@@ -1,3 +1,4 @@
+### [超级账本Fabric翻译](https://www.transifex.com/hyperledger/fabric_2_0/dashboard/)
 ### [（大鱼）区块链破解大数据交易的难题](https://www.jianshu.com/p/c9ee2a0a73ab)
 1.数据可溯源  
 数据价值随时间线指数递减。数据二次转卖后，数据拥有方的举证难题。  
