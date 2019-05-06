@@ -1,4 +1,4 @@
-### [区块链数字化转型(Blockchain Digtal Transformation)](https://101blockchains.com/wp-content/uploads/2018/08/blockchain_digital_transformation.png)
+### [区块链数字化转型(Blockchain Digtal Transformation)](https://101blockchains.com/blockchain-digital-transformation)
 ![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/blockchain_digital_transformation.png)
 
 ### [超级账本Fabric翻译](https://www.transifex.com/hyperledger/fabric_2_0/dashboard/)
