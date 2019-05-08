@@ -1,3 +1,7 @@
+### 同态加密
+[同态加密——如何让帮你干活的人不知道自己都干了些什么](https://zhuanlan.zhihu.com/p/31822335)  
+[同态加密算法简述](https://blog.csdn.net/jason_cuijiahui/article/details/79121702)
+
 ### [区块链数字化转型(Blockchain Digtal Transformation)](https://101blockchains.com/blockchain-digital-transformation)
 ![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/blockchain_digital_transformation.png)
 
