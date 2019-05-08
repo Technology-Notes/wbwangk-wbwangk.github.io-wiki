@@ -1,3 +1,7 @@
+### 区块链+物联网
+[基于区块链的物联网安全案例（上）](https://www.8btc.com/article/366894)  
+[基于区块链的物联网安全案例（下）](https://www.8btc.com/article/368878)  
+
 ### 同态加密
 [同态加密——如何让帮你干活的人不知道自己都干了些什么](https://zhuanlan.zhihu.com/p/31822335)  
 [同态加密算法简述](https://blog.csdn.net/jason_cuijiahui/article/details/79121702)
