@@ -1,3 +1,4 @@
+### [智慧政务:区块链电子证照共享平台建设方案(ppt)](http://www.sohu.com/a/193763420_178670)
 ### [JWT实现token-based会话管理](https://www.cnblogs.com/lyzg/p/6028341.html)
 对于JWT的断言claims讲得比较明白。
 
