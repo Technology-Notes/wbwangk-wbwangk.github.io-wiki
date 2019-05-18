@@ -1,3 +1,6 @@
+### [Sovrin 白皮书：摘要](https://blog.csdn.net/li_jiachuan/article/details/82941955)
+数字身份（Digital identity）、自我主权的身份（self-sovereign identity）
+
 ### [智慧政务:区块链电子证照共享平台建设方案(ppt)](http://www.sohu.com/a/193763420_178670)
 ### [JWT实现token-based会话管理](https://www.cnblogs.com/lyzg/p/6028341.html)
 对于JWT的断言claims讲得比较明白。
