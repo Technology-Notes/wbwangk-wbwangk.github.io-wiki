@@ -1,4 +1,6 @@
 ### [W3C-CCG (W3C Credentials Community Group)](https://github.com/w3c-ccg)
+[Decentralized Identifiers (DIDs) v0.12](https://w3c-ccg.github.io/did-spec/)
+
 ### [监管科技崛起：从FinTech到RegTech ](http://www.sohu.com/a/226607298_100132383)
 金融科技（Fintech）、监管科技（Regulatory Technology，AKA： RegTech）  
 网络信息安全（CyberSecurity）
