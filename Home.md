@@ -6,6 +6,7 @@ Indy项目所支持的概念是“可验证的声明”。
 
 ### [W3C-CCG (W3C Credentials Community Group)](https://github.com/w3c-ccg)
 [Decentralized Identifiers (DIDs) v0.12](https://w3c-ccg.github.io/did-spec/)
+W3C发布可验证声明数据模型和表示（Verifiable Claims Data Model and Representations）的首份标准工作草案
 
 ### [监管科技崛起：从FinTech到RegTech ](http://www.sohu.com/a/226607298_100132383)
 金融科技（Fintech）、监管科技（Regulatory Technology，AKA： RegTech）  
