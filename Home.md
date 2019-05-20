@@ -1,3 +1,9 @@
+### [Indy项目采用不同技术开发数字身份系统](https://www.jinse.com/news/blockchain/22156.html)
+Indy项目所支持的概念是“可验证的声明”。  
+“有了可以验证的声明，它就成为一个加密签名的自包含数据集。现在如果我去了药店，需要证明自己年满18岁，那么我的系统就能以药店可以信任、验证的方式提供信息，以确认信息是车辆管理局所发布的。”  
+值得注意的是，万维网联盟成立了一个可验证声明工作组，以鼓励创建分布式ID解决方案的各方实现互操作性。  
+医疗保健行业也是该技术的潜在受益者。该项目设想了一个系统，即医生变换工作单位时，可以拥有证明自己资历的标识。  
+
 ### [W3C-CCG (W3C Credentials Community Group)](https://github.com/w3c-ccg)
 [Decentralized Identifiers (DIDs) v0.12](https://w3c-ccg.github.io/did-spec/)
 
