@@ -1,3 +1,6 @@
+### [密钥管理互操作协议（KMIP）的开源实现KMIP4J](https://blog.csdn.net/lihuayong/article/details/19121655)
+KMIP定义了密钥生命周期管理系统（KLMS）和其客户之间的沟通。
+
 ### [复盘华为、腾讯数据争夺战 数据该如何“确权”？](https://baijiahao.baidu.com/s?id=1589703714685676723&wfr=spider&for=pc)
 2017年12月8日，中共中央政治局就实施国家大数据战略进行集体学习，习近平总书记强调， 要制定数据资源确权、开放、流通、交易相关制度，完善数据产权保护制度。
 
