@@ -1,3 +1,8 @@
+###  TEE（可信执行环境）
+https://blog.csdn.net/wed110/article/details/53894927
+  TEE 是 Trusted Execution Environment 的缩写，即 可信执行环境。通常用来进行数字版权管理（DRM : Digital Rights Management ）、移动支付和敏感数据保护。
+    TEE 的实现是基于 ARM TrustZone。
+
 ### 超级账本温室
 ![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/%E8%B6%85%E7%BA%A7%E8%B4%A6%E6%9C%AC%E6%B8%A9%E5%AE%A4.jpg)
 ### [密钥管理互操作协议（KMIP）的开源实现KMIP4J](https://blog.csdn.net/lihuayong/article/details/19121655)
