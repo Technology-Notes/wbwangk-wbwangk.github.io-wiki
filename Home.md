@@ -1,3 +1,7 @@
+### [PDF安全](https://www.fileopen.com/hubfs/ebooks/ThinkingPersonsGuidetoDRM.pdf)
+/DISK/密码学/ThinkingPersonsGuidetoDRM（PDF安全）.pdf  
+同一目录下应有中文版。  
+
 ### [国家互联网信息办公室关于《数据安全管理办法（征求意见稿）》公开征求意见的通知](https://mp.weixin.qq.com/s/oSI9Z6vheDMq-pkek3U8Pw)
 
 ###  TEE（可信执行环境）
