@@ -1,3 +1,9 @@
+### 质量保险
+产品责任保险：车撞人，车坏。保人，不保车。
+产品质量保险：车撞人，车坏。保车，不保人。  [出处](https://m.cpic.com.cn/c/2018-06-03/1546792.shtml)  
+
+
+
 ### [PDF安全](https://www.fileopen.com/hubfs/ebooks/ThinkingPersonsGuidetoDRM.pdf)
 /DISK/密码学/ThinkingPersonsGuidetoDRM（PDF安全）.pdf  
 同一目录下应有中文版。  
