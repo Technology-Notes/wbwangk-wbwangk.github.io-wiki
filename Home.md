@@ -1,3 +1,10 @@
+### [神奇的零知识证明和zkSNARK究竟是什么](https://www.roboticschina.com/news/2264.html)
+文中引用了另一篇文章《SNARKs的崛起》：
+![](https://cdn.8btc.com/wp-content/uploads/2018/10/201810110819445437.jpg)
+
+### [Zcash挖矿算法深度解析](https://www.8btc.com/article/126531)
+该文章对于比特币和zcash区块头结构的解释比较深刻。
+
 ### [NEO区块链开发指南](https://docs.neo.org/developerguide/zh/articles/introduction.html)
 ECDSA 签名的例子：
 
