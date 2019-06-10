@@ -1,3 +1,14 @@
+### [AE(Aeternity)项目分析](https://www.jianshu.com/p/3d60901b9d32)
+**AE给区块链技术带来了两大技术创新：**  
+状态通道及并行关系（State Channels and parallelism)  
+AE的智能合约是作为功能选项存在于状态通道中。用户仅在侧链上进行互动。只有在意见不一致的时候，代码，智能合约（smart contact）才会涉及到区块链。整个模式就像一个具有自我裁决能力的数字法庭。
+
+作者：Thehrdertheluck
+链接：https://www.jianshu.com/p/3d60901b9d32
+来源：简书
+简书著作权归作者所有，任何形式的转载都请联系作者获得授权并注明出处。
+
+
 ### [什么是区块链主链](http://chanye.18183.com/201807/1132053.html)
 “主链”一词源于“主网”（相对于测试网而言），即正式上线的、独立的区块链网络。  
 ![主链侧链](https://c-img.18183.com/images/2018/07/20/57bd433409fe84cb7db08e5a6744a647.jpg)
