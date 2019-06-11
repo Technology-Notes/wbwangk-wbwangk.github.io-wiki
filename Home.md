@@ -1,3 +1,7 @@
+### [轻松学习RSA加密算法原理](https://blog.csdn.net/sunmenggmail/article/details/11994013)
+先讲了一些概念，如素数、互质数、指数运算、模运算等。  
+
+
 ### [神奇的零知识证明和zkSNARK究竟是什么](https://www.roboticschina.com/news/2264.html)
 文中引用了另一篇文章《SNARKs的崛起》：
 ![](https://cdn.8btc.com/wp-content/uploads/2018/10/201810110819445437.jpg)
