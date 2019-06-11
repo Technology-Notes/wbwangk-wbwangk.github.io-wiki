@@ -1,5 +1,6 @@
 ### [Loom Network](https://cloud.tencent.com/developer/news/202827)
 一个以太坊侧链，由以太坊上的Plasma提供安全保障，可以在侧链和以太坊主链之间转移加密资产。
+### [比特币智能合约侧链(sidechain)RSK：十分之一的矿工都在保护它](https://www.8btc.com/article/207049)
 
 ### [《数据安全管理办法（征求意见稿）》](https://mp.weixin.qq.com/s/oSI9Z6vheDMq-pkek3U8Pw)
 ### [轻松学习RSA加密算法原理](https://blog.csdn.net/sunmenggmail/article/details/11994013)
