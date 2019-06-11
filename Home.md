@@ -1,9 +1,10 @@
 ### [轻松学习RSA加密算法原理](https://blog.csdn.net/sunmenggmail/article/details/11994013)
 先讲了一些概念，如素数、互质数、指数运算、模运算等。  
 
-http://g14n.info/2014/09/math-on-github-pages/  
-使用LaTeX在GitHub Pages上显示数学公式。描述了两种方法，一种是使用MathJax来呈现公式客户端，另一种使用KaTeX来呈现公式服务器端。  
-使用html标签： E = mc<sup>2</sup>  来生成上标。  Log<sub>2</sub>这是下标。
+[阮一峰：RSA算法原理（一）](https://www.cnblogs.com/hiflora/archive/2013/07/04/3171775.html)  主要讲算法基础知识，如欧拉定理。  
+[阮一峰：RSA算法原理（二）](http://www.360doc.com/content/15/0330/11/2664229_459254157.shtml)  
+
+ E = mc<sup>2</sup>  来生成上标。  Log<sub>2</sub>这是下标。
 
 ### [神奇的零知识证明和zkSNARK究竟是什么](https://www.roboticschina.com/news/2264.html)
 文中引用了另一篇文章《SNARKs的崛起》：
