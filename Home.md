@@ -2,7 +2,8 @@
 先讲了一些概念，如素数、互质数、指数运算、模运算等。  
 
 [阮一峰：RSA算法原理（一）](https://www.cnblogs.com/hiflora/archive/2013/07/04/3171775.html)  主要讲算法基础知识，如欧拉定理。  
-[阮一峰：RSA算法原理（二）](http://www.360doc.com/content/15/0330/11/2664229_459254157.shtml)  
+[阮一峰：RSA算法原理（二）](http://www.360doc.com/content/15/0330/11/2664229_459254157.shtml)  主要讲RSA对消息进行加密解密。  
+[通过RSA实现数字签名](https://blog.csdn.net/chengqiuming/article/details/82831835)
 
  E = mc<sup>2</sup>  来生成上标。  Log<sub>2</sub>这是下标。
 
