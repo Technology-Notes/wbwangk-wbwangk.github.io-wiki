@@ -1,5 +1,9 @@
-### [Loom Network](https://cloud.tencent.com/developer/news/202827)
+### [Loom Network](http://www.sohu.com/a/241843708_100134346)
 一个以太坊侧链，由以太坊上的Plasma提供安全保障，可以在侧链和以太坊主链之间转移加密资产。
+
+[Blockstream发布改良版侧链白皮书，解除第三方操作风险](https://www.8btc.com/article/116357):  
+二级（secondary）区块链、二级资产（secondary asset）、根链（RSK）平台、双向楔入（2-way peg）、联合楔入（Federated pegs）
+
 ### [比特币智能合约侧链(sidechain)RSK：十分之一的矿工都在保护它](https://www.8btc.com/article/207049)
 ![](https://bbtcdn.8btc.com/data/attachment/forum/201804/04/160839yeh48fxff4ff4uai.jpg)
 ### [《数据安全管理办法（征求意见稿）》](https://mp.weixin.qq.com/s/oSI9Z6vheDMq-pkek3U8Pw)
