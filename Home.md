@@ -1,3 +1,5 @@
+### [浏览器指纹实现方案：Cookie、Flash Cookies、帆布指纹识别](https://blog.csdn.net/Fabulous1111/article/details/84206426)
+
 ### [Bulletproofs论文中文版](https://www.8btc.com/article/296278)
 
 ### [区块链研究最新进展综述](https://www.jianshu.com/p/1911eed3f055)
