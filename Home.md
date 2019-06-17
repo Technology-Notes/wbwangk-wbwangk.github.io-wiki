@@ -61,7 +61,7 @@ A 联合楔入 B 高效SPV证明 C 元互换
 ![](https://bbtcdn.8btc.com/data/attachment/forum/201804/04/160839yeh48fxff4ff4uai.jpg)
 ### [《数据安全管理办法（征求意见稿）》](https://mp.weixin.qq.com/s/oSI9Z6vheDMq-pkek3U8Pw)
 ### [轻松学习RSA加密算法原理](https://blog.csdn.net/sunmenggmail/article/details/11994013)
-先讲了一些概念，如素数、互质数、指数运算、模运算等。  
+先讲了一些概念，如素数、互质数、指数运算、模运算等。后面附有java实现的RSA加密解密算法。  
 
 [阮一峰：RSA算法原理（一）](https://www.cnblogs.com/hiflora/archive/2013/07/04/3171775.html)  主要讲算法基础知识，如欧拉定理。  
 [阮一峰：RSA算法原理（二）](http://www.360doc.com/content/15/0330/11/2664229_459254157.shtml)  主要讲RSA对消息进行加密解密。  
