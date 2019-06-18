@@ -1,3 +1,5 @@
+### [现代密码学第13讲密钥托管(精)]https://wenku.baidu.com/view/741c6f2527d3240c8447efaf.html)
+密钥托管（Key Escrow）
 ### [Feige-Fiat-Shamir零知识身份认证](https://blog.csdn.net/weixin_43255133/article/details/83513411)
 这是一个交互协议，即证明方和验证方要进行多次通信。
 ### [现代密码学第4章数论与有限域的基本概念](https://wenku.baidu.com/view/741c6f2527d3240c8447efaf.html)
