@@ -1,3 +1,5 @@
+### [现代密码学第9章身份认证](https://max.book118.com/html/2017/1006/136225962.shtm)
+
 ### [浏览器指纹实现方案：Cookie、Flash Cookies、帆布指纹识别](https://blog.csdn.net/Fabulous1111/article/details/84206426)
 
 ### [Bulletproofs论文中文版](https://www.8btc.com/article/296278)
