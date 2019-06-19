@@ -1,3 +1,9 @@
+### [以太坊创始人：如何保护区块链中的隐私性？已探索出4种方案！](http://www.360doc.com/content/17/1207/16/27398134_710872131.shtml)
+- 通道(Channels)  
+- 混合器(Mixers)  
+- 环签名(Ring Signature)  
+- 零知识证明(Zero knowledge proofs)  
+
 ### [现代密码学(第四章)  公钥密码](https://wenku.baidu.com/view/fb340d48eefdc8d376ee328b.html?from=search)
 公钥体制的基本原理是**陷门单向函数**：  
 - 一般单向函数(one-way)：已知x，容易计算f(x);但已知f(x)，求解x极为困难。  
