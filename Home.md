@@ -1,4 +1,9 @@
-### [现代密码学第13讲密钥托管(精)]https://wenku.baidu.com/view/741c6f2527d3240c8447efaf.html)
+### [现代密码学(第四章)  公钥密码](https://wenku.baidu.com/view/fb340d48eefdc8d376ee328b.html?from=search)
+公钥体制的基本原理是**陷门单向函数**：  
+- 一般单向函数(one-way)：已知x，容易计算f(x);但已知f(x)，求解x极为困难。  
+- 陷门单向函数(Trapdoor one-way function)：不知陷门信息下，由f(x)求x极为困难；但知道陷门信息后，由f(x)求x是易于实现的。
+
+### [现代密码学第13讲密钥托管(精)](https://wenku.baidu.com/view/741c6f2527d3240c8447efaf.html)
 密钥托管（Key Escrow）
 ### [Feige-Fiat-Shamir零知识身份认证](https://blog.csdn.net/weixin_43255133/article/details/83513411)
 这是一个交互协议，即证明方和验证方要进行多次通信。
