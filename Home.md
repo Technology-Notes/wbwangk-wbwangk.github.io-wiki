@@ -1,3 +1,5 @@
+### [Algorand协议详解](https://www.jianshu.com/p/c1f73f2eafac)
+是一种随机的共识算法，公链和联盟链可用。
 ### 数字身份
 [IDHub创始人曲明：数字身份将是下一个万亿市场](https://blog.csdn.net/dev_csdn/article/details/80559351)  
 [区块链里数字身份的意义（附一篇引发思考的优秀区块链文章）](https://blog.csdn.net/weixin_34124651/article/details/87763702)
