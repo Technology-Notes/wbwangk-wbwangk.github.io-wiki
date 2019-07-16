@@ -1,3 +1,5 @@
+### [大阪G20峰会与日本提倡的DFFT新概念](http://wap.keguanjp.com/kgjp_jingji/kgjp_jj_jj/pt20190621060003.html)
+
 ### [DApp是个伪需求？DeFi才是以太坊活下去的真正用例](https://www.8btc.com/article/439370)
 DeFi，即去中心化金融，也称作是开放金融。  
 
