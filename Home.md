@@ -1,3 +1,7 @@
+### [ 首页  资讯  链圈子 Libra听证会火药十足：监管方难以信任Facebook
+Libra听证会火药十足：监管方难以信任Facebook](https://www.8btc.com/article/447524)
+实名制
+
 ### [北雄安，南佛山：区块链政务应用C位城市已出线 | 区块链市政应用](https://www.8btc.com/article/447638)
 
 北雄安，南佛山：区块链政务应用C位城市已出线 | 区块链市政应用
