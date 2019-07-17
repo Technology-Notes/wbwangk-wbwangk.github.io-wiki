@@ -1,3 +1,7 @@
+### [数字身份：恶魔之门、通行证与圣杯](https://www.8btc.com/article/423330)
+异质身份的诞生  
+我将身份分解为三类：传统身份（政府），信任证明网络（谷歌，Facebook）和托管身份解决方案（微软AD，Okta）。 
+
 ### [Libra听证会火药十足：监管方难以信任Facebook](https://www.8btc.com/article/447524)
 实名制
 
