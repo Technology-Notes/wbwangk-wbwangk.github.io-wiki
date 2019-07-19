@@ -1,3 +1,8 @@
+### [区块链如何获得网信办备案？首批197个项目梳理：联盟链主唱 金融、存证应用多](https://www.8btc.com/article/384881)
+北京市共有63家，占总量的三成，位列第一，广东省、浙江省、上海市紧随其后，分别有47家、24家、19家。
+![](https://appserversrc.8btc.com/newpost/201904021040233.png)
+![](https://appserversrc.8btc.com/newpost/201904021040234.png)
+
 ### [数字身份：恶魔之门、通行证与圣杯](https://www.8btc.com/article/423330)
 异质身份的诞生  
 我将身份分解为三类：传统身份（政府），信任证明网络（谷歌，Facebook）和托管身份解决方案（微软AD，Okta）。 
