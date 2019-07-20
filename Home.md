@@ -1,3 +1,6 @@
+### [江苏涟水一市民买了两盒薯片引发了一张超三千万罚单 涉事机构达利集团为何三缄其口](https://www.toutiao.com/a6715320468888355342/?tt_from=weixin&utm_campaign=client_share&wxshare_count=1&timestamp=1563592990&app=news_article&utm_source=weixin&utm_medium=toutiao_android&req_id=201907201123100101520500916409E02&group_id=6715320468888355342)
+抽奖
+
 ### [区块链数据溯源能否解决造假难题？](https://baijiahao.baidu.com/s?id=1610196670615643232&wfr=spider&for=pc)
 ![](https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=2536100392,1764378290&fm=173&app=25&f=JPG?w=640&h=158&s=4CA6A452C522752204DC754A0300C072P)
 可追溯包括2个途径：跟踪(Tracking)和追溯(Tracing)。跟踪指的是产品从供应链的上游至下游的正向流通，跟随一个特定的单元或一批产品运行路径的能力。追溯则是指产品从供应链下游至上游的逆向流通，即识别一个特定的单元或一批产品来源的能力。  
