@@ -1,3 +1,14 @@
+### [STO全攻略——了解STO一篇文章就够了](http://www.sohu.com/a/273471116_750125)
+STO，即Security Token Offering，证券通证发行的意思。证券是一种财产权的有价凭证，持有者可以依据此凭证，证明其所有权或债权等私权的证明文件。美国 SEC认为满足Howey测试的就是证券，即满足Howey Test：a contract, transaction or scheme whereby a person invests his money in a common enterprise and is led to expect profits solely from the efforts of the promoter or a third party。笼统来说，在 SEC 看来，但凡是有“收益预期”的所有投资，都应该被认为是证券。
+
+三、STO对象
+
+STO就是将现有的传统资产，如股权、债权等作为担保物进行通证化（Tokenize），上链后变成证券化通证，而且必须适用于联邦证券法监管。
+
+从性质上来说，证券通证化的对象为股权、债权、权证等。从最终标的物形式来看，证券通证化的对象为房产所有权、房地产投资基金、黄金、碳信用额、石油、美术作品、音乐版权等。
+
+
+
 ### [巴哈马数字资产发行草案研究](https://www.8btc.com/article/443718)
 Token的分类：虚拟货币通证、资产型通证、实用性通证、非同质化通证、其它
 
