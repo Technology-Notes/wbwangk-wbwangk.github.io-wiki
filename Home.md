@@ -1,3 +1,6 @@
+### [巴哈马数字资产发行草案研究](https://www.8btc.com/article/443718)
+Token的分类：虚拟货币通证、资产型通证、实用性通证、非同质化通证、其它
+
 ### [江苏涟水一市民买了两盒薯片引发了一张超三千万罚单 涉事机构达利集团为何三缄其口](https://www.toutiao.com/a6715320468888355342/?tt_from=weixin&utm_campaign=client_share&wxshare_count=1&timestamp=1563592990&app=news_article&utm_source=weixin&utm_medium=toutiao_android&req_id=201907201123100101520500916409E02&group_id=6715320468888355342)
 抽奖
 
