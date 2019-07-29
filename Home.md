@@ -1,3 +1,12 @@
+### [USDT是什么？](https://doc.mbalib.com/view/9b5af120d9112ca6406e2a61a31879a1.html)
+法币(Fiat)，法定货币。
+Tether，本意是“拴牲口”，引申为“绑定”。创建一种加密货币，将之与法币绑定。tether是一家注册在香港的公司，将通证与法币1:1兑换。存在tether的法币相当于准备金，发行tether就相当于在做央行的职责。
+tether是USDT的一种。
+
+[一文彻底读懂 Tether，究竟是神、是妖、还是魔？](https://www.jianshu.com/p/f4c67d903602)  
+简单的说，Tether 是一种特殊的加密货币，通过 Omni Layer 协议在比特币区块链上发行。  Tether 发行的与美元挂钩的代币为「USDT」即 USDTether，
+
+
 ### [资产代币化操作指南](https://www.8btc.com/article/440146)
 资产代币化简单地说就是使用数字货币来证明实际资产的所有权，它对加快买卖证券的过程大有裨益。
 
