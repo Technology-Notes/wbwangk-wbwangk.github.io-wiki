@@ -1,3 +1,8 @@
+### 电子政务信息资源目录
+《(政务信息资源目录介绍](http://www.360doc.com/document/18/0515/19/55627652_754204010.shtml)》  
+2002年国家信息化领导小组《关于我国电子政务建设指导意见》中第一次提到“电子政务信息资源目录体系”  
+[国家信息化领导小组《关于我国电子政务建设指导意见》](https://wenku.baidu.com/view/5d6711e4284ac850ad0242e0.html)  
+
 ### [第二十九课 如何实现MetaMask签名授权后DAPP一键登录功能？](https://cloud.tencent.com/developer/article/1366834)
 单点登录，区块链身份增强认证
 
