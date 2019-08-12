@@ -1,3 +1,10 @@
+### [2019年中国区块链产业园发展报告](https://mp.weixin.qq.com/s/7Lu2yYR7GJQ1-2xP9QCpYA)
+国内区块链产业园区数量已多达22家。
+
+区块链政策背景：
+![](https://mmbiz.qpic.cn/mmbiz_png/KhpQAgftg5lpsJvVSiafhvIicdLJtjpsazuqZRG70ibmibCVf904SogsLN9hAwPLXcMgPXfPwE21ibibp3ajCq8MXdfg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1)
+
+
 ### [国内外健康医疗大数据建设及应用发展现状分析](https://mp.weixin.qq.com/s/rsvyqrOLKrtgCRhKbyEurw)
 （1）向医疗服务提供者和保险服务方收费。大数据提供的决策支持能够带来更好的医疗结果和提高效率节约成本。随着医疗保险未来更多地位价值和基于结果付费，医疗服务提供者和医疗服务支付者都面临着越来越大的控费压力,这类公司的客户群也将越来越大。
 
