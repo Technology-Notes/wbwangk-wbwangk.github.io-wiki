@@ -1,3 +1,14 @@
+### [64岁图灵奖得主破解区块链“不可能三角”](https://baijiahao.baidu.com/s?id=1612389790320856482&wfr=spider&for=pc)
+无法同时兼顾扩展性（Scability）、安全性（Security）、去中心（Decentralization）这三项要求，至多只能三者取其二。  
+Algorand 由“algorithm”（算法）和“random”（随机）两个字组合而成。  
+Algorand 的共识机制分成两个步骤，分别是“发起”（Propose）与“协议”（Agreement）。
+
+在第一个步骤“发起”，系统会随机选择一个代币，公布其公钥，由公开持有者签名并发起一个新的区块，关键是这一过程可以非常快速。
+
+而在第二个步骤“协议”，系统会再由用户中随机选出 1000 名验证者并公布其公钥，由这 1000 名用户达成共识并进行签名，新的区块便得以生成。
+
+而这些过程将以 Algorand 独创的加密抽签（cryptographic sortition）技术来随机选择用户，无法事先预知是哪些人会被选中。
+
 ### [Vitalik：如何区分侧链、Plasma和分片？](https://www.8btc.com/article/463573)
 紧耦合是分片的属性  分片：为确保系统每个部分的整体有效性和可用性而非常努力地尝试。  
 Plasma不是紧耦合系统：主链不知道Plasma区块的有效性  
