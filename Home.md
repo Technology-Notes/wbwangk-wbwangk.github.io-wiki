@@ -1,3 +1,5 @@
+### [从 Liquid Loom 和 BOS 看侧链生态发展](https://www.jianshu.com/p/074aab9cb97c)
+
 ### [不牺牲安全下的分片扩展](https://www.jianshu.com/p/7cf394a56b23)
 自适应状态分片技术：使用自适应状态分片技术，每个分片每秒能够进行3750笔以上的交易，如Elrond。  
 分片之间的同步是在元链(Metachain)上完成的。   
