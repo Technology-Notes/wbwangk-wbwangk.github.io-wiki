@@ -1,3 +1,17 @@
+### E:/Disk/BaaS/对标/腾讯区块链方案白皮书.pdf   （2017）
+![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/%E5%8C%BA%E5%9D%97%E9%93%BE%E7%BB%8F%E6%B5%8E%E5%8F%91%E5%B1%95%E7%9A%84%E9%87%8D%E7%82%B9%E8%A1%8C%E4%B8%9A.png)
+金融、物联网、供应链、公益慈善、公共服务领域  
+
+区块链产业的四类参与主体：  
+1、 初创公司或组织  
+2、 金融机构  
+3、 大型科技公司  
+4、 资讯公司/系统集成商  
+
+中国区块链三大联盟：  
+金链盟、中国分布式总账基础协议联盟、中国区块链研究联盟  
+
+
 ### E:/Disk/BaaS/对标/2018年区块链产业发展报告.pdf
 ![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/7baas.png)
 ### [区块链与物联网的双剑合璧](http://www.199it.com/archives/831986.html)  或：E:/Disk/BaaS/对标/区块链与物联网的双剑合璧.pdf
