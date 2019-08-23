@@ -1,3 +1,9 @@
+### 二维码
+标识一切对象是联通物理世界与数字世界的信息入口，是数字经济发展不可或缺的驱动力 
+Two-dimensional Code Technology  
+identify internet of Everything  
+The infomation entrance to connect the physical world and the digital world The indispensable driving force ofr the development of digital economy  
+
 ### E:/Disk/BaaS/对标/区块链TBaaS产品白皮书.pdf  (腾讯)
 2.4.3 区块链+医疗  
 2017年国务院《“十三五”深化医药卫生体制改革规划》当中着重提出了，医疗机构应该按照药品通用名开具处方，并主动向患者提供，不得限制处方外流。同时又探索医院门诊多渠道购药模式，患者可凭处方到零售药店购药。推进“互联网+药品流通”推广“网订店取”、“网订店送”等新型配送方式。在这个政策背景下，智慧医院平台电子处方信息流动过程中的的保密性、防篡改、全程可追溯等需求就成为重中之重。区块链技术能够让患者、医院、药企、卫计委（监管方）等多个参与方形成一个互信联盟，同时满足监管和安全的需求。例如，腾讯微信智慧医院就已经通过区块链技术实现处方信息的安全流转。
