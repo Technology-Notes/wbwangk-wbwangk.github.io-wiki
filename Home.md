@@ -1,3 +1,6 @@
+### [隐密交易的到来：深入 AZTEC 协议](https://blog.csdn.net/shangsongwww/article/details/89490349)
+AZTEC协议英文版：https://github.com/AztecProtocol/AZTEC/blob/master/AZTEC.pdf
+
 ### [从Web2.0走向Web3.0：还有多远？](https://www.8btc.com/article/474893)
 
 互联网的范式不断迭代升级，从只有静态网页的web1.0到用户直接交互的web2.0，再到用户自主控制数据的web3.0。
