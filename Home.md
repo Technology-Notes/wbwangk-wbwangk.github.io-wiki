@@ -42,6 +42,7 @@ AZTEC协议是一个为金融机构开展隐私以太坊交易服务的项目。
 
 [研究的正文](https://www.useit.com.cn/thread-22134-1-1.html)
 
+![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/%E6%BE%B3%E5%A4%A7%E5%88%A9%E4%BA%9A%E5%8D%AB%E7%94%9F%E9%83%A8%E5%9F%BA%E4%BA%8E%E5%8C%BA%E5%9D%97%E9%93%BE%E7%9A%84%E4%B8%B4%E5%BA%8A%E7%A7%91%E7%A0%94%E5%B9%B3%E5%8F%B0.png)
 ### [区块链＋医疗：区块链电子处方已来，未来已不远](https://www.iyiou.com/p/81599.html)
 电子医疗记录（EHRs）  
 区块链技术在医疗领域，有三个可以直接应用的核心优势：
