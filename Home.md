@@ -1,3 +1,4 @@
+![](https://appserversrc.8btc.com/images/20190909094429iotg.jpeg)
 ### [央行官员首次在得到App开课，讲解Libra和央行数字货币](https://www.8btc.com/article/475319)
 
 ### [链塔智库2019区块链+医疗研究报告](https://max.book118.com/html/2019/0416/6232204050002023.shtm)
