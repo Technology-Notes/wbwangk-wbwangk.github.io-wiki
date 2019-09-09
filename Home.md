@@ -1,3 +1,6 @@
+### [为什么去中心化身份很重要？](https://www.8btc.com/article/477727)
+![](https://appserversrc.8btc.com/images/20190909093940L6Qw.jpeg)
+理解治理、身份和权威之间的关系流
 ### [零基础读懂分布式系统](https://www.8btc.com/article/477739)
 ![](https://appserversrc.8btc.com/images/20190909094429iotg.jpeg)
 ![](https://appserversrc.8btc.com/images/20190909094430HvOP.jpeg)
