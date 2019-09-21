@@ -1,3 +1,6 @@
+### [区块链 OUT 了，DAG、哈希图（Hashgraph）是它的接班人](https://www.8btc.com/article/481771)
+DAG应用领域局限于物联网，这是为工业设备确保数据完整性的技术。
+
 ### [数据可靠性指南](https://max.book118.com/html/2018/1020/5244114244001322.shtm)
 ALCOA原则：
 A--可追溯
