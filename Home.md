@@ -1,4 +1,5 @@
-
+### Gartner对区块链5到10年内对大多数行业产生革命性影响
+![](http://www.199it.com/wp-content/uploads/2019/09/d91701.png)
 
 ### [巴比特专栏 | 斯坦福：2019区块链社会影响力报告](https://www.8btc.com/article/484998)
 
