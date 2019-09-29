@@ -1,3 +1,10 @@
+### [RFID—EPC—EPCIS三者的关系](http://www.rfdmes.com/news/4636-cn.html)
+EPC，Electronic Product Code，中文名为产品电子代码。EPC编码96位（二进制）方式的编码体系。96位的EPC码，可以为2.68亿公司赋码，每个公司可以有1600万产品分类，每类产品有680亿的独立产品编码，形象的说可以为地球上的每一粒大米赋一个唯一的编码。
+
+一个完整的EPC工作系统由EPC标签、识读器、Savant服务器、Internet、ONS（对象名称解析服务）服务器、PML（实体标记语言）服务器以及众多的数据库组成。
+
+EPCIS，economic products code information service，中文名为产品电子代码信息服务，它是一个EPCglobal网络服务，通过该服务，能够使业务合作伙伴通过网络交换EPC相关数据。
+
 ### [信通院：工业互联网标识解析体系最新进展](https://www.shangyexinzhi.com/Article/details/id-144/)
 ![](https://img.shangyexinzhi.com/xztest-image/article/1885daf312b0cc3e34e86e529e78e418.jpg)
 《关于深化“互联网+先进制造业”发展工业互联网的指导意见》提出要“推进标识解析体系建设”。
