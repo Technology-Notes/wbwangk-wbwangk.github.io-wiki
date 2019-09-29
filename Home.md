@@ -1,3 +1,10 @@
+### [智能分布式标识系统（IDIS）及其应用介绍](http://www.aii-alliance.org/index.php?m=content&c=index&a=document_download&ftype=3&fid=243&fno=0)
+主讲人：谢家贵   Teleinfo
+
+Intelligent Distributed Identifier System（IDIS系统）
+
+支持Handle/DNS协议，兼容Handle、OID、Ecode、EPC等多种标识体系。
+
 ### [RFID—EPC—EPCIS三者的关系](http://www.rfdmes.com/news/4636-cn.html)
 EPC，Electronic Product Code，中文名为产品电子代码。EPC编码96位（二进制）方式的编码体系。96位的EPC码，可以为2.68亿公司赋码，每个公司可以有1600万产品分类，每类产品有680亿的独立产品编码，形象的说可以为地球上的每一粒大米赋一个唯一的编码。
 
