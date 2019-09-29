@@ -1,6 +1,7 @@
 ### [信通院：工业互联网标识解析体系最新进展](https://www.shangyexinzhi.com/Article/details/id-144/)
-![](https://img.shangyexinzhi.com/xztest-image/article/1885daf312b0cc3e34e86e529e78e418.jpg?x-oss-process=image/sharpen,200)
+![](https://img.shangyexinzhi.com/xztest-image/article/1885daf312b0cc3e34e86e529e78e418.jpg)
 《关于深化“互联网+先进制造业”发展工业互联网的指导意见》提出要“推进标识解析体系建设”。
+
 《工业互联网发展行动计划（2018-2020年）》提出“标识解析体系构建行动”的发展目标为“2020年建成5个左右标识解析国家顶级节点，形成10个以上公共标识解析服务节点，标识注册量超过20亿。”
 
 ### Gartner对区块链5到10年内对大多数行业产生革命性影响
