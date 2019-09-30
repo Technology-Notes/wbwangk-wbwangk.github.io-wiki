@@ -46,6 +46,8 @@ Intelligent Distributed Identifier System（IDIS系统）
 
 支持Handle/DNS协议，兼容Handle、OID、Ecode、EPC等多种标识体系。
 
+Teleinfo为中国信息通信研究院（原工业和信息化部电信研究院）为筹划“互联网战略”落地设立的全资子公司，Teleinfo正在全球统一部署互联网域名、网络标识、区块链数字网络等3张服务网络。
+
 ### [RFID—EPC—EPCIS三者的关系](http://www.rfdmes.com/news/4636-cn.html)
 EPC，Electronic Product Code，中文名为产品电子代码。EPC编码96位（二进制）方式的编码体系。96位的EPC码，可以为2.68亿公司赋码，每个公司可以有1600万产品分类，每类产品有680亿的独立产品编码，形象的说可以为地球上的每一粒大米赋一个唯一的编码。
 
