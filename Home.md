@@ -1,3 +1,8 @@
+### [工业互联网标识解析论文阅读笔记（2）(Handle系统介绍)](http://www.mryu.top/notes/280.html)、
+是学习handke系统的导引性文章。  
+该博客的“标识解析”标签：http://www.mryu.top/tag/%E6%A0%87%E8%AF%86%E8%A7%A3%E6%9E%90  
+
+
 ### [智能分布式标识系统（IDIS）及其应用介绍](http://www.aii-alliance.org/index.php?m=content&c=index&a=document_download&ftype=3&fid=243&fno=0)
 主讲人：谢家贵   Teleinfo
 
