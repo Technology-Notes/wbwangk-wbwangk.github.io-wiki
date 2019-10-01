@@ -1,3 +1,9 @@
+### [你知道URL、URI和URN三者之间的区别吗？](http://www.sohu.com/a/192616867_463987)
+![](http://5b0988e595225.cdn.sohucs.com/images/20170917/c9929fbb89de4d5f896e986ffa336a1f.jpeg)
+uri:http://bitpoetry.io/posts/hello.html#intro  
+url:http://bitpoetry.io/posts/hello.html
+urn:bitpoetry.io/posts/hello.html#intro
+
 ### [Handle 系统与域名系统互联互通机制：一种基于标记语言描述协](http://www.dnlunwenw.com/jisuanji/3931.html)
 通过分析已有解决方案的利弊，发现协议数据单元与协议本身的分离可解决两个系统的解析协议和编码规则不兼容问题。利用这一分离机制，设计并实现了一种基于代理服务器的Handle系统与域名系统互联互通机制。
 
