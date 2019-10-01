@@ -1,3 +1,8 @@
+### Handle系统的几个RFC文档
+[RFC3650: Handle System Overview](https://datatracker.ietf.org/doc/rfc3650/?include_text=1)
+[RFC3651:Handle System Namespace and Service Definition](https://datatracker.ietf.org/doc/rfc3651/?include_text=1)
+[RFC3652:Handle System Protocol (ver 2.1) Specification](https://datatracker.ietf.org/doc/rfc3652/?include_text=1)
+
 ### [你知道URL、URI和URN三者之间的区别吗？](http://www.sohu.com/a/192616867_463987)
 ![](http://5b0988e595225.cdn.sohucs.com/images/20170917/c9929fbb89de4d5f896e986ffa336a1f.jpeg)
 uri:http://bitpoetry.io/posts/hello.html#intro  
