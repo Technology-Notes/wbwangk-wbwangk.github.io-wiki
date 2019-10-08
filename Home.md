@@ -8,6 +8,10 @@
 [RFC3651:Handle System Namespace and Service Definition](https://datatracker.ietf.org/doc/rfc3651/?include_text=1)
 [RFC3652:Handle System Protocol (ver 2.1) Specification](https://datatracker.ietf.org/doc/rfc3652/?include_text=1)
 
+[rfc3650(Handle系统概述).docx](https://github.com/wbwangk/wbwangk.github.io/blob/master/Docs/rfc3650(Handle%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0).docx?raw=true)  
+[rfc3651(Handle系统名称空间和服务定义).docx](https://github.com/wbwangk/wbwangk.github.io/blob/master/Docs/rfc3651(Handle%E7%B3%BB%E7%BB%9F%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4%E5%92%8C%E6%9C%8D%E5%8A%A1%E5%AE%9A%E4%B9%89).docx?raw=true)  
+[rfc3652(Handle系统协议(版本2.1)规范).docx](https://github.com/wbwangk/wbwangk.github.io/blob/master/Docs/rfc3652(Handle%E7%B3%BB%E7%BB%9F%E5%8D%8F%E8%AE%AE(%E7%89%88%E6%9C%AC2.1)%E8%A7%84%E8%8C%83).docx?raw=true)
+
 ### [你知道URL、URI和URN三者之间的区别吗？](http://www.sohu.com/a/192616867_463987)
 ![](http://5b0988e595225.cdn.sohucs.com/images/20170917/c9929fbb89de4d5f896e986ffa336a1f.jpeg)
 uri:http://bitpoetry.io/posts/hello.html#intro  
