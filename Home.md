@@ -1,6 +1,7 @@
 ### [邢腾飞:Handle——技术体系、发展态势与产业应用（附PPT）](http://www.cspiii.com/sx/rdxw/2016-09-09-3022.html)
 
-  
+### [食盐企业电子防伪追溯系统建设指南](https://zhongyan-oss.oss-cn-beijing.aliyuncs.com/%E9%A3%9F%E7%9B%90%E4%BC%81%E4%B8%9A%E7%94%B5%E5%AD%90%E9%98%B2%E4%BC%AA%E8%BF%BD%E6%BA%AF%E7%B3%BB%E7%BB%9F%E5%BB%BA%E8%AE%BE%E6%8C%87%E5%8D%97?Expires=101521855321&OSSAccessKeyId=LTAI0d8PS4yuiPiA&Signature=ZaGZ3IMZRMM3utQkcSd8zlNHmGc%3D&name=%E9%A3%9F%E7%9B%90%E4%BC%81%E4%B8%9A%E7%94%B5%E5%AD%90%E9%98%B2%E4%BC%AA%E8%BF%BD%E6%BA%AF%E7%B3%BB%E7%BB%9F%E5%BB%BA%E8%AE%BE%E6%8C%87%E5%8D%97.pdf)
+
 ### [欧盟物联网研究战略路线图](https://wenku.baidu.com/view/ca968fcb0508763231121222.html)
 另一个链接：http://www.internet-of-things-research.eu/pdf/IoT_Cluster_SRA_English2Chinese_Translation.pdf
 
