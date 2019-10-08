@@ -1,3 +1,8 @@
+### [Handle系统的发展及应用]（https://max.book118.com/html/2018/1026/6021103102001224.shtm）
+从数据图书馆、数字内容管理、数字出版、数字博物馆、远程教育到科学数据管理与网格计算、数字权益管理、信息安全管理与隐私保护领域。Handle系统作为联合国ITU推荐的互联网下一代链接技术。
+
+数字对象标识是数字对象架构（DOA，Digital Object Architecture）的关键组成部分
+
 ### Handle系统的几个RFC文档
 [RFC3650: Handle System Overview](https://datatracker.ietf.org/doc/rfc3650/?include_text=1)
 [RFC3651:Handle System Namespace and Service Definition](https://datatracker.ietf.org/doc/rfc3651/?include_text=1)
