@@ -3,6 +3,10 @@
 
 数字对象标识是数字对象架构（DOA，Digital Object Architecture）的关键组成部分
 
+2009年发布的欧盟物联网研究战略路线图[14]甚至将其（指Handle系统）作为最优先的研究重点。
+
+DOA理论的创立者、CNRI总裁Robert Kahn博士也认为：物联网实际上就是互联网，DOA提供的先进的基础设施对于管理“物”的信息仍然是非常理想和适合的[15]。事实上，在物联网架构的研究中，越来越多的专家意识到IPV6无法解决物联网的统一标识问题，因为IPV6只是地址而非名称。因此，欧盟已开始与CNRI开展合作，将Handle系统技术与IPV6相结合，开展搭建物联网应用基础平台的研究与实验项目。
+
 ### Handle系统的几个RFC文档
 [RFC3650: Handle System Overview](https://datatracker.ietf.org/doc/rfc3650/?include_text=1)
 [RFC3651:Handle System Namespace and Service Definition](https://datatracker.ietf.org/doc/rfc3651/?include_text=1)
