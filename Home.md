@@ -1,3 +1,6 @@
+### [邢腾飞:Handle——技术体系、发展态势与产业应用（附PPT）](http://www.cspiii.com/sx/rdxw/2016-09-09-3022.html)
+
+  
 ### [欧盟物联网研究战略路线图](https://wenku.baidu.com/view/ca968fcb0508763231121222.html)
 另一个链接：http://www.internet-of-things-research.eu/pdf/IoT_Cluster_SRA_English2Chinese_Translation.pdf
 
