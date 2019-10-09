@@ -1009,6 +1009,8 @@ JWT+以太坊实现JWT令牌的区块链留痕。
 ### [区块链数字化转型(Blockchain Digtal Transformation)](https://101blockchains.com/blockchain-digital-transformation)
 ![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/blockchain_digital_transformation.png)
 
+中文翻译：[区块链数字化转型](https://github.com/wbwangk/wbwangk.github.io/blob/master/Docs/%E5%8C%BA%E5%9D%97%E9%93%BE%E6%95%B0%E5%AD%97%E5%8C%96%E8%BD%AC%E5%9E%8B.docx?raw=true)
+
 ### [超级账本Fabric翻译](https://www.transifex.com/hyperledger/fabric_2_0/dashboard/)
 ### [（大鱼）区块链破解大数据交易的难题](https://www.jianshu.com/p/c9ee2a0a73ab)
 1.数据可溯源  
