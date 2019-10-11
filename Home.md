@@ -1,3 +1,7 @@
+### [工业互联网体系架构2.0](https://www.leiphone.com/news/201908/hUzbjgidrtLxFR9k.html)
+2016年9月，工业互联网产业联盟发布了工业互联网产业体系架构1.0的版本，近日，中国信息通信硏究院副院长、工业互联网产业联盟秘书长余晓晖为行业人士揭晓了《工业互联网体系架构2.0》，具体新版本体系架构如下图所示：
+![](https://static.leiphone.com/uploads/new/images/20190902/5d6cd2a257f30.jpg?imageView2/2/w/740)
+
 ### [邢腾飞:Handle——技术体系、发展态势与产业应用（附PPT）](http://www.cspiii.com/sx/rdxw/2016-09-09-3022.html)
 
 ### [食盐企业电子防伪追溯系统建设指南](https://zhongyan-oss.oss-cn-beijing.aliyuncs.com/%E9%A3%9F%E7%9B%90%E4%BC%81%E4%B8%9A%E7%94%B5%E5%AD%90%E9%98%B2%E4%BC%AA%E8%BF%BD%E6%BA%AF%E7%B3%BB%E7%BB%9F%E5%BB%BA%E8%AE%BE%E6%8C%87%E5%8D%97?Expires=101521855321&OSSAccessKeyId=LTAI0d8PS4yuiPiA&Signature=ZaGZ3IMZRMM3utQkcSd8zlNHmGc%3D&name=%E9%A3%9F%E7%9B%90%E4%BC%81%E4%B8%9A%E7%94%B5%E5%AD%90%E9%98%B2%E4%BC%AA%E8%BF%BD%E6%BA%AF%E7%B3%BB%E7%BB%9F%E5%BB%BA%E8%AE%BE%E6%8C%87%E5%8D%97.pdf)
