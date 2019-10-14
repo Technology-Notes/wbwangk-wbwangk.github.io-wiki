@@ -1,3 +1,6 @@
+### [Digital Object Architectureand theHandle System](https://wenku.baidu.com/view/d96030ee4afe04a1b071de2a.html)
+![](https://wkretype.bdimg.com/retype/zoom/d96030ee4afe04a1b071de2a?pn=11&o=jpg_6&md5sum=bae3e04ad93080aa1c6c3f0e577e906d&sign=0580121612&png=116632-184655&jpg=1273128-1415579)
+
 ### [工业互联网体系架构2.0](https://www.leiphone.com/news/201908/hUzbjgidrtLxFR9k.html)
 2016年9月，工业互联网产业联盟发布了工业互联网产业体系架构1.0的版本，近日，中国信息通信硏究院副院长、工业互联网产业联盟秘书长余晓晖为行业人士揭晓了《工业互联网体系架构2.0》，具体新版本体系架构如下图所示：
 ![](https://static.leiphone.com/uploads/new/images/20190902/5d6cd2a257f30.jpg?imageView2/2/w/740)
