@@ -1,3 +1,5 @@
+### [超级账本2019二季度中国贡献榜 (更新内容）](https://mp.weixin.qq.com/s/oZATB0BwnIWJcEYGyJNd9w)
+
 ### [Digital Object Architectureand theHandle System](https://wenku.baidu.com/view/d96030ee4afe04a1b071de2a.html)
 ![](https://wkretype.bdimg.com/retype/zoom/d96030ee4afe04a1b071de2a?pn=11&o=jpg_6&md5sum=bae3e04ad93080aa1c6c3f0e577e906d&sign=0580121612&png=116632-184655&jpg=1273128-1415579)
 
