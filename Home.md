@@ -1,3 +1,5 @@
+### [观点 | a16z：Libra应放弃一篮子货币，仅与美元锚定](https://www.8btc.com/article/495684)
+
 ### [一文了解超级账本DLT、库、开发工具有哪些，Hyperledger家族成员你认识几个？](https://www.8btc.com/article/495856)
 
 ### [超级账本2019二季度中国贡献榜 (更新内容）](https://mp.weixin.qq.com/s/oZATB0BwnIWJcEYGyJNd9w)
