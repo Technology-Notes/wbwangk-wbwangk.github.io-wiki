@@ -3,11 +3,11 @@
 
 ### [为什么选择阿里云区块链服务？](https://help.aliyun.com/document_detail/85263.html?spm=a2c4g.11174283.3.1.131376fbGFovXX)
 ![](http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/pic/85263/cn_zh/1551770405506/Image%202.png)
-（上图有HYPERLEDGER FABRIC图标）   [原图地址](http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/pic/85263/cn_zh/1551770405506/Image%202.png)
+（上图有HYPERLEDGER FABRIC图标）  
 
 产品功能架构：
 ![](http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/pic/85269/cn_zh/1547034943177/BaaS_Doc_Images_v1.4.002.jpeg)
-
+ [原图地址](http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/pic/85269/cn_zh/1547034943177/BaaS_Doc_Images_v1.4.002.jpeg)
 ### [观点 | a16z：Libra应放弃一篮子货币，仅与美元锚定](https://www.8btc.com/article/495684)
 
 ### [一文了解超级账本DLT、库、开发工具有哪些，Hyperledger家族成员你认识几个？](https://www.8btc.com/article/495856)
