@@ -1,3 +1,6 @@
+### [HTTPS工作原理](https://www.cnblogs.com/GeniusLyzh/archive/2018/07/17/9321242.html)
+![](https://images2018.cnblogs.com/blog/686913/201807/686913-20180717004507890-79439412.jpg)
+
 ### [腾讯区块链服务](https://cloud.tencent.com/product/tbaas)
 ![](https://main.qcloudimg.com/raw/0130193a64f095a7e28ea9b820a8a07a.png)
 [白皮书](https://main.qcloudimg.com/raw/565be73decf6badd55779613908a3319/%E8%85%BE%E8%AE%AF%E4%BA%91%E5%8C%BA%E5%9D%97%E9%93%BETBaaS%E4%BA%A7%E5%93%81%E7%99%BD%E7%9A%AE%E4%B9%A6.pdf)
