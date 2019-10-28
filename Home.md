@@ -84,6 +84,11 @@ TPS  2万/秒
 ### [华为区块链服务](https://www.huaweicloud.com/product/bcs.html)
 ![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/%E5%8D%8E%E4%B8%BA%E5%8C%BA%E5%9D%97%E9%93%BE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E5%9B%BE.png)
 
+《华为区块链白皮书》：
+华为区块链的整体构想是：聚焦典型应用领域，以区块链平台为核心，联合网络和可信硬件执行环境（终端+芯片），形成三位一体的端到端区块链框架，实现软件+硬件结合，提供更快、更安全的区块链端到端解决方案。
+可信硬件执行环境：加强硬件能力，软硬结合，大幅提升区块链的安全性和性能安全和性能是制约区块链网络发展的两个关键技术因素，所有的区块链都是在这两者之间寻求平衡。目前的技术主要是在共识算法和共识机制等软件层面进行提升，而未来通过可信硬件环境提供芯片层级的区块链安全和性能加速，是业界考虑的一个重要方向。
+
+
 ### [为什么选择阿里云区块链服务？](https://help.aliyun.com/document_detail/85263.html?spm=a2c4g.11174283.3.1.131376fbGFovXX)
 ![](http://docs-aliyun.cn-hangzhou.oss.aliyun-inc.com/assets/pic/85263/cn_zh/1551770405506/Image%202.png)
 （上图有HYPERLEDGER FABRIC图标）  
