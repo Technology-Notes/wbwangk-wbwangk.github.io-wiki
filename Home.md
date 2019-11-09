@@ -1,3 +1,5 @@
+### [【Libra 技术解读】详解LibraBFT共识机制](http://www.qukuaiwang.com.cn/news/142431.html)
+
 ### [浅析RAFT协议和BFT算法的一些区别](https://zhuanlan.zhihu.com/p/65520151)
 RAFT协议是BFT的弱化。例如随机数决定了谁当leader，这在开放体系下太容易被攻击。
 
