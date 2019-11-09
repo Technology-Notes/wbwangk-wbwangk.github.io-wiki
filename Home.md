@@ -1,5 +1,5 @@
 ### [[区块链] 共识算法之争（PBFT，Raft，PoW，PoS，DPoS，Ripple）](https://www.cnblogs.com/X-knight/p/9157814.html)
-介绍PBFT和Raft共识，有动画解释Raft，赞！
+介绍PBFT和Raft共识，有[动画解释Raft](http://thesecretlivesofdata.com/raft/)，赞！
 
 ### [2019年全球区块链企业发明专利排行榜（TOP100）](http://www.iprdaily.cn/news_23016.html?from=singlemessage&isappinstalled=0)
 
