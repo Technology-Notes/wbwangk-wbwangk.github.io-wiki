@@ -1,3 +1,6 @@
+### [浅析RAFT协议和BFT算法的一些区别](https://zhuanlan.zhihu.com/p/65520151)
+RAFT协议是BFT的弱化。例如随机数决定了谁当leader，这在开放体系下太容易被攻击。
+
 ### [[区块链] 共识算法之争（PBFT，Raft，PoW，PoS，DPoS，Ripple）](https://www.cnblogs.com/X-knight/p/9157814.html)
 介绍PBFT和Raft共识，有[动画解释Raft](http://thesecretlivesofdata.com/raft/)，赞！
 
