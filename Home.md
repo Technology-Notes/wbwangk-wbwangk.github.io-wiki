@@ -1,3 +1,6 @@
+### [星云研究院：Hyperledger Fabric论文分析](http://www.360doc.com/content/19/0223/13/16619343_816977054.shtml)
+非常棒的超级账本Fabric共识机制原理分析
+
 ### [理解零知识证明算法之Zk-stark——Arithmetization](https://www.8btc.com/article/516674)
 
 ### [法规观察：区块链的两大核心特征难以与GDPR相协调](https://www.8btc.com/article/516575)
