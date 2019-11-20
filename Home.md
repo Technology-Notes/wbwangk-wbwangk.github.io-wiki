@@ -1,6 +1,9 @@
 ### [区块链人才短缺：年薪20万，招不到区块链工程师](https://www.8btc.com/article/516729)
 [地方政府的“链上”马拉松：谁是“区块链之都”？](https://www.8btc.com/article/516366)
 
+[观察 | 中国区块链在全球舆论场筑造了一座高峰](https://www.8btc.com/article/516163)
+![](https://appserversrc.8btc.com/images/20191119100351fVnv.jpeg)
+![](https://appserversrc.8btc.com/images/20191119100352mtyO.jpeg)
 ### [发展改革委修订发布《产业结构调整指导目录（2019年本）》](http://www.gov.cn/xinwen/2019-11/06/content_5449193.htm)
 不再淘汰挖矿产业
 
