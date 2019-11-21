@@ -1,3 +1,6 @@
+### [区块链5大巨头横向对比](https://www.jianshu.com/p/8863e757b244)
+abric、FISCO BCOS、微软的Coco、企业以太坊联盟（EEA）及R3的Corda这五个具有一定影响力的联盟链
+
 ### [星云研究院：Hyperledger Fabric论文分析](http://www.360doc.com/content/19/0223/13/16619343_816977054.shtml)
 非常棒的超级账本Fabric共识机制原理分析
 
