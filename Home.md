@@ -1,3 +1,8 @@
+### [超级账本第15个最新项目 - Hyperledger Besu](https://mp.weixin.qq.com/s/affhhajYzwX32PWTPNbWRQ)
+这是一个以太坊客户端。
+
+出于安全考量，Hyperledger Besu不支持客户端的密钥管理。替代方案是，您可以使用EthSigner或任何与以太坊兼容的钱包来管理私钥。EthSigner 提供了对您的密钥存储的访问，并通过Hashicorp Vault和Microsoft Azure等工具对交易进行签名。
+
 ### [区块链5大巨头横向对比](https://www.jianshu.com/p/8863e757b244)
 abric、FISCO BCOS、微软的Coco、企业以太坊联盟（EEA）及R3的Corda这五个具有一定影响力的联盟链
 
