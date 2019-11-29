@@ -1,3 +1,6 @@
+### [区块链在金融领域的应用.pptx](https://max.book118.com/html/2018/1223/5032201043001342.shtm)
+中国区块链标准化
+
 ### [“套证”可防！谈论Sarine钻石指纹识别技术时，我们究竟在讲什么？](https://scroll.huanqiu.com/article/9CaKrnKnE9I)
 
 
