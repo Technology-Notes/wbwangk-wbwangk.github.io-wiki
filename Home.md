@@ -1,3 +1,7 @@
+### [基于标识的密码技术（IBC）简介](https://blog.csdn.net/icelikejia/article/details/78910848)
+Shamir在1984[S84]年提出了基于标识的密码技术(Identity-Based Cryptography - IBC)：即用户的标识就可以用做用户的公钥（更加准确地说是用户的公钥可以从用户的标识和系统指定的一个方法计算得出）。
+![](https://www.olymtech.net/images/webImages/ibc-profile-3.jpg)
+
 ### [中国通信标准化协会：“物联网+区块链”应用与发展白皮书](https://mp.weixin.qq.com/s/VDtsrevrb0wkELEhHH9evg)
 白皮书指出，区块链凭借“不可篡改”、“共识机制”和“去中心化”等特性， 对物联网将产生以下几方面的影响：
 
