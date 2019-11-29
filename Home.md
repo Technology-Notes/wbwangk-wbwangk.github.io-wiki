@@ -1,3 +1,7 @@
+### [“套证”可防！谈论Sarine钻石指纹识别技术时，我们究竟在讲什么？](https://scroll.huanqiu.com/article/9CaKrnKnE9I)
+
+
+
 ### [This AI Spots Fake Diamonds, Tests Water, Sees Disease](https://www.cbronline.com/news/ai-fakes?linkId=52415820)
 IBM钻石防伪：
 
