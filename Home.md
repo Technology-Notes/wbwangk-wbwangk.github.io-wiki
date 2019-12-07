@@ -21,6 +21,8 @@ civic代币：
 
 四、 应用案例-为自动售货机进行匿名年龄验证
 
+![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/civic2.png)
+
 ### [短公钥的可证明安全基于身份数字签名算法_王之怡.pdf](e:/disk/密码学/短公钥的可证明安全基于身份数字签名算法_王之怡.pdf)
 基于身份签名算法由以下算法组成：
 
