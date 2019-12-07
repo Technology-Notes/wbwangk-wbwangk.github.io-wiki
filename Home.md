@@ -23,6 +23,8 @@ civic代币：
 
 ![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/civic2.png)
 
+[civic白皮书](https://tokensale.civic.com/CivicTokenSaleWhitePaper.pdf)
+
 ### [短公钥的可证明安全基于身份数字签名算法_王之怡.pdf](e:/disk/密码学/短公钥的可证明安全基于身份数字签名算法_王之怡.pdf)
 基于身份签名算法由以下算法组成：
 
