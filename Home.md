@@ -21,7 +21,7 @@ civic代币：
 
 四、 应用案例-为自动售货机进行匿名年龄验证
 
-![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/civic2.png)
+![](https://docs.civic.com/images/codeflow.png)
 
 [civic白皮书](https://tokensale.civic.com/CivicTokenSaleWhitePaper.pdf)
 
