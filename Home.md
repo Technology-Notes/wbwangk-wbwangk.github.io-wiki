@@ -17,7 +17,7 @@ civic代币：
 
 验证授权机构的公共标识符，散列标识数据和指示数据的标志仍然有效
 
-![](https://pics2.baidu.com/feed/9345d688d43f8794c78d752bd2f96bf01ad53aae.png?token=072fc796b43114c27c312ca47ee0d44d&s=C8A21D72491B604D587959DB0300C0B1)
+![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/civic1.png)
 
 ### [短公钥的可证明安全基于身份数字签名算法_王之怡.pdf](e:/disk/密码学/短公钥的可证明安全基于身份数字签名算法_王之怡.pdf)
 基于身份签名算法由以下算法组成：
