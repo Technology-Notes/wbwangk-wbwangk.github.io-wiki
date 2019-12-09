@@ -1,3 +1,6 @@
+### [医疗链medicalchain白皮书](https://medicalchain.com/en/whitepaper/)
+E:\Disk\健康医疗\医疗链（Medicalchain）白皮书.docx
+
 ### [Civic——KYC和身份验证的未来](http://www.qukuaiwang.com.cn/news/2352.html)
 这就是Civic创建一个安全的身份平台的原因。它实际上就像一个连接您本人和网络凭据的数字钱包。 
 
