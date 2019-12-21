@@ -1,3 +1,8 @@
+### [区块链标准的虚与实](http://baijiahao.baidu.com/s?id=1602680264387044490&wfr=spider&for=pc)
+前全球都在积极的讨论区块链行业标准，全球区块链的标准机构包括IEEE区块链资产交易委员会、万维网联盟（W3C）、区块链联盟(R3CEV)、国际电信联盟标准化部门（ITU-T）、区块链和分布式记账技术技术委员会（ISO/TC 307）。
+
+[互链独家 | 抢占话语权 中国区块链标准化“元年” ——全球区块链标准图谱 ](http://www.sohu.com/a/314562094_100158079)
+
 ### [CSDN区块链开发者大会PPT](https://download.csdn.net/meeting/meeting_detail/52)
 
 ### [阿里的区块链身份服务](https://www.aliyun.com/solution/blockchain/DIS)
