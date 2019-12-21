@@ -1,3 +1,5 @@
+### [CSDN区块链开发者大会PPT](https://download.csdn.net/meeting/meeting_detail/52)
+
 ### [阿里的区块链身份服务](https://www.aliyun.com/solution/blockchain/DIS)
 
 ### [医疗链medicalchain白皮书](https://medicalchain.com/en/whitepaper/)
