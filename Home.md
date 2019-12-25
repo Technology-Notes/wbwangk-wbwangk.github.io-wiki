@@ -7,6 +7,9 @@
  
 零知识证明（ZKPs）： ZKP是一种密码学技术，是一种在无需泄露数据本身情况下证明某些数据运算的一种零知识证明，允许两方（证明者和验证者）来证明某个提议是真实的，而且无需泄露除了它是真实的之外的任何信息。在密码学货币和区块链中，这通常是指交易信息数据。
 
+[匿名币的核心技术——环签名和zk-SNARK的对比](https://bihu.com/article/1424993)
+![](https://github.com/wbwangk/wbwangk.github.io/raw/master/images/14ce081599121928d0f05722671f1999.png)
+
 ### [简析 ｜ 区块链治理的三个分支](https://baijiahao.baidu.com/s?id=1618458969892910831&wfr=spider&for=pc)
 区块链治理是核心开发人员、全节点和基金会之间相互制约平衡的过程。
 
