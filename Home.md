@@ -1,3 +1,8 @@
+### [电子发票区块链应用调查（上）](https://www.8btc.com/media/539673)
+![](https://appserversrc.8btc.com/images/20191227193627Cx5R.jpeg)
+腾讯区块链电子发票业务流程示意图:  
+![](https://appserversrc.8btc.com/images/20191227193629Xn1E.jpeg)
+
 ### 数字法币
 [全球六大银行联手研发新型虚拟数字货币(UtilitySettlementCoin，USC) 2018年有望面世](https://www.885.com/a/94655.html)
 瑞银表示，每个清算货币都将100%的由央行背书，对应欧元和美元。据悉，区块链技术可以让加密货币无需中央账本即可通过计算机网络进行电子交易和验证。
