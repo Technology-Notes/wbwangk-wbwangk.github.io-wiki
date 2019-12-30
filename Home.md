@@ -1,3 +1,6 @@
+### [Fiat–Shamir heuristic 启发式的应用 理解 代码实现](https://blog.csdn.net/liangyihuai/article/details/103438974)
+比常用的向后台提交用户名口令的“摘要验证”方式更安全。
+
 ### [技术解读 | Polkadot 跨链方案全剖析](https://www.8btc.com/media/539316)
 Polkadot 希望能够连接各个区块链网络，主要关注在解决以下三个层面的问题：   
 - 互操作性（跨链）  
