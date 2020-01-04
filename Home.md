@@ -1,3 +1,5 @@
+### [微众银行区块链WeDPR隐私保护白皮书](https://mp.weixin.qq.com/s/fYCHWb2SwWu-9ySLibrI0w)
+
 ### [《密码胶囊:一种用于交互协议的隔离原语》](E:\Disk\密码学\零知识\CRYPTO_86_密码容器：交互协定的一种本原解模型(王伟兵).docx)
 
 ### [Fiat–Shamir heuristic 启发式的应用 理解 代码实现](https://blog.csdn.net/liangyihuai/article/details/103438974)
