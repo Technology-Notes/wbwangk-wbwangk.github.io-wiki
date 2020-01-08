@@ -1,3 +1,6 @@
+### [观点 | 区块链技术能消除你对ETC消费的不信任与恐惧吗？](https://www.8btc.com/media/543719)
+![](https://appserversrc.8btc.com/images/202001080959507bu5.jpg)
+
 ### [美国计算机学会：区块链技术到底能做什么？](https://www.8btc.com/media/542727)
 原文：https://queue.acm.org/detail.cfm?id=3376896
 
