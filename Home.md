@@ -1,3 +1,12 @@
+### [门限密码学的理论、实现和应用](https://www.docin.com/p-1397914275.html)
+
+### [区块链技术引卷 | 预言机：区块链与外界沟通的桥梁](https://www.8btc.com/media/544041)
+预言机英文为Oracle，最初源于古希腊宗教，意为“神谕、先知、预言”。
+
+计算机科学之父艾伦·图灵于1939年在博士论文里提出预言机的概念，介绍了超计算（Hypercomputation）。预言机比图灵机更加强大，可以回答一些无法通过计算解决的问题，例如，“今年世界杯，哪只球队将问鼎冠军？”。
+
+一部预言机是一个带着“魔法黑盒”的图灵机，其中黑盒可以解答两类问题：一是决定性问题（Decision Problem，只需回答“是”或“否”的问题），二是功能性问题（Function Problem，又被称为复杂型问题，比简单回答“是否”要复杂，例如，正整数x可以被哪些数整除？）
+
 ### [shubhamvrkr/android-fabric-sdk:  Hyperledger fabric 1.1 java SDK compatible with android (API 24+)](https://github.com/shubhamvrkr/android-fabric-sdk)
 
 ### [观点 | 区块链技术能消除你对ETC消费的不信任与恐惧吗？](https://www.8btc.com/media/543719)
