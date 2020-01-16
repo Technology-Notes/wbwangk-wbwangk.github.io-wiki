@@ -1,3 +1,6 @@
+### [黑湖科技：打通制造业信息孤岛，用区块链并联车间流水线 | 创业](http://www.xinqtech.com/read/201802/1317770.shtml)
+![](http://cdn.upf.123.com.cn/caij/FileUpload/20180213/56931833_m.jpg)
+
 ### [杭州市区块链产业及园区发展报告：注册区块链企业1611家，布局6大区块链产业园](https://www.8btc.com/media/543964)
 
 ### [以美元霸权为尺 全球央行数字货币已分为三种类型](https://www.8btc.com/media/544029)
