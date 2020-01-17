@@ -1,3 +1,5 @@
+### [【DIPNET大讲堂】区块链+：设备预防性维护](https://bihu.com/article/1969639582)
+
 ### [运输联盟中的区块链](https://www.bita.studio/)
 标准：https://static1.squarespace.com/static/5aa97ac8372b96325bb9ad66/t/5c7e88397817f73e6c60a967/1551796284047/BiTAS+Tracking+Data+Frameowork+Profile+v9_ISTO.pdf
 
