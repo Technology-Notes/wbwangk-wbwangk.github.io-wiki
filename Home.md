@@ -1,3 +1,8 @@
+### [技术分享 | 安全并且公平的Block Dag排序](https://www.8btc.com/media/547608)
+在之前的文章中，我们看到了在DAG拓扑结构中可能出现的问题是定义区块和转账的顺序。在这篇文章中，我们描述了Taraxa的机制，该机制不仅可以确保在Block DAG中进行排序，而且可以确保排序的过程是安全和公平。
+
+![](https://appserversrc.8btc.com/activity/2020011716461887351.png)
+
 ### [【DIPNET大讲堂】区块链+：设备预防性维护](https://bihu.com/article/1969639582)
 
 ### [运输联盟中的区块链](https://www.bita.studio/)
