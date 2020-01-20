@@ -1,3 +1,9 @@
+### [法律人视野下的区块链应用：以司法领域及供应链金融领域为例](https://www.8btc.com/media/548145)
+![](https://appserversrc.8btc.com/activity/2020011918263711509.jpg)
+北京互联网法院采用区块链智能合约技术实现执行一键立案:  
+![](https://appserversrc.8btc.com/activity/2020011918271847903.png)
+![](https://appserversrc.8btc.com/activity/2020011918274588848.png)
+
 ### [供应链管理中的区块链：关键用例和收益](https://www.infopulse.com/blog/blockchain-in-supply-chain-management-key-use-cases-and-benefits/)
 区块链是革新数字供应链管理的关键创新技术之一。随着供应链本质上变得越来越复杂，涉及不同的利益相关者并主要依赖于许多外部中介，区块链已成为解决供应链生态系统中发生的所有数据/文档/通信交换问题的有力竞争者。
 
