@@ -1,3 +1,5 @@
+### [区块链首次应用于集五福：链上有“福”同享是什么体验？](https://www.8btc.com/article/548195)
+
 ### [法律人视野下的区块链应用：以司法领域及供应链金融领域为例](https://www.8btc.com/media/548145)
 ![](https://appserversrc.8btc.com/activity/2020011918263711509.jpg)
 北京互联网法院采用区块链智能合约技术实现执行一键立案:  
