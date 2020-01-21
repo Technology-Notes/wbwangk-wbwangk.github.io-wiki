@@ -6,6 +6,7 @@
 模式3：自我主权/点对点
 ![](https://oss02.bihu.com/img/58b51d4ea6284cd85a8315787a7cbf14.png?x-oss-process=style/size_lg)
 
+[W3C: Verifiable Credentials Data Model 1.0](https://w3c.github.io/vc-data-model/)
 ### [The Path to Self-Sovereign Identity(SSI)](http://www.lifewithalacrity.com/2016/04/the-path-to-self-soverereign-identity.html)
 
 ### [【SSI】通往自我主权身份之路（2）——SSI的十大原则](https://bihu.com/article/1704088)
