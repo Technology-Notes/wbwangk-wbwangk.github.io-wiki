@@ -1,3 +1,20 @@
+### [TokenGazer深度研究 ｜ Sovrin：技术落地可期，但推广难度较大](https://baijiahao.baidu.com/s?id=1617078975363035134&wfr=spider&for=pc)
+宏观上看，区块链在身份认证领域具有一定的推广潜力，但仍会存在较大的应用障碍。有区块链技术背景的Evernym公司深度参与了Sovrin的发展，预计Evernym会对Sovrin项目的发展提供持续帮助。
+
+Sorvin是一种用于自治身份（Self-Sovereign Identity）和去中心化信任的协议。
+
+公链具有去中心化的特点，而且所有人都可以使用，因此区块链有可能适合成为去中心化的注册中心。由于区块链上的每笔交易都有一个数字签名（需要私钥），因此可以使用区块链本身存储相关的公钥，或者持有者需要证明所有权的其他密钥。此时PKI就变成了DPKI（decentralized PKI）。如果有一个为公钥地址设计的区块链，那么任何人就可以发布数字签名的证书，任何其他人也可以验证签名。以上是Sovrin的基本思路。
+
+当前专注于身份认证的项目很少，已经上二级市场的项目主要是Civic，其他开发中的项目包括uPort、SecureKey、ID2020等。
+
+2015年，一家名为Evernym的创业公司开始设计一个名为Sovrin的区块链解决身份认证问题。Evernym邀请了一批数字验证、安全、隐私方面的专家来设计和管理Sovrin。
+
+2016年9月29日，Sovrin基金会在伦敦成立。它是一家国际化的基金会，由受托人（trustee）组成的董事会和技术管理董事会构成。
+
+2017年初，Sovrin基金会将开源代码库（最初由Evernym贡献）移交给Linux基金会，变成了Hyperledger Indy项目。
+
+经调查[7]，Evernym是一家成立于2013年的软件公司，主要开发去中心化的自治身份App，创始人为Jason Law（也是Sovrin受托人董事会成员）和Timothy Ruff（非Sovrin成员）。Evernym于2017年获得了种子轮和风险轮融资。Evernym曾与Blockstack、uPort、Gem、Microsoft、Digital Bazaar等公司一起参与了W3C证书社区组的DID（去中心化标识符）规范的制订。
+
 ### [数字身份关系的三种模式——自主权身份（SSI）有何不同，为什么它更好？（全文）](https://bihu.com/article/1682722)
 模式1：孤立式模式/传统模式
 ![](https://oss02.bihu.com/img/6bc4a5d777972dc2c661aa1b1bbccc3c.png?x-oss-process=style/size_lg)
