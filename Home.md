@@ -1,3 +1,13 @@
+### [数字身份关系的三种模式——自主权身份（SSI）有何不同，为什么它更好？（全文）](https://bihu.com/article/1682722)
+模式1：孤立式模式/传统模式
+![](https://oss02.bihu.com/img/6bc4a5d777972dc2c661aa1b1bbccc3c.png?x-oss-process=style/size_lg)
+模式2：第三方身份识别提供者（IDP
+![](https://oss02.bihu.com/img/72735ac01887efed5537aa59272ffae7.png?x-oss-process=style/size_lg)
+模式3：自我主权/点对点
+![](https://oss02.bihu.com/img/58b51d4ea6284cd85a8315787a7cbf14.png?x-oss-process=style/size_lg)
+
+### [The Path to Self-Sovereign Identity(SSI)](http://www.lifewithalacrity.com/2016/04/the-path-to-self-soverereign-identity.html)
+
 ### [【SSI】通往自我主权身份之路（2）——SSI的十大原则](https://bihu.com/article/1704088)
 术语表
 以下术语与本文相关。这些只是通常被用来讨论数字身份的所有术语的一个子集，并已将术语数量控制在最小范围以避免过于复杂。
