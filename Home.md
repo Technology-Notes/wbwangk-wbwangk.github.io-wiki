@@ -1,3 +1,26 @@
+### [介绍DID--理解去中心化身份](https://www.hrtechchina.com/30467.html)
+区块链技术承诺可以将个人数据的所有权从公司和政府手中返还给个人，进行数字身份变革，从而使个人拥有权力与他人共享数据，并且可以随时撤回。
+
+身份是 Web 3 基础设施缺失的最重要的一部分，有许多项目采用不同的方式构建整个去中心化应用生态系统可以使用的身份层。目前关注度最高的两个层次是 namespaces（命名空间） 和 attestations（认证）。
+
+一.命名空间  
+去中心化身份的一个关键点是：如何在没有中心持有的注册机构的情况下，能够标识世界上的人、设备以及其他实体。
+
+Zooko 三角是网络中命名系统的三个理想性质的三难选择困境，即数字名称无法同时包含三种性质：
+安全、去中心化和可理解性
+
+二. 认证（ attestations ）
+在去中心化应用的世界中，我们不再信任第三方，但我们仍然需要在智能合约执行之前验证某人的身份。认证是去中心化身份系统中信任和声誉的基石
+
+身份自治产品  
+一种解决方案是拥有独立的身份产品。这种身份产品需要满足四个基本特性：  
+1. 身份具有某种唯一标识。（存储这种标识的最佳体系结构就是上文描述的满足 Zooko 三角的命名空间。）  
+2. 第三方能够声明（注册）某个身份的信息。声明中包括例如名称、地址、电子邮件等。  
+3. 能以某种方式请求用户的身份认证。  
+4. 能有某种方式查询有关某身份的声明。  
+
+
+### DID备忘
 [Decentralized Identifiers (DIDs) v1.0]（Core Data Model and Syntaxes）(https://w3c.github.io/did-core/)
 [Verifiable Credentials Data Model 1.0]（Expressing verifiable information on the Web）(https://w3c.github.io/vc-data-model)
 
@@ -12,8 +35,7 @@
 [DID Method Registry](https://w3c-ccg.github.io/did-method-registry/)
 列出了一些DID的一些合法地址，其中的did:work是一个构建在超级账本Fabric上的数字身份实现（https://workday.github.io/work-did-method-spec/）
 
-一、	去中心化身份（Decentralized ID, DID）介绍
-[去中心化身份（Decentralized ID, DID）介绍](https://blog.csdn.net/treaser/article/details/99004355)
+### [去中心化身份（Decentralized ID, DID）介绍](https://blog.csdn.net/treaser/article/details/99004355)
 较系统地介绍了DID，如知名DID项目、W3C的DID标准（DID标识符、DIDI文档、可验证声明）。谈到了Zooko三角形理论。
 
 可验证声明简称VC，有以下几种参与者（列出了其功能）：  
