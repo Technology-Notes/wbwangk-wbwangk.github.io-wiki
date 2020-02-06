@@ -1,5 +1,12 @@
+
 ### Sovrin
 [白皮书Sovrin-Protocol-and-Token-White-Paper.pdf](https://sovrin.org/wp-content/uploads/2018/03/Sovrin-Protocol-and-Token-White-Paper.pdf)
+该白皮书的翻译：[第一部分](https://blog.csdn.net/li_jiachuan/article/details/82942181
+)、[第二部分](https://blog.csdn.net/li_jiachuan/article/details/82942594
+)、[第三部分](https://blog.csdn.net/li_jiachuan/article/details/82945795
+)、[第四部分](https://blog.csdn.net/li_jiachuan/article/details/82946289)、[第五部分](https://blog.csdn.net/li_jiachuan/article/details/82951790)
+
+[Sovrin术语](https://www.evernym.com/wp-content/uploads/2017/07/Sovrin-Glossary.pdf)
 
 ### [ERC 725 and ERC 735 的实现及关系](https://www.cnblogs.com/wanghui-garcia/p/9636716.html)
 根据这个网站给的教程进行学习过程为：
