@@ -1,10 +1,11 @@
 
 ### Sovrin
 [白皮书Sovrin-Protocol-and-Token-White-Paper.pdf](https://sovrin.org/wp-content/uploads/2018/03/Sovrin-Protocol-and-Token-White-Paper.pdf)
+
 该白皮书的翻译：[第一部分](https://blog.csdn.net/li_jiachuan/article/details/82942181
 )、[第二部分](https://blog.csdn.net/li_jiachuan/article/details/82942594
 )、[第三部分](https://blog.csdn.net/li_jiachuan/article/details/82945795
-)、[第四部分](https://blog.csdn.net/li_jiachuan/article/details/82946289)、[第五部分](https://blog.csdn.net/li_jiachuan/article/details/82951790)
+)、[第四部分](https://blog.csdn.net/li_jiachuan/article/details/82946289)、[第五部分](https://blog.csdn.net/li_jiachuan/article/details/82951790)、[第六部分](https://blog.csdn.net/qq_42750537/article/details/103165346)
 
 [Sovrin术语](https://www.evernym.com/wp-content/uploads/2017/07/Sovrin-Glossary.pdf)
 
