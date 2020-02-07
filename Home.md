@@ -1,3 +1,6 @@
+### [uPort：去中心化的身份系统试用  - CSDN博客](https://blog.csdn.net/shangsongwww/article/details/90111467)
+文章给出了uPort试用的截图，直观。文章作者有很多区块链相关文章。
+
 ### [区块链为何对安全多方计算如此热情？](https://blog.csdn.net/shangsongwww/article/details/103785256)
 假设，你、小王和小李想知道三人的平均薪资，但又不想透露自己的具体薪资，那么要用什么方法达到这个目的呢？
 ![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9pbWcuYmlzaGlqaWUuY29tLzE1NzEwNTQ5MTg0NTI2Ni5qcGVn?x-oss-process=image/format,png)
