@@ -1,3 +1,6 @@
+### [Hyperledge 发布 Avalon，提高区块链的链下处理性能](https://blog.csdn.net/shangsongwww/article/details/103668178)
+Hyperledger 项目通过博客发布了新项目 Hyperledger Avalon ，意在解决许多区块链项目在可扩展性和隐私性上所面对的挑战。Avalon 力图通过受信的链下处理，在确保交易的安全性和弹性的同时，解决可扩展性和隐私性等痛点问题。其核心是提供一种受信的计算服务（TCS，Trusted Compute Service），支持受信执行环境（TEE，Trusted Execution Environmen）、零知识证明（ZKP，Zero Knowledge Proofs）和多方计算（MPC，Multi-Party Compute）。
+
 ### [IOTA](https://www.iota.org/)
 一种区块链+物联网的融合技术。这是它的官网。
 
