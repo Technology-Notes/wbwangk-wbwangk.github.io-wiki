@@ -11,6 +11,10 @@
 ![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9pbWcuYmlzaGlqaWUuY29tLzE1NzEwNTQ5MTg0NTI2Ni5qcGVn?x-oss-process=image/format,png)
 在线画函数曲线:[fooplot.com](http://www.fooplot.com/#W3sidHlwZSI6MCwiZXEiOiJ4XjMreF4yK3grMSIsImNvbG9yIjoiIzAwMDAwMCJ9LHsidHlwZSI6MTAwMH1d)
 
+基于安全多方计算的密钥管理。在数字货币里拥有账户的私钥就表示拥有了资金的所有权。为了提高资产安全，尤其是大额资产，目前有两种方案：多重签名和秘密共享。
+
+KZen公布了新款的ZenGo钱包，它基于多方安全计算技术，使用两个独立（部分）秘钥来取代传统的单个私钥模式。其中一个秘钥保存在手机上（用 TouchID/FaceID授权访问），另一个存储在 ZenGo 服务器上，在进行交易的时候，手机和 ZenGo 服务器通信共同完成签名。
+
 ### [Hyperledge 发布 Avalon，提高区块链的链下处理性能](https://blog.csdn.net/shangsongwww/article/details/103668178)
 Hyperledger 项目通过博客发布了新项目 Hyperledger Avalon ，意在解决许多区块链项目在可扩展性和隐私性上所面对的挑战。Avalon 力图通过受信的链下处理，在确保交易的安全性和弹性的同时，解决可扩展性和隐私性等痛点问题。其核心是提供一种受信的计算服务（TCS，Trusted Compute Service），支持受信执行环境（TEE，Trusted Execution Environmen）、零知识证明（ZKP，Zero Knowledge Proofs）和多方计算（MPC，Multi-Party Compute）。
 
