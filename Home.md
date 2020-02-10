@@ -1,3 +1,6 @@
+### [中国国交中心副理事长黄奇帆：数字化具有颠覆性，区块链技术解决数字经济基础设施问题](https://www.8btc.com/article/553838)
+将ABCD进行了类比
+
 ### [区块链研究报告 Forkast.Insights：2019-2020中国区块链报告](http://forkast.news/wp-content/uploads/2019/12/Forkast.Insights-China-Blockchain-Report-2019-2020.pdf)
 时间轴：Global Timeline of Blockchain Development
 
