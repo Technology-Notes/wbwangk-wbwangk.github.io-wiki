@@ -1,3 +1,7 @@
+### [区块链研究报告 Forkast.Insights：2019-2020中国区块链报告](http://forkast.news/wp-content/uploads/2019/12/Forkast.Insights-China-Blockchain-Report-2019-2020.pdf)
+时间轴：Global Timeline of Blockchain Development
+
+
 ### [uPort白皮书](https://max.book118.com/html/2017/0829/130676852.shtm)
 [英文版白皮书](https://blockchainlab.com/pdf/uPort_whitepaper_DRAFT20161020.pdf)  
 [uPort官网](https://www.uport.me/)
