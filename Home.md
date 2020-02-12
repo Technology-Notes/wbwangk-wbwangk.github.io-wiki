@@ -4,6 +4,9 @@
 [通过Shamir的秘密共享安全地划分和管理秘密数据](http://kimh.github.io/blog/en/security/protect-your-secret-key-with-shamirs-secret-sharing/)  
 文章中用2阶多项式解释和验算了过程。
 
+[在秘密共享方案中挑战对手模型](http://www.isg.rhul.ac.uk/~martin/files/brusselscontactforum_Keith_Martin.pdf)
+一个幻灯片，宏观
+
 ### [中国国交中心副理事长黄奇帆：数字化具有颠覆性，区块链技术解决数字经济基础设施问题](https://www.8btc.com/article/553838)
 将ABCD进行了类比
 
