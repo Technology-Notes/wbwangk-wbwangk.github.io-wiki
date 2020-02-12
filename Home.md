@@ -1,3 +1,6 @@
+### [Shamir's Secret Sharing Scheme](http://point-at-infinity.org/ssss/)
+该网页中有个密钥分享的[演示](http://point-at-infinity.org/ssss/demo.html)
+
 ### [中国国交中心副理事长黄奇帆：数字化具有颠覆性，区块链技术解决数字经济基础设施问题](https://www.8btc.com/article/553838)
 将ABCD进行了类比
 
