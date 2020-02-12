@@ -26,6 +26,7 @@
 假设，你、小王和小李想知道三人的平均薪资，但又不想透露自己的具体薪资，那么要用什么方法达到这个目的呢？
 ![](https://imgconvert.csdnimg.cn/aHR0cHM6Ly9pbWcuYmlzaGlqaWUuY29tLzE1NzEwNTQ5MTg0NTI2Ni5qcGVn?x-oss-process=image/format,png)
 在线画函数曲线:[fooplot.com](http://www.fooplot.com/#W3sidHlwZSI6MCwiZXEiOiJ4XjMreF4yK3grMSIsImNvbG9yIjoiIzAwMDAwMCJ9LHsidHlwZSI6MTAwMH1d)
+[拉格朗日插值法(图文详解)](https://blog.csdn.net/shenwansangz/article/details/88682785)
 
 基于安全多方计算的密钥管理。在数字货币里拥有账户的私钥就表示拥有了资金的所有权。为了提高资产安全，尤其是大额资产，目前有两种方案：多重签名和秘密共享。
 
