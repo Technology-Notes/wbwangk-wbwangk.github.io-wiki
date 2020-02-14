@@ -1,3 +1,6 @@
+### [一年之计在于春，减产之计在于囤](https://www.8btc.com/media/555333)
+截至2020年2月7日，全球数字通证总市值为2842.24亿美元，相比上月末上涨888.3亿美元，涨幅为45.5%。一月日均成交额为1025.4亿美元，较上月增加343.4亿美元，增幅为50.3%。
+
 ### [Shamir's Secret Sharing Scheme](http://point-at-infinity.org/ssss/)
 该网页中有个密钥分享的[演示](http://point-at-infinity.org/ssss/demo.html)
 
