@@ -1,3 +1,6 @@
+### [ECC加密算法入门介绍](https://www.pediy.com/kssd/pediy06/pediy6014.htm)
+通俗讲解了**射影平面**的概念。
+
 ### [ppt:ELGamal算法](https://wenku.baidu.com/view/48fa2f315022aaea988f0f32.html)
 开始是“群论”入门，包括群定义、有限群、群的阶。
 
