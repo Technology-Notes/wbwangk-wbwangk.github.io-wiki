@@ -1,3 +1,5 @@
+### [张岚：利用MPC计算多人平均薪资](https://note.youdao.com/ynoteshare1/index.html?id=a27a1116944bfea07b6f8cdc5dc7b5ad&type=note)
+
 ### [blockstack](https://blockstack.org/)
 提供区块链全栈技术库，包括区块链、用户身份、加密存储等。[中文白皮书](https://blockstack.org/whitepaper-ch.pdf)
 
