@@ -1,3 +1,6 @@
+### [Conflux研究组 | 区块链数据存储的“密码学黑科技”--累加器](https://www.jinse.com/blockchain/506878.html)
+无状态区块链与成员性证明membership proof、默克尔树的成员性证明（Merkle Proof）、 密码学累加器（Cryptographic Accumulator）
+
 ### [首先看看区块链上的身份管理方案](https://www.researchgate.net/publication/322383187_A_First_Look_at_Identity_Management_Schemes_on_the_Blockchain)
 中文翻译：E:\Disk\电子证照\1801.03294_A_First_Look_at_Identity_Management_Schemes_on_the_Blockchain(有道文档翻译结果)
 
