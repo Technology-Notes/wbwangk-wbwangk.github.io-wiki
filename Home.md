@@ -1,3 +1,8 @@
+### [首先看看区块链上的身份管理方案](https://www.researchgate.net/publication/322383187_A_First_Look_at_Identity_Management_Schemes_on_the_Blockchain)
+中文翻译：E:\Disk\电子证照\1801.03294_A_First_Look_at_Identity_Management_Schemes_on_the_Blockchain(有道文档翻译结果)
+
+我们介绍了基于DLT的IdM的新兴景观，并评估了三个有代表性的提案- uPort, ShoCard和Sovrin -使用一个具有开创性的框架的分析镜头来描述成功的IdM方案的本质。
+
 ### [张岚：利用MPC计算多人平均薪资](https://note.youdao.com/ynoteshare1/index.html?id=a27a1116944bfea07b6f8cdc5dc7b5ad&type=note)
 
 ### [blockstack](https://blockstack.org/)
