@@ -1,3 +1,5 @@
+### [Self-Sovereign Identity: A Comparison of IRMA and Sovrin](https://www.researchgate.net/publication/334458262_Self-Sovereign_Identity_A_Comparison_of_IRMA_and_Sovrin)
+
 ### [Conflux研究组 | 区块链数据存储的“密码学黑科技”--累加器](https://www.jinse.com/blockchain/506878.html)
 无状态区块链与成员性证明membership proof、默克尔树的成员性证明（Merkle Proof）、 密码学累加器（Cryptographic Accumulator）
 
