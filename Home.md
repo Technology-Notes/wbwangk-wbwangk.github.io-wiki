@@ -1,3 +1,6 @@
+### [椭圆曲线加密算法ECDSA与RFC6979改进提案](http://www.qukuaiwang.com.cn/news/14920.html)
+对椭圆曲线上的有限集加减乘除都讲得很易懂，最后讲了ECDAS数字签名。
+
 ### [基于区块链（以太坊）的电子证照管理系统解决方案](https://blog.csdn.net/bjgpdn/article/details/87947471)
 
 ### BLS（Boneh-Lynn-Sacham）
