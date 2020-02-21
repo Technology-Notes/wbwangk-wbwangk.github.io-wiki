@@ -1,3 +1,5 @@
+### [亿欧智库：2020全球科技公司区块链布局案例研究](http://www.199it.com/archives/1003730.html)
+
 ### [Self-Sovereign Identity: A Comparison of IRMA and Sovrin](https://www.researchgate.net/publication/334458262_Self-Sovereign_Identity_A_Comparison_of_IRMA_and_Sovrin)
 
 ### [Conflux研究组 | 区块链数据存储的“密码学黑科技”--累加器](https://www.jinse.com/blockchain/506878.html)
