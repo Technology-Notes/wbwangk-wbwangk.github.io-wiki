@@ -1,3 +1,5 @@
+### [一文预测2020年安全多方计算（MPC）对区块链行业的五大影响](https://www.8btc.com/article/528713)
+截至目前，包括区块链行业在内的所有行业，安全多方计算（MPC）技术的最大应用，就是通过门限签名方案(TSS)进行密钥管理。门限签名允许私钥可在多个参与者之间被分割，从而产生一个类似多重签名的协议，但对其参与者而言，它是完全本地的（解释：在区块链场景下完全是链外处理的）。
 ### [亿欧智库：2020全球科技公司区块链布局案例研究](http://www.199it.com/archives/1003730.html)
 
 ### [Self-Sovereign Identity: A Comparison of IRMA and Sovrin](https://www.researchgate.net/publication/334458262_Self-Sovereign_Identity_A_Comparison_of_IRMA_and_Sovrin)
