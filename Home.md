@@ -1922,6 +1922,9 @@ IBFT，全称 Istanbul Byzantine Fault Tolerance (伊斯坦布尔拜占庭容错
 
 天眼查上一些专利显示的信息不全，可以到国家知识产权局下的“[中国及多国专利审查信息查询](http://cpquery.sipo.gov.cn/txnIndex.do?purl=http%3A%2F%2Fcpquery.sipo.gov.cn%2FtxnPantentInfoList.do%3Finner-flag%3Aopen-type%3Dwindow%26inner-flag%3Aflowno%3D1551953509852)”根据专利名称查询。
 
+[知网专利检索](https://kns.cnki.net/kns/brief/result.aspx?dbprefix=SCOD)  
+支持按发明人/申请人检索。
+
 ### [二维码的生成细节和原理](https://www.cnblogs.com/alantu2018/p/8504373.html)
 
 ### [专利申请基础知识](https://wenku.baidu.com/view/8d7c1c6d2bf90242a8956bec0975f46527d3a7e2.html)
