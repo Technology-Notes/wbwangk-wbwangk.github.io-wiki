@@ -24,7 +24,13 @@
 [BLS算法的魔幻之处——秘钥共享与阈值签名](http://gongxiangcj.com/posts/18196)  
 加密货币签名算法BLS （Boneh-Lynn-Sacham）是一种可以实现签名聚合和密钥聚合的算法（即可以将多个密钥聚合成一把密钥，将多个签名聚合成一个签名）。
 
+此前，Stepan Snigirev写过一篇关于BLS的文章，很好地解释了BLS背后的基础知识和数学。文章中Stepan还解释了BLS的一些属性（例如可聚合）和用例以及如何使用聚合签名来实现简单的阈值方案。(**就是下面的链接**)
+
 [Schnorr 签名方案和 BLS 签名方案的全面对比](https://blog.csdn.net/shangsongwww/article/details/88575802)
+这是一个翻译稿，[Stepan Snigirev写的原文](https://medium.com/cryptoadvance/bls-signatures-better-than-schnorr-5a7fe30ea716)
+
+下面的文档中用到了BLS算法：
+[Distributed Key Generation with Ethereum Smart Contracts](https://sqi.at/resources/Schindler-2019-CIW-Distributed-Key-Generation-with-Ethereum-Smart-Contracts.pdf)  [中文翻译](E:\Disk\密码学\MPC\Schindler-2019-CIW-Distributed-Key-Generation-with-Ethereum-Smart-Contracts(有道文档翻译结果))
 
 ### [一文预测2020年安全多方计算（MPC）对区块链行业的五大影响](https://www.8btc.com/article/528713)
 截至目前，包括区块链行业在内的所有行业，安全多方计算（MPC）技术的最大应用，就是通过门限签名方案(TSS)进行密钥管理。门限签名允许私钥可在多个参与者之间被分割，从而产生一个类似多重签名的协议，但对其参与者而言，它是完全本地的（解释：在区块链场景下完全是链外处理的）。
