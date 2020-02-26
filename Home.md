@@ -1675,7 +1675,7 @@ Verifiable Random Function（随机可验证函数） 可验证随机函数可�
 有E23(1,1)的例子，E23表示以23为基底取模。
 
 在线计算椭圆曲线乘法：[有限域𝔽p上的椭圆曲线纯量乘法](http://star.aust.edu.cn/xjfang/crypto/mul.html)
-
+在线计算椭圆曲线加法：[有限域𝔽p上的椭圆曲线点加运算](http://star.aust.edu.cn/xjfang/crypto/add.html)
 ### [侧链白皮书：用楔入式侧链实现区块链的创新—摘要、前言](https://www.8btc.com/article/34638)
 
 白皮书目录：
