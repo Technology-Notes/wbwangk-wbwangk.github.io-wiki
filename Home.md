@@ -1672,7 +1672,7 @@ ING探索了很多关于零知识证明的变体技术，比如范围证明（�
 Verifiable Random Function（随机可验证函数） 可验证随机函数可以看作是一个随机预言机（Random Oracle，RO） 一般的数字签名（如椭圆曲线签名）输出不是唯一的，每次签名输出都变化，而VRF要求数字签名的唯一性，这对签名算法提出了特殊要求。
 
 [ECC椭圆曲线详解(有具体实例)](https://www.cnblogs.com/Kalafinaian/p/7392505.html)
-有E23(1,1)的例子，E23表示以23为基底取模。
+有E23(1,1)的例子，E23表示以23为基底取模。有椭圆曲线加密的例子。而[这个文档](http://star.aust.edu.cn/xjfang/crypto/ch8.pdf)有椭圆曲线签名的举例。
 
 在线计算椭圆曲线乘法：[有限域𝔽p上的椭圆曲线纯量乘法](http://star.aust.edu.cn/xjfang/crypto/mul.html)
 在线计算椭圆曲线加法：[有限域𝔽p上的椭圆曲线点加运算](http://star.aust.edu.cn/xjfang/crypto/add.html)
