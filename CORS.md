@@ -1,7 +1,3 @@
-```
-x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}
-```
-
 阮一峰的博客文章[跨域资源共享CORS详解](http://www.ruanyifeng.com/blog/2016/04/cors.html)对CORS的原理讲的很到位。本文主要针对如何配置Nginx以便支持CORS。  
 首先创建一个将来被include的nginx配置文件片段`cors-include.conf`，然后在nginx的配置文件中引用这个文件：
 ```nginx
