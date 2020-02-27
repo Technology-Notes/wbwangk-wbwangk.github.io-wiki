@@ -1,3 +1,7 @@
+### [《现代密码学》课件](http://star.aust.edu.cn/xjfang/crypto/)
+全面、系统、带例子，赞！  
+[ch7:](http://star.aust.edu.cn/xjfang/crypto/ch7.pdf)
+
 ### [A Graduate Course in Applied Cryptography](https://crypto.stanford.edu/~dabo/cryptobook/BonehShoup_0_5.pdf)
 一个尚未完成的密码学书英文版，很全面，算法很新。
 Stepan在[BLS签名：比Schnorr更好](https://medium.com/cryptoadvance/bls-signatures-better-than-schnorr-5a7fe30ea716)文章中推荐了这本书。
