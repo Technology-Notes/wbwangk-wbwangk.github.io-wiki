@@ -29,7 +29,8 @@
 
 ### [A Graduate Course in Applied Cryptography](https://crypto.stanford.edu/~dabo/cryptobook/BonehShoup_0_5.pdf)
 一个尚未完成的密码学书英文版，很全面，算法很新。
-Stepan在[BLS签名：比Schnorr更好](https://medium.com/cryptoadvance/bls-signatures-better-than-schnorr-5a7fe30ea716)文章中推荐了这本书。
+Stepan在[BLS签名：比Schnorr更好](https://medium.com/cryptoadvance/bls-signatures-better-than-schnorr-5a7fe30ea716)文章中推荐了这本书。  
+[理解 BLS 签名算法](https://ethfans.org/posts/bls-signatures-better-than-schnorr)
 
 ### [通胀降至1%，Voice上线……EOS的持币者们仍旧迷茫](https://www.8btc.com/media/560335)
 有利于了解EOS生态
