@@ -1,3 +1,6 @@
+### [微众银行的DID方案](https://fintech.webank.com/developer/docs/weidentity/README.html)
+WeIdentity
+
 ### [Android Java SDK for Hyperledger Fabric 1.3](https://github.com/ishotoli/fabric-sdk-java)
 
 ### [干货 | 一文读懂比特币的Taproot/Schnorr升级](https://www.8btc.com/media/562991)
