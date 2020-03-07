@@ -1,3 +1,7 @@
+### [杭州区块链技术与应用联合会：2019杭州区块链行业发展报告](http://www.199it.com/archives/997014.html)
+与隐私保护相关的加密技术：混币技术（CoinJoin）、环签名、安全多方计算、同态加密、零知识证明。
+跨链技术：哈希锁定、公证人机制、侧链/中继链、锚定矿工机制。
+
 ### [微众银行的DID方案](https://fintech.webank.com/developer/docs/weidentity/README.html)
 WeIdentity
 
