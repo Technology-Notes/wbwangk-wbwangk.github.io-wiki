@@ -1,3 +1,5 @@
+### [基于超级账本(Hyperledger)的代币Metacoin将首次在全球加密货币交易所Liquid上市](https://m.jinse.com/blockchain/528904.html?showSimple=1)
+
 ### [深度解读！微软区块链生态](http://www.360doc.com/content/18/0524/16/3066843_756684802.shtml)
 ppt，总结的不错！
 
