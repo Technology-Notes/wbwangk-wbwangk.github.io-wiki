@@ -1,3 +1,9 @@
+### [隐私合规风险知几何？数据合规商用需过九重关](https://www.8btc.com/article/568066)
+这里提炼出的两组关键词——“数据内容保护”和“数据权利保障”，代表了隐私合规的两条主线。
+
+接下来，我们将围绕两条主线相关的九个维度，具体描述其对应的合规需求。
+![](https://appserversrc.8btc.com/images/20200312102828aWeF.jpeg)
+
 ### [基于超级账本(Hyperledger)的代币Metacoin将首次在全球加密货币交易所Liquid上市](https://m.jinse.com/blockchain/528904.html?showSimple=1)
 
 ### [深度解读！微软区块链生态](http://www.360doc.com/content/18/0524/16/3066843_756684802.shtml)
