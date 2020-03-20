@@ -1,3 +1,6 @@
+### [第8章 数字签名技术](file:///E:/Disk/%E5%AF%86%E7%A0%81%E5%AD%A6/%E6%96%B9%E8%B4%A4%E8%BF%9B/ch8.pdf)
+写了多种数字签名技术，很全。
+
 ### [零知识证明（zero-knowledge proofs）](https://blog.csdn.net/shangsongwww/article/details/101425668)
 据悉，荷兰ING推出了其改良版：零知识范围证明( [Zero-Knowledge Range Proof, ZKRP](https://github.com/ing-bank/zkproofs) )，它允许证明方在不需验证方实际了解确切内容，验证方就能证明证明方的讯息是在某个一定范围为内，例如：是否已达特定年龄、有一定金额的资产，而ZKRP号称比ZKP的效率快上10倍，这让隐密交易的时间成本大大降低，又符合实际需求。ING更提出了「零知识集合隶属」(zero-knowledge set membership)证明，能将让零知识证明不仅应用在数字上，更能包含其他类型的数据，这将为企业隐私增添更多应用范围，例如可判断一个用户是居住在欧盟的某个国家，而不用他提供确切的地址。
 
