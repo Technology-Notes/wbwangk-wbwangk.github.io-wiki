@@ -1,3 +1,6 @@
+### [门限 ECDSA——更安全、更私密的多重签名](https://weibo.com/ttarticle/p/show?id=2309634450570655105355)
+Keep 开发者 Piotr Dyraga 在 2018 年旧金山区块链周上关于门限 ECDSA 的演讲
+
 ### [门限密码学的理论、实现和应用](https://www.doc88.com/p-5791005390301.html)
 上海交大硕士论文。
 门限密码学基于秘密共享。分支处RSA、DSS、ElGamal三个门限方案。
