@@ -1,3 +1,8 @@
+### [sMPC安全多方计算]
+白皮书：  
+霍克：密码学和隐私保护智能合约的区块链模型。可在https://eprint.iacr.org/2015/675.pdf上在线获得 。  
+谜：具有保密性的分散式计算平台。可在线访问 http://enigma.media.mit.edu/enigma_full.pdf。  
+
 ### [门限 ECDSA——更安全、更私密的多重签名](https://weibo.com/ttarticle/p/show?id=2309634450570655105355)
 Keep 开发者 Piotr Dyraga 在 2018 年旧金山区块链周上关于门限 ECDSA 的演讲
 
