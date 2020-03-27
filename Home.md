@@ -1,3 +1,7 @@
+### [Vitalik ：理解新型通用零知识证明方案PLONK](https://www.8btc.com/article/486086)
+下图给出了各种零知识证明的大小：  
+![](http://v1.8btc.com/wp-content/uploads/2019/09/201909241323077632.png)
+
 ### [烧脑解密Dfinity的共识过程](http://www.qukuaiwang.com.cn/news/142763.html)
 大家可能会惊讶的发现，目前大部分的公链项目，不约而同的走向统一方向：
  
