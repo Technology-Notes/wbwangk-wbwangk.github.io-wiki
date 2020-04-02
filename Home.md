@@ -1,3 +1,6 @@
+### [https://www.8btc.com/media/577647](数据月报 | 新冠疫情持续恶化，通证市场遭受重创)
+很多图表，hash-rate、BTC price、挖矿难度等
+
 ### [荷兰商业银行零知识证明开源实现](https://github.com/ing-bank/zkrp?tdsourcetag=s_pctim_aiomsg)
 Reusable library for creating and verifying zero-knowledge range proofs and set membership proofs.
 
