@@ -1,3 +1,6 @@
+### [科普 | Eth 2 Staking 指南：分片化的共识](https://www.8btc.com/media/577681)
+信标链、BLS、委员会、分片化的共识（sharded consensus）
+
 ### [https://www.8btc.com/media/577647](数据月报 | 新冠疫情持续恶化，通证市场遭受重创)
 很多图表，hash-rate、BTC price、挖矿难度等
 
