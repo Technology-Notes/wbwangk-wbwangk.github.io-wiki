@@ -1,3 +1,8 @@
+### [为什么去中心化并不如你认为的那么重要](https://www.8btc.com/media/577479)
+Marker V1价格预言机，ESPN比赛结果（可信数据源）
+
+![](https://appserversrc.8btc.com/images/20200402142438uUd0.jpeg)
+
 ### [Maker的预言机还有哪些致命弱点](http://www.elecfans.com/blockchain/1095643.html)
 Maker价格预言机，从14个价格数据流中报告加密货币价格，如ETH / USD，MKR / USD
 
