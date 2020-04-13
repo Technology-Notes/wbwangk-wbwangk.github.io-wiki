@@ -1,3 +1,8 @@
+### [世界正在改变，顶级区块链风投如何在动荡中寻找机会？](https://www.8btc.com/media/581674)
+Solana，每秒5万交易，Layer1 扩容。 Solana 在三个方面具有绝对领先优势：1）吞吐量高；2）延时最低；3）交易成本最低。
+
+Maskbook，这是在隐私保护领域的一款出色的区块链技术应用。Maskbook 采用了 OTT_（over-the-to）_的方法，试图在 Web 2.0 和Web 3.0之间构建桥梁。用户无需从 Facebook 等中心化平台迁移，就可以通过 Maskbook 享用所有去中心化和 Web 3.0 的所有功能。用户可以发送只有好友可见的加密帖子，用加密货币打赏，构建智能合约，甚至无需利用 Facebook 或 Twitter 的 API，就可以在上面组织 DAO。
+
 ### [零知识证明学习资源汇总](https://mp.weixin.qq.com/s/-LU4FsFKt7ebX4sbKXNylA)
 「推荐文章一」一个数独引发的惨案：零知识证明（Zero-Knowledge Proof）
 推荐值：❤️❤️❤️❤️❤️
