@@ -1,3 +1,6 @@
+### [读心术：从零知识证明中提取「知识」](https://mp.weixin.qq.com/s?__biz=MzIxNjkwODE5NQ==&mid=2247484044&idx=1&sn=b62876f7e57cd7a891dc9d07e75374d0&scene=21#wechat_redirect)
+将正整数r映射到椭圆曲线上的点r*G，是一种同态加密（加法同态）。
+
 ### [Software Foundations 软件基础](https://coq-zh.github.io/SF-zh/)
 《软件基础》系列广泛地介绍了可靠软件的数学基础。
 
