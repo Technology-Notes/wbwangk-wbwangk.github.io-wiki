@@ -865,6 +865,9 @@ IBM表示，首批机型可能在未来18个月内提供给客户。
 
 Shamir在1984[S84]年提出了基于标识的密码技术(Identity-Based Cryptography - IBC)：即用户的标识就可以用做用户的公钥（更加准确地说是用户的公钥可以从用户的标识和系统指定的一个方法计算得出）。 ![img](https://camo.githubusercontent.com/9ee9268d039e7b9f2b3a271d2bfb2a5204243a72/68747470733a2f2f7777772e6f6c796d746563682e6e65742f696d616765732f776562496d616765732f6962632d70726f66696c652d332e6a7067)
 
+[基于标识的密码算法及国密SM9标准](https://baijiahao.baidu.com/s?id=1626706581580564395&wfr=spider&for=pc)  
+直到2001年，第一个真正实用的基于标识加密（也称基于身份加密，IBE，identity-based encryption）的方案由美国密码学家Boneh和Franklin独立地利用椭圆曲线上的双线性映射Weil配对设计出来。该方案很好的实现了Shamir的思想，即公钥可以是任意的字符串，使将用户标识/身份直接用于密码通信过程中的密钥交换、数字签名验证成为可能。
+
 ### [中国通信标准化协会：“物联网+区块链”应用与发展白皮书](https://mp.weixin.qq.com/s/VDtsrevrb0wkELEhHH9evg)
 
 白皮书指出，区块链凭借“不可篡改”、“共识机制”和“去中心化”等特性， 对物联网将产生以下几方面的影响：
