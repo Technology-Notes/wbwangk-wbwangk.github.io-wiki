@@ -1,3 +1,5 @@
+### [趣链科技的共识算法Robust Byzantine Fault Tolerance (RBFT)](https://hyperchain.readthedocs.io/en/latest/consensus.html)
+
 ### [区块链学习笔记 (4): Powers of Tau](https://zhuanlan.zhihu.com/p/42196632)
 之前 Zcash 使用的证明公钥和验证公钥，是通过 6 台机器做多方安全运算[1]生成的，只有把 6 台机器的原始随机数全部拿到，才能做上述那些造假的事情。机器在计算完成后立刻就在物理上进行毁坏[2]。为什么只有 6 台机器？因为算法效率和不可扩展性只允许这个量级数量的参与者。
 
