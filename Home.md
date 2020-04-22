@@ -1,3 +1,15 @@
+### [2020年稳定币的疯狂开局：单月增长近30亿美元，原因可能有这些](https://www.8btc.com/article/586081)
+[1](http://www.readblocks.com/archives/6742)尽管与美元挂钩，但USDC的价值在0.97美元和1.11美元之间轻微波动。您会发现它的价值并不是绝对等于1美元。USDC当前是以太坊区块链上创建的ERC-20代币。
+
+最近这段时间，稳定币的市值规模一下增长了近30亿美元。  
+这些稳定币不受比特币、以太坊这些非锚定加密货币的波动影响，同时又继承了一些强大的特性：
+
+开放、全球性、互联网上的任何人都可以24*7小时访问；
+传输速度快，交易成本低且安全；
+数字化，可编程；
+
+根据CoinMetrics的数据显示，截至4月20日，全球稳定币的总市值已升至90亿美元的历史新高，其中USDC约为7.3亿美元。
+
 ### [趣链科技的共识算法Robust Byzantine Fault Tolerance (RBFT)](https://hyperchain.readthedocs.io/en/latest/consensus.html)
 
 ### [区块链学习笔记 (4): Powers of Tau](https://zhuanlan.zhihu.com/p/42196632)
