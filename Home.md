@@ -1,3 +1,5 @@
+### [无需一堆证件、刷脸办业务，北京七类电子证照上了区块链](https://www.8btc.com/article/586805)
+
 ### [科普 | 点对点网络组建：从 Kademlia 到 Discv5](https://www.8btc.com/media/586948)
 
 ### [马化腾：区块链全面拥抱产业互联网](https://www.8btc.com/media/586091)
