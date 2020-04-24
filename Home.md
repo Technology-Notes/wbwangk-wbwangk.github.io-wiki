@@ -2227,6 +2227,7 @@ IBFT，全称 Istanbul Byzantine Fault Tolerance (伊斯坦布尔拜占庭容错
 信通院发布的《大数据白皮书（2018年）》：http://www.cac.gov.cn/2018-04/25/c_1122741894.htm信通院2018人工智能发展白皮书技术篇重磅发布：http://www.caict.ac.cn/kxyj/qwfb/bps/201809/P020180906443463663989.pdf 工信部发布《2018年中国区块链产业白皮书》：http://www.miit.gov.cn/n1146290/n1146402/n1146445/c6180238/part/6180297.pdf 信通院发布《区块链白皮书（2018年）》：https://pan.baidu.com/s/1ncJg3SwjrOgQ8tlXT0cZww
 
 ### [区块链信息服务管理规定](http://www.cac.gov.cn/2019-01/10/c_1123971164.htm)
+[《中华人民共和国网络安全法》](https://wenku.baidu.com/view/8e7fd054876fb84ae45c3b3567ec102de2bddf1f.html)
 
 ### [国家互联网信息办公室有关负责人就《区块链信息服务管理规定》答记者问](http://www.cac.gov.cn/2019-01/10/c_1123971223.htm)
 
