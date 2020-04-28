@@ -1,3 +1,5 @@
+### [地方政府发文支持丰水挖矿，2018年以来首次：四川或大规模开放](https://www.8btc.com/media/588894)
+
 ### [印钞机的秘密：USDT增发最全技术细节披露](https://www.8btc.com/media/588945)
 调用了 MultiSigWallet 合约的 confirmTransaction(uint) 函数完成的增发操作。
 
