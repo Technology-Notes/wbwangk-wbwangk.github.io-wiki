@@ -1,3 +1,11 @@
+### [隐私和跨链交易兼备，Zcash宣布和Cosmos互通](https://www.8btc.com/article/593220)
+Cosmos网络的目标是成为“区块链的互联网”，在这里任何区块链都可以相互通信、共享数据和进行交易。为了实现这一目标，该项目正在部署一种区块链间通信（IBC）协议，以促进互操作性。
+
+该协议被用于“pegzone”，即不同区块链之间的中介。Zcash基金会计划利用这一功能，允许Cosmos用户发送和接收隐私和匿名交易。
+
+### [干货 | 一文读懂比特币的Taproot/Schnorr升级](https://www.8btc.com/media/562991)
+椭圆曲线 secp256k1
+
 ### [密码学原语如何应用？解析单向哈希的妙用](https://www.8btc.com/media/590146)
 密码学领域提出了一系列基本组件，即密码学原语（Cryptographic Primitive）来实现这一目标，其中最常用的便是单向哈希。
 
