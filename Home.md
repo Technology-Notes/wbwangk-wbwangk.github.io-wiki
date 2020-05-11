@@ -1,3 +1,9 @@
+### [以太坊分片Sharding FAQ](https://www.jianshu.com/p/48476b7e6e61)
+还有其他一些使用高级密码学的方法。如[Mimblewimble](https://scalingbitcoin.org/papers/mimblewimble.txt) 和基于ZK-SNARKs的策略来解决扩展性问题的特定部分。
+
+我们如何促进跨分片通信？
+![](https://upload-images.jianshu.io/upload_images/11831773-ce21db7ff924b8b3.png)
+
 ### [隐私和跨链交易兼备，Zcash宣布和Cosmos互通](https://www.8btc.com/article/593220)
 Cosmos网络的目标是成为“区块链的互联网”，在这里任何区块链都可以相互通信、共享数据和进行交易。为了实现这一目标，该项目正在部署一种区块链间通信（IBC）协议，以促进互操作性。
 
