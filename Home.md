@@ -1,3 +1,6 @@
+### [IPFS白皮书中文版](https://blog.csdn.net/han0373/article/details/80569425)
+[英文原版](https://www.win.tue.nl/~mholende/seminar/references/ipfs.pdf)
+
 ### [以太坊分片Sharding FAQ](https://www.jianshu.com/p/48476b7e6e61)
 还有其他一些使用高级密码学的方法。如[Mimblewimble](https://scalingbitcoin.org/papers/mimblewimble.txt) 和基于ZK-SNARKs的策略来解决扩展性问题的特定部分。
 
