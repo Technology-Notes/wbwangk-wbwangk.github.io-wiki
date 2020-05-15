@@ -1,3 +1,7 @@
+### [Filecoin测试网第二阶段启动，5分钟了解其要点](https://www.8btc.com/media/596417)
+Filecoin时空证明(PoSt)  
+Drand: Drand 是一个分布式随机信标网络。Drand网络上的节点共同工作，使用双线性对和阈值密码，以固定的间隔生成集体的，可公开验证的，公正的和不可预测的随机值。
+
 ### [区块链技术在物流中的应用：提高效率、建立新商业模型](https://www.8btc.com/media/595756)
 ![](https://appserversrc.8btc.com/images/20200513182249aBit.jpeg)
 
