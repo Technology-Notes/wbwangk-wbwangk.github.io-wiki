@@ -1,3 +1,6 @@
+### [唯链白皮书2.0](https://www.vechain.org/whitepaper/#bit_65sv8)
+
+
 ### [国家密码管理局的标准规范](http://www.oscca.gov.cn/sca/xxgk/bzgf.shtml)
 SM2-SM9等
 
