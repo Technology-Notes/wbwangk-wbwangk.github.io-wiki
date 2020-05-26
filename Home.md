@@ -1,3 +1,33 @@
+### [PKI/CA工作原理及架构](https://www.jianshu.com/p/c65fa3af1c01)
+- PKI：Public Key Infrastructure，公钥基础设施。  
+- 
+CA：Certificate Of Authority，认证中心。
+  
+-  数字证书：提供了一种发布公钥的简便途径；
+一个数字证书包括：拥有者身份信息、公钥、CA数字签名、有效期等其他信息。
+  
+- 数字签名：用来确认信息发送者的身份，保证信息的完整性和抗否认性。
+
+![](https://upload-images.jianshu.io/upload_images/2960526-f952f39f3e341564.png?imageMogr2/auto-orient/strip|imageView2/2/w/632/format/webp)
+
+
+### [PKI、CPK、IBC性能浅析](https://wenku.baidu.com/view/7e53e078a26925c52cc5bff4.html)
+认证就是为用户签发公钥证书，从而为用户声称的身份与实际身份的一致性提供证明和信任担保。
+### [PKI/CA工作原理及架构](https://www.jianshu.com/p/c65fa3af1c01)
+- PKI：Public Key Infrastructure，公钥基础设施。  
+- 
+CA：Certificate Of Authority，认证中心。
+  
+-  数字证书：提供了一种发布公钥的简便途径；
+一个数字证书包括：拥有者身份信息、公钥、CA数字签名、有效期等其他信息。
+  
+- 数字签名：用来确认信息发送者的身份，保证信息的完整性和抗否认性。
+
+![](https://upload-images.jianshu.io/upload_images/2960526-f952f39f3e341564.png?imageMogr2/auto-orient/strip|imageView2/2/w/632/format/webp)
+
+### [PKI、CPK、IBC性能浅析](https://wenku.baidu.com/view/7e53e078a26925c52cc5bff4.html)
+认证就是为用户签发公钥证书，从而为用户声称的身份与实际身份的一致性提供证明和信任担保。
+
 ### [“新基建”写入政府工作报告，“链签约”时代来临](https://www.8btc.com/article/600881)
 来学嘉教授当选国际密码协会会士
 
