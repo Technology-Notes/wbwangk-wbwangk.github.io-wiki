@@ -1,3 +1,11 @@
+### [基于身份的密码学](https://blog.thalesesecurity.com/2019/09/26/identity-based-cryptography/)
+是IBC的综述，很全。谈到了对IBE/IBS的各种扩展：  
+- 基于身份的签密方案。  
+- 基于身份的广播加密（IBBE）  
+- 基于分层身份的加密/签名（HIBE / HIBS）  
+- 可撤销的IBE。  
+- 基于晶格的IBE。  
+
 ### [PKI/CA工作原理及架构](https://www.jianshu.com/p/c65fa3af1c01)
 - PKI：Public Key Infrastructure，公钥基础设施。  
 - 
