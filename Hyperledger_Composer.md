@@ -872,7 +872,7 @@ yo hyperledger-composer:businessnetwork
 [文档地址](https://wbwangk.github.io/ComposerDocs/tutorials_deploy-to-fabric-multi-org/)  
 从安装方式可以看出它使用的目录：
 ```
-git clone -b issue-6978 https://github.com/sstone1/fabric-samples.git
+git clone --depth 1 -b issue-6978 https://github.com/sstone1/fabric-samples.git
 ```
 它是在FYBN(first-network)脚本的基础上进行了个性化修改。所以默认目录就是`fabric-samples`
 
@@ -880,11 +880,11 @@ git clone -b issue-6978 https://github.com/sstone1/fabric-samples.git
 安装过程在[快速入门](https://hyperledgercn.github.io/hyperledgerDocs/getting_started/)文档中，但多数学习时间是花在[第一个Fabric网络](https://hyperledgercn.github.io/hyperledgerDocs/build_network_zh/)文档中。  
 安装快速开始：
 ```
-git clone https://github.com/hyperledger/fabric.git
+git clone --depth 1 https://github.com/hyperledger/fabric.git
 ```
 安装fabric-samples：
 ```
-git clone https://github.com/hyperledger/fabric-samples
+git clone --depth 1 https://github.com/hyperledger/fabric-samples
 ```
 进入BYFN目录则是：
 ```

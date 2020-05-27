@@ -267,7 +267,7 @@ middleman插件可用于授权检查。在调用真正的Kong API前，利用mid
 middleman不是官方插件，而是一个定制插件。使用前需要先安装。假定kong安装目录是`/usr/local/kong`。  
 ```
 $ cd /usr/local/kong  && mkdir plugins && cd plugins
-$ git clone https://github.com/pantsel/kong-middleman-plugin middleman
+$ git clone --depth 1 https://github.com/pantsel/kong-middleman-plugin middleman
 $ cd middleman
 $ luarocks make *.rockspec
 ```

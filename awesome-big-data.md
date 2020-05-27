@@ -2,7 +2,7 @@
 ## BI
 redash.io  
 开源商业智能平台，展现的样子土。  
-安装在share2：使用了[provisioning script]  (https://raw.githubusercontent.com/getredash/redash/master/setup/ubuntu/bootstrap.sh)脚本安装，但不要直接git clone到/opt目录下，因为bootstrop脚本要自己创建/opt/redash/目录/。自动安装了nginx。  
+安装在share2：使用了[provisioning script]  (https://raw.githubusercontent.com/getredash/redash/master/setup/ubuntu/bootstrap.sh)脚本安装，但不要直接git clone --depth 1到/opt目录下，因为bootstrop脚本要自己创建/opt/redash/目录/。自动安装了nginx。  
 
 saiku  
 开源的OLAP浏览器  

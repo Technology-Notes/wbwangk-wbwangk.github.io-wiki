@@ -44,7 +44,7 @@ centos下的安装参加[这个](http://justniffer.sourceforge.net/#!/install)�
 
 #### centos7.3下编译
 ```
-$ git clone https://github.com/onotelli/justniffer.git
+$ git clone --depth 1 https://github.com/onotelli/justniffer.git
 $ cd justniffer
 $ yum install gcc-c++ libpcap libpcap-devel boost boost-devel
 $ ./configure

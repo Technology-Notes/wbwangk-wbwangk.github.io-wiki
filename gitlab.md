@@ -22,7 +22,7 @@ git config --global user.email "wbwang@inspur.com"
 
 Create a new repository
 ```
-git clone http://gitserver/imaidata/docs.git
+git clone --depth 1 http://gitserver/imaidata/docs.git
 cd docs
 touch README.md
 git add README.md

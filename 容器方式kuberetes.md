@@ -53,7 +53,7 @@ $ vagrant ssh k8s0
 下载部署脚本：
 ```
 $ cd /opt
-$ git clone https://github.com/wbwangk/kube-deploy
+$ git clone --depth 1 https://github.com/wbwangk/kube-deploy
 $ cd kube-deploy/docker-multinode
 $ export IP_ADDRESS=192.168.1.140
 $ ./master.sh
@@ -98,7 +98,7 @@ $ curl $MASTER_IP:2379/version
 下载部署脚本：
 ```
 $ cd /opt
-$ git clone https://github.com/wbwangk/kube-deploy
+$ git clone --depth 1 https://github.com/wbwangk/kube-deploy
 $ cd kube-deploy/docker-multinode
 $ docker pull wbwang/flannel:v0.6.1-amd64
 $ docker pull wbwang/hyperkube-amd64:v1.5.2

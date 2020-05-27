@@ -1,7 +1,7 @@
 使用 pyenv 可以在一个系统中安装多个python版本。
 This project used to be known as pythonbrew, but is now known as pyenv. To install it you need to clone a copy of it into your $HOME directory like so(下载pyenv):
 ```
-$ git clone git://github.com/yyuu/pyenv.git ~/.pyenv
+$ git clone --depth 1 git://github.com/yyuu/pyenv.git ~/.pyenv
 Cloning into .pyenv...
 remote: Counting objects: 2207, done.
 remote: Compressing objects: 100% (617/617), done.

@@ -37,7 +37,7 @@ $ hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=,  -Di
 本测试需要一个启用了kerberos的HDP集群。首先，下载java样例代码：
 ```
 $ cd /opt
-$ git clone https://github.com/jjmeyer0/hdp-test-examples
+$ git clone --depth 1 https://github.com/jjmeyer0/hdp-test-examples
 ```
 【创建keytab】  
 用管理员账号登录KDC，然后创建叫webb的主体，并导出keytab：

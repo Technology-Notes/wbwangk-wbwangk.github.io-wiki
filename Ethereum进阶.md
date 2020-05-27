@@ -245,7 +245,7 @@ true
 ### etherparty/explorer
 安装：
 ```
-$ git clone https://github.com/etherparty/explorer
+$ git clone --depth 1 https://github.com/etherparty/explorer
 $ cd explorer 
 $ npm start
 ```

@@ -4,7 +4,7 @@
 下载perl脚本，形成转换管道，生成html文件：
 ```
 $ cd /opt
-$ git clone git://github.com/bagder/roffit.git
+$ git clone --depth 1 git://github.com/bagder/roffit.git
 $ cd roffit
 $ mkdir -p /var/www/html/man
 $ zcat /usr/share/man/man1/scp.1.gz \

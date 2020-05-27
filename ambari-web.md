@@ -1,7 +1,7 @@
 原文地址：`https://cwiki.apache.org/confluence/display/AMBARI/Coding+Guidelines+for+Ambari`  
 ### 安装和启动过程
 ```
-$ git clone https://git-wip-us.apache.org/repos/asf/ambari.git
+$ git clone --depth 1 https://git-wip-us.apache.org/repos/asf/ambari.git
 $ cd ambari/ambari-web
 $ sudo npm install -g brunch@1.7.20
 $ rm -rf node_modules public

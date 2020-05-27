@@ -9,7 +9,7 @@ fabric官方库提供了一个Vagrantfile，是个ubuntu16的环境，供开发�
   
 在宿主机下启动fabric开发环境VM：
 ```
-$ git clone https://github.com/hyperledger/fabric.git
+$ git clone --depth 1 https://github.com/hyperledger/fabric.git
 $ cd fabric/devenv && vagrant up && vagrant ssh
 ```
 虚拟机启动过程中会自动执行一个`setup.sh`脚本进行初始化。有时会半途执行失败。可以进入linux后手工执行脚本：
@@ -44,7 +44,7 @@ go version go1.9.2 linux/amd64
 #### Hyperledger Fabric Samples
 [Hyperledger官方GETTING STARTED](https://hyperledger-fabric.readthedocs.io/en/latest/samples.html)  
 ```
-$ cd /opt && git clone -b master https://github.com/hyperledger/fabric-samples.git
+$ cd /opt && git clone --depth 1 -b master https://github.com/hyperledger/fabric-samples.git
 $ cd fabric-samples && curl -sSL https://goo.gl/6wtTN5 | bash -s 1.1.0-preview
 ```
 脚本会自动下载了很多docker镜像，如ca、order、peer、ccenv、tools、couchdb、kafka、zookeeper、javaenv等。

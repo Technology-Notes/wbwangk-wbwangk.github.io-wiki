@@ -15,7 +15,7 @@ apt-get install ambari-server -y
 关于搭建HDP本地源，更详细文档在[这里](https://github.com/wbwangk/wbwangk.github.io/wiki/%E6%90%AD%E5%BB%BAHDP%E6%9C%AC%E5%9C%B0%E6%BA%90)。  
 下列测试的目的是建立“无互联网模式HDP本地源”，环境是vagrant VM + ubuntu14。[官方文档](https://cwiki.apache.org/confluence/display/AMBARI/Quick+Start+Guide)提供了搭建测试环境的vagrant配置文件及相关脚本，下载该vagrant配置文件：
 ```
-$ git clone https://github.com/u39kun/ambari-vagrant.git
+$ git clone --depth 1 https://github.com/u39kun/ambari-vagrant.git
 ```
 上述命令我在windows10的git bash窗口中执行的。然后：
 ```

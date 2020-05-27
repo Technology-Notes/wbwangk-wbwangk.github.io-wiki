@@ -129,7 +129,7 @@ $ yum install sqlite-devel-3.7.17-8.el7.x86_64.rpm
 ### 下载源码和编译
 下载hue源码，然后编译：
 ```
-$ git clone https://github.com/cloudera/hue.git
+$ git clone --depth 1 https://github.com/cloudera/hue.git
 $ cd hue
 $ make apps > hue_make.log 2>&1
 ```
@@ -184,7 +184,7 @@ github上的[EsharEditor/ambari-hue-service]((https://github.com/EsharEditor/amb
 ```
 $ VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
 $ rm -rf /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE  
-$ sudo git clone https://github.com/imaidev/ambari-hue-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE
+$ sudo git clone --depth 1 https://github.com/imaidev/ambari-hue-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/HUE
 ```
 可以把上面的VERSION定义一行添加到文件```~/.bashrc```的最后，以便这个环境变量随时可用。  
 不同的操作系统需要不同的hue安装包，repo.imaicloud.com上现有三个操作系统的HUE-3.12.0安装包：

@@ -952,7 +952,7 @@ mkdir workspace && cd workspace
 
 2. 下载Quorum示例库、启动虚拟机、登录虚拟机：
 ```
-git clone https://github.com/jpmorganchase/quorum-examples
+git clone --depth 1 https://github.com/jpmorganchase/quorum-examples
 cd quorum-examples && vagrant up
 vagrant ssh
 ```

@@ -28,12 +28,12 @@ $ git push -u orgin master     （推送到远程库）
 
 克隆指定分支：
 ```
-$ git clone -b branch-2.6 https://github.com/apache/ambari.git
+$ git clone --depth 1 -b branch-2.6 https://github.com/apache/ambari.git
 ```
 ### git与基础认证
 gitlib与AD进行了集成，当对于私有库进行克隆时提示输入用户名口令，如：
 ```
-git clone http://open.inspur.com/imaidata/docs.git
+git clone --depth 1 http://open.inspur.com/imaidata/docs.git
 正克隆到 'docs'...
 Username for 'http://open.inspur.com': wbwang
 Password for 'http://wbwang@open.inspur.com':
@@ -85,7 +85,7 @@ pip install python-markdown-math
 将`https://github.com/HyperledgerCN/hyperledgerDocs`分叉(fork)到自己的库:`https://github.com/wbwangk/hyperledgerDocs`
 #### clone到本地
 ```
-git clone https://github.com/wbwangk/hyperledgerDocs.git
+git clone --depth 1 https://github.com/wbwangk/hyperledgerDocs.git
 cd hyperledgerDocs
 ```
 #### 编辑文档
@@ -151,7 +151,7 @@ INFO    -  Your documentation should shortly be available at: https://wbwangk.gi
 [原文](https://ethereum-homestead.readthedocs.io/en/latest/about.html#restructured-text-markup-sphinx)  
 与Markdown类似的标记语言，格式更丰富。例如，下面以太坊homestead版本文档就是用rst格式编写的。编译办法：
 ```
-git clone https://github.com/ethereum/homestead-guide
+git clone --depth 1 https://github.com/ethereum/homestead-guide
 cd homestead-guide
 make html
 ```

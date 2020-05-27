@@ -80,7 +80,7 @@ curl -X POST http://kong:8001/plugins \
 middleman不是官方插件，而是一个定制插件。使用前需要先安装。假定kong安装目录是`/usr/local/kong`。
 ```
 $ cd /usr/local/kong  && mkdir plugins && cd plugins
-$ git clone https://github.com/pantsel/kong-middleman-plugin middleman
+$ git clone --depth 1 https://github.com/pantsel/kong-middleman-plugin middleman
 $ cd middleman
 $ luarocks make *.rockspec
 ```

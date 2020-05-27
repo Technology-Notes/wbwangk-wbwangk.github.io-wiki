@@ -546,7 +546,7 @@ $$ peer chaincode upgrade -o orderer.example.com:7050 --tls $CORE_PEER_TLS_ENABL
 Fabric自带的VM空间太小，改用box`bento/ubuntu-16.4`重建。  
 ```
 $ cd /e/vagrant9/ambari-vagrant
-$ git clone https://github.com/hyperledger/fabric.git
+$ git clone --depth 1 https://github.com/hyperledger/fabric.git
 $ cd fabric/devenv
 ```
 值修改Vagrantfile使用空间为40G的新box：
@@ -566,7 +566,7 @@ make clean gotools
 #### 安装fabric-samples库
 ```
 $ cd /opt
-$ git clone -b master https://github.com/hyperledger/fabric-samples.git
+$ git clone --depth 1 -b master https://github.com/hyperledger/fabric-samples.git
 $ cd fabric-samples
 $ curl -sSL https://goo.gl/6wtTN5 | bash 
 （$ curl -sSL https://goo.gl/6wtTN5 | bash -s 1.1.0-preview）
@@ -793,7 +793,7 @@ $ curl -X GET --cookie "access_token=(略)" --header 'Accept: application/json' 
 下载项目：
 ```
 cd /opt
-git clone https://github.com/hyperledger/fabric-sdk-rest.git
+git clone --depth 1 https://github.com/hyperledger/fabric-sdk-rest.git
 cd fabric-sdk-rest
 ```
 利用npm进行一些依赖包的下载、构建等：

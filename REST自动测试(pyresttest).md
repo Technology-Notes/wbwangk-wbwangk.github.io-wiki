@@ -16,7 +16,7 @@ $ pip install pyresttest
 pyresttest库自带了测试用的REST服务器。
 ```
 cd /opt
-git clone https://github.com/svanoort/pyresttest.git
+git clone --depth 1 https://github.com/svanoort/pyresttest.git
 pip install 'django >=1.6, <1.7' django-tastypie==0.12.1
 cd pyresttest/pyresttest/testapp
 python manage.py testserver test_data.json &

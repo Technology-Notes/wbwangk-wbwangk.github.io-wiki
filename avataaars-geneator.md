@@ -1,7 +1,7 @@
 ## 安装avataaars-geneator
 (VM:u1601)  
 ```
-$ git clone https://github.com/fangpenlin/avataaars-geneator
+$ git clone --depth 1 https://github.com/fangpenlin/avataaars-geneator
 $ cd avataaars-geneator
 $ sudo npm i yarn -g --verbose
 ```

@@ -3,7 +3,7 @@
 ### 快速开始
 将Apache Shiro源码克隆到本地(centos7):
 ```
-$ git clone https://github.com/apache/shiro.git
+$ git clone --depth 1 https://github.com/apache/shiro.git
 ```
 shiro带有一些示范，如QuickStart，下面进入QuickStart目录，并利用mvn下载好依赖包。
 ```

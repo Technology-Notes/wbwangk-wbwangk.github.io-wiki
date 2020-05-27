@@ -315,7 +315,7 @@ $ sed -i 's/$releasever/7/' /etc/yum.repos.d/CentOS7-Base-163.repo          (由
 在ambari所在的节点（我的是c7001）上，下载定制的Ambari服务freeipa：
 ```
 $ VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-$ sudo git clone https://github.com/imaidev/ambari-freeipa-service.git   /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/FREEIPA-DEMO 
+$ sudo git clone --depth 1 https://github.com/imaidev/ambari-freeipa-service.git   /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/FREEIPA-DEMO 
 $ ambari-server restart
 ```
 浏览器输入地址Ambari(c7001.ambari.apache.org:8080)，登录后添加服务，选择FreeIPA Server，自动选择安装在节点c7001。但实测发现FreeIPA与Ambari有冲突（如freeipa的CA要占用8080端口），所以手工修改安装节点到c7003。参数配置：

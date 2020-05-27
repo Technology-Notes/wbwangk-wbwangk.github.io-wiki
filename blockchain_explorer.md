@@ -10,7 +10,7 @@ apt install mysql-server
 
 克隆explorer源码：
 ```bash
-git clone https://github.com/hyperledger/blockchain-explorer.git
+git clone --depth 1 https://github.com/hyperledger/blockchain-explorer.git
 cd blockchain-explorer
 ```
 

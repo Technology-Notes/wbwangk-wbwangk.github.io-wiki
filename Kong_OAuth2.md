@@ -96,7 +96,7 @@ $ curl -k -H "Authorization: token Xjh29oE8UBCx0KouGDEW1pVt4a27Q1XH" https://loc
 github上有个利用Kong的OAuth2插件做的[Hello World示范](https://github.com/Kong/kong-oauth2-hello-world)，以这个为入门很好。可以再结合插件的[官方文档](https://getkong.org/plugins/oauth2-authentication/)一起看。  
 这个Hello World是个用Node.js应用，有前端有后端。安装很简单：
 ```
-$ git clone https://github.com/Kong/kong-oauth2-hello-world.git kong-oauth2
+$ git clone --depth 1 https://github.com/Kong/kong-oauth2-hello-world.git kong-oauth2
 $ cd kong-oauth2
 $ npm install
 ```

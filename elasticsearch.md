@@ -179,7 +179,7 @@ IK插件的版本必须和elasticsearch的版本号一样，这是个很容易�
 自己构建插件需要的软件有git、jdk、maven：
 ```
 $ cd /opt
-$ git clone https://github.com/medcl/elasticsearch-analysis-ik
+$ git clone --depth 1 https://github.com/medcl/elasticsearch-analysis-ik
 $ git checkout tags/v5.6.1
 ```
 如果你的elasticsearch的版本号不是v5.6.1，那么一定要用`git checkout`将版本号切换到你的elasticsearch的版本号。  
